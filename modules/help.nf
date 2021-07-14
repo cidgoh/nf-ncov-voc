@@ -1,7 +1,7 @@
 def printHelp() {
   log.info"""
   Usage:
-    nextflow run connor-lab/ncov2019-artic-nf -profile (singularity,docker,conda) ( --illumina | --nanpolish | --medaka ) --prefix [prefix] [workflow-options]
+    nextflow run main.nf -profile (singularity,docker,conda) ( --startdate | --enddate | --ivar | --bwa ) --prefix [prefix] [workflow-options]
 
   Description:
     Variant Calling workflow for SARS-CoV-2 Variant of Concern (VOC) and Variant of Interest (VOI) consensus sequences to generate data for Visualization

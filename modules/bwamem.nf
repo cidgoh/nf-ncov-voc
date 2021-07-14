@@ -9,7 +9,7 @@ process BWAMEM {
     tag {"Mapping_${seq}"}
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.sorted.bam", mode: 'copy'
 
-    cpus 4
+    cpus 1
 
     input:
         tuple(path(seq),path(ref))

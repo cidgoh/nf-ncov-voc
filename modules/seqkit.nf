@@ -3,7 +3,6 @@ process SEQKIT {
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
 
   tag { "ExtractFasta_${ids}" }
-  cpus 4
 
   input:
       tuple(path(ids),path(sequence))

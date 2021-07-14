@@ -42,6 +42,23 @@ process extractMetadata {
     """
 }
 
+process vcfTotsv {
+
+    tag {"vcfTotsv${annotated_vcf.baseName}"}
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
+
+    input:
+        path(annotated_vcf)
+
+    output:
+        path("*.tsv")
+
+    script:
+      """
+      vcf2tsv.py ${annotated_vcf} ${annotated_vcf.baseName}.tsv
+      """
+}
+
 process processGVCF{
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
   //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
@@ -64,5 +81,45 @@ process processGVCF{
                         -m ${variants.baseName}.mask.txt \
                         -v ${variants.baseName}.variants.vcf \
                         -c ${variants.baseName}.consensus.vcf ${variants}
+  """
+}
+
+
+process make_vcf_list {
+  input:
+  file(vcf) from makelist_ch.collect()
+
+  output:
+  file("vcfs.txt") into vcftxt_ch
+
+  script:
+  template 'makelist.py'
+}
+
+
+process merge_vcfs {
+  publishDir path: "${params.outdir}/freebayes"
+  //cpus params.cpus.toInteger()
+
+  input:
+  file(vcf) from vcf_ch.collect()
+  file(vcfidx) from vcfidx_ch.collect()
+  file(fasta)
+  file(faidx)
+  file(vcftxt) from vcftxt_ch
+
+  output:
+  file("${params.project}.vcf.gz")
+  file("${params.project}.vcf.gz.tbi")
+
+  script:
+  """
+  gunzip -cd \$(cat $vcftxt) | vcffirstheader | bgzip -c > ${params.project}_dirty.vcf.gz
+  gsort ${params.project}_dirty.vcf.gz $faidx | vcfuniq \
+      | bgzip -c > ${params.project}_dirty_sorted.vcf.gz
+  bcftools norm -c all -f $fasta --multiallelics - --threads ${task.cpus} \
+      --output ${params.project}.vcf.gz --output-type z \
+      ${params.project}_dirty_sorted.vcf.gz
+  tabix -p vcf ${params.project}.vcf.gz
   """
 }

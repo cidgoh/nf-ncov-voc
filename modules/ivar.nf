@@ -13,13 +13,13 @@ process IVAR {
 
     script:
         """
-        samtools mpileup -aa -A -d 0 --reference ${ref} -B -Q 13 ${bam} |\
+        samtools mpileup -aa -A -d 0 --reference ${ref} -B -Q 0 ${bam} |\
         ivar variants \
         -r ${ref} \
-        -m ${params.ivarMinDepth} \
+        -m ${params.var_MinDepth} \
         -p ${bam.baseName}.variants \
-        -q ${params.ivarMinVariantQuality} \
-        -t ${params.ivarMinFreqThreshold} \
+        -q ${params.var_MinVariantQuality} \
+        -t ${params.var_MinFreqThreshold} \
         -g ${ref_gff}
         """
 }
