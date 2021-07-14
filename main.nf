@@ -14,7 +14,7 @@ include {printHelp} from './modules/help.nf'
 //include {makeFastqSearchPath} from './modules/util.nf'
 
 // import subworkflows
-include {ncov_voc} from './workflows/Variantcalling.nf'
+include {ncov_voc} from './workflows/covidmvp.nf'
 
 
 if (params.help){
@@ -43,10 +43,10 @@ if ( ! params.prefix ) {
 // main workflow
 workflow {
 
-      //Channel.from('B.1.1.7', 'B.1.351', 'B.1.427', 'B.1.429', 'P.1', 'B.1.525', 'B.1.526', 'B.1.526.1', 'B.1.526.2', 'B.1.617', 'P.2')
-      //      .set{ch_voc}
-      Channel.from('B.1.617', 'P.1' )
+      Channel.from('B.1.1.7','B.1.351', 'B.1.351.2', 'B.1.351.3', 'P.1', 'P.1.1', 'P.1.2', 'B.1.617.2', 'AY.1', 'AY.2', 'B.1.525', 'B.1.526', 'B.1.617.1', 'C.37')
             .set{ch_voc}
+      //Channel.from('B.1.351', 'B.1.525')
+      //      .set{ch_voc}
 
       Channel.fromPath( "$params.seq/*.fasta", checkIfExists: true)
 	         .set{ ch_seq }
