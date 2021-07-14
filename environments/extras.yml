@@ -1,3 +1,4 @@
+name: nf-ncov-voc-extra
 channels:
   - conda-forge
   - bioconda
