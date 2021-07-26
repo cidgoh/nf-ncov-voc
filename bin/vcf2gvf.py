@@ -10,6 +10,7 @@ Created on Fri Jul 23 11:06:22 2021
 This script converts VCF files that have been annotated by snpEFF into GVF files, including the functional annotation.
 '''
 
+import argparse
 import pandas as pd
 import re
 import glob
@@ -17,21 +18,36 @@ import os
 import numpy as np
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Converts snpEFF-annotated VCF files to GVF files with functional annotation')
+    parser.add_argument('--vcfdir', type=str, default=None,
+                        help='Path to folder containing snpEFF-annotated VCFs files')
+    #filepath can be absolute (~/Desktop/test/22_07_2021/) or relative (./22_07_2021/)
+    parser.add_argument('--pokay', type=str, default='functional_annotation_V.0.2.tsv',
+                        help='Anoosha\'s parsed pokay .tsv file')
+    parser.add_argument('--clades', type=str, default='clade_defining_mutations.tsv',
+                        help='.tsv of clade-defining mutations')
+    parser.add_argument('--outdir', type=str, default='./gvf_files/',
+                        help='Output directory for finished GVF files: folder will be created if it doesn\'t already exist')
+    return parser.parse_args()
+
+
 gvf_columns = ['#seqid','#source','#type','#start','#end','#score','#strand','#phase','#attributes']
 
 
-def vcftogvf(var_data):
+def vcftogvf(var_data, strain):
     
     df = pd.read_csv(var_data, sep='\t', header=65)
-    df['strain'] = re.search('/(.+?)_ids', var_data).group(1)
+    df['strain'] = strain #re.search('/(.+?)_ids', var_data).group(1)
     
     new_df = pd.DataFrame(index=range(0,len(df)),columns=gvf_columns)
-    
+
     #parse EFF column
     eff_info = df['INFO'].str.findall('\((.*?)\)') #series: extract everything between parentheses as elements of a list
     eff_info = eff_info.apply(pd.Series)[0] #take first element of list
     eff_info = eff_info.str.split(pat='|').apply(pd.Series) #split at pipe, form dataframe
-    
+
     #hgvs names
     hgvs = eff_info[3].str.rsplit(pat='c.').apply(pd.Series)
     hgvs_protein = hgvs[0].str[:-1]
@@ -46,6 +62,8 @@ def vcftogvf(var_data):
     #mutation type: looks like MISSENSE or SILENT from Zohaib's file
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + eff_info[1] + ';'    
     
+   
+        
     #columns copied straight from Zohaib's file
     for column in ['REF','ALT']:
         key = column.lower()
@@ -63,7 +81,7 @@ def vcftogvf(var_data):
     
     #add strain name
     new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + df['strain'] + ';'
-    
+
     #add WHO strain name
     alt_strain_names = {'B.1.1.7': 'Alpha', 'B.1.351': 'Beta', 'P.1': 'Gamma', 'B.1.617.2': 'Delta', 'B.1.427': 'Epsilon', 'B.1.429': 'Epsilon', 'P.2': 'Zeta', 'B.1.525': 'Eta', 'P.3': 'Theta', 'B.1.526': 'Iota', 'B.1.617.1': 'Kappa'}
     mapped_alt_strains = df['strain'].map(alt_strain_names)
@@ -101,6 +119,7 @@ def add_functions(gvf_df, annotation_file, clade_file, strain):
     df = pd.read_csv(annotation_file, sep='\t', header=0) #load functional annotations spreadsheet
     #gvf = pd.read_csv(gvf_df, sep='\t', header=3) #load entire GVF file for modification
     gvf = gvf_df
+    
     clades = pd.read_csv(clade_file, sep='\t', header=0, usecols=['strain', 'mutation']) #load entire GVF file for modification
     clades = clades.loc[clades.strain == strain]
     attributes = gvf["#attributes"].str.split(pat=';').apply(pd.Series)
@@ -134,7 +153,7 @@ def add_functions(gvf_df, annotation_file, clade_file, strain):
     unique_groups = df3.drop_duplicates() #92 unique groups
     unique_groups_multicol = sorted_df.drop_duplicates() #92 unique groups, not all members of which might be present in the gvf file
     merged_df["mutation_group_labeller"] = df3 #for sanity checking
-
+    
     #make a unique id for mutation groups that have all members represented in the vcf
     #for groups with missing members, delete those functional annotations
     merged_df["id"] = 'NaN'
@@ -184,46 +203,48 @@ def add_functions(gvf_df, annotation_file, clade_file, strain):
     
     return merged_df, leftover_names, gvf["mutation"].tolist(), leftover_clade_names
     
+      
+
+if __name__ == '__main__':
     
-
-#process all annotated VCF files in the data folder
-def convertfolder(folderpath):
-    new_folder = folderpath + "/gvf_files" #gvf files from this script will be stored in here
-    if not os.path.exists(new_folder):
-        os.makedirs(new_folder)
-    os.chdir(folderpath)
+    args = parse_args()
     
-    parent_directory = os.path.dirname(os.path.dirname(os.getcwd())) #path to voc_prototype main folder
-    annotation_file = parent_directory + '/functional_annotation_V.0.2.tsv'
-    clade_file = parent_directory + '/clade_defining_mutations.tsv'
+    if not os.path.exists(args.vcfdir):
+        print("VCF file folder not found")
+        
+    annotation_file = args.pokay
+    clade_file = args.clades
+    outdir = args.outdir
+    
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
 
-    pragmas = pd.DataFrame([['##gff-version 3'], ['##gvf-version 1.10'], ['##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']]) #pragmas are in column 0
-
-    print("Processing vcf files in " + folderpath + " ...")
+    print("Processing vcf files in " + args.vcfdir + " ...")
     print("")
     
-    for file in glob.glob('./*.vcf'): #get all .tsv files
-        print("input file: ", file)
+    pragmas = pd.DataFrame([['##gff-version 3'], ['##gvf-version 1.10'], ['##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']]) #pragmas are in column 0
+
+    for file in glob.glob(args.vcfdir + '/*.vcf'): #get all .vcf files
+        print("Processing: " + file)
+        
         #get strain name
-        pat = r'.*?/(.*)_ids.*'
+        pat = r'.*?' + args.vcfdir + '(.*)_ids.*'
         match = re.search(pat, file)
         strain = match.group(1)
-        #create gvf from annotated vcf
-        gvf = vcftogvf(file)
+        print("strain: ", strain)
+        
+        #create gvf from annotated vcf (ignoring pragmas for now)
+        gvf = vcftogvf(file, strain)
+        #add functional annotations
         annotated_gvf, leftover_names, mutations, leftover_clade_names = add_functions(gvf, annotation_file, clade_file, strain)
         annotated_gvf = annotated_gvf[gvf_columns]
-        #add pragmas to df, then save to .tsv
+        #add pragmas to df, then save to .gvf
         annotated_gvf = pd.DataFrame(np.vstack([annotated_gvf.columns, annotated_gvf])) #columns are now 0, 1, ...
         final_gvf = pragmas.append(annotated_gvf)
-        filepath = "./gvf_files" + file[1:-4] + ".annotated.gvf"
+        filepath = outdir + strain + ".annotated.gvf"
         print("saved as: ", filepath)
         print("")
         final_gvf.to_csv(filepath, sep='\t', index=False, header=False)
         
     print("Processing complete.")
         
-
-
-'''Run script for a given folder of annotated VCFs'''
-folder = "reference_data_/22_07_2021" #folder containing annotated VCFs
-convertfolder(folder)
