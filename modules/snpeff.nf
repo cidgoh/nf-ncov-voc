@@ -13,18 +13,14 @@ process SNPEFF {
 
     script:
       """
-      JAVA -jar $baseDir/snpEff/snpEff.jar \
-      ann MN908947.3 -v \
+      snpEff \
+      MN908947.3 -v \
       -formatEff \
       -hgvs1LetterAa \
       -hgvsOld \
       -noShiftHgvs \
       -sequenceOntology \
-      -config $baseDir/snpEff/snpeff.config \
-      -dataDir $baseDir/snpEff/SnpEffDB/ \
       ${vcf} \
-      -htmlStats ${vcf.baseName}.snpEff.html \
-      -csvStats ${vcf.baseName}.snpEff.csv \
       > ${vcf.baseName}.annotated.vcf
       """
 }
