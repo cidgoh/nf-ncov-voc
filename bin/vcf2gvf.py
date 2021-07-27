@@ -81,7 +81,7 @@ def vcftogvf(var_data, strain):
     new_df['#attributes'] = new_df['#attributes'] + 'who_label=' + alt_strain_names.get(strain) + ';'
 
     #add VOC/VOI designation
-    if mapped_alt_strains.all() in {'Alpha', 'Beta', 'Gamma', 'Delta'}:
+    if strain in {'Alpha', 'Beta', 'Gamma', 'Delta'}:
         new_df['#attributes'] = new_df['#attributes'] + 'status=VOC;'
     else:
         new_df['#attributes'] = new_df['#attributes'] + 'status=VOI;'
