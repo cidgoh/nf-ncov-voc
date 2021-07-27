@@ -38,9 +38,7 @@ gvf_columns = ['#seqid','#source','#type','#start','#end','#score','#strand','#p
 
 def vcftogvf(var_data, strain):
     
-    df = pd.read_csv(var_data, sep='\t', header=65)
-    df['strain'] = strain #re.search('/(.+?)_ids', var_data).group(1)
-    
+    df = pd.read_csv(var_data, sep='\t', header=65)    
     new_df = pd.DataFrame(index=range(0,len(df)),columns=gvf_columns)
 
     #parse EFF column
@@ -55,15 +53,9 @@ def vcftogvf(var_data, strain):
     hgvs_nucleotide = 'c.' + hgvs[1]
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'Name=' + hgvs_protein + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'nt_name=' + hgvs_nucleotide + ';'
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'gene=' + eff_info[5] + ';' #gene names
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + eff_info[1] + ';' #mutation type 
     
-    #gene names
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'gene=' + eff_info[5] + ';'
-
-    #mutation type: looks like MISSENSE or SILENT from Zohaib's file
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + eff_info[1] + ';'    
-    
-   
-        
     #columns copied straight from Zohaib's file
     for column in ['REF','ALT']:
         key = column.lower()
@@ -80,12 +72,13 @@ def vcftogvf(var_data, strain):
     new_df['#attributes'] = new_df['#attributes'] + info[28].str.lower() + ';' #ro
     
     #add strain name
-    new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + df['strain'] + ';'
+    new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + strain + ';'
 
     #add WHO strain name
     alt_strain_names = {'B.1.1.7': 'Alpha', 'B.1.351': 'Beta', 'P.1': 'Gamma', 'B.1.617.2': 'Delta', 'B.1.427': 'Epsilon', 'B.1.429': 'Epsilon', 'P.2': 'Zeta', 'B.1.525': 'Eta', 'P.3': 'Theta', 'B.1.526': 'Iota', 'B.1.617.1': 'Kappa'}
-    mapped_alt_strains = df['strain'].map(alt_strain_names)
-    new_df['#attributes'] = new_df['#attributes'] + 'who_label=' + mapped_alt_strains + ';'
+    #mapped_alt_strains = df['strain'].map(alt_strain_names)
+    #new_df['#attributes'] = new_df['#attributes'] + 'who_label=' + mapped_alt_strains + ';'
+    new_df['#attributes'] = new_df['#attributes'] + 'who_label=' + alt_strain_names.get(strain) + ';'
 
     #add VOC/VOI designation
     if mapped_alt_strains.all() in {'Alpha', 'Beta', 'Gamma', 'Delta'}:
@@ -113,13 +106,11 @@ def vcftogvf(var_data, strain):
 
 
 #takes 3 arguments: an output file of vcftogvf.py, Anoosha's annotation file from Pokay, and the clade defining mutations tsv.
-def add_functions(gvf_df, annotation_file, clade_file, strain):
+def add_functions(gvf, annotation_file, clade_file, strain):
 
     #load files into Pandas dataframes
     df = pd.read_csv(annotation_file, sep='\t', header=0) #load functional annotations spreadsheet
-    #gvf = pd.read_csv(gvf_df, sep='\t', header=3) #load entire GVF file for modification
-    gvf = gvf_df
-    
+
     clades = pd.read_csv(clade_file, sep='\t', header=0, usecols=['strain', 'mutation']) #load entire GVF file for modification
     clades = clades.loc[clades.strain == strain]
     attributes = gvf["#attributes"].str.split(pat=';').apply(pd.Series)
