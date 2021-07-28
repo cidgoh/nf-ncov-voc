@@ -1,6 +1,6 @@
 process IVAR {
 
-    tag { "VariantCalling_IVAR_${bam}" }
+    tag { "${bam.baseName.replace(".sorted","")}" }
 
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.variants.tsv", mode: 'copy'
 
@@ -8,7 +8,7 @@ process IVAR {
     tuple(path(bam), path(ref), path(ref_gff))
 
     output:
-    tuple path("${bam.baseName}.variants.tsv")
+    path("*.variants.tsv"), emit: variants
 
 
     script:
@@ -17,7 +17,7 @@ process IVAR {
         ivar variants \
         -r ${ref} \
         -m ${params.var_MinDepth} \
-        -p ${bam.baseName}.variants \
+        -p ${bam.baseName.replace(".sorted","")}.variants \
         -q ${params.var_MinVariantQuality} \
         -t ${params.var_MinFreqThreshold} \
         -g ${ref_gff}
