@@ -68,7 +68,7 @@ process tsvTovcf {
         path(variants_tsv)
 
     output:
-        path("*.vcf")
+        path("*.vcf"), emit: vcf
 
     script:
       """
