@@ -21,7 +21,7 @@ process extractMetadata {
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
   //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
 
-  tag { "ExtractMetadata_${x}" }
+  tag { "${x}" }
 
   input:
       path(metadata)
@@ -56,6 +56,23 @@ process vcfTotsv {
     script:
       """
       vcf2tsv.py ${annotated_vcf} ${annotated_vcf.baseName}.tsv
+      """
+}
+
+process tsvTovcf {
+
+    tag {"${variants_tsv.baseName.replace(".variants", "")}"}
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
+
+    input:
+        path(variants_tsv)
+
+    output:
+        path("*.vcf")
+
+    script:
+      """
+      ivar_variants_to_vcf.py ${variants_tsv} ${variants_tsv.baseName}.vcf
       """
 }
 
