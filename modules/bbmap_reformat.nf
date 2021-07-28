@@ -3,7 +3,7 @@ process BBMAP {
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.log", mode: 'copy'
 
-  tag { "qcFasta_${sequence}" }
+  tag { "${sequence.baseName}" }
 
   input:
       path(sequence)
@@ -15,7 +15,7 @@ process BBMAP {
     """
     reformat.sh \
     in=${sequence} \
-    out=${sequence.baseName}_reformatted.fasta \
+    out=${sequence.baseName}_qc.fasta \
     maxns=145 addunderscore tossjunk > ${sequence.baseName}.log
     """
 }
