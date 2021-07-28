@@ -16,8 +16,8 @@ def parse_args():
                         help='GISAID Sequence file in .fasta or .fa ('
                              'optionally compressed with gzip) '
                              'format')
-    parser.add_argument('--outdir', type=str, default='./',
-                        help='Output directpry')
+    #parser.add_argument('--outdir', type=str, default='./',
+    #                    help='Output directpry')
     parser.add_argument('--voc', type=str, default=None,
                         help='Variant of Concern e.g. B.1.1.7, P.1 etc')
     parser.add_argument('--samplingsize', type=int, default=0,
@@ -39,7 +39,7 @@ if __name__ == '__main__':
                                       format='%Y-%m-%d',
                                       errors='coerce')
 
-    print(Metadata['pango_lineage'].value_counts())
+    #print(Metadata['pango_lineage'].value_counts())
     """ Filtering for human associated and consensus sequence of
     at least 29Kb """
     Human_associated = Metadata[(Metadata['host'].str.lower() ==
@@ -67,7 +67,9 @@ if __name__ == '__main__':
     #df1['Virus name']=df1['Virus name'].str.split("/")[2]
     ids = df['strain'].tolist()
     #ids=[i.rsplit('/')[1] for i in ids]
-    with open(args.outdir + args.voc + "_ids_" + sampling + "GISAID.txt", 'w') as filehandle:
+    #with open(args.outdir + args.voc + "_ids_" + sampling + "GISAID.txt", 'w') as filehandle:
+    #    filehandle.writelines("%s\n" % id for id in ids)
+    with open(args.voc + ".txt", 'w') as filehandle:
         filehandle.writelines("%s\n" % id for id in ids)
 
     # df.to_csv(
@@ -75,7 +77,11 @@ if __name__ == '__main__':
     #    sep="\t",
     #    columns=["Virus name"], quoting=csv.QUOTE_NONE, index=False,
     #    header=False)
+    #df.to_csv(
+    #    args.outdir + args.voc + "_" + sampling + "GISAID.tsv",
+    #    sep="\t",
+    #    quoting=csv.QUOTE_NONE, index=False, header=True)
     df.to_csv(
-        args.outdir + args.voc + "_" + sampling + "GISAID.tsv",
+        args.voc + "_Metadata.tsv",
         sep="\t",
         quoting=csv.QUOTE_NONE, index=False, header=True)
