@@ -6,7 +6,7 @@ process MINIMAP2 {
     * @output
     */
 
-    tag {"Mapping_${seq}"}
+    tag {"${seq.baseName.replace("_qc", "")}"}
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.sorted.bam", mode: 'copy'
 
     cpus 1
@@ -22,7 +22,7 @@ process MINIMAP2 {
     script:
       """
       minimap2 -t ${task.cpus} -ax asm5 -a ${ref} ${seq} | \
-      samtools sort -o ${seq.baseName}.sorted.bam
-      samtools index -b -@ ${task.cpus} ${seq.baseName}.sorted.bam ${seq.baseName}.sorted.bam.bai
+      samtools sort -o ${seq.baseName.replace("_qc","")}.sorted.bam
+      samtools index -b -@ ${task.cpus} ${seq.baseName.replace("_qc","")}.sorted.bam ${seq.baseName.replace("_qc","")}.sorted.bam.bai
       """
 }
