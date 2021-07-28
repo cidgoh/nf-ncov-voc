@@ -1,6 +1,6 @@
 process SNPEFF {
 
-    tag {"snpEff${vcf.baseName}"}
+    tag {"${vcf.baseName}"}
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.annotated.vcf", mode: 'copy'
 
     cpus 1
@@ -9,12 +9,11 @@ process SNPEFF {
         path(vcf)
 
     output:
-        path("*.annotated.vcf"), emit: annotated_vcf
+        path("*.annotated.vcf")
 
     script:
       """
-      snpEff \
-      MN908947.3 -v \
+      snpEff MN908947.3 -v \
       -formatEff \
       -hgvs1LetterAa \
       -hgvsOld \
