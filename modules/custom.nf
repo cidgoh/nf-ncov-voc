@@ -76,6 +76,27 @@ process tsvTovcf {
       """
 }
 
+process tagProblematicSites {
+
+    tag {"${vcf.baseName.replace(".variants", "")}"}
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
+
+    input:
+        tuple(path(vcf), path(prob_vcf))
+
+    output:
+        path("*.vcf"), emit: filtered_vcf
+
+    script:
+      """
+      problematic_sites_tag.py \
+      --vcffile ${vcf} \
+      --filter_vcf ${prob_vcf} \
+      --output_vcf ${vcf.baseName}.filtered.vcf
+      """
+}
+
+
 process processGVCF{
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
   //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
