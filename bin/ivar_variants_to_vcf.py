@@ -49,6 +49,7 @@ def ivar_variants_to_vcf(file_in, file_out, pass_only=False,
     filename = os.path.splitext(file_in)[0]
     header = ('##fileformat=VCFv4.2\n'
               '##source=iVar\n'
+              '##contig=<ID=MN908947.3,length=29903>\n'
               '##INFO=<ID=DP,Number=1,Type=Integer,'
               'Description="Total read depth at the locus">\n'
               '##FILTER=<ID=PASS,Description="Result of p-value <= '
@@ -69,6 +70,10 @@ def ivar_variants_to_vcf(file_in, file_out, pass_only=False,
               '##FORMAT=<ID=ALT_RV,Number=1,Type=Integer,'
               'Description="Depth of alternate base on reverse '
               'reads">\n'
+              '##FORMAT=<ID=ALT_QUAL,Number=1,Type=String, '
+              'Description="Mean quality of alternate base">\n'
+              '##FORMAT=<ID=REF_QUAL,Number=1,Type=Integer,'
+              'Description="Mean quality of reference base">\n'
               '##FORMAT=<ID=QA,Number=A,Type=Integer,'
               'Description="Alternate allele quality sum in phred">\n'
               '##FORMAT=<ID=AF,Number=A,Type=Float,'
@@ -110,7 +115,7 @@ def ivar_variants_to_vcf(file_in, file_out, pass_only=False,
                 info = 'DP=' + line[11]
                 info_format = \
                     'GT:RO:REF_RV:REF_QUAL:AO:ALT_RV' \
-                    ':ALT_QUAL:AF '
+                    ':ALT_QUAL:AF'
                 sample = '1:' + line[4] + ':' + line[5] + ':' + line[
                     6] + ':' + line[7] + ':' + line[8] + ':' + line[
                              9] + ':' + line[10]
