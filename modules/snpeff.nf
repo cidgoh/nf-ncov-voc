@@ -1,12 +1,12 @@
 process SNPEFF {
 
-    tag {"${vcf.baseName}"}
+    tag {"${filtered_vcf.baseName}"}
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.annotated.vcf", mode: 'copy'
 
     cpus 1
 
     input:
-        path(vcf)
+        path(filtered_vcf)
 
     output:
         path("*.annotated.vcf")
@@ -19,7 +19,7 @@ process SNPEFF {
       -hgvsOld \
       -noShiftHgvs \
       -sequenceOntology \
-      ${vcf} \
-      > ${vcf.baseName}.annotated.vcf
+      ${filtered_vcf} \
+      > ${filtered_vcf.baseName}.annotated.vcf
       """
 }
