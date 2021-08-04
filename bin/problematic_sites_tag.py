@@ -17,6 +17,8 @@ def parse_args():
     parser.add_argument('--filter_vcf', type=str, default=None,
                         help='Problematic sites in SARS-CoV-2 genomes '
                              'in VCF file')
+    parser.add_argument('--output_vcf', type=str, default=None,
+                        help='Output VCF file')
     return parser.parse_args()
 
 
@@ -35,7 +37,7 @@ if __name__ == '__main__':
          'Type': 'String', 'Number': '1'})
 
     # create a new vcf Writer using the input vcf as a template.
-    fname = "out.vcf"
+    fname = args.output_vcf
 
     w = Writer(fname, data_vcf)
     prob_vcf_columns = ['CHROM', 'POS', 'ID', 'REF',
