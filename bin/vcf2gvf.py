@@ -24,7 +24,6 @@ import re
 import glob
 import os
 import numpy as np
-from cyvcf2 import VCF, Writer
 
 
 def parse_args():
@@ -62,15 +61,16 @@ def vcftogvf(var_data, strain):
     eff_info = df['INFO'].str.findall('\((.*?)\)') #series: extract everything between parentheses as elements of a list
     eff_info = eff_info.apply(pd.Series)[0] #take first element of list
     eff_info = eff_info.str.split(pat='|').apply(pd.Series) #split at pipe, form dataframe
-
     #hgvs names
     hgvs = eff_info[3].str.rsplit(pat='c.').apply(pd.Series)
     hgvs_protein = hgvs[0].str[:-1]
-    hgvs_protein.replace(r'^\s+$', np.nan, regex=True)
     hgvs_nucleotide = 'c.' + hgvs[1]
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'Name=' + hgvs_protein + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'nt_name=' + hgvs_nucleotide + ';'
     
+    #use nucleotide name where protein name doesn't exist (for 'Name' attribute)
+    Names = hgvs_protein
+    Names[~Names.str.contains("p.")] =  hgvs_nucleotide #fill in empty protein name spaces with nucleotide names ("c."...)
+    
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'Name=' + Names + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'nt_name=' + hgvs_nucleotide + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'gene=' + eff_info[5] + ';' #gene names
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + eff_info[1] + ';' #mutation type 
@@ -84,32 +84,28 @@ def vcftogvf(var_data, strain):
             key = 'Variant_seq'
         new_df['#attributes'] = new_df['#attributes'].astype(str) + key + '=' + df[column].astype(str) + ';'
 
-    #add ao, dp, ro
+    #make 'INFO' column easier to extract attributes from
     info = df['INFO'].str.split(pat=';').apply(pd.Series) #split at ;, form dataframe
-    new_df['#attributes'] = new_df['#attributes'] + info[5].str.lower() + ';' #ao
-    new_df['#attributes'] = new_df['#attributes'] + info[7].str.lower() + ';' #dp
-    new_df['#attributes'] = new_df['#attributes'] + info[28].str.lower() + ';' #ro
+    for column in info.columns:
+        split = info[column].str.split(pat='=').apply(pd.Series)
+        title = split[0].drop_duplicates().tolist()[0].lower()
+        content = split[1]
+        info[column] = content #ignore "tag=" in column content
+        info.rename(columns={column:title}, inplace=True) #make attribute tag as column label
     
+    #add 'INFO' attributes by name
+    for column in ['ao','dp','ro']:
+        new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '=' + info[column].astype(str) + ';'
+
     #add strain name
     new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + strain + ';'
-
-    #add WHO strain name
-    alt_strain_names = {'B.1.1.7': 'Alpha', 'B.1.351': 'Beta', 'P.1': 'Gamma', 'B.1.617.2': 'Delta', 'B.1.427': 'Epsilon', 'B.1.429': 'Epsilon', 'P.2': 'Zeta', 'B.1.525': 'Eta', 'P.3': 'Theta', 'B.1.526': 'Iota', 'B.1.617.1': 'Kappa'}
-    new_df['#attributes'] = new_df['#attributes'] + 'who_label=' + alt_strain_names.get(strain) + ';'
-
-    #add VOC/VOI designation
-    if strain in {'Alpha', 'Beta', 'Gamma', 'Delta'}:
-        new_df['#attributes'] = new_df['#attributes'] + 'status=VOC;'
-    else:
-        new_df['#attributes'] = new_df['#attributes'] + 'status=VOI;'
-    
     #remove starting NaN; leave trailing ';'
     new_df['#attributes'] = new_df['#attributes'].str[3:]
     
     #fill in other GVF columns
     new_df['#seqid'] = df['#CHROM']
     new_df['#source'] = '.'
-    new_df['#type'] = info[40].str.split(pat='=').apply(pd.Series)[1]
+    new_df['#type'] = info['type']
     new_df['#start'] = df['POS']
     new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() - 1).astype(str)  #this needs fixing
     new_df['#score'] = '.'
@@ -127,11 +123,9 @@ def add_functions(gvf, annotation_file, clade_file, strain):
 
     #load files into Pandas dataframes
     df = pd.read_csv(annotation_file, sep='\t', header=0) #load functional annotations spreadsheet
-    clades = pd.read_csv(clade_file, sep='\t', header=0, usecols=['strain', 'mutation']) #load clade-defining mutations file
-    clades = clades.loc[clades.strain == strain] #only look at the relevant part of that file
     
     attributes = gvf["#attributes"].str.split(pat=';').apply(pd.Series)
-    hgvs_protein = attributes[0].str.split(pat='=').apply(pd.Series)[1]
+    hgvs_protein = attributes[0].str.split(pat='=').apply(pd.Series)[1] #remember this includes nucleotide names where there are no protein names
     hgvs_nucleotide = attributes[1].str.split(pat='=').apply(pd.Series)[1]
     gvf["mutation"] = hgvs_protein.str[2:] #drop the prefix
 
@@ -139,8 +133,7 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     for column in df.columns:
         df[column] = df[column].str.lstrip()
     merged_df = pd.merge(df, gvf, on=['mutation'], how='right') #add functional annotations
-    merged_df = pd.merge(clades, merged_df, on=['mutation'], how='right') #add clade-defining mutations
-
+    
     #collect all mutation groups (including reference mutation) in a column, sorted alphabetically
     #this is more roundabout than it needs to be; streamline with grouby() later
     merged_df["mutation_group"] = merged_df["comb_mutation"].astype(str) + ", '" + merged_df["mutation"].astype(str) + "'"
@@ -185,10 +178,23 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         else:
             merged_df["#attributes"] = merged_df["#attributes"].astype(str) + key + '=' + merged_df[column].astype(str) + ';'
 
-    #change clade-defining attribute to True/False depending on content of 'strain' column
-    merged_df.loc[merged_df.strain == strain, "#attributes"] = merged_df.loc[merged_df.strain == strain, "#attributes"].astype(str)  + "clade_defining=True;"
-    merged_df.loc[merged_df.strain != strain, "#attributes"] = merged_df.loc[merged_df.strain != strain, "#attributes"].astype(str)  + "clade_defining=False;"
 
+    #if strain is in clades file, merge that too
+    clades = pd.read_csv(clade_file, sep='\t', header=0) #load clade-defining mutations file
+    available_strains = clades['strain'].drop_duplicates().tolist() 
+    if strain in available_strains:
+        clades = clades.loc[clades.strain == strain] #only look at the relevant part of that file
+        #extract status and WHO strain name from clades file
+        voc_status = clades['voc_status'].drop_duplicates().tolist()[0]
+        who_label = clades['who_name'].drop_duplicates().tolist()[0]
+        #merge clades with function-annotated dataframe
+        merged_df = pd.merge(clades, merged_df, on=['mutation'], how='right') #add clade-defining mutations
+        #change clade-defining attribute to True/False depending on content of 'strain' column
+        merged_df.loc[merged_df.strain == strain, "#attributes"] = merged_df.loc[merged_df.strain == strain, "#attributes"].astype(str)  + "clade_defining=True;"
+        merged_df.loc[merged_df.strain != strain, "#attributes"] = merged_df.loc[merged_df.strain != strain, "#attributes"].astype(str)  + "clade_defining=False;"
+        merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "who_label=" + who_label + ';'
+        merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "voc_status=" + voc_status + ';'
+        
     #add ID to attributes
     merged_df["#attributes"] = 'ID=' + merged_df['id'].astype(str) + ';' + merged_df["#attributes"].astype(str)
     
@@ -280,6 +286,7 @@ if __name__ == '__main__':
         pat = r'.*?' + '(.*)_ids.*'
         match = re.search(pat, file.split("/")[-1])
         strain = match.group(1)
+        #strain = 'moose'
         print("Strain: ", strain)
         
         #create gvf from annotated vcf (ignoring pragmas for now)
