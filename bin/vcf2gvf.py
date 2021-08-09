@@ -36,7 +36,7 @@ def parse_args():
     group.add_argument('--vcffile', type=str, default=None,
                         help='Path to a snpEFF-annotated VCF file')
     #filepath can be absolute (~/Desktop/test/22_07_2021/) or relative (./22_07_2021/)
-    parser.add_argument('--pokay', type=str, default='functional_annotation_V.0.2.tsv',
+    parser.add_argument('--pokay', type=str, default='functional_annotation_V.0.3.tsv',
                         help='Anoosha\'s parsed pokay .tsv file')
     parser.add_argument('--clades', type=str, default='clade_defining_mutations.tsv',
                         help='.tsv of clade-defining mutations')
@@ -118,7 +118,7 @@ def vcftogvf(var_data, strain):
 
 
 
-#takes 3 arguments: an output file of vcftogvf.py, Anoosha's annotation file from Pokay, and the clade defining mutations tsv.
+#takes 4 arguments: the output df of vcftogvf.py, Anoosha's annotation file from Pokay, the clade defining mutations tsv, and the strain name.
 def add_functions(gvf, annotation_file, clade_file, strain):
 
     #load files into Pandas dataframes
@@ -170,7 +170,7 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     #change semicolons in function descriptions to colons
     merged_df['function_description'] = merged_df['function_description'].str.replace(';',':')
     #add key-value pairs to attributes column
-    for column in ['function_category', 'source', 'citation', 'comb_mutation', 'function_description']:
+    for column in ['function_category', 'source', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']:
         key = column.lower()
         merged_df[column] = merged_df[column].fillna('') #replace NaNs with empty string
         if column in ['function_category', 'citation', 'function_description']:
