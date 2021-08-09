@@ -24,7 +24,7 @@ AY.1	https://outbreak.info/situation-reports?pango=AY.1&loc=IND&loc=GBR&loc=USA	
 AY.1	https://outbreak.info/situation-reports?pango=AY.1&loc=IND&loc=GBR&loc=USA	S	D950N	D950N		VOC	Delta
 AY.1	https://outbreak.info/situation-reports?pango=AY.1&loc=IND&loc=GBR&loc=USA	ORF7a	V82A	V82A		VOC	Delta
 AY.1	https://outbreak.info/situation-reports?pango=AY.1&loc=IND&loc=GBR&loc=USA	ORF8	D119I	D119I		VOC	Delta
-AY.1	https://outbreak.info/situation-reports?pango=AY.1&loc=IND&loc=GBR&loc=USA	ORF8	del120/121	del120/121		VOC	Delta
+AY.1	https://outbreak.info/situation-reports?pango=AY.1&loc=IND&loc=GBR&loc=USA	ORF8	120_121del	del120/121		VOC	Delta
 AY.1	https://outbreak.info/situation-reports?pango=AY.1&loc=IND&loc=GBR&loc=USA	S	T478K	T478K		VOC	Delta
 AY.1	https://outbreak.info/situation-reports?pango=AY.1&loc=IND&loc=GBR&loc=USA	S	L452R	L452R		VOC	Delta
 AY.1	https://outbreak.info/situation-reports?pango=AY.1&loc=IND&loc=GBR&loc=USA	S	W258L	W258L		VOC	Delta
@@ -53,8 +53,8 @@ AY.2	https://outbreak.info/situation-reports?pango=AY.2&loc=IND&loc=GBR&loc=USA	
 AY.2	https://outbreak.info/situation-reports?pango=AY.2&loc=IND&loc=GBR&loc=USA	S	L452R	L452R		VOC	Delta
 AY.2	https://outbreak.info/situation-reports?pango=AY.2&loc=IND&loc=GBR&loc=USA	N	D377Y	D377Y		VOC	Delta
 AY.2	https://outbreak.info/situation-reports?pango=AY.2&loc=IND&loc=GBR&loc=USA	ORF8	D119I	D119I		VOC	Delta
-AY.2	https://outbreak.info/situation-reports?pango=AY.2&loc=IND&loc=GBR&loc=USA	ORF8	del120/121	del120/121		VOC	Delta
-AY.2	https://outbreak.info/situation-reports?pango=AY.2&loc=IND&loc=GBR&loc=USA	S	del157/158	del157/158		VOC	Delta
+AY.2	https://outbreak.info/situation-reports?pango=AY.2&loc=IND&loc=GBR&loc=USA	ORF8	120_121del	del120/121		VOC	Delta
+AY.2	https://outbreak.info/situation-reports?pango=AY.2&loc=IND&loc=GBR&loc=USA	S	157_158del	del157/158		VOC	Delta
 AY.2	https://outbreak.info/situation-reports?pango=AY.2&loc=IND&loc=GBR&loc=USA	S	E156G	E156G		VOC	Delta
 AY.2	https://outbreak.info/situation-reports?pango=AY.2&loc=IND&loc=GBR&loc=USA	S	V70F	V70F		VOC	Delta
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	S	D614G	D614G		VOC	Delta
@@ -73,7 +73,7 @@ AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	S	L452R	
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	ORF8	D119I	D119I		VOC	Delta
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	ORF7a	T120I	T120I		VOC	Delta
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	ORF7a	V82A	V82A		VOC	Delta
-AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	ORF8	del120/121	del120/121		VOC	Delta
+AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	ORF8	120_121del	del120/121		VOC	Delta
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	N	R203M	R203M		VOC	Delta
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	ORF1a	V2930L	V2930L		VOC	Delta
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	ORF1a	A1306S	A1306S		VOC	Delta
@@ -84,7 +84,7 @@ AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	ORF1a	P2
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	ORF7b	T40I	T40I		VOC	Delta
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	ORF1a	I3731V	I3731V		VOC	Delta
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	ORF1a	P2287S	P2287S		VOC	Delta
-AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	S	del157/158	del157/158		VOC	Delta
+AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	S	157_158del	del157/158		VOC	Delta
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	S	E156G	E156G		VOC	Delta
 AY.3	https://outbreak.info/situation-reports?pango=AY.3&loc=USA&loc=GBR	N	G215C	G215C		VOC	Delta
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.1	ORF1a	D1127Y	D1127Y		VOC	Delta
@@ -102,7 +102,7 @@ AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.12	ORF1b	H1550Y	H1550Y
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.13	ORF1b	A1918V	A1918V		VOC	Delta
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.14	S	T19R	T19R		VOC	Delta
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.15	S	E156G	E156G		VOC	Delta
-AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.16	S	del157/158	del157/158		VOC	Delta
+AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.16	S	157_158del	del157/158		VOC	Delta
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.17	S	L452R	L452R		VOC	Delta
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.18	S	T478K	T478K		VOC	Delta
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.19	S	D614G	D614G		VOC	Delta
@@ -114,7 +114,7 @@ AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.24	ORF7a	V82A	V82A		VO
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.25	ORF7a	T120I	T120I		VOC	Delta
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.26	ORF7b	T40I	T40I		VOC	Delta
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.27	ORF8	D119I	D119I		VOC	Delta
-AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.28	ORF8	del120/121	del120/121		VOC	Delta
+AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.28	ORF8	120_121del	del120/121		VOC	Delta
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.29	N	D63G	D63G		VOC	Delta
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.30	N	R203M	R203M		VOC	Delta
 AY.3.1	https://outbreak.info/situation-reports?pango=AY.3.31	N	G215C	G215C		VOC	Delta
@@ -136,10 +136,10 @@ B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&lo
 B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	N	D3L	D3L		VOC	Alpha
 B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	N501Y	N501Y		VOC	Alpha
 B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	ORF1a	I2230T	I2230T		VOC	Alpha
-B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	ORF1a	del3676/3678	del3676/3678		VOC	Alpha
+B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	ORF1a	3676_3678del	del3676/3678		VOC	Alpha
 B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	ORF1a	S3675K	S3675K		VOC	Alpha
-B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	del69/70	del69/70		VOC	Alpha
-B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	del144/145	del144/145		VOC	Alpha
+B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	69_70del	del69/70		VOC	Alpha
+B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	144_145del	del144/145		VOC	Alpha
 B.1.1.7	https://outbreak.info/situation-reports?pango=B.1.1.7&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	N	G204R	G204R		VOC	Alpha
 B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	D614G	D614G		VOC	Alpha
 B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	ORF1a	T1001I	T1001I		VOC	Alpha
@@ -158,10 +158,10 @@ B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3
 B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	N	D3L	D3L		VOC	Alpha
 B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	N501Y	N501Y		VOC	Alpha
 B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	ORF1a	I2230T	I2230T		VOC	Alpha
-B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	ORF1a	del3676/3678	del3676/3678		VOC	Alpha
+B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	ORF1a	3676_3678del	del3676/3678		VOC	Alpha
 B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	ORF1a	S3675K	S3675K		VOC	Alpha
-B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	del69/70	del69/70		VOC	Alpha
-B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	del144/145	del144/145		VOC	Alpha
+B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	69_70del	del69/70		VOC	Alpha
+B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	144_145del	del144/145		VOC	Alpha
 B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	N	G204R	G204R		VOC	Alpha
 B.1.1.7 + S:E484K	https://outbreak.info/situation-reports?pango=B.1.1.7&muts=S%3AE484K&loc=GBR&loc=USA&loc=USA_US-CA&selected=GBR	S	E484K	E484K		VOC	Alpha
 B.1.351	https://outbreak.info/situation-reports?pango=B.1.351	S	D614G	D614G		VOC	Beta
@@ -192,7 +192,7 @@ B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&l
 B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	S	D215G	D215G		VOC	Beta
 B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	S	K417N	K417N		VOC	Beta
 B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	ORF1a	N2596S	N2596S		VOC	Beta
-B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	ORF1a	del3676/3678	del3676/3678		VOC	Beta
+B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	ORF1a	3676_3678del	del3676/3678		VOC	Beta
 B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	ORF1a	S3675K	S3675K		VOC	Beta
 B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	ORF1a	K1655N	K1655N		VOC	Beta
 B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	E	P71L	P71L		VOC	Beta
@@ -201,7 +201,7 @@ B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&l
 B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	ORF1a	A3456V	A3456V		VOC	Beta
 B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	S	N501Y	N501Y		VOC	Beta
 B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	S	E484K	E484K		VOC	Beta
-B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	S	del241/243	del241/243		VOC	Beta
+B.1.351.2	https://outbreak.info/situation-reports?pango=B.1.351.2&selected=MYT&loc=MYT	S	241_243del	del241/243		VOC	Beta
 B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	E	P71L	P71L		VOC	Beta
 B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	S	D614G	D614G		VOC	Beta
 B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	S	N501Y	N501Y		VOC	Beta
@@ -220,10 +220,10 @@ B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&l
 B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	S	E484K	E484K		VOC	Beta
 B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	S	L18F	L18F		VOC	Beta
 B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	ORF1a	N2596S	N2596S		VOC	Beta
-B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	ORF1a	del3676/3678	del3676/3678		VOC	Beta
+B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	ORF1a	3676_3678del	del3676/3678		VOC	Beta
 B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	ORF1a	S3675K	S3675K		VOC	Beta
 B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	ORF1a	K1655N	K1655N		VOC	Beta
-B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	S	del241/243	del241/243		VOC	Beta
+B.1.351.3	https://outbreak.info/situation-reports?pango=B.1.351.3&selected=BGD&loc=BGD	S	241_243del	del241/243		VOC	Beta
 B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	S	D614G	D614G		VOC	Delta
 B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	M	I82T	I82T		VOC	Delta
 B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	ORF3a	S26L	S26L		VOC	Delta
@@ -241,7 +241,7 @@ B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	ORF7a	T120I	T1
 B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	S	D950N	D950N		VOC	Delta
 B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	ORF7a	V82A	V82A		VOC	Delta
 B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	ORF8	D119_F120del	del119/120		VOC	Delta
-B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	S	del157/158	del157/158	E156_R158delinsG	VOC	Delta
+B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	S	157_158del	del157/158	E156_R158delinsG	VOC	Delta
 B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	ORF1a	A1306S	A1306S		VOC	Delta
 B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	ORF1a	T3646A	T3646A		VOC	Delta
 B.1.617.2	https://outbreak.info/situation-reports?pango=B.1.617.2	ORF1a	T3255I	T3255I		VOC	Delta
@@ -274,7 +274,7 @@ P.1	https://outbreak.info/situation-reports?pango=P.1	S	T1027I	T1027I		VOC	Gamma
 P.1	https://outbreak.info/situation-reports?pango=P.1	S	K417T	K417T		VOC	Gamma
 P.1	https://outbreak.info/situation-reports?pango=P.1	S	R190S	R190S		VOC	Gamma
 P.1.1	https://outbreak.info/situation-reports?pango=P.1.1&selected=BRA&loc=BRA&loc=USA&loc=JPN	S	T1027I	T1027I		VOC	
-P.1.1	https://outbreak.info/situation-reports?pango=P.1.1&selected=BRA&loc=BRA&loc=USA&loc=JPN	ORF1a	del3676/3678	del3676/3678		VOC	
+P.1.1	https://outbreak.info/situation-reports?pango=P.1.1&selected=BRA&loc=BRA&loc=USA&loc=JPN	ORF1a	3676_3678del	del3676/3678		VOC	
 P.1.1	https://outbreak.info/situation-reports?pango=P.1.1&selected=BRA&loc=BRA&loc=USA&loc=JPN	S	H655Y	H655Y		VOC	
 P.1.1	https://outbreak.info/situation-reports?pango=P.1.1&selected=BRA&loc=BRA&loc=USA&loc=JPN	ORF1b	P314L	P314L		VOC	
 P.1.1	https://outbreak.info/situation-reports?pango=P.1.1&selected=BRA&loc=BRA&loc=USA&loc=JPN	ORF1a	S3675K	S3675K		VOC	
@@ -315,7 +315,7 @@ P.1.2	https://outbreak.info/situation-reports?pango=P.1.2&selected=BRA&loc=BRA&l
 P.1.2	https://outbreak.info/situation-reports?pango=P.1.2&selected=BRA&loc=BRA&loc=USA&loc=JPN	ORF8	E92K	E92K		VOC	
 P.1.2	https://outbreak.info/situation-reports?pango=P.1.2&selected=BRA&loc=BRA&loc=USA&loc=JPN	S	R190S	R190S		VOC	
 P.1.2	https://outbreak.info/situation-reports?pango=P.1.2&selected=BRA&loc=BRA&loc=USA&loc=JPN	S	D138Y	D138Y		VOC	
-P.1.2	https://outbreak.info/situation-reports?pango=P.1.2&selected=BRA&loc=BRA&loc=USA&loc=JPN	ORF1a	del3676/3678	del3676/3678		VOC	
+P.1.2	https://outbreak.info/situation-reports?pango=P.1.2&selected=BRA&loc=BRA&loc=USA&loc=JPN	ORF1a	3676_3678del	del3676/3678		VOC	
 P.1.2	https://outbreak.info/situation-reports?pango=P.1.2&selected=BRA&loc=BRA&loc=USA&loc=JPN	ORF1a	S3675K	S3675K		VOC	
 P.1.2	https://outbreak.info/situation-reports?pango=P.1.2&selected=BRA&loc=BRA&loc=USA&loc=JPN	S	K417T	K417T		VOC	
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	ORF1a	D75G	D75G		VOI	
@@ -327,7 +327,7 @@ AV.1	https://outbreak.info/situation-reports?pango=AV.1	ORF1a	K1745I	K1745I		VOI
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	ORF1a	N2405S	N2405S		VOI	
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	ORF1a	A3209V	A3209V		VOI	
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	ORF1a	S3675K	S3675K		VOI	
-AV.1	https://outbreak.info/situation-reports?pango=AV.1	ORF1a	del3676/3678	del3676/3678		VOI	
+AV.1	https://outbreak.info/situation-reports?pango=AV.1	ORF1a	3676_3678del	del3676/3678		VOI	
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	ORF1b	P314L	P314L		VOI	
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	ORF1b	S425A	S425A		VOI	
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	ORF1b	T1404M	T1404M		VOI	
@@ -335,7 +335,7 @@ AV.1	https://outbreak.info/situation-reports?pango=AV.1	ORF1b	A1643V	A1643V		VOI
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	S	D80G	D80G		VOI	
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	S	T95I	T95I		VOI	
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	S	G142D	G142D		VOI	
-AV.1	https://outbreak.info/situation-reports?pango=AV.1	S	del144/145	del144/145		VOI	
+AV.1	https://outbreak.info/situation-reports?pango=AV.1	S	144_145del	del144/145		VOI	
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	S	N439K	N439K		VOI	
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	S	E484K	E484K		VOI	
 AV.1	https://outbreak.info/situation-reports?pango=AV.1	S	D614G	D614G		VOI	
@@ -354,11 +354,11 @@ B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&l
 B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	ORF1a	A3209V	A3209V		VOI	
 B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	ORF1a	T3284I	T3284I		VOI	
 B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	ORF1a	S3675K	S3675K		VOI	
-B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	ORF1a	del3676/3678	del3676/3678		VOI	
+B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	ORF1a	3676_3678del	del3676/3678		VOI	
 B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	ORF1b	P314L	P314L		VOI	
 B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	ORF1b	V2371M	V2371M		VOI	
 B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	S	T95I	T95I		VOI	
-B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	S	del144/145	del144/145		VOI	
+B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	S	144_145del	del144/145		VOI	
 B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	S	E484K	E484K		VOI	
 B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	S	D614G	D614G		VOI	
 B.1.1.318	https://outbreak.info/situation-reports?pango=B.1.1.318&selected=GBR&loc=GBR	S	P681H	P681H		VOI	
@@ -399,13 +399,13 @@ B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	ORF1a	T2007I	T2007
 B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	S	Q677H	Q677H		VOI	Eta
 B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	S	E484K	E484K		VOI	Eta
 B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	S	F888L	F888L		VOI	Eta
-B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	ORF6	del2/3	del2/3		VOI	Eta
+B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	ORF6	2_3del	del2/3		VOI	Eta
 B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	ORF1a	S3675_F3677del	del3675/3677		VOI	Eta
 B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	S	A67V	A67V		VOI	Eta
 B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	S	H69_V70del	del69/70		VOI	Eta
-B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	S	del144/145	del144/145	Y145del	VOI	Eta
+B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	S	144_145del	del144/145	Y145del	VOI	Eta
 B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	N	A12G	A12G		VOI	Eta
-B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	N	del3	del3		VOI	Eta
+B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	N	3del	del3		VOI	Eta
 B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	N	T205I	T205I		VOI	Eta
 B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	S	Q52R	Q52R		VOI	Eta
 B.1.525	https://outbreak.info/situation-reports?pango=B.1.525	E	L21F	L21F		VOI	Eta
@@ -507,7 +507,7 @@ C.36.3	https://outbreak.info/situation-reports?pango=C.36.3&loc=THA&loc=EGY&sele
 C.36.3	https://outbreak.info/situation-reports?pango=C.36.3&loc=THA&loc=EGY&selected=EGY	ORF1b	P314L	P314L		VOI	
 C.36.3	https://outbreak.info/situation-reports?pango=C.36.3&loc=THA&loc=EGY&selected=EGY	ORF1b	D1028Y	D1028Y		VOI	
 C.36.3	https://outbreak.info/situation-reports?pango=C.36.3&loc=THA&loc=EGY&selected=EGY	S	S12F	S12F		VOI	
-C.36.3	https://outbreak.info/situation-reports?pango=C.36.3&loc=THA&loc=EGY&selected=EGY	S	del69/70	del69/70		VOI	
+C.36.3	https://outbreak.info/situation-reports?pango=C.36.3&loc=THA&loc=EGY&selected=EGY	S	69_70del	del69/70		VOI	
 C.36.3	https://outbreak.info/situation-reports?pango=C.36.3&loc=THA&loc=EGY&selected=EGY	S	W152R	W152R		VOI	
 C.36.3	https://outbreak.info/situation-reports?pango=C.36.3&loc=THA&loc=EGY&selected=EGY	S	R346S	R346S		VOI	
 C.36.3	https://outbreak.info/situation-reports?pango=C.36.3&loc=THA&loc=EGY&selected=EGY	S	L452R	L452R		VOI	
@@ -526,11 +526,11 @@ C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	ORF
 C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	ORF1a	T3255I	T3255I		VOI	Lambda
 C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	ORF1a	G3278S	G3278S		VOI	Lambda
 C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	ORF1a	S3675K	S3675K		VOI	Lambda
-C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	ORF1a	del3676/3678	del3676/3678		VOI	Lambda
+C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	ORF1a	3676_3678del	del3676/3678		VOI	Lambda
 C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	ORF1b	P314L	P314L		VOI	Lambda
 C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	S	G75V	G75V		VOI	Lambda
 C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	S	T76I	T76I		VOI	Lambda
-C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	S	del247/253	del247/253		VOI	Lambda
+C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	S	247_253del	del247/253		VOI	Lambda
 C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	S	L452Q	L452Q		VOI	Lambda
 C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	S	F490S	F490S		VOI	Lambda
 C.37	https://outbreak.info/situation-reports?pango=C.37&loc=PER&selected=PER	S	D614G	D614G		VOI	Lambda
