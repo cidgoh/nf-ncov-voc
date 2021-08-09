@@ -72,6 +72,7 @@ def vcftogvf(var_data, strain):
     
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'Name=' + Names + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'nt_name=' + hgvs_nucleotide + ';'
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'aa_name=' + hgvs_protein + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'gene=' + eff_info[5] + ';' #gene names
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + eff_info[1] + ';' #mutation type 
 

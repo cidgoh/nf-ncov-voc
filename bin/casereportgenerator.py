@@ -54,6 +54,9 @@ def gvf2tsv(gvf):
     
     #remove '#' from column names
     df.columns = df.columns.str.replace("#", "")
+    
+    #drop unwanted columns
+    df = df.drop(labels=['source', 'strand', 'score', 'phase', 'id'], axis=1)
 
     return df
 
@@ -72,3 +75,5 @@ if __name__ == '__main__':
     
     filepath = outdir + "report.tsv"
     tsv_df.to_csv(filepath, sep='\t', index=False)
+    
+    print("Saved as: " + filepath)
