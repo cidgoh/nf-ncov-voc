@@ -29,10 +29,10 @@ if __name__ == '__main__':
     # Reading the VCF file and adding 2 more attributes into INFO header
     data_vcf = VCF(args.vcffile)
     data_vcf.add_info_to_header(
-        {'ID': 'PS_FILTER', 'Description': 'Mask/Caution',
+        {'ID': 'ps_filter', 'Description': 'Mask/Caution',
          'Type': 'String', 'Number': '1'})
     data_vcf.add_info_to_header(
-        {'ID': 'PS_EXC',
+        {'ID': 'ps_exc',
          'Description': 'Reasons for mask/caution',
          'Type': 'String', 'Number': '1'})
 
@@ -71,15 +71,15 @@ if __name__ == '__main__':
 
     # Searching records and adding TAGs into INFO column
     for record in data_vcf:
-        record.INFO["PS_FILTER"] = "n/a"
-        record.INFO["PS_EXC"] = "n/a"
+        record.INFO["ps_filter"] = ""
+        record.INFO["ps_exc"] = ""
         if (record.POS in prob_vcf_df["POS"].values) & \
                 (record.REF in prob_vcf_df["REF"].values) & \
                 (record.ALT in prob_vcf_df["ALT"].values):
-            record.INFO["PS_FILTER"] = prob_vcf_df.loc[
+            record.INFO["ps_filter"] = prob_vcf_df.loc[
                 prob_vcf_df['POS']
                 == record.POS, 'FILTER'].item()
-            record.INFO["PS_EXC"] = prob_vcf_df.loc[prob_vcf_df[
+            record.INFO["ps_exc"] = prob_vcf_df.loc[prob_vcf_df[
                                                         'POS'] ==
                                                     record.POS,
                                                     'INFO'].item()
