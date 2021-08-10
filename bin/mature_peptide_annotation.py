@@ -61,12 +61,14 @@ if __name__ == '__main__':
                              featuretype='mature_protein_region_of_CDS',
                              order_by='start'):
             if i.start <= record.POS <= i.end:
-                record.INFO["mat_pep_id"] = ",".join(i.attributes[
-                                                         'product'])
-                record.INFO["mat_pep_desc"] = ",".join(i.attributes[
-                                                           'Note'])
-                record.INFO["mat_pep_acc"] = ",".join(i.attributes[
-                                                          'protein_id'])
+                print(i.attributes['product'],i.attributes['Note'],
+                      i.attributes['protein_id'])
+                record.INFO["mat_pep_id"] = str(" ".join(i.attributes[
+                                                         'product'])).replace(";", ",")
+                record.INFO["mat_pep_desc"] = str(" ".join(i.attributes[
+                                                         'Note'])).replace(";", ",")
+                record.INFO["mat_pep_acc"] = str(" ".join(i.attributes[
+                                                         'protein_id'])).replace(";", ",")
         w.write_record(record)
     w.close()
     data_vcf.close()
