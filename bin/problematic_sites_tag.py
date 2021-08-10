@@ -71,16 +71,18 @@ if __name__ == '__main__':
 
     # Searching records and adding TAGs into INFO column
     for record in data_vcf:
+        record.INFO["PS_FILTER"] = "n/a"
+        record.INFO["PS_EXC"] = "n/a"
         if (record.POS in prob_vcf_df["POS"].values) & \
                 (record.REF in prob_vcf_df["REF"].values) & \
                 (record.ALT in prob_vcf_df["ALT"].values):
-            record.INFO["PS_FILTER"] = prob_vcf_df.loc[prob_vcf_df['POS']
-                                                    == record.POS, 'FILTER'].item()
-            record.INFO["PS_EXC"] = prob_vcf_df.loc[prob_vcf_df['POS']
-                                                 == record.POS, 'INFO'].item()
-        else:
-            record.INFO["PS_FILTER"] = "None"
-            record.INFO["PS_EXC"] = "None"
+            record.INFO["PS_FILTER"] = prob_vcf_df.loc[
+                prob_vcf_df['POS']
+                == record.POS, 'FILTER'].item()
+            record.INFO["PS_EXC"] = prob_vcf_df.loc[prob_vcf_df[
+                                                        'POS'] ==
+                                                    record.POS,
+                                                    'INFO'].item()
         w.write_record(record)
 
     w.close()
