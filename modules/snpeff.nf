@@ -1,6 +1,6 @@
 process SNPEFF {
 
-    tag {"${filtered_vcf.baseName}"}
+    tag {"${filtered_vcf.baseName.replace(".variants.filtered", "")}"}
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.annotated.vcf", mode: 'copy'
 
     cpus 1
@@ -9,7 +9,7 @@ process SNPEFF {
         path(filtered_vcf)
 
     output:
-        path("*.annotated.vcf")
+        path("*.annotated.vcf"), emit: peptide_vcf
 
     script:
       """
