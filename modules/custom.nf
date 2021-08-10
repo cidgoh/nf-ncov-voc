@@ -42,22 +42,7 @@ process extractMetadata {
     """
 }
 
-process vcfTotsv {
 
-    tag {"vcfTotsv${annotated_vcf.baseName}"}
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
-
-    input:
-        path(annotated_vcf)
-
-    output:
-        path("*.tsv")
-
-    script:
-      """
-      vcf2tsv.py ${annotated_vcf} ${annotated_vcf.baseName}.tsv
-      """
-}
 
 process tsvTovcf {
 
@@ -96,6 +81,25 @@ process tagProblematicSites {
       """
 }
 
+process annotate_mat_peptide {
+
+    tag {"${peptide_vcf.baseName.replace(".variants.filtered.annotated", "")}"}
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
+
+    input:
+        tuple(path(peptide_vcf), path(genome_gff))
+
+    output:
+        path("*.vcf")
+
+    script:
+      """
+      mature_peptide_annotation.py \
+      --vcf_file ${peptide_vcf}\
+      --annotation_file ${genome_gff}\
+      --output_vcf ${peptide_vcf.baseName}.filtered.vcf
+      """
+}
 
 process processGVCF{
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
@@ -123,17 +127,23 @@ process processGVCF{
 }
 
 
-process make_vcf_list {
-  input:
-  file(vcf) from makelist_ch.collect()
 
-  output:
-  file("vcfs.txt") into vcftxt_ch
+process vcfTotsv {
 
-  script:
-  template 'makelist.py'
+    tag {"vcfTotsv${annotated_vcf.baseName}"}
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
+
+    input:
+        path(annotated_vcf)
+
+    output:
+        path("*.tsv")
+
+    script:
+      """
+      vcf2tsv.py ${annotated_vcf} ${annotated_vcf.baseName}.tsv
+      """
 }
-
 
 process merge_vcfs {
   publishDir path: "${params.outdir}/freebayes"
