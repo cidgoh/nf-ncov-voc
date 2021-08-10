@@ -9,6 +9,7 @@ params.voc = ".github/data/VOC"
 params.refdb = ".github/data/refdb"
 params.ref_gff = ".github/data/features"
 params.prob_sites = ".github/data/problematic_sites"
+params.genome_annotation = ".github/data/genome_annotation"
 
 
 // include modules
@@ -68,9 +69,12 @@ workflow {
       Channel.fromPath( "$params.prob_sites/*.vcf", checkIfExists: true)
             .set{ ch_probvcf }
 
+      Channel.fromPath( "$params.genome_annotation/*.gff", checkIfExists: true)
+            .set{ ch_genannot }
+
 
    main:
 
        //println("This will call Illumina workflow")
-       ncov_voc(ch_seq, ch_metadata, ch_voc, ch_ref, ch_refgff, ch_reffai, ch_probvcf)
+       ncov_voc(ch_seq, ch_metadata, ch_voc, ch_ref, ch_refgff, ch_reffai, ch_probvcf, ch_genannot)
 }
