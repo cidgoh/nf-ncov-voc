@@ -19,6 +19,7 @@ import os
 import re
 
 
+
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Converts a GVF file to a TSV')

@@ -8,7 +8,7 @@ Created on Fri Jul 23 11:06:22 2021
 
 '''
 This script converts VCF files that have been annotated by snpEFF into GVF files, including the functional annotation.
-Note that the strain is obtained by parsing the file name, expected to contain the substring "/strainnamehere_ids".
+Note that the strain is obtained by parsing the file name, expected to contain the substring "/strainnamehere.variants".
 
 Required user input is either a single VCF file or a directory containing VCF files.
 
@@ -17,7 +17,7 @@ Eg:
 To also output tsvs of the unmatched mutation names:
     python vcf2gvf.py --vcfdir ./22_07_2021/ --names
     
-/home/madeline/Downloads/B.1.525.variants.filtered.annotated.filtered.vcf
+test case: /home/madeline/Downloads/B.1.525.variants.filtered.annotated.filtered.vcf
 '''
 
 import argparse
@@ -26,6 +26,9 @@ import re
 import glob
 import os
 import numpy as np
+import json
+
+from definitions import GENE_POSITIONS_DICT
 
 
 def parse_args():
@@ -48,6 +51,25 @@ def parse_args():
     return parser.parse_args()
 
 
+def map_pos_to_gene(pos):
+    """This function is inspired/lifted from Ivan's code.
+    Map a series of nucleotide positions to SARS-CoV-2 genes.
+    See https://www.ncbi.nlm.nih.gov/nuccore/MN908947.
+    :param pos: Nucleotide position pandas series
+    :type pos: int
+    :return: SARS-CoV-2 gene at nucleotide position ``pos``
+    :rtype: str
+    """
+    gene_names = pos.astype(str) #make a series of the same size as pos to put gene names in
+    for gene in GENE_POSITIONS_DICT:
+        start = GENE_POSITIONS_DICT[gene]["start"]
+        end = GENE_POSITIONS_DICT[gene]["end"]
+        gene_mask = pos.between(start, end, inclusive=True)
+        gene_names[gene_mask] = gene
+    gene_names[gene_names.str.isnumeric()] = "intergenic"
+    return gene_names
+
+
 gvf_columns = ['#seqid','#source','#type','#start','#end','#score','#strand','#phase','#attributes']
 vcf_colnames = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO', 'FORMAT', 'unknown']
 
@@ -60,7 +82,7 @@ def vcftogvf(var_data, strain):
     new_df = pd.DataFrame(index=range(0,len(df)),columns=gvf_columns)
 
     #parse INFO column
-
+    
     #sort out problematic sites tag formats
     df['INFO'] = df['INFO'].str.replace('ps_filter;','ps_filter=;')
     df['INFO'] = df['INFO'].str.replace('ps_exc;','ps_exc=;')
@@ -82,7 +104,8 @@ def vcftogvf(var_data, strain):
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'Name=' + Names + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'nt_name=' + hgvs_nucleotide + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'aa_name=' + hgvs_protein + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'gene=' + eff_info[5] + ';' #gene names
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'vcf_gene=' + eff_info[5] + ';' #gene names
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'chrom_region=' + map_pos_to_gene(df['POS'].astype(int)) + ';' #gene names including IGRs/UTRs 
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + eff_info[1] + ';' #mutation type 
 
     #make 'INFO' column easier to extract attributes from
@@ -301,7 +324,7 @@ if __name__ == '__main__':
     if args.vcffile:
         
         file = args.vcffile
-        
+
         print("Processing: " + file)
             
         #get strain name
