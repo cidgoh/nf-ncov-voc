@@ -5,3 +5,4 @@ channels:
   - defaults
 dependencies:
   - cyvcf=0.8.0
+  - gffutils=0.10.1
