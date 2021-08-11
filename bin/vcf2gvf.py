@@ -85,15 +85,6 @@ def vcftogvf(var_data, strain):
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'gene=' + eff_info[5] + ';' #gene names
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + eff_info[1] + ';' #mutation type 
 
-    #columns copied straight from Zohaib's file
-    for column in ['REF','ALT']:
-        key = column.lower()
-        if key=='ref':
-            key = 'Reference_seq'
-        elif key=='alt':
-            key = 'Variant_seq'
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + key + '=' + df[column].astype(str) + ';'
-
     #make 'INFO' column easier to extract attributes from
     info = df['INFO'].str.split(pat=';').apply(pd.Series) #split at ;, form dataframe
     for column in info.columns:
@@ -104,9 +95,27 @@ def vcftogvf(var_data, strain):
         info.rename(columns={column:title}, inplace=True) #make attribute tag as column label
     
     #add 'INFO' attributes by name
-    #for column in ['ao','dp','ro']:
     for column in ['dp', 'ps_filter', 'ps_exc', 'mat_pep_id', 'mat_pep_desc', 'mat_pep_acc']:
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '=' + info[column].astype(str) + ';'
+        info[column] = info[column].fillna('') #drop nans if they exist
+        if column == 'mat_pep_desc':
+            new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '="' + info[column].astype(str) + '";'
+        else:
+            new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '=' + info[column].astype(str) + ';'
+        
+        
+    #add ao, ro
+    unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ro=' + unknown[1].astype(str) + ';'
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ao=' + unknown[4].astype(str) + ';'
+    
+    #add columns copied straight from Zohaib's file
+    for column in ['REF','ALT']:
+        key = column.lower()
+        if key=='ref':
+            key = 'Reference_seq'
+        elif key=='alt':
+            key = 'Variant_seq'
+        new_df['#attributes'] = new_df['#attributes'].astype(str) + key + '=' + df[column].astype(str) + ';'
 
     #add strain name
     new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + strain + ';'
@@ -302,7 +311,6 @@ if __name__ == '__main__':
         
         #create gvf from annotated vcf (ignoring pragmas for now)
         gvf = vcftogvf(file, strain)
-        print(gvf)
         #add functional annotations
         if args.names:
             annotated_gvf, leftover_names, mutations, leftover_clade_names = add_functions(gvf, annotation_file, clade_file, strain)
