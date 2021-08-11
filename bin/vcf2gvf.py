@@ -74,9 +74,9 @@ def vcftogvf(var_data, strain):
     hgvs = eff_info[3].str.rsplit(pat='c.').apply(pd.Series)
     hgvs_protein = hgvs[0].str[:-1]
     hgvs_nucleotide = 'c.' + hgvs[1]
-    
+
     #use nucleotide name where protein name doesn't exist (for 'Name' attribute)
-    Names = hgvs_protein
+    Names = hgvs[0].str[:-1]
     Names[~Names.str.contains("p.")] =  hgvs_nucleotide #fill in empty protein name spaces with nucleotide names ("c."...)
     
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'Name=' + Names + ';'
