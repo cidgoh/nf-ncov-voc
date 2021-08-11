@@ -28,7 +28,7 @@ import os
 import numpy as np
 import json
 
-from definitions import GENE_POSITIONS_DICT
+#from definitions import GENE_POSITIONS_DICT
 
 
 def parse_args():
@@ -36,8 +36,9 @@ def parse_args():
         description='Converts snpEFF-annotated VCF files to GVF files with functional annotation')
     #make --file or --directory options mutually exclusive
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('--vcfdir', type=str, default=None,
-                        help='Path to folder containing snpEFF-annotated VCF files')
+    #group.add_argument('--vcfdir', type=str, default=None,
+    #                    help='Path to folder containing
+    #                    snpEFF-annotated VCF files')
     group.add_argument('--vcffile', type=str, default=None,
                         help='Path to a snpEFF-annotated VCF file')
     #filepath can be absolute (~/Desktop/test/22_07_2021/) or relative (./22_07_2021/)
@@ -45,13 +46,20 @@ def parse_args():
                         help='Anoosha\'s parsed pokay .tsv file')
     parser.add_argument('--clades', type=str, default='clade_defining_mutations.tsv',
                         help='.tsv of clade-defining mutations')
-    parser.add_argument('--outdir', type=str, default='./gvf_files/',
-                        help='Output directory for finished GVF files: folder will be created if it doesn\'t already exist')
+    parser.add_argument('--gene_positions', type=str,
+                        default=None,
+                        help='gene positions in json format')
+    parser.add_argument('--strain', type=str,
+                        default=None,
+                        help='lineage')
+    parser.add_argument('--outvcf', type=str,
+                        help='Output directory for finished GVF '
+                             'files: folder will be created if it doesn\'t already exist')
     parser.add_argument("--names", help="Save unmatched mutation names to .tsvs for troubleshooting naming formats", action="store_true")
     return parser.parse_args()
 
 
-def map_pos_to_gene(pos):
+def map_pos_to_gene(pos, GENE_POSITIONS_DICT):
     """This function is inspired/lifted from Ivan's code.
     Map a series of nucleotide positions to SARS-CoV-2 genes.
     See https://www.ncbi.nlm.nih.gov/nuccore/MN908947.
@@ -73,7 +81,7 @@ def map_pos_to_gene(pos):
 gvf_columns = ['#seqid','#source','#type','#start','#end','#score','#strand','#phase','#attributes']
 vcf_colnames = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO', 'FORMAT', 'unknown']
 
-def vcftogvf(var_data, strain):
+def vcftogvf(var_data, strain, GENE_POSITIONS_DICT):
      
     df = pd.read_csv(var_data, sep='\t', names=vcf_colnames)    
     df = df[~df['#CHROM'].str.contains("#")] #remove pragmas
@@ -105,7 +113,9 @@ def vcftogvf(var_data, strain):
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'nt_name=' + hgvs_nucleotide + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'aa_name=' + hgvs_protein + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'vcf_gene=' + eff_info[5] + ';' #gene names
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'chrom_region=' + map_pos_to_gene(df['POS'].astype(int)) + ';' #gene names including IGRs/UTRs 
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
+                            'chrom_region=' + map_pos_to_gene(df[
+                                                                  'POS'].astype(int), GENE_POSITIONS_DICT) + ';' #gene names including IGRs/UTRs
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + eff_info[1] + ';' #mutation type 
 
     #make 'INFO' column easier to extract attributes from
@@ -268,13 +278,14 @@ def add_functions(gvf, annotation_file, clade_file, strain):
 if __name__ == '__main__':
     
     args = parse_args()
-    
+    with open(args.gene_positions) as fp:
+        GENE_POSITIONS_DICT = json.load(fp)
     annotation_file = args.pokay
     clade_file = args.clades
-    outdir = args.outdir
+    #outdir = args.outdir
     
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
+    #if not os.path.exists(outdir):
+    #    os.makedirs(outdir)
 
     #make empty list in which to store mutation names from all strains in the folder together
     all_strains_mutations = []
@@ -283,14 +294,14 @@ if __name__ == '__main__':
     pragmas = pd.DataFrame([['##gff-version 3'], ['##gvf-version 1.10'], ['##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']]) #pragmas are in column 0
 
     
-    if args.vcfdir:
-        if not os.path.exists(args.vcfdir):
-            print("VCF file folder not found")
-        else:
-            print("Processing vcf files in " + args.vcfdir + " ...")
-            print("")
+    #if args.vcfdir:
+    #    if not os.path.exists(args.vcfdir):
+    #        print("VCF file folder not found")
+    #    else:
+    #        print("Processing vcf files in " + args.vcfdir + " ...")
+    #        print("")
     
-
+    '''
         for file in glob.glob(args.vcfdir + '/*.vcf'): #get all .vcf files
             print("Processing: " + file)
             
@@ -319,7 +330,7 @@ if __name__ == '__main__':
                 all_strains_mutations.append(mutations)
                 leftover_df = leftover_df.append(leftover_names)
                 unmatched_clade_names = unmatched_clade_names.append(leftover_clade_names)
-            
+    '''
             
     if args.vcffile:
         
@@ -328,22 +339,26 @@ if __name__ == '__main__':
         print("Processing: " + file)
             
         #get strain name
-        pat = r'.*?' + '(.*).variants.*'
-        match = re.search(pat, file.split("/")[-1])
-        strain = match.group(1)
-        print("Strain: ", strain)
+        #pat = r'.*?' + '(.*).variants.*'
+        #match = re.search(pat, file.split("/")[-1])
+        #strain = match.group(1)
+        #print("Strain: ", strain)
         
         #create gvf from annotated vcf (ignoring pragmas for now)
-        gvf = vcftogvf(file, strain)
+        gvf = vcftogvf(file, args.strain, GENE_POSITIONS_DICT)
         #add functional annotations
         if args.names:
-            annotated_gvf, leftover_names, mutations, leftover_clade_names = add_functions(gvf, annotation_file, clade_file, strain)
+            annotated_gvf, leftover_names, mutations, \
+            leftover_clade_names = add_functions(gvf,
+                                                 annotation_file,
+                                                 clade_file, args.strain)
         else:
-            annotated_gvf = add_functions(gvf, annotation_file, clade_file, strain)
+            annotated_gvf = add_functions(gvf, annotation_file,
+                                          clade_file, args.strain)
         #add pragmas to df, then save to .gvf
         annotated_gvf = pd.DataFrame(np.vstack([annotated_gvf.columns, annotated_gvf])) #columns are now 0, 1, ...
         final_gvf = pragmas.append(annotated_gvf)
-        filepath = outdir + strain + ".annotated.gvf"
+        filepath = args.outvcf #outdir + strain + ".annotated.gvf"
         print("Saved as: ", filepath)
         print("")
         final_gvf.to_csv(filepath, sep='\t', index=False, header=False)
@@ -353,22 +368,23 @@ if __name__ == '__main__':
             leftover_df = leftover_df.append(leftover_names)
             unmatched_clade_names = unmatched_clade_names.append(leftover_clade_names)
         
-            
+    '''        
     if args.names:  
         #save unmatched names (in tsv but not in Pokay) across all strains to a .tsv file
         if args.vcffile:
-            leftover_names_filepath = outdir + strain + "_leftover_names.tsv"
-        if args.vcfdir:
-            leftover_names_filepath = outdir + "leftover_names.tsv"
+            leftover_names_filepath = "_leftover_names.tsv"
+        #if args.vcfdir:
+        #    leftover_names_filepath = outdir + "leftover_names.tsv"
         leftover_df.to_csv(leftover_names_filepath, sep='\t', index=False)
         print("")
         print("Mutation names not found in Pokay saved to " + leftover_names_filepath)
     
         #save unmatched clade-defining mutation names across all strains to a .tsv file
         if args.vcffile:
-            leftover_clade_names_filepath = outdir + strain + "_leftover_clade_defining_names.tsv"
-        if args.vcfdir:
-            leftover_clade_names_filepath = outdir + "all_leftover_clade_defining_names.tsv"
+            leftover_clade_names_filepath = "leftover_clade_defining_names.tsv"
+        #if args.vcfdir:
+        #    leftover_clade_names_filepath = outdir + 
+        #    "all_leftover_clade_defining_names.tsv"
         unmatched_clade_names.to_csv(leftover_clade_names_filepath, sep='\t', index=False)
         print("Clade-defining mutation names not found in the annotated VCFs saved to " + leftover_clade_names_filepath)
 
@@ -379,7 +395,7 @@ if __name__ == '__main__':
             print("# unique mutations in " + strain + " VCF file: ", np.unique(arr).shape[0])
         if args.vcfdir:
             print("# unique mutations across all processed VCFs: ", np.unique(arr).shape[0])
-
+    '''
     print("")
     print("")        
     print("Processing complete.")
