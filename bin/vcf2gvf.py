@@ -16,6 +16,8 @@ Eg:
     python vcf2gvf.py --vcfdir ./22_07_2021/
 To also output tsvs of the unmatched mutation names:
     python vcf2gvf.py --vcfdir ./22_07_2021/ --names
+    
+/home/madeline/Downloads/B.1.525.variants.filtered.annotated.filtered.vcf
 '''
 
 import argparse
@@ -57,7 +59,14 @@ def vcftogvf(var_data, strain):
 
     new_df = pd.DataFrame(index=range(0,len(df)),columns=gvf_columns)
 
-    #parse EFF column
+    #parse INFO column
+
+    #sort out problematic sites tag formats
+    df['INFO'] = df['INFO'].str.replace('ps_filter;','ps_filter=;')
+    df['INFO'] = df['INFO'].str.replace('ps_exc;','ps_exc=;')
+    df['INFO'] = df['INFO'].str.replace('=n/a','')
+    
+    #parse EFF entry in INFO    
     eff_info = df['INFO'].str.findall('\((.*?)\)') #series: extract everything between parentheses as elements of a list
     eff_info = eff_info.apply(pd.Series)[0] #take first element of list
     eff_info = eff_info.str.split(pat='|').apply(pd.Series) #split at pipe, form dataframe
@@ -95,7 +104,8 @@ def vcftogvf(var_data, strain):
         info.rename(columns={column:title}, inplace=True) #make attribute tag as column label
     
     #add 'INFO' attributes by name
-    for column in ['ao','dp','ro']:
+    #for column in ['ao','dp','ro']:
+    for column in ['dp', 'ps_filter', 'ps_exc', 'mat_pep_id', 'mat_pep_desc', 'mat_pep_acc']:
         new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '=' + info[column].astype(str) + ';'
 
     #add strain name
@@ -106,7 +116,7 @@ def vcftogvf(var_data, strain):
     #fill in other GVF columns
     new_df['#seqid'] = df['#CHROM']
     new_df['#source'] = '.'
-    new_df['#type'] = info['type']
+    new_df['#type'] = '.' #info['type']
     new_df['#start'] = df['POS']
     new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() - 1).astype(str)  #this needs fixing
     new_df['#score'] = '.'
@@ -284,7 +294,7 @@ if __name__ == '__main__':
         print("Processing: " + file)
             
         #get strain name
-        pat = r'.*?' + '(.*)_ids.*'
+        pat = r'.*?' + '(.*).variants.*'
         match = re.search(pat, file.split("/")[-1])
         strain = match.group(1)
         #strain = 'moose'
@@ -292,6 +302,7 @@ if __name__ == '__main__':
         
         #create gvf from annotated vcf (ignoring pragmas for now)
         gvf = vcftogvf(file, strain)
+        print(gvf)
         #add functional annotations
         if args.names:
             annotated_gvf, leftover_names, mutations, leftover_clade_names = add_functions(gvf, annotation_file, clade_file, strain)

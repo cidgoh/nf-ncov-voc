@@ -25,7 +25,7 @@ def parse_args():
                         help='Path to a GVF file')
     #filepath can be absolute (~/Desktop/test/22_07_2021/) or relative (./22_07_2021/)
     parser.add_argument('--outdir', type=str, default='./case_report_tsvs/',
-                        help='Output directory for finished GVF files: folder will be created if it doesn\'t already exist')
+                        help='Output directory for finished .tsv files: folder will be created if it doesn\'t already exist')
     return parser.parse_args()
 
 
