@@ -8,14 +8,14 @@ Created on Mon Aug  9 10:47:11 2021
 
 '''
 This script converts GVF to a TSV, for conversion to an HTML case report.
-
-/home/madeline/Desktop/test/gvf_files/B.1.525.annotated.gvf
 '''
 
 
 import argparse
 import pandas as pd
 import os
+import re
+
 
 
 def parse_args():
@@ -25,7 +25,7 @@ def parse_args():
                         help='Path to a GVF file')
     #filepath can be absolute (~/Desktop/test/22_07_2021/) or relative (./22_07_2021/)
     parser.add_argument('--outdir', type=str, default='./case_report_tsvs/',
-                        help='Output directory for finished GVF files: folder will be created if it doesn\'t already exist')
+                        help='Output directory for finished .tsv files: folder will be created if it doesn\'t already exist')
     return parser.parse_args()
 
 
@@ -67,13 +67,19 @@ if __name__ == '__main__':
     
     outdir = args.outdir
     gvf = args.gvf
-    
+
+    #get strain name
+    pat = r'.*?' + '(.*).annotated.*'
+    match = re.search(pat, gvf.split("/")[-1])
+    strain = match.group(1)
+    print("Strain: ", strain)
+
     if not os.path.exists(outdir):
         os.makedirs(outdir)
         
     tsv_df = gvf2tsv(gvf)
     
-    filepath = outdir + "report.tsv"
+    filepath = outdir + strain + "_report.tsv"
     tsv_df.to_csv(filepath, sep='\t', index=False)
     
     print("Saved as: " + filepath)

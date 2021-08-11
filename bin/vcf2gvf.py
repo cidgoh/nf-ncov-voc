@@ -8,7 +8,7 @@ Created on Fri Jul 23 11:06:22 2021
 
 '''
 This script converts VCF files that have been annotated by snpEFF into GVF files, including the functional annotation.
-Note that the strain is obtained by parsing the file name, expected to contain the substring "/strainnamehere_ids".
+Note that the strain is obtained by parsing the file name, expected to contain the substring "/strainnamehere.variants".
 
 Required user input is either a single VCF file or a directory containing VCF files.
 
@@ -16,6 +16,8 @@ Eg:
     python vcf2gvf.py --vcfdir ./22_07_2021/
 To also output tsvs of the unmatched mutation names:
     python vcf2gvf.py --vcfdir ./22_07_2021/ --names
+    
+test case: /home/madeline/Downloads/B.1.525.variants.filtered.annotated.filtered.vcf
 '''
 
 import argparse
@@ -24,6 +26,9 @@ import re
 import glob
 import os
 import numpy as np
+import json
+
+from definitions import GENE_POSITIONS_DICT
 
 
 def parse_args():
@@ -46,6 +51,25 @@ def parse_args():
     return parser.parse_args()
 
 
+def map_pos_to_gene(pos):
+    """This function is inspired/lifted from Ivan's code.
+    Map a series of nucleotide positions to SARS-CoV-2 genes.
+    See https://www.ncbi.nlm.nih.gov/nuccore/MN908947.
+    :param pos: Nucleotide position pandas series
+    :type pos: int
+    :return: SARS-CoV-2 gene at nucleotide position ``pos``
+    :rtype: str
+    """
+    gene_names = pos.astype(str) #make a series of the same size as pos to put gene names in
+    for gene in GENE_POSITIONS_DICT:
+        start = GENE_POSITIONS_DICT[gene]["start"]
+        end = GENE_POSITIONS_DICT[gene]["end"]
+        gene_mask = pos.between(start, end, inclusive=True)
+        gene_names[gene_mask] = gene
+    gene_names[gene_names.str.isnumeric()] = "intergenic"
+    return gene_names
+
+
 gvf_columns = ['#seqid','#source','#type','#start','#end','#score','#strand','#phase','#attributes']
 vcf_colnames = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO', 'FORMAT', 'unknown']
 
@@ -57,7 +81,14 @@ def vcftogvf(var_data, strain):
 
     new_df = pd.DataFrame(index=range(0,len(df)),columns=gvf_columns)
 
-    #parse EFF column
+    #parse INFO column
+    
+    #sort out problematic sites tag formats
+    df['INFO'] = df['INFO'].str.replace('ps_filter;','ps_filter=;')
+    df['INFO'] = df['INFO'].str.replace('ps_exc;','ps_exc=;')
+    df['INFO'] = df['INFO'].str.replace('=n/a','')
+    
+    #parse EFF entry in INFO    
     eff_info = df['INFO'].str.findall('\((.*?)\)') #series: extract everything between parentheses as elements of a list
     eff_info = eff_info.apply(pd.Series)[0] #take first element of list
     eff_info = eff_info.str.split(pat='|').apply(pd.Series) #split at pipe, form dataframe
@@ -65,25 +96,17 @@ def vcftogvf(var_data, strain):
     hgvs = eff_info[3].str.rsplit(pat='c.').apply(pd.Series)
     hgvs_protein = hgvs[0].str[:-1]
     hgvs_nucleotide = 'c.' + hgvs[1]
-    
+
     #use nucleotide name where protein name doesn't exist (for 'Name' attribute)
-    Names = hgvs_protein
+    Names = hgvs[0].str[:-1]
     Names[~Names.str.contains("p.")] =  hgvs_nucleotide #fill in empty protein name spaces with nucleotide names ("c."...)
     
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'Name=' + Names + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'nt_name=' + hgvs_nucleotide + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'aa_name=' + hgvs_protein + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'gene=' + eff_info[5] + ';' #gene names
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'vcf_gene=' + eff_info[5] + ';' #gene names
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'chrom_region=' + map_pos_to_gene(df['POS'].astype(int)) + ';' #gene names including IGRs/UTRs 
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + eff_info[1] + ';' #mutation type 
-
-    #columns copied straight from Zohaib's file
-    for column in ['REF','ALT']:
-        key = column.lower()
-        if key=='ref':
-            key = 'Reference_seq'
-        elif key=='alt':
-            key = 'Variant_seq'
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + key + '=' + df[column].astype(str) + ';'
 
     #make 'INFO' column easier to extract attributes from
     info = df['INFO'].str.split(pat=';').apply(pd.Series) #split at ;, form dataframe
@@ -95,8 +118,27 @@ def vcftogvf(var_data, strain):
         info.rename(columns={column:title}, inplace=True) #make attribute tag as column label
     
     #add 'INFO' attributes by name
-    for column in ['ao','dp','ro']:
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '=' + info[column].astype(str) + ';'
+    for column in ['dp', 'ps_filter', 'ps_exc', 'mat_pep_id', 'mat_pep_desc', 'mat_pep_acc']:
+        info[column] = info[column].fillna('') #drop nans if they exist
+        if column == 'mat_pep_desc':
+            new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '="' + info[column].astype(str) + '";'
+        else:
+            new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '=' + info[column].astype(str) + ';'
+        
+        
+    #add ao, ro
+    unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ro=' + unknown[1].astype(str) + ';'
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ao=' + unknown[4].astype(str) + ';'
+    
+    #add columns copied straight from Zohaib's file
+    for column in ['REF','ALT']:
+        key = column.lower()
+        if key=='ref':
+            key = 'Reference_seq'
+        elif key=='alt':
+            key = 'Variant_seq'
+        new_df['#attributes'] = new_df['#attributes'].astype(str) + key + '=' + df[column].astype(str) + ';'
 
     #add strain name
     new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + strain + ';'
@@ -106,7 +148,7 @@ def vcftogvf(var_data, strain):
     #fill in other GVF columns
     new_df['#seqid'] = df['#CHROM']
     new_df['#source'] = '.'
-    new_df['#type'] = info['type']
+    new_df['#type'] = '.' #info['type']
     new_df['#start'] = df['POS']
     new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() - 1).astype(str)  #this needs fixing
     new_df['#score'] = '.'
@@ -170,6 +212,8 @@ def add_functions(gvf, annotation_file, clade_file, strain):
 
     #change semicolons in function descriptions to colons
     merged_df['function_description'] = merged_df['function_description'].str.replace(';',':')
+    #change heteozygosity column to True/False
+    merged_df['heterozygosity'] = merged_df['heterozygosity']=='heterozygous'
     #add key-value pairs to attributes column
     for column in ['function_category', 'source', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']:
         key = column.lower()
@@ -280,14 +324,13 @@ if __name__ == '__main__':
     if args.vcffile:
         
         file = args.vcffile
-        
+
         print("Processing: " + file)
             
         #get strain name
-        pat = r'.*?' + '(.*)_ids.*'
+        pat = r'.*?' + '(.*).variants.*'
         match = re.search(pat, file.split("/")[-1])
         strain = match.group(1)
-        #strain = 'moose'
         print("Strain: ", strain)
         
         #create gvf from annotated vcf (ignoring pragmas for now)
