@@ -189,6 +189,8 @@ def add_functions(gvf, annotation_file, clade_file, strain):
 
     #change semicolons in function descriptions to colons
     merged_df['function_description'] = merged_df['function_description'].str.replace(';',':')
+    #change heteozygosity column to True/False
+    merged_df['heterozygosity'] = merged_df['heterozygosity']=='heterozygous'
     #add key-value pairs to attributes column
     for column in ['function_category', 'source', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']:
         key = column.lower()
@@ -306,7 +308,6 @@ if __name__ == '__main__':
         pat = r'.*?' + '(.*).variants.*'
         match = re.search(pat, file.split("/")[-1])
         strain = match.group(1)
-        #strain = 'moose'
         print("Strain: ", strain)
         
         #create gvf from annotated vcf (ignoring pragmas for now)

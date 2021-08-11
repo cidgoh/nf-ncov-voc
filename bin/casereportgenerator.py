@@ -16,6 +16,7 @@ This script converts GVF to a TSV, for conversion to an HTML case report.
 import argparse
 import pandas as pd
 import os
+import re
 
 
 def parse_args():
@@ -67,13 +68,19 @@ if __name__ == '__main__':
     
     outdir = args.outdir
     gvf = args.gvf
-    
+
+    #get strain name
+    pat = r'.*?' + '(.*).annotated.*'
+    match = re.search(pat, gvf.split("/")[-1])
+    strain = match.group(1)
+    print("Strain: ", strain)
+
     if not os.path.exists(outdir):
         os.makedirs(outdir)
         
     tsv_df = gvf2tsv(gvf)
     
-    filepath = outdir + "report.tsv"
+    filepath = outdir + strain + "_report.tsv"
     tsv_df.to_csv(filepath, sep='\t', index=False)
     
     print("Saved as: " + filepath)
