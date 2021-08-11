@@ -8,8 +8,6 @@ Created on Mon Aug  9 10:47:11 2021
 
 '''
 This script converts GVF to a TSV, for conversion to an HTML case report.
-
-/home/madeline/Desktop/test/gvf_files/B.1.525.annotated.gvf
 '''
 
 
