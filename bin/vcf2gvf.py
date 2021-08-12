@@ -10,14 +10,11 @@ Created on Fri Jul 23 11:06:22 2021
 This script converts VCF files that have been annotated by snpEFF into GVF files, including the functional annotation.
 Note that the strain is obtained by parsing the file name, expected to contain the substring "/strainnamehere.variants".
 
-Required user input is either a single VCF file or a directory containing VCF files.
+Required user input is a VCF file and strain name.
 
-Eg:
-    python vcf2gvf.py --vcfdir ./22_07_2021/
-To also output tsvs of the unmatched mutation names:
-    python vcf2gvf.py --vcfdir ./22_07_2021/ --names
-    
-test case: /home/madeline/Downloads/B.1.525.variants.filtered.annotated.filtered.vcf
+test case: 
+--vcffile /home/madeline/Downloads/B.1.525.variants.filtered.annotated.filtered.vcf --strain B.1.525 --outvcf b1525out.gvf
+
 '''
 
 import argparse
@@ -42,19 +39,18 @@ def parse_args():
     group.add_argument('--vcffile', type=str, default=None,
                         help='Path to a snpEFF-annotated VCF file')
     #filepath can be absolute (~/Desktop/test/22_07_2021/) or relative (./22_07_2021/)
-    parser.add_argument('--pokay', type=str, default='functional_annotation_V.0.3.tsv',
-                        help='Anoosha\'s parsed pokay .tsv file')
-    parser.add_argument('--clades', type=str, default='clade_defining_mutations.tsv',
+    parser.add_argument('--pokay', type=str, default='../.github/data/functional_annotation/functional_annotation_V.0.3.tsv',
+                        help='Anoosha\'s v.3 parsed pokay .tsv file')
+    parser.add_argument('--clades', type=str, default='../.github/data/clade_defining/clade_defining_mutations.tsv',
                         help='.tsv of clade-defining mutations')
     parser.add_argument('--gene_positions', type=str,
-                        default=None,
+                        default='./assets/gene_positions.json',
                         help='gene positions in json format')
     parser.add_argument('--strain', type=str,
                         default=None,
                         help='lineage')
     parser.add_argument('--outvcf', type=str,
-                        help='Output directory for finished GVF '
-                             'files: folder will be created if it doesn\'t already exist')
+                        help='Output directory for finished GVF files: folder will be created if it doesn\'t already exist')
     parser.add_argument("--names", help="Save unmatched mutation names to .tsvs for troubleshooting naming formats", action="store_true")
     return parser.parse_args()
 
@@ -105,6 +101,11 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT):
     hgvs_protein = hgvs[0].str[:-1]
     hgvs_nucleotide = 'c.' + hgvs[1]
 
+    #change nucleotide names of the form "c.C*4378A" to c.C4378AN; change vcf_gene to "intergenic" here
+    asterisk_mask = hgvs_nucleotide.str.contains('\*')
+    hgvs_nucleotide[asterisk_mask] = 'c.' + df['REF'] + df['POS'] + df['ALT']
+    eff_info[5][asterisk_mask] = "intergenic"
+    
     #use nucleotide name where protein name doesn't exist (for 'Name' attribute)
     Names = hgvs[0].str[:-1]
     Names[~Names.str.contains("p.")] =  hgvs_nucleotide #fill in empty protein name spaces with nucleotide names ("c."...)
@@ -118,6 +119,7 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT):
                                                                   'POS'].astype(int), GENE_POSITIONS_DICT) + ';' #gene names including IGRs/UTRs
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + eff_info[1] + ';' #mutation type 
 
+
     #make 'INFO' column easier to extract attributes from
     info = df['INFO'].str.split(pat=';').apply(pd.Series) #split at ;, form dataframe
     for column in info.columns:
@@ -130,10 +132,7 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT):
     #add 'INFO' attributes by name
     for column in ['dp', 'ps_filter', 'ps_exc', 'mat_pep_id', 'mat_pep_desc', 'mat_pep_acc']:
         info[column] = info[column].fillna('') #drop nans if they exist
-        if column == 'mat_pep_desc':
-            new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '="' + info[column].astype(str) + '";'
-        else:
-            new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '=' + info[column].astype(str) + ';'
+        new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '=' + info[column].astype(str) + ';'
         
         
     #add ao, ro
@@ -228,10 +227,7 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     for column in ['function_category', 'source', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']:
         key = column.lower()
         merged_df[column] = merged_df[column].fillna('') #replace NaNs with empty string
-        if column in ['function_category', 'citation', 'function_description']:
-            merged_df["#attributes"] = merged_df["#attributes"].astype(str) + key + '=' + '"' + merged_df[column].astype(str) + '"' + ';'
-        else:
-            merged_df["#attributes"] = merged_df["#attributes"].astype(str) + key + '=' + merged_df[column].astype(str) + ';'
+        merged_df["#attributes"] = merged_df["#attributes"].astype(str) + key + '=' + merged_df[column].astype(str) + ';'
 
 
     #if strain is in clades file, merge that too
@@ -396,7 +392,6 @@ if __name__ == '__main__':
         if args.vcfdir:
             print("# unique mutations across all processed VCFs: ", np.unique(arr).shape[0])
     '''
-    print("")
     print("")        
     print("Processing complete.")
         
