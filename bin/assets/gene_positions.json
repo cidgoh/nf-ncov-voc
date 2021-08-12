@@ -10,6 +10,6 @@
   "ORF8": {"start": 27894, "end": 28259},
   "N": {"start": 28274, "end": 29533},
   "ORF10": {"start": 29558, "end": 29674},
-  "Stem-loop": {"start": 29728, "end": 29768},
+  "Stem-loop,3' UTR": {"start": 29728, "end": 29768},
   "3' UTR": {"start": 29675, "end": 29903}
 }
