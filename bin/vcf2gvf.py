@@ -69,7 +69,10 @@ def map_pos_to_gene(pos, GENE_POSITIONS_DICT):
         start = GENE_POSITIONS_DICT[gene]["start"]
         end = GENE_POSITIONS_DICT[gene]["end"]
         gene_mask = pos.between(start, end, inclusive=True)
-        gene_names[gene_mask] = gene
+        if gene == "Stem-loop":
+            gene_names[gene_mask] = gene + ",3\' UTR"
+        else:
+            gene_names[gene_mask] = gene
     gene_names[gene_names.str.isnumeric()] = "intergenic"
     return gene_names
 
