@@ -23,9 +23,8 @@ def parse_args():
         description='Converts a GVF file to a TSV')
     parser.add_argument('--gvf', type=str, default=None,
                         help='Path to a GVF file')
-    #filepath can be absolute (~/Desktop/test/22_07_2021/) or relative (./22_07_2021/)
-    parser.add_argument('--outdir', type=str, default='./case_report_tsvs/',
-                        help='Output directory for finished .tsv files: folder will be created if it doesn\'t already exist')
+    parser.add_argument('--outtsv', type=str, default='./case_report_tsvs/',
+                        help='Output filepath for finished .tsv')
     return parser.parse_args()
 
 
@@ -65,21 +64,10 @@ if __name__ == '__main__':
     
     args = parse_args()
     
-    outdir = args.outdir
+    filepath = args.outtsv
     gvf = args.gvf
 
-    #get strain name
-    pat = r'.*?' + '(.*).annotated.*'
-    match = re.search(pat, gvf.split("/")[-1])
-    strain = match.group(1)
-    print("Strain: ", strain)
-
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
-        
     tsv_df = gvf2tsv(gvf)
-    
-    filepath = outdir + strain + "_report.tsv"
     tsv_df.to_csv(filepath, sep='\t', index=False)
     
     print("Saved as: " + filepath)
