@@ -236,15 +236,22 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     if strain in available_strains:
         clades = clades.loc[clades.strain == strain] #only look at the relevant part of that file
         #extract status and WHO strain name from clades file
-        voc_status = clades['voc_status'].drop_duplicates().tolist()[0]
+        variant = clades['variant'].drop_duplicates().tolist()[0]
         who_label = clades['who_name'].drop_duplicates().tolist()[0]
+        variant_status = clades['variant_status'].drop_duplicates().tolist()[0]
+        voi_designation_date = clades['voi_designation_date'].drop_duplicates().tolist()[0]
+        voc_designation_date = clades['voc_designation_date'].drop_duplicates().tolist()[0]
         #merge clades with function-annotated dataframe
         merged_df = pd.merge(clades, merged_df, on=['mutation'], how='right') #add clade-defining mutations
         #change clade-defining attribute to True/False depending on content of 'strain' column
         merged_df.loc[merged_df.strain == strain, "#attributes"] = merged_df.loc[merged_df.strain == strain, "#attributes"].astype(str)  + "clade_defining=True;"
         merged_df.loc[merged_df.strain != strain, "#attributes"] = merged_df.loc[merged_df.strain != strain, "#attributes"].astype(str)  + "clade_defining=False;"
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "who_label=" + who_label + ';'
-        merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "voc_status=" + voc_status + ';'
+        merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "variant=" + variant + ';'
+        merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "variant_status=" + variant_status + ';'
+        merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "voi_designation_date=" + voi_designation_date + ';'
+        merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "voc_designation_date=" + voc_designation_date + ';'
+        
         
     #add ID to attributes
     merged_df["#attributes"] = 'ID=' + merged_df['id'].astype(str) + ';' + merged_df["#attributes"].astype(str)
