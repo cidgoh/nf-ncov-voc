@@ -2,14 +2,14 @@ process FREEBAYES {
 
     tag { "VariantCalling_FREEBAYES_${bam}" }
     cpus 1
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.gvcf", mode: 'copy'
 
     input:
     tuple(path(bam), path(ref), path(index))
     path(bam_index)
 
     output:
-    path("${bam.baseName}.vcf"), emit: variants
+    path("${bam.baseName}.gvcf"), emit: gvcf
 
     script:
         """
@@ -33,6 +33,6 @@ process FREEBAYES {
                   --pooled-continuous \
                   --min-coverage ${params.var_MinDepth} \
                   ${bam} |
-                  sed s/QR,Number=1,Type=Integer/QR,Number=1,Type=Float/ > ${bam.baseName}.vcf
+                  sed s/QR,Number=1,Type=Integer/QR,Number=1,Type=Float/ > ${bam.baseName}.gvcf
         """
 }
