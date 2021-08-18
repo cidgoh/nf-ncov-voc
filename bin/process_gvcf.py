@@ -5,8 +5,6 @@
 import itertools
 import argparse
 import pysam
-import sys
-import os
 from collections import defaultdict
 
 
