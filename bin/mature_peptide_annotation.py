@@ -35,7 +35,7 @@ if __name__ == '__main__':
     }
     db = gffutils.create_db(
         args.annotation_file, 'ncov_annotation.db',
-        force=True, merge_strategy="warning")
+        force=True, merge_strategy="wmerge")
     data_vcf = VCF(args.vcf_file)
     data_vcf.add_info_to_header(
         {'ID': 'mat_pep_id', 'Description': 'Mature Peptide ID',
@@ -50,25 +50,23 @@ if __name__ == '__main__':
          'Type': 'String', 'Number': '.'})
     output_file_name = args.output_vcf
     w = Writer(output_file_name, data_vcf)
-    gene = db[gene_protein["orf1ab"]]
-    # gene = db[gene_protein[record.INFO.get('EFF').split("|")[5]]]
+    # gene = db[gene_protein["orf1ab"]]
 
     for record in data_vcf:
+        gene = db[gene_protein[record.INFO.get('EFF').split("|")[5]]]
         record.INFO["mat_pep_id"] = "n/a"
         record.INFO["mat_pep_desc"] = "n/a"
         record.INFO["mat_pep_acc"] = "n/a"
         for i in db.children(gene,
                              featuretype='mature_protein_region_of_CDS',
                              order_by='start'):
-            if i.start <= record.POS <= i.end:
-                print(i.attributes['product'],i.attributes['Note'],
-                      i.attributes['protein_id'])
-                record.INFO["mat_pep_id"] = str(" ".join(i.attributes[
-                                                         'product'])).replace(";", ",")
-                record.INFO["mat_pep_desc"] = str(" ".join(i.attributes[
-                                                         'Note'])).replace(";", ",")
-                record.INFO["mat_pep_acc"] = str(" ".join(i.attributes[
-                                                         'protein_id'])).replace(";", ",")
+            if int(i.start) <= int(record.POS) <= int(i.end):
+                record.INFO["mat_pep_id"] = str(" ".join(
+                    i.attributes['product'])).replace(";", ",")
+                record.INFO["mat_pep_desc"] = str(" ".join(
+                    i.attributes['Note'])).replace(";", ",")
+                record.INFO["mat_pep_acc"] = str(" ".join(
+                    i.attributes['protein_id'])).replace(";", ",")
         w.write_record(record)
     w.close()
     data_vcf.close()
