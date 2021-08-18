@@ -8,7 +8,7 @@ process BCFTOOLS{
       tuple(path(variants), path(ref))
 
   output:
-      path("*.vcf"), emit: vcf
+      path("*.vcf"), emit: normalized_vcf
   //    path("*.txt"), emit: ids
 
   script:
