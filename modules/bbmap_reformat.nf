@@ -16,6 +16,6 @@ process BBMAP {
     reformat.sh \
     in=${sequence} \
     out=${sequence.baseName}_qc.fasta \
-    maxns=145 addunderscore tossjunk > ${sequence.baseName}.log
+    maxns=580 minavgquality=20 minlength=29000 addunderscore tossjunk > ${sequence.baseName}.log
     """
 }
