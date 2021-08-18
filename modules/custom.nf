@@ -97,7 +97,7 @@ process annotate_mat_peptide {
       mature_peptide_annotation.py \
       --vcf_file ${peptide_vcf}\
       --annotation_file ${genome_gff}\
-      --output_vcf ${peptide_vcf.baseName}.filtered.vcf
+      --output_vcf ${peptide_vcf.baseName}.filtered.annotated.vcf
       """
 }
 
@@ -108,7 +108,7 @@ process processGVCF{
   tag { "ProcessGVCF" }
 
   input:
-      path(variants)
+      path(gvcf)
 
   output:
       path("*.variants.vcf"), emit: vcf
@@ -120,9 +120,9 @@ process processGVCF{
   process_gvcf.py -d ${params.var_MinDepth} \
                         -l ${params.var_MinFreqThreshold} \
                         -u ${params.var_FreqThreshold} \
-                        -m ${variants.baseName}.mask.txt \
-                        -v ${variants.baseName}.variants.vcf \
-                        -c ${variants.baseName}.consensus.vcf ${variants}
+                        -m ${gvcf.baseName}.mask.txt \
+                        -v ${gvcf.baseName}.variants.vcf \
+                        -c ${gvcf.baseName}.consensus.vcf ${gvcf}
   """
 }
 
