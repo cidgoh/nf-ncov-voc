@@ -140,8 +140,8 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT):
         
     #add ao, ro
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ro=' + unknown[1].astype(str) + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ao=' + unknown[4].astype(str) + ';'
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ro=' + unknown[3].astype(str) + ';'
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ao=' + unknown[5].astype(str) + ';'
     
     #add columns copied straight from Zohaib's file
     for column in ['REF','ALT']:
