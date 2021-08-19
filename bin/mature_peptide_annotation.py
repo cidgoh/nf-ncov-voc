@@ -35,7 +35,7 @@ if __name__ == '__main__':
     }
     db = gffutils.create_db(
         args.annotation_file, 'ncov_annotation.db',
-        force=True, merge_strategy="wmerge")
+        force=True, merge_strategy="merge")
     data_vcf = VCF(args.vcf_file)
     data_vcf.add_info_to_header(
         {'ID': 'mat_pep_id', 'Description': 'Mature Peptide ID',
