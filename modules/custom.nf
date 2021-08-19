@@ -16,7 +16,6 @@ process grabIndex {
 }
 
 
-
 process extractMetadata {
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
   //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
@@ -43,7 +42,6 @@ process extractMetadata {
 }
 
 
-
 process tsvTovcf {
 
     tag {"${variants_tsv.baseName.replace(".variants", "")}"}
@@ -60,6 +58,33 @@ process tsvTovcf {
       ivar_variants_to_vcf.py ${variants_tsv} ${variants_tsv.baseName}.vcf
       """
 }
+
+
+process processGVCF{
+  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
+  //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
+
+  tag { "ProcessGVCF" }
+
+  input:
+      path(gvcf)
+
+  output:
+      path("*.variants.vcf"), emit: vcf
+      path("*.consensus.vcf")
+      path("*.txt")
+
+  script:
+  """
+  process_gvcf.py -d ${params.var_MinDepth} \
+  -l ${params.var_MinFreqThreshold} \
+  -u ${params.var_FreqThreshold} \
+  -m ${gvcf.baseName}.mask.txt \
+  -v ${gvcf.baseName}.variants.vcf \
+  -c ${gvcf.baseName}.consensus.vcf ${gvcf}
+  """
+}
+
 
 process tagProblematicSites {
 
@@ -81,6 +106,7 @@ process tagProblematicSites {
       """
 }
 
+
 process annotate_mat_peptide {
 
     tag {"${peptide_vcf.baseName.replace(".variants.filtered.annotated", "")}"}
@@ -90,7 +116,7 @@ process annotate_mat_peptide {
         tuple(path(peptide_vcf), path(genome_gff))
 
     output:
-        path("*.vcf")
+        path("*.vcf"), emit: annotated_vcf
 
     script:
       """
@@ -101,32 +127,31 @@ process annotate_mat_peptide {
       """
 }
 
-process processGVCF{
-  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
-  //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
 
-  tag { "ProcessGVCF" }
+process vcfTogvf{
+  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.gvf", mode: 'copy'
+  //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
+  tag { "VCF2GVF" }
 
   input:
-      path(gvcf)
+      tuple(path(annotated_vcf), path(func_annot), path(clade_def), path(gene_coord))
+      each x
 
   output:
-      path("*.variants.vcf"), emit: vcf
-      path("*.consensus.vcf")
-      path("*.txt")
+      path("*gvf")
 
   script:
   """
-  process_gvcf.py -d ${params.var_MinDepth} \
-                        -l ${params.var_MinFreqThreshold} \
-                        -u ${params.var_FreqThreshold} \
-                        -m ${gvcf.baseName}.mask.txt \
-                        -v ${gvcf.baseName}.variants.vcf \
-                        -c ${gvcf.baseName}.consensus.vcf ${gvcf}
+    vcf2gvf.py --vcffile ${annotated_vcf}\
+    --pokay ${func_annot}\
+    --clades ${clade_def}\
+    --gene_positions ${gene_coord}\
+    --strain ${x}\
+    --outvcf ${annotated_vcf.baseName}.gvf\
+
   """
+
 }
-
-
 
 process vcfTotsv {
 
@@ -143,31 +168,4 @@ process vcfTotsv {
       """
       vcf2tsv.py ${annotated_vcf} ${annotated_vcf.baseName}.tsv
       """
-}
-
-process merge_vcfs {
-  publishDir path: "${params.outdir}/freebayes"
-  //cpus params.cpus.toInteger()
-
-  input:
-  file(vcf) from vcf_ch.collect()
-  file(vcfidx) from vcfidx_ch.collect()
-  file(fasta)
-  file(faidx)
-  file(vcftxt) from vcftxt_ch
-
-  output:
-  file("${params.project}.vcf.gz")
-  file("${params.project}.vcf.gz.tbi")
-
-  script:
-  """
-  gunzip -cd \$(cat $vcftxt) | vcffirstheader | bgzip -c > ${params.project}_dirty.vcf.gz
-  gsort ${params.project}_dirty.vcf.gz $faidx | vcfuniq \
-      | bgzip -c > ${params.project}_dirty_sorted.vcf.gz
-  bcftools norm -c all -f $fasta --multiallelics - --threads ${task.cpus} \
-      --output ${params.project}.vcf.gz --output-type z \
-      ${params.project}_dirty_sorted.vcf.gz
-  tabix -p vcf ${params.project}.vcf.gz
-  """
 }
