@@ -10,6 +10,10 @@ params.refdb = ".github/data/refdb"
 params.ref_gff = ".github/data/features"
 params.prob_sites = ".github/data/problematic_sites"
 params.genome_annotation = ".github/data/genome_annotation"
+params.functional_annotation = ".github/data/functional_annotation"
+params.clade_defining_mutations = ".github/data/clade_defining"
+params.gene_coordinates = ".github/data/gene_coordinates"
+
 
 
 // include modules
@@ -46,10 +50,12 @@ if ( ! params.prefix ) {
 // main workflow
 workflow {
 
-      //Channel.from('B.1.1.7','B.1.351', 'B.1.351.2', 'B.1.351.3', 'P.1', 'P.1.1', 'P.1.2', 'B.1.617.2', 'AY.1', 'AY.2', 'AY.3', 'B.1.525', 'B.1.526', 'B.1.617.1', 'C.37')
+      //Channel.from('B.1.1.7', 'B.1.351', 'B.1.351.2', 'B.1.351.3', 'P.1', 'P.1.1', 'P.1.2', 'P.1.4', 'P.1.6', 'P.1.7', 'B.1.617.2', 'AY.1', 'AY.2', 'AY.3', 'AY.3.1',  'B.1.525', 'B.1.526', 'B.1.617.1', 'C.37')
       //      .set{ch_voc}
-      Channel.from('B.1.351', 'B.1.525')
-            .set{ch_voc}
+      //Channel.from('B.1.351.3', 'B.1.351.2', 'B.1.351', 'AY.3.1', 'AY.3', 'AY.2', 'AY.1', 'B.1.617.2')
+      //      .set{ch_voc}
+      Channel.from('B.1.351.3')
+            .set{ ch_voc }
 
       Channel.fromPath( "$params.seq/*.fasta", checkIfExists: true)
 	         .set{ ch_seq }
@@ -70,11 +76,20 @@ workflow {
             .set{ ch_probvcf }
 
       Channel.fromPath( "$params.genome_annotation/*.gff", checkIfExists: true)
-            .set{ ch_genannot }
+            .set{ ch_geneannot }
+
+      Channel.fromPath( "$params.functional_annotation/*.tsv", checkIfExists: true)
+            .set{ ch_funcannot }
+
+      Channel.fromPath( "$params.clade_defining_mutations/*.tsv", checkIfExists: true)
+            .set{ ch_cladedef }
+
+      Channel.fromPath( "$params.gene_coordinates/*.json", checkIfExists: true)
+            .set{ ch_genecoord }
 
 
    main:
 
        //println("This will call Illumina workflow")
-       ncov_voc(ch_seq, ch_metadata, ch_voc, ch_ref, ch_refgff, ch_reffai, ch_probvcf, ch_genannot)
+       ncov_voc(ch_seq, ch_metadata, ch_voc, ch_ref, ch_refgff, ch_reffai, ch_probvcf, ch_geneannot, ch_funcannot, ch_cladedef, ch_genecoord)
 }
