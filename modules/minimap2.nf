@@ -9,7 +9,7 @@ process MINIMAP2 {
     tag {"${seq.baseName.replace("_qc", "")}"}
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.sorted.bam", mode: 'copy'
 
-    cpus 1
+    cpus 8
 
     input:
         tuple(path(seq),path(ref))
