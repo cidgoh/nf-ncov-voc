@@ -60,11 +60,9 @@ process tsvTovcf {
 }
 
 
-process processGVCF{
-  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
-  //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
-
-  tag { "ProcessGVCF" }
+process processGVCF {
+  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*variants.vcf", mode: 'copy'
+  tag {"${gvcf.baseName}"}
 
   input:
       path(gvcf)
@@ -77,8 +75,8 @@ process processGVCF{
   script:
   """
   process_gvcf.py -d ${params.var_MinDepth} \
-  -l ${params.var_MinFreqThreshold} \
-  -u ${params.var_FreqThreshold} \
+  -l ${params.lower_ambiguityFrequency} \
+  -u ${params.upper_ambiguityFrequency} \
   -m ${gvcf.baseName}.mask.txt \
   -v ${gvcf.baseName}.variants.vcf \
   -c ${gvcf.baseName}.consensus.vcf ${gvcf}
@@ -87,9 +85,8 @@ process processGVCF{
 
 
 process tagProblematicSites {
-
-    tag {"${vcf.baseName.replace(".variants", "")}"}
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
+    tag {"${vcf.baseName.replace(".variants.normalized","")}"}
 
     input:
         tuple(path(vcf), path(prob_vcf))
@@ -109,8 +106,9 @@ process tagProblematicSites {
 
 process annotate_mat_peptide {
 
-    tag {"${peptide_vcf.baseName.replace(".variants.filtered.annotated", "")}"}
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
+    tag {"${peptide_vcf.baseName.replace(".variants.normalized.filtered.SNPEFF_annotated", "")}"}
+
 
     input:
         tuple(path(peptide_vcf), path(genome_gff))
@@ -123,19 +121,19 @@ process annotate_mat_peptide {
       mature_peptide_annotation.py \
       --vcf_file ${peptide_vcf}\
       --annotation_file ${genome_gff}\
-      --output_vcf ${peptide_vcf.baseName}.filtered.annotated.vcf
+      --output_vcf ${peptide_vcf.baseName.replace(".variants.normalized.filtered.SNPEFF_annotated", "")}.annotated.vcf
       """
 }
 
 
 process vcfTogvf{
+
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.gvf", mode: 'copy'
-  //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
-  tag { "VCF2GVF" }
+  tag {"${annotated_vcf.baseName.replace(".annotated", "")}"}
 
   input:
       tuple(path(annotated_vcf), path(func_annot), path(clade_def), path(gene_coord))
-      each x
+
 
   output:
       path("*gvf")
@@ -146,9 +144,8 @@ process vcfTogvf{
     --pokay ${func_annot}\
     --clades ${clade_def}\
     --gene_positions ${gene_coord}\
-    --strain ${x}\
-    --outvcf ${annotated_vcf.baseName}.gvf\
-
+    --strain ${annotated_vcf.baseName.replace(".annotated", "")}\
+    --outvcf ${annotated_vcf.baseName}.gvf
   """
 
 }
