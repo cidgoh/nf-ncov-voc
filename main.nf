@@ -3,16 +3,16 @@
 // enable dsl2
 nextflow.preview.dsl = 2
 
-params.seq = ".github/data/sequence"
-params.meta = ".github/data/metadata"
-params.voc = ".github/data/VOC"
-params.refdb = ".github/data/refdb"
-params.ref_gff = ".github/data/features"
-params.prob_sites = ".github/data/problematic_sites"
-params.genome_annotation = ".github/data/genome_annotation"
-params.functional_annotation = ".github/data/functional_annotation"
-params.clade_defining_mutations = ".github/data/clade_defining"
-params.gene_coordinates = ".github/data/gene_coordinates"
+params.seq = "$baseDir/.github/data/sequence"
+params.meta = "$baseDir/.github/data/metadata"
+params.voc = "$baseDir/.github/data/VOC"
+params.refdb = "$baseDir/.github/data/refdb"
+params.ref_gff = "$baseDir/.github/data/features"
+params.prob_sites = "$baseDir/.github/data/problematic_sites"
+params.genome_annotation = "$baseDir/.github/data/genome_annotation"
+params.functional_annotation = "$baseDir/.github/data/functional_annotation"
+params.clade_defining_mutations = "$baseDir/.github/data/clade_defining"
+params.gene_coordinates = "$baseDir/.github/data/gene_coordinates"
 
 
 
