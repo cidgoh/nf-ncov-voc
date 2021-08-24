@@ -1,15 +1,13 @@
 process SNPEFF {
 
-    tag {"${filtered_vcf.baseName.replace(".variants.filtered", "")}"}
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.annotated.vcf", mode: 'copy'
-
-    cpus 1
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
+    tag {"${filtered_vcf.baseName.replace(".variants.normalized.filtered", "")}"}
 
     input:
         path(filtered_vcf)
 
     output:
-        path("*.annotated.vcf"), emit: peptide_vcf
+        path("*.vcf"), emit: peptide_vcf
 
     script:
       """
@@ -20,6 +18,6 @@ process SNPEFF {
       -noShiftHgvs \
       -sequenceOntology \
       ${filtered_vcf} \
-      > ${filtered_vcf.baseName}.annotated.vcf
+      > ${filtered_vcf.baseName}.SNPEFF_annotated.vcf
       """
 }
