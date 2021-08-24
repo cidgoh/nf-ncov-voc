@@ -9,7 +9,7 @@ import argparse
 def parse_args(args=None):
     description = 'Convert iVar variants tsv file to vcf format.'
     epilog = """
-                Example usage: python ivar_variants_to_vcf.py <FILE_IN> 
+                Example usage: python ivar_variants_to_vcf.py <FILE_IN>
                 <FILE_OUT>
             """
 
@@ -52,6 +52,9 @@ def ivar_variants_to_vcf(file_in, file_out, pass_only=False,
               '##contig=<ID=MN908947.3,length=29903>\n'
               '##INFO=<ID=DP,Number=1,Type=Integer,'
               'Description="Total read depth at the locus">\n'
+              '##INFO=<ID=AO,Number=1,Type=Integer,'
+              'Description="Count'
+              ' of full observations of this alternate haplotype.">\n'
               '##FILTER=<ID=PASS,Description="Result of p-value <= '
               '0.05">\n'
               '##FILTER=<ID=FAIL,Description="Result of p-value > '
@@ -113,6 +116,7 @@ def ivar_variants_to_vcf(file_in, file_out, pass_only=False,
                 else:
                     filter_flag = 'FAIL'
                 info = 'DP=' + line[11]
+                info = info + ';AO=' +line[7]
                 info_format = \
                     'GT:RO:REF_RV:REF_QUAL:AO:ALT_RV' \
                     ':ALT_QUAL:AF'
