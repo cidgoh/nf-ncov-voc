@@ -7,15 +7,12 @@ Created on Mon Aug  9 10:47:11 2021
 """
 
 '''
-This script converts GVF to a TSV, for conversion to an HTML case report.
+This script converts GVF to a TSV, for later conversion to an HTML case report.
 '''
 
 
 import argparse
 import pandas as pd
-import os
-import re
-
 
 
 def parse_args():
@@ -56,6 +53,17 @@ def gvf2tsv(gvf):
     
     #drop unwanted columns
     df = df.drop(labels=['source', 'seqid', 'type', 'end', 'strand', 'score', 'phase', 'id'], axis=1)
+    
+    #reorder columns
+    cols = ['name', 'nt_name', 'aa_name', 'start', 'vcf_gene', 'chrom_region',
+       'mutation_type', 'dp', 'ps_filter', 'ps_exc', 'mat_pep_id',
+       'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
+       'variant_seq', 'viral_lineage', 'function_category', 'citation',
+       'comb_mutation', 'function_description', 'heterozygosity',
+       'clade_defining', 'who_label', 'variant', 'variant_status',
+       'voi_designation_date', 'voc_designation_date',
+       'alert_designation_date']
+    df = df[cols]
 
     return df
 
