@@ -16,7 +16,6 @@ include { vcfTogvf             } from '../modules/custom.nf'
 
 workflow ncov_voc_user {
     take:
-      ch_user_vcf
       ch_probvcf
       ch_geneannot
       ch_funcannot
@@ -28,17 +27,21 @@ workflow ncov_voc_user {
       //SEQKIT(extractMetadata.out.ids.combine(ch_seq))
       //BBMAP(SEQKIT.out.fasta)
 
-
-
       if(params.tsv){
+        Channel.fromPath( "$params.user_data/*.tsv", checkIfExists: true)
+              .set{ ch_user_tsv }
 
-        tsvTovcf(ch_user_vcf)
+        tsvTovcf(ch_user_tsv)
         tagProblematicSites(tsvTovcf.out.vcf.combine(ch_probvcf))
       }
-      else{
 
+      else if(params.vcf){
+        Channel.fromPath( "$params.user_data/*.vcf", checkIfExists: true)
+              .set{ ch_user_vcf }
+        
         tagProblematicSites(ch_user_vcf.combine(ch_probvcf))
       }
+
       SNPEFF(tagProblematicSites.out.filtered_vcf)
       annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
       vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_cladedef).combine(ch_genecoord))
