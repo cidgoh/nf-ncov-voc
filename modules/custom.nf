@@ -32,18 +32,20 @@ process extractMetadata {
       path("*.txt"), emit: ids
 
   script:
+
   if( params.gisaid )
     """
-    extract_metadata.py
-    --gisaid True \
+    extract_metadata.py \
     --table ${metadata} \
     --voc ${x} \
+    --gisaid True \
     --startdate ${params.startdate} \
     --enddate ${params.enddate}
     """
+
   else
     """
-    extract_metadata.py
+    extract_metadata.py \
     --table ${metadata} \
     --voc ${x} \
     --startdate ${params.startdate} \
