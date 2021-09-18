@@ -21,6 +21,7 @@ import glob
 import os
 import numpy as np
 import json
+from natsort import index_natsorted
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -71,13 +72,23 @@ def map_pos_to_gene(pos, GENE_POSITIONS_DICT):
 gvf_columns = ['#seqid','#source','#type','#start','#end','#score','#strand','#phase','#attributes']
 vcf_colnames = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO', 'FORMAT', 'unknown']
 
-def vcftogvf(var_data, strain, GENE_POSITIONS_DICT):
+def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
      
     df = pd.read_csv(var_data, sep='\t', names=vcf_colnames)    
     df = df[~df['#CHROM'].str.contains("#")] #remove pragmas
     df = df.reset_index(drop=True) #restart index from 0
 
     new_df = pd.DataFrame(index=range(0,len(df)),columns=gvf_columns)
+
+    #fill in first 8 GVF columns
+    new_df['#seqid'] = df['#CHROM']
+    new_df['#source'] = '.'
+    new_df['#type'] = '.' #info['type']
+    new_df['#start'] = df['POS']
+    new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() - 1).astype(str)  #this needs fixing
+    new_df['#score'] = '.'
+    new_df['#strand'] = '+'
+    new_df['#phase'] = '.'
 
     #parse INFO column
     
@@ -103,8 +114,34 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT):
     #use nucleotide name where protein name doesn't exist (for 'Name' attribute)
     Names = hgvs[0].str[:-1]
     Names[~Names.str.contains("p.")] =  hgvs_nucleotide #fill in empty protein name spaces with nucleotide names ("c."...)
+    new_df["Names"] = Names
     
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'Name=' + Names + ';'
+    
+    #split multi-aa names from the vcf into single-aa names (multi-row)
+    multiaanames = pd.read_csv(names_to_split, sep='\t', header=0) #load names_to_split spreadsheet
+    names_to_separate = np.intersect1d(multiaanames, new_df['Names'].str[2:]) #multi-aa names that are in the gvf (list form)
+    #add new columns to the gvf
+    new_df["multi_name"] = ''
+    new_df["multiaa_comb_mutation"] = ''
+    #now split the rows apart in-place
+    for multname in names_to_separate:
+        splits = multiaanames[multiaanames['name']==multname]['split_into'].copy() #relevant part of 'split_into' column
+        splits_list = splits.str.split(pat=',').tolist()[0] #list of names to split into
+        split_index = new_df.index.get_loc(new_df.index[new_df['Names'].str[2:]==multname][0])  #new_df index containing multi-aa name
+        seprows = new_df.loc[[split_index]].copy() #copy of rows to alter
+        new_df = new_df.drop(split_index) #delete original combined mutation rows
+    
+        i=0
+        for sepname in splits_list:
+            seprows['Names'] = "p." + sepname #single-aa name
+            seprows["multi_name"] = multname #original multi-aa name
+            seprows["multiaa_comb_mutation"] = splits.tolist()[0].replace(sepname,'').replace(',,',',').strip(',') #other single-aa names corresponding to this multi-aa mutation
+            new_df = pd.concat([new_df.iloc[:split_index + i], seprows, new_df.iloc[split_index + i:]]).reset_index(drop=True)
+            i += 1
+
+
+    #add attributes
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'Name=' + new_df["Names"] + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'nt_name=' + hgvs_nucleotide + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'aa_name=' + hgvs_protein + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'vcf_gene=' + eff_info[5] + ';' #gene names
@@ -146,62 +183,34 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT):
             key = 'Variant_seq'
         new_df['#attributes'] = new_df['#attributes'].astype(str) + key + '=' + df[column].astype(str) + ';'
 
-    #add strain name
+    #add strain name, multi-aa notes
     new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + strain + ';'
+    new_df['#attributes'] = new_df['#attributes'] + "multi_name=" + new_df["multi_name"] + ';'
+    new_df['#attributes'] = new_df['#attributes'] + "multiaa_comb_mutation=" + new_df["multiaa_comb_mutation"] + ';'    
     #remove starting NaN; leave trailing ';'
     new_df['#attributes'] = new_df['#attributes'].str[3:]
-    
-    #fill in other GVF columns
-    new_df['#seqid'] = df['#CHROM']
-    new_df['#source'] = '.'
-    new_df['#type'] = '.' #info['type']
-    new_df['#start'] = df['POS']
-    new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() - 1).astype(str)  #this needs fixing
-    new_df['#score'] = '.'
-    new_df['#strand'] = '+'
-    new_df['#phase'] = '.'
-    
+      
     new_df = new_df[gvf_columns] #only keep the columns needed for a gvf file
-
+    new_df.to_csv('new_df.tsv', sep='\t', index=False, header=False)
     return new_df
 
 
 
 #takes 4 arguments: the output df of vcftogvf.py, Anoosha's annotation file from Pokay, the clade defining mutations tsv, the strain name, and the names_to_split tsv.
-def add_functions(gvf, annotation_file, clade_file, strain, names_to_split):
-
-    #load files into Pandas dataframes
-    df = pd.read_csv(annotation_file, sep='\t', header=0) #load functional annotations spreadsheet
-    
+def add_functions(gvf, annotation_file, clade_file, strain):
+        
     attributes = gvf["#attributes"].str.split(pat=';').apply(pd.Series)
     hgvs_protein = attributes[0].str.split(pat='=').apply(pd.Series)[1] #remember this includes nucleotide names where there are no protein names
     hgvs_nucleotide = attributes[1].str.split(pat='=').apply(pd.Series)[1]
     gvf["mutation"] = hgvs_protein.str[2:] #drop the prefix
-    '''
-    #split multi-aa names from the vcf into single-aa names (multi-row)
-    multiaanames = pd.read_csv(names_to_split, sep='\t', header=0) #load names_to_split spreadsheet
-    #find those names that are in the gvf (list form)
-    names_to_separate = np.intersect1d(multiaanames, gvf["mutation"]) 
-    for multname in names_to_separate:
-        splits = multiaanames[multiaanames['name']==multname]['split_into'].copy()
-        split_index = multiaanames.index[multiaanames['name']==multname].tolist()
-        splits_list = splits.str.split(pat=',').tolist()[0] #list of names to split into
-        for sepname in splits_list:
-            seprows = gvf[gvf['mutation']==multname].copy() #copy of rows to alter
-            seprows['mutation'] = sepname #single-aa name
-            seprows["multi_name"] = multname #original multi-aa name
-            seprows["multiaa_comb_mutation"] = splits.tolist()[0].replace(sepname,'').replace(',,',',').strip(',') #other single-aa names corresponding to this multi-aa mutation
-            gvf = gvf.append(seprows, ignore_index=True) #add extras to the end
-        #delete original combined mutation rows
-        gvf = gvf.drop(split_index)
-    #resort gvf by 'start' value, then reindex
-    gvf = gvf.sort_values(by=['#start'])
-    print(gvf)
-    '''
+    
     #merge annotated vcf and functional annotation files by 'mutation' column in the gvf
+    df = pd.read_csv(annotation_file, sep='\t', header=0) #load functional annotations spreadsheet
+   
     for column in df.columns:
         df[column] = df[column].str.lstrip()
     merged_df = pd.merge(df, gvf, on=['mutation'], how='right') #add functional annotations
+    
     
     #collect all mutation groups (including reference mutation) in a column, sorted alphabetically
     #this is more roundabout than it needs to be; streamline with grouby() later
@@ -318,16 +327,16 @@ if __name__ == '__main__':
     print("Processing: " + file)
         
     #create gvf from annotated vcf (ignoring pragmas for now)
-    gvf = vcftogvf(file, args.strain, GENE_POSITIONS_DICT)
+    gvf = vcftogvf(file, args.strain, GENE_POSITIONS_DICT, args.names_to_split)
     #add functional annotations
     if args.names:
         annotated_gvf, leftover_names, mutations, \
         leftover_clade_names = add_functions(gvf,
                                              annotation_file,
-                                             clade_file, args.strain, args.names_to_split)
+                                             clade_file, args.strain)
     else:
         annotated_gvf = add_functions(gvf, annotation_file,
-                                      clade_file, args.strain, args.names_to_split)
+                                      clade_file, args.strain)
     #add pragmas to df, then save to .gvf
     annotated_gvf = pd.DataFrame(np.vstack([annotated_gvf.columns, annotated_gvf])) #columns are now 0, 1, ...
     final_gvf = pragmas.append(annotated_gvf)
