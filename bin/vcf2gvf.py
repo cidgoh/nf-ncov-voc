@@ -185,13 +185,13 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
 
     #add strain name, multi-aa notes
     new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + strain + ';'
-    new_df['#attributes'] = new_df['#attributes'] + "multi_name=" + new_df["multi_name"] + ';'
+    new_df['#attributes'] = new_df['#attributes'] + "multi_aa_name=" + new_df["multi_name"] + ';'
     new_df['#attributes'] = new_df['#attributes'] + "multiaa_comb_mutation=" + new_df["multiaa_comb_mutation"] + ';'    
     #remove starting NaN; leave trailing ';'
     new_df['#attributes'] = new_df['#attributes'].str[3:]
       
-    new_df = new_df[gvf_columns] #only keep the columns needed for a gvf file
-    new_df.to_csv('new_df.tsv', sep='\t', index=False, header=False)
+    new_df = new_df[gvf_columns + ['multiaa_comb_mutation']] #only keep the columns needed for a gvf file, plus multiaa_comb_mutation to add to comb_mutation later
+
     return new_df
 
 
@@ -214,7 +214,7 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     
     #collect all mutation groups (including reference mutation) in a column, sorted alphabetically
     #this is more roundabout than it needs to be; streamline with grouby() later
-    merged_df["mutation_group"] = merged_df["comb_mutation"].astype(str) + ", '" + merged_df["mutation"].astype(str) + "'"
+    merged_df["mutation_group"] = merged_df["comb_mutation"].astype(str) + ", '" + merged_df['multiaa_comb_mutation'].astype(str) + ", '" + merged_df["mutation"].astype(str) + "'"
     mutation_groups = merged_df["mutation_group"].str.split(pat=',').apply(pd.Series)
     mutation_groups = mutation_groups.apply(lambda s:s.str.replace("'", ""))
     mutation_groups = mutation_groups.apply(lambda s:s.str.replace(" ", ""))
