@@ -105,7 +105,10 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     hgvs = eff_info[3].str.rsplit(pat='c.').apply(pd.Series)
     hgvs_protein = hgvs[0].str[:-1]
     hgvs_nucleotide = 'c.' + hgvs[1]
-
+    
+    new_df['nt_name'] = hgvs_nucleotide
+    new_df['aa_name'] = hgvs_protein
+    
     #change nucleotide names of the form "c.C*4378A" to c.C4378AN; change vcf_gene to "intergenic" here
     asterisk_mask = hgvs_nucleotide.str.contains('\*')
     hgvs_nucleotide[asterisk_mask] = 'c.' + df['REF'] + df['POS'] + df['ALT']
@@ -114,42 +117,16 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     #use nucleotide name where protein name doesn't exist (for 'Name' attribute)
     Names = hgvs[0].str[:-1]
     Names[~Names.str.contains("p.")] =  hgvs_nucleotide #fill in empty protein name spaces with nucleotide names ("c."...)
+
     new_df["Names"] = Names
     
+    new_df['vcf_gene'] = eff_info[5]
+    new_df['mutation_type'] = eff_info[1]
     
-    #split multi-aa names from the vcf into single-aa names (multi-row)
-    multiaanames = pd.read_csv(names_to_split, sep='\t', header=0) #load names_to_split spreadsheet
-    names_to_separate = np.intersect1d(multiaanames, new_df['Names'].str[2:]) #multi-aa names that are in the gvf (list form)
-    #add new columns to the gvf
     new_df["multi_name"] = ''
     new_df["multiaa_comb_mutation"] = ''
-    #now split the rows apart in-place
-    for multname in names_to_separate:
-        splits = multiaanames[multiaanames['name']==multname]['split_into'].copy() #relevant part of 'split_into' column
-        splits_list = splits.str.split(pat=',').tolist()[0] #list of names to split into
-        split_index = new_df.index.get_loc(new_df.index[new_df['Names'].str[2:]==multname][0])  #new_df index containing multi-aa name
-        seprows = new_df.loc[[split_index]].copy() #copy of rows to alter
-        new_df = new_df.drop(split_index) #delete original combined mutation rows
     
-        i=0
-        for sepname in splits_list:
-            seprows['Names'] = "p." + sepname #single-aa name
-            seprows["multi_name"] = multname #original multi-aa name
-            seprows["multiaa_comb_mutation"] = splits.tolist()[0].replace(sepname,'').replace(',,',',').strip(',') #other single-aa names corresponding to this multi-aa mutation
-            new_df = pd.concat([new_df.iloc[:split_index + i], seprows, new_df.iloc[split_index + i:]]).reset_index(drop=True)
-            i += 1
-
-
-    #add attributes
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'Name=' + new_df["Names"] + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'nt_name=' + hgvs_nucleotide + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'aa_name=' + hgvs_protein + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'vcf_gene=' + eff_info[5] + ';' #gene names
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'chrom_region=' + map_pos_to_gene(df[
-                                                                  'POS'].astype(int), GENE_POSITIONS_DICT) + ';' #gene names including IGRs/UTRs
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + eff_info[1] + ';' #mutation type 
-
+    new_df['#attributes'] = 'chrom_region=' + map_pos_to_gene(df['POS'].astype(int), GENE_POSITIONS_DICT) + ';' #gene names including IGRs/UTRs
 
     #make 'INFO' column easier to extract attributes from
     info = df['INFO'].str.split(pat=';').apply(pd.Series) #split at ;, form dataframe
@@ -164,7 +141,7 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     for column in ['ps_filter', 'ps_exc', 'mat_pep_id', 'mat_pep_desc', 'mat_pep_acc']:
         info[column] = info[column].fillna('') #drop nans if they exist
         new_df['#attributes'] = new_df['#attributes'].astype(str) + column + '=' + info[column].astype(str) + ';'
-        
+       
     #add ro, ao, dp
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ro=' + unknown[3].astype(str) + ';'
@@ -183,15 +160,49 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
             key = 'Variant_seq'
         new_df['#attributes'] = new_df['#attributes'].astype(str) + key + '=' + df[column].astype(str) + ';'
 
+
+    #split multi-aa names from the vcf into single-aa names (multi-row)
+    multiaanames = pd.read_csv(names_to_split, sep='\t', header=0) #load names_to_split spreadsheet
+    names_to_separate = np.intersect1d(multiaanames, new_df['Names'].str[2:]) #multi-aa names that are in the gvf (list form)
+    #now split the rows apart in-place
+    for multname in names_to_separate:
+        splits = multiaanames[multiaanames['name']==multname]['split_into'].copy() #relevant part of 'split_into' column
+        splits_list_1 = splits.str.split(pat=',').tolist()[0] #list of names to split into
+        splits_list = [s.replace("'", '') for s in splits_list_1]
+        split_index = new_df.index.get_loc(new_df.index[new_df['Names'].str[2:]==multname][0])  #new_df index containing multi-aa name
+        seprows = new_df.loc[[split_index]].copy() #copy of rows to alter
+        print(seprows)
+        new_df = new_df.drop(split_index) #delete original combined mutation rows
+    
+        i=0
+        for sepname in splits_list:
+            seprows['Names'] = "p." + sepname #single-aa name
+            seprows["multi_name"] = multname #original multi-aa name
+            seprows["multiaa_comb_mutation"] = splits.tolist()[0].replace("'" + sepname + "'",'').replace(",,",',').strip(',') #other single-aa names corresponding to this multi-aa mutation
+            new_df = pd.concat([new_df.loc[:split_index + i], seprows, new_df.loc[split_index + i:]]).reset_index(drop=True)
+            print(new_df)
+            i += 1
+
+    #add attributes
+    new_df['#attributes'] = 'Name=' + new_df["Names"] + ';' + new_df['#attributes'].astype(str)
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'nt_name=' + new_df['nt_name'] + ';'
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'aa_name=' + new_df['aa_name'] + ';'
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'vcf_gene=' + new_df['vcf_gene'] + ';' #gene names
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + new_df['mutation_type'] + ';' #mutation type 
+
+    print(new_df['#start']) 
+    print(new_df["Names"]) 
+    print(new_df['#attributes']) 
+
+
     #add strain name, multi-aa notes
     new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + strain + ';'
     new_df['#attributes'] = new_df['#attributes'] + "multi_aa_name=" + new_df["multi_name"] + ';'
     new_df['#attributes'] = new_df['#attributes'] + "multiaa_comb_mutation=" + new_df["multiaa_comb_mutation"] + ';'    
-    #remove starting NaN; leave trailing ';'
-    new_df['#attributes'] = new_df['#attributes'].str[3:]
       
     new_df = new_df[gvf_columns + ['multiaa_comb_mutation']] #only keep the columns needed for a gvf file, plus multiaa_comb_mutation to add to comb_mutation later
-
+    print("DONE")
+    new_df.to_csv('new_df.tsv', sep='\t', index=False, header=False)
     return new_df
 
 
@@ -214,7 +225,10 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     
     #collect all mutation groups (including reference mutation) in a column, sorted alphabetically
     #this is more roundabout than it needs to be; streamline with grouby() later
-    merged_df["mutation_group"] = merged_df["comb_mutation"].astype(str) + ", '" + merged_df['multiaa_comb_mutation'].astype(str) + ", '" + merged_df["mutation"].astype(str) + "'"
+    merged_df["mutation_group"] = merged_df["comb_mutation"].astype(str) + ", '" + merged_df["mutation"].astype(str) + "'" + ",'D3Y'" + "," + merged_df['multiaa_comb_mutation'].astype(str)
+    print(merged_df["mutation_group"])
+    print(merged_df['multiaa_comb_mutation'])
+    merged_df["mutation_group"] = merged_df["comb_mutation"].astype(str) + ", '" + merged_df["mutation"].astype(str) + "'," + merged_df['multiaa_comb_mutation'].astype(str)
     mutation_groups = merged_df["mutation_group"].str.split(pat=',').apply(pd.Series)
     mutation_groups = mutation_groups.apply(lambda s:s.str.replace("'", ""))
     mutation_groups = mutation_groups.apply(lambda s:s.str.replace(" ", ""))
