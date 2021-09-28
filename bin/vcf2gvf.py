@@ -216,20 +216,21 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     
     #collect all mutation groups (including reference mutation) in a column, sorted alphabetically
     #this is more roundabout than it needs to be; streamline with grouby() later
-    merged_df["mutation_group"] = merged_df["comb_mutation"].astype(str) + ", '" + merged_df["mutation"].astype(str) + "'"
-    merged_df["mutation_group_combadded"] = merged_df["comb_mutation"].astype(str) + ", '" + merged_df["mutation"].astype(str) + "'," + merged_df['multiaa_comb_mutation'].astype(str)
+    merged_df["mutation_group"] = merged_df["comb_mutation"].astype(str) + ", '" + merged_df["mutation"].astype(str) + "', " + merged_df['multiaa_comb_mutation'].astype(str)
+    merged_df["mutation_group"] = merged_df["mutation_group"].str.replace("nan, ", "")
+    merged_df["mutation_group"] = merged_df["mutation_group"].str.rstrip(' ').str.rstrip(',')
+
+    #separate the mutation_group column into its own df with one mutation per column
     mutation_groups = merged_df["mutation_group"].str.split(pat=',').apply(pd.Series)
     mutation_groups = mutation_groups.apply(lambda s:s.str.replace("'", ""))
     mutation_groups = mutation_groups.apply(lambda s:s.str.replace(" ", ""))
-    mutation_groups = mutation_groups.transpose() 
+    mutation_groups = mutation_groups.transpose() #now each mutation has a column instead
+    #sort each column alphabetically
     sorted_df = mutation_groups
+
     for column in mutation_groups.columns:
         sorted_df[column] = mutation_groups.sort_values(by=column, ignore_index=True)[column]
     sorted_df = sorted_df.transpose()
-    
-    #splitnames_df = merged_df[['mutation_group', 'multiaa_comb_mutation', 'comb_mutation','mutation_group_combadded']] #only keep the columns needed
-    #splitnames_df.to_csv('splitnames_df.tsv', sep='\t', index=False, header=True)
-
     
     #since they're sorted, put everything back into a single cell, don't care about dropna
     df3 = sorted_df.apply(lambda x :','.join(x.astype(str)),axis=1)
