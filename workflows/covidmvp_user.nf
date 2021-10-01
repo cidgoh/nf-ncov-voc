@@ -1,8 +1,6 @@
 #!/usr/bin/env nextflow
 
-// enable dsl2
-nextflow.preview.dsl = 2
-//params.ref = ".github/data/referencedb"
+nextflow.enable.dsl = 2
 
 // import modules
 
