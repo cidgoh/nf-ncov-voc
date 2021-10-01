@@ -21,7 +21,6 @@ import glob
 import os
 import numpy as np
 import json
-from natsort import index_natsorted
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -358,23 +357,20 @@ if __name__ == '__main__':
         unmatched_clade_names = unmatched_clade_names.append(leftover_clade_names)
         
         #save unmatched names (in tsv but not in functional_annotations) across all strains to a .tsv file
-        leftover_names_filepath = "_leftover_names.tsv"
+        leftover_names_filepath = args.strain + "_leftover_names.tsv"
         leftover_df.to_csv(leftover_names_filepath, sep='\t', index=False)
         print("")
         print("Mutation names not found in functional annotations file saved to " + leftover_names_filepath)
     
-        #save unmatched clade-defining mutation names across all strains to a .tsv file
-        leftover_clade_names_filepath = "leftover_clade_defining_names.tsv"
+        #save unmatched clade-defining mutation names to a .tsv file
+        leftover_clade_names_filepath = args.strain + "_leftover_clade_defining_names.tsv"
         unmatched_clade_names.to_csv(leftover_clade_names_filepath, sep='\t', index=False)
-        print("Clade-defining mutation names not found in the annotated VCFs saved to " + leftover_clade_names_filepath)
+        print("Clade-defining mutation names not found in the annotated VCF saved to " + leftover_clade_names_filepath)
 
         #print number of unique mutations across all strains    
         flattened = [val for sublist in all_strains_mutations for val in sublist]
         arr = np.array(flattened)
-        if args.vcffile:
-            print("# unique mutations in " + strain + " VCF file: ", np.unique(arr).shape[0])
-        if args.vcfdir:
-            print("# unique mutations across all processed VCFs: ", np.unique(arr).shape[0])
+        print("# unique mutations in " + args.strain + " VCF file: ", np.unique(arr).shape[0])
 
     print("")        
     print("Processing complete.")
