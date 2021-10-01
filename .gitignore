@@ -1,7 +1,16 @@
 .nextflow*
+<<<<<<< Updated upstream
 work/*
 results/*
 .idea/*
 .github/data/metadata
 .github/data/sequence
 .DS_store
+=======
+.github/data/metadata*
+.github/data/sequence*
+results*
+work/*
+*.DS_Store
+.idea/*
+>>>>>>> Stashed changes
