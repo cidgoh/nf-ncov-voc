@@ -1,7 +1,9 @@
 process FREEBAYES {
 
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.[gvcf,vcf]", mode: 'copy'
-    tag {"${bam.baseName.replace(".sorted", "")}"}
+    tag {"${bam.baseName}"}
+
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.gvcf", mode: 'copy'
+
     cpus 1
 
     input:
@@ -12,6 +14,22 @@ process FREEBAYES {
     path("*.gvcf"), emit: gvcf
 
     script:
+      if( params.single_genome ){
+        """
+        freebayes \
+        -p 1 \
+        -f ${ref} \
+        -F 0.2 \
+        -C 1 \
+        --pooled-continuous \
+        --min-coverage 1 \
+        ${bam} |
+        sed s/QR,Number=1,Type=Integer/QR,Number=1,Type=Float/ > ${bam.baseName}.gvcf
+        """
+      }
+
+
+      else{
         """
         freebayes \
         -p 1 \
@@ -22,6 +40,10 @@ process FREEBAYES {
         --min-coverage ${params.var_MinDepth} \
         --limit-coverage ${params.var_downsample} \
         ${bam} |
-        sed s/QR,Number=1,Type=Integer/QR,Number=1,Type=Float/ > ${bam.baseName.replace(".sorted","")}.gvcf
+        sed s/QR,Number=1,Type=Integer/QR,Number=1,Type=Float/ > ${bam.baseName}.gvcf
+
         """
+      }
+
+
 }
