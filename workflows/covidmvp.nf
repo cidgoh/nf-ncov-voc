@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 
 // enable dsl2
-nextflow.preview.dsl = 2
+nextflow.enable.dsl = 2
 //params.ref = ".github/data/referencedb"
 
 // import modules
@@ -10,14 +10,13 @@ include { grabIndex            } from '../modules/custom.nf'
 include { BWAINDEX             } from '../modules/bwaindex.nf'
 include { BBMAP                } from  '../modules/bbmap_reformat.nf'
 include { extractMetadata      } from '../modules/custom.nf'
-include { processGVCF          } from '../modules/custom.nf'
+include { SEQKIT               } from '../modules/seqkit.nf'
 include { BWAMEM               } from '../modules/bwamem.nf'
 include { MINIMAP2             } from '../modules/minimap2.nf'
-include { IVAR                 } from '../modules/ivar.nf'
 include { FREEBAYES            } from '../modules/freebayes.nf'
-include { SEQTK                } from '../modules/seqtk.nf'
-include { SEQKIT               } from '../modules/seqkit.nf'
+include { processGVCF          } from '../modules/custom.nf'
 include { BCFTOOLS             } from '../modules/bcftools.nf'
+include { IVAR                 } from '../modules/ivar.nf'
 include { tsvTovcf             } from '../modules/custom.nf'
 include { SNPEFF               } from '../modules/snpeff.nf'
 include { tagProblematicSites  } from '../modules/custom.nf'
@@ -40,9 +39,16 @@ workflow ncov_voc {
       ch_genecoord
 
     main:
-      extractMetadata(ch_metadata, ch_voc)
-      SEQKIT(extractMetadata.out.ids.combine(ch_seq))
-      BBMAP(SEQKIT.out.fasta)
+      if(!params.single_genome){
+        extractMetadata(ch_metadata, ch_voc)
+        SEQKIT(extractMetadata.out.ids.combine(ch_seq))
+
+        BBMAP(SEQKIT.out.fasta)
+      }
+      else{
+        BBMAP(ch_seq)
+      }
+
       if (params.bwa){
         if ( params.bwa_index ){
         grabIndex("${params.bwa_index}")
