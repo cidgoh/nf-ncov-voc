@@ -351,14 +351,13 @@ if __name__ == '__main__':
     print("")
     final_gvf.to_csv(filepath, sep='\t', index=False, header=False)
     
-    
     #get name troubleshooting reports
     if args.names:        
         all_strains_mutations.append(mutations)
         leftover_df = leftover_df.append(leftover_names)
         unmatched_clade_names = unmatched_clade_names.append(leftover_clade_names)
         
-        #save unmatched names (in tsv but not in Pfunctional_annotations) across all strains to a .tsv file
+        #save unmatched names (in tsv but not in functional_annotations) across all strains to a .tsv file
         leftover_names_filepath = "_leftover_names.tsv"
         leftover_df.to_csv(leftover_names_filepath, sep='\t', index=False)
         print("")
