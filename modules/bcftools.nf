@@ -1,6 +1,6 @@
 process BCFTOOLS{
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
-  tag {"${variants.baseName.replace("variants", "")}"}
+  tag {"${variants.baseName}"}
 
   input:
       tuple(path(variants), path(ref))

@@ -1,16 +1,12 @@
 process SEQKIT {
-  //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
 
-  tag { "${ids.baseName}" }
+  tag { "${ids.Name}" }
 
   input:
       tuple(path(ids),path(sequence))
-      //path(sequence)
-      //each x
 
   output:
-      //path("*.tsv")
       path("*.fasta"), emit: fasta
 
   script:
