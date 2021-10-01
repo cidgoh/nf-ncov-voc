@@ -1,7 +1,7 @@
 
 process grabIndex {
 
-    tag { "Grab_Covid-19_index" }
+    tag { "grabing_SARS-CoV-2_index" }
 
     input:
       path(index_folder)
@@ -17,14 +17,12 @@ process grabIndex {
 
 
 process extractMetadata {
-  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
-  //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
+  tag { "${x}.tsv" }
 
-  tag { "${x}" }
+  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
 
   input:
       path(metadata)
-      //path(sequence)
       each x
 
   output:
@@ -57,7 +55,8 @@ process extractMetadata {
 
 process tsvTovcf {
 
-    tag {"${variants_tsv.baseName.replace(".variants", "")}"}
+    tag {"${variants_tsv.baseName}"}
+
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
 
     input:
@@ -68,14 +67,16 @@ process tsvTovcf {
 
     script:
       """
-      ivar_variants_to_vcf.py ${variants_tsv} ${variants_tsv.baseName}.vcf
+      ivar_variants_to_vcf.py ${variants_tsv} ${variants_tsv}.vcf
       """
 }
 
 
 process processGVCF {
-  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*variants.vcf", mode: 'copy'
+
   tag {"${gvcf.baseName}"}
+
+  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*variants.vcf", mode: 'copy'
 
   input:
       path(gvcf)
@@ -86,20 +87,33 @@ process processGVCF {
       path("*.txt")
 
   script:
-  """
-  process_gvcf.py -d ${params.var_MinDepth} \
-  -l ${params.lower_ambiguityFrequency} \
-  -u ${params.upper_ambiguityFrequency} \
-  -m ${gvcf.baseName}.mask.txt \
-  -v ${gvcf.baseName}.variants.vcf \
-  -c ${gvcf.baseName}.consensus.vcf ${gvcf}
-  """
+    if( params.single_genome ){
+      """
+      process_gvcf.py -d 1 \
+      -l 0 \
+      -u 1 \
+      -m ${gvcf.baseName}.mask.txt \
+      -v ${gvcf.baseName}.variants.vcf \
+      -c ${gvcf.baseName}.consensus.vcf ${gvcf}
+      """
+    }
+    else{
+      """
+      process_gvcf.py -d ${params.var_MinDepth} \
+      -l ${params.lower_ambiguityFrequency} \
+      -u ${params.upper_ambiguityFrequency} \
+      -m ${gvcf.baseName}.mask.txt \
+      -v ${gvcf.baseName}.variants.vcf \
+      -c ${gvcf.baseName}.consensus.vcf ${gvcf}
+      """
+    }
 }
 
 
 process tagProblematicSites {
+    tag {"${vcf.baseName}"}
+
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
-    tag {"${vcf.baseName.replace(".variants.normalized","")}"}
 
     input:
         tuple(path(vcf), path(prob_vcf))
@@ -119,9 +133,9 @@ process tagProblematicSites {
 
 process annotate_mat_peptide {
 
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
-    tag {"${peptide_vcf.baseName.replace(".variants.normalized.filtered.SNPEFF_annotated", "")}"}
+    tag {"${peptide_vcf.baseName}"}
 
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
 
     input:
         tuple(path(peptide_vcf), path(genome_gff))
@@ -134,22 +148,22 @@ process annotate_mat_peptide {
       mature_peptide_annotation.py \
       --vcf_file ${peptide_vcf}\
       --annotation_file ${genome_gff}\
-      --output_vcf ${peptide_vcf.baseName.replace(".variants.normalized.filtered.SNPEFF_annotated", "")}.annotated.vcf
+      --output_vcf ${peptide_vcf.baseName}.annotated.vcf
       """
 }
 
 
 process vcfTogvf{
 
+  tag {"${annotated_vcf.baseName}"}
+
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.gvf", mode: 'copy'
-  tag {"${annotated_vcf.baseName.replace(".annotated", "")}"}
 
   input:
       tuple(path(annotated_vcf), path(func_annot), path(clade_def), path(gene_coord))
 
-
   output:
-      path("*gvf")
+      path("*.gvf")
 
   script:
   """
@@ -166,6 +180,7 @@ process vcfTogvf{
 process vcfTotsv {
 
     tag {"vcfTotsv${annotated_vcf.baseName}"}
+
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
 
     input:
