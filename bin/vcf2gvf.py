@@ -128,7 +128,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     info = df['INFO'].str.split(pat=';').apply(pd.Series) #split at ;, form dataframe
     for column in info.columns:
         split = info[column].str.split(pat='=').apply(pd.Series)
-        title = split[0].drop_duplicates().tolist()[0].lower()
+        title = split[0].drop_duplicates().tolist()[0]
+        if isinstance(title, str):
+            title = title.lower()
         content = split[1]
         info[column] = content #ignore "tag=" in column content
         info.rename(columns={column:title}, inplace=True) #make attribute tag as column label
