@@ -285,7 +285,9 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "voi_designation_date=" + voi_designation_date + ';'
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "voc_designation_date=" + voc_designation_date + ';'
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "alert_designation_date=" + alert_designation_date + ';'
-        
+    else:
+        merged_df["#attributes"] = merged_df["#attributes"].astype(str)  + "clade_defining=n/a;" + "who_label=n/a;" + "variant=n/a;" + "variant_status=n/a;" + "voi_designation_date=n/a;" + "voc_designation_date=n/a;" + "alert_designation_date=n/a;"
+
         
     #add ID to attributes
     merged_df["#attributes"] = 'ID=' + merged_df['id'].astype(str) + ';' + merged_df["#attributes"].astype(str)
