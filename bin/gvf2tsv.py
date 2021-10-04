@@ -55,12 +55,16 @@ def gvf2tsv(gvf):
     
     #drop unwanted columns
     df = df.drop(labels=['source', 'seqid', 'type', 'end', 'strand', 'score', 'phase', 'id'], axis=1)
+
+    #rename 'dp' column to 'sequence_depth', make 'viral_lineage' plural
+    df = df.rename(columns={'dp': 'sequence_depth', 'viral_lineage': 'viral_lineages'})
     
     #reorder columns
-    cols = ['name', 'nt_name', 'aa_name', 'start', 'vcf_gene', 'chrom_region',
-       'mutation_type', 'dp', 'ps_filter', 'ps_exc', 'mat_pep_id',
+    cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
+       'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
+       'mutation_type', 'sequence_depth', 'ps_filter', 'ps_exc', 'mat_pep_id',
        'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
-       'variant_seq', 'viral_lineage', 'function_category', 'citation',
+       'variant_seq', 'viral_lineages', 'function_category', 'citation',
        'comb_mutation', 'function_description', 'heterozygosity',
        'clade_defining', 'who_label', 'variant', 'variant_status',
        'voi_designation_date', 'voc_designation_date',

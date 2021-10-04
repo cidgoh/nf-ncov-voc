@@ -16,35 +16,31 @@ test case:
 
 import argparse
 import pandas as pd
-import re
-import glob
-import os
 import numpy as np
 import json
-from natsort import index_natsorted
 
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Converts a snpEFF-annotated VCF file to a GVF file with functional annotation')
     parser.add_argument('--vcffile', type=str, default=None,
                         help='Path to a snpEFF-annotated VCF file')
-    parser.add_argument('--pokay', type=str, default='../.github/data/functional_annotation/functional_annotation_V.0.3.tsv',
-                        help='Anoosha\'s v.3 parsed pokay .tsv file')
-    parser.add_argument('--clades', type=str, default='../.github/data/clade_defining/clade_defining_mutations.tsv',
-                        help='.tsv of clade-defining mutations')
+    parser.add_argument('--functional_annotations', type=str, default=None,
+                        help='TSV file of functional annotations')
+    parser.add_argument('--clades', type=str, default=None,
+                        help='TSV file of outbreak.info clade-defining mutations')
     parser.add_argument('--gene_positions', type=str,
-                        default='../.github/data/gene_coordinates/gene_positions.json',
-                        help='gene positions in json format')
+                        default=None,
+                        help='gene positions in JSON format')
     parser.add_argument('--names_to_split', type=str,
-                        default='../.github/data/multi_aa_names/mutation_names_to_split.tsv',
+                        default=None,
                         help='.tsv of multi-aa mutation names to split up into individual aa names')
     parser.add_argument('--strain', type=str,
                         default=None,
                         help='lineage')
     parser.add_argument('--outvcf', type=str,
-                        help='Filename for the output .gvf file')
+                        help='Filename for the output GVF file')
     parser.add_argument("--single_genome", help="VCF file is of a single genome", action="store_true")
-    parser.add_argument("--names", help="Save unmatched mutation names to .tsvs for troubleshooting naming formats", action="store_true")
+    parser.add_argument("--names", help="Save mutation names without functional annotations to TSV files for troubleshooting purposes", action="store_true")
     return parser.parse_args()
 
 
@@ -199,7 +195,7 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
 
 
 
-#takes 4 arguments: the output df of vcftogvf.py, Anoosha's annotation file from Pokay, the clade defining mutations tsv, the strain name, and the names_to_split tsv.
+#takes 4 arguments: the output df of vcftogvf.py, the functional annotation file, the clade defining mutations tsv, the strain name, and the names_to_split tsv.
 def add_functions(gvf, annotation_file, clade_file, strain):
     attributes = gvf["#attributes"].str.split(pat=';').apply(pd.Series)
     hgvs_protein = attributes[0].str.split(pat='=').apply(pd.Series)[1] #remember this includes nucleotide names where there are no protein names
@@ -297,11 +293,9 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     if args.names:
         #get list of names in tsv but not in functional annotations, and vice versa, saved as a .tsv
         tsv_names = gvf["mutation"].unique()
-        pokay_names = df["mutation"].unique()
-        print(str(np.setdiff1d(tsv_names, pokay_names).shape[0]) + "/" + str(tsv_names.shape[0]) + " mutation names were not found in pokay")
-        in_pokay_only = pd.DataFrame({'in_pokay_only':np.setdiff1d(pokay_names, tsv_names)})
-        in_tsv_only = pd.DataFrame({'in_tsv_only':np.setdiff1d(tsv_names, pokay_names)})
-        leftover_names = in_tsv_only
+        functional_annotation_names = df["mutation"].unique()
+        print(str(np.setdiff1d(tsv_names, functional_annotation_names).shape[0]) + "/" + str(tsv_names.shape[0]) + " mutation names were not found in functional_annotations")
+        leftover_names = pd.DataFrame({'in_tsv_only':np.setdiff1d(tsv_names, functional_annotation_names)})
         leftover_names["strain"] = strain
     
         clade_names = clades["mutation"].unique()
@@ -321,7 +315,7 @@ if __name__ == '__main__':
     args = parse_args()
     with open(args.gene_positions) as fp:
         GENE_POSITIONS_DICT = json.load(fp)
-    annotation_file = args.pokay
+    annotation_file = args.functional_annotations
     clade_file = args.clades
 
     #make empty list in which to store mutation names from all strains in the folder together
@@ -353,31 +347,27 @@ if __name__ == '__main__':
     print("")
     final_gvf.to_csv(filepath, sep='\t', index=False, header=False)
     
-    
     #get name troubleshooting reports
     if args.names:        
         all_strains_mutations.append(mutations)
         leftover_df = leftover_df.append(leftover_names)
         unmatched_clade_names = unmatched_clade_names.append(leftover_clade_names)
         
-        #save unmatched names (in tsv but not in Pokay) across all strains to a .tsv file
-        leftover_names_filepath = "_leftover_names.tsv"
+        #save unmatched names (in tsv but not in functional_annotations) across all strains to a .tsv file
+        leftover_names_filepath = args.strain + "_leftover_names.tsv"
         leftover_df.to_csv(leftover_names_filepath, sep='\t', index=False)
         print("")
-        print("Mutation names not found in Pokay saved to " + leftover_names_filepath)
+        print("Mutation names not found in functional annotations file saved to " + leftover_names_filepath)
     
-        #save unmatched clade-defining mutation names across all strains to a .tsv file
-        leftover_clade_names_filepath = "leftover_clade_defining_names.tsv"
+        #save unmatched clade-defining mutation names to a .tsv file
+        leftover_clade_names_filepath = args.strain + "_leftover_clade_defining_names.tsv"
         unmatched_clade_names.to_csv(leftover_clade_names_filepath, sep='\t', index=False)
-        print("Clade-defining mutation names not found in the annotated VCFs saved to " + leftover_clade_names_filepath)
+        print("Clade-defining mutation names not found in the annotated VCF saved to " + leftover_clade_names_filepath)
 
         #print number of unique mutations across all strains    
         flattened = [val for sublist in all_strains_mutations for val in sublist]
         arr = np.array(flattened)
-        if args.vcffile:
-            print("# unique mutations in " + strain + " VCF file: ", np.unique(arr).shape[0])
-        if args.vcfdir:
-            print("# unique mutations across all processed VCFs: ", np.unique(arr).shape[0])
+        print("# unique mutations in " + args.strain + " VCF file: ", np.unique(arr).shape[0])
 
     print("")        
     print("Processing complete.")
