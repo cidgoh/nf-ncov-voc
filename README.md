@@ -8,7 +8,7 @@ In this module, the genomic data for each lineage is converted to a GVF (Genomic
 
 # Surveillance Report
 
-A TSV file can be produced that summarizes mutation information for SARS-CoV-2 variants.  This file contains the same information found in the GVF files in a more human-readable format, with all reference lineages per variant merged into one concise TSV.
+A TSV file can be produced that summarizes mutation information for SARS-CoV-2 variants.  This file contains much of the same information found in the GVF files in a more human-readable format, with all reference lineages per variant merged into one concise TSV.
 
 # Visualization
 
