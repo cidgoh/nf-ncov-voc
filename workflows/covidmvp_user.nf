@@ -23,6 +23,7 @@ workflow ncov_voc_user {
       ch_funcannot
       ch_cladedef
       ch_genecoord
+      ch_mutationsplit
 
     main:
       //extractMetadata(ch_metadata, ch_voc)
@@ -65,6 +66,6 @@ workflow ncov_voc_user {
 
       SNPEFF(tagProblematicSites.out.filtered_vcf)
       annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
-      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_cladedef).combine(ch_genecoord))
+      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_cladedef).combine(ch_genecoord).combine(ch_mutationsplit))
 
 }
