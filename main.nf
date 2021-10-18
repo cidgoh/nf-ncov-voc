@@ -12,16 +12,20 @@ params.genome_annotation = "$baseDir/.github/data/genome_annotation"
 params.functional_annotation = "$baseDir/.github/data/functional_annotation"
 params.clade_defining_mutations = "$baseDir/.github/data/clade_defining"
 params.gene_coordinates = "$baseDir/.github/data/gene_coordinates"
+params.mutation_names = "$baseDir/.github/data/multi_aa_names"
+
 
 
 
 // include modules
-include {printHelp} from './modules/help.nf'
+include {printHelp        } from './modules/help.nf'
+include {extractVariants  } from './modules/custom.nf'
+
 //include {makeFastqSearchPath} from './modules/util.nf'
 
 // import subworkflows
-include {ncov_voc} from './workflows/covidmvp.nf'
-include {ncov_voc_user} from './workflows/covidmvp_user.nf'
+include {ncov_voc         } from './workflows/covidmvp.nf'
+include {ncov_voc_user    } from './workflows/covidmvp_user.nf'
 
 
 if (params.help){
@@ -69,19 +73,25 @@ workflow {
         Channel.fromPath( "$params.gene_coordinates/*.json", checkIfExists: true)
               .set{ ch_genecoord }
 
-        ncov_voc_user( ch_probvcf, ch_geneannot, ch_funcannot, ch_cladedef, ch_genecoord)
+        Channel.fromPath( "$params.mutation_names/*.tsv", checkIfExists: true)
+              .set{ ch_mutationsplit }
+
+
+        ncov_voc_user( ch_probvcf, ch_geneannot, ch_funcannot, ch_cladedef, ch_genecoord, ch_mutationsplit)
       }
 
 
       else if(params.mode == 'reference'){
-        //Channel.from('B.1.1.7', 'B.1.351', 'B.1.351.2', 'B.1.351.3', 'P.1', 'P.1.1', 'P.1.2', 'P.1.4', 'P.1.6', 'P.1.7', 'B.1.617.2', 'AY.1', 'AY.2', 'AY.3', 'AY.3.1',  'B.1.525', 'B.1.526', 'B.1.617.1', 'C.37')
-        //      .set{ch_voc}
-        //Channel.from('B.1.351.3', 'B.1.351.2', 'B.1.351', 'AY.3.1', 'AY.3', 'AY.2', 'AY.1', 'B.1.617.2')
-        //      .set{ch_voc}
-        //Channel.from('B.1.617.2', 'AY.3.1', 'AY.2')
-        //      .set{ ch_voc }
-        Channel.from('AY.3.1', 'AY.2')
-              .set{ ch_voc }
+
+        if(params.variants){
+          Channel.fromPath( "$params.variants", checkIfExists: true)
+               .set{ ch_variants }
+        }
+        else{
+          Channel.fromPath( "$baseDir/.github/data/variants/*.tsv", checkIfExists: true)
+               .set{ ch_variant }
+        }
+
 
         if(params.seq){
           Channel.fromPath( "$params.seq", checkIfExists: true)
@@ -96,12 +106,20 @@ workflow {
           Channel.fromPath( "$params.meta", checkIfExists: true)
                .set{ ch_metadata }
         }
+
         else{
           Channel.fromPath( "$baseDir/.github/data/metadata/*.tsv", checkIfExists: true)
                 .set{ ch_metadata }
         }
 
 
+        extractVariants(ch_variant.combine(ch_metadata))
+        extractVariants.out.lineages
+                .splitText()
+                .set{ ch_voc }
+
+
+        ch_voc.view()
         Channel.fromPath( "$params.ref_gff/*.gff3", checkIfExists: true)
               .set{ ch_refgff }
 
@@ -126,10 +144,11 @@ workflow {
         Channel.fromPath( "$params.gene_coordinates/*.json", checkIfExists: true)
               .set{ ch_genecoord }
 
-        println(params.seq)
-        println(params.meta)
+        Channel.fromPath( "$params.mutation_names/*.tsv", checkIfExists: true)
+              .set{ ch_mutationsplit }
 
-        ncov_voc(ch_seq, ch_metadata, ch_voc, ch_ref, ch_refgff, ch_reffai, ch_probvcf, ch_geneannot, ch_funcannot, ch_cladedef, ch_genecoord)
+
+        ncov_voc(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai, ch_probvcf, ch_geneannot, ch_funcannot, ch_cladedef, ch_genecoord, ch_mutationsplit )
       }
 
 }

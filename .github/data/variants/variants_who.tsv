@@ -1,0 +1,13 @@
+variant	pango_lineage	status
+Alpha	B.1.1.7,Q.*	VOC
+Beta	B.1.351	VOC
+Gamma	P.1	VOC
+Delta	B.1.617.2,AY.*	VOC
+Lambda	C.37	VOI
+Mu	B.1.621	VOI
+Kappa	B.1.617.1	VUM
+Iota	B.1.526	VUM
+Eta	B.1.525	VUM
+Epsilon	B.1.427,B.1.429	VUM
+Zeta	P.2	VUM
+Theta	P.3	VUM

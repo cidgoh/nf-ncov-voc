@@ -3,7 +3,7 @@
 nextflow.enable.dsl = 2
 
 // import modules
-
+include { extractVariants      } from '../modules/custom.nf'
 include { grabIndex            } from '../modules/custom.nf'
 include { BWAINDEX             } from '../modules/bwaindex.nf'
 include { BBMAP                } from  '../modules/bbmap_reformat.nf'
@@ -22,11 +22,12 @@ include { annotate_mat_peptide } from '../modules/custom.nf'
 include { vcfTogvf             } from '../modules/custom.nf'
 
 
+
 workflow ncov_voc {
     take:
-      ch_seq
-      ch_metadata
       ch_voc
+      ch_metadata
+      ch_seq
       ch_ref
       ch_refgff
       ch_reffai
@@ -35,14 +36,15 @@ workflow ncov_voc {
       ch_funcannot
       ch_cladedef
       ch_genecoord
+      ch_mutationsplit
 
     main:
-      if(!params.single_genome){
+      if(!params.single_genome){}
         extractMetadata(ch_metadata, ch_voc)
         SEQKIT(extractMetadata.out.ids.combine(ch_seq))
-
         BBMAP(SEQKIT.out.fasta)
       }
+
       else{
         BBMAP(ch_seq)
       }
@@ -75,6 +77,6 @@ workflow ncov_voc {
       }
       SNPEFF(tagProblematicSites.out.filtered_vcf)
       annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
-      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_cladedef).combine(ch_genecoord))
+      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_cladedef).combine(ch_genecoord).combine(ch_mutationsplit))
 
 }

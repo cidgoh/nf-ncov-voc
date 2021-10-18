@@ -15,6 +15,7 @@ def printHelp() {
     --mode                    A flag for user uploaded data through visualization app or high-throughput analyses (reference | user) (Default: reference)
 
   Optional:
+    --variants                Provide a variants file (tsv) (Default: $baseDir/.github/data/variants/variants_who.tsv)
     --input_type              Specify type of input file (vcf | tsv | fasta) (Default: vcf)
     --gisaid                  Specify if the dataset is from GISAID (gisaid) (Default: None)
     --single-genome           Specify if the dataset is single genome (single-genome) (Default: None)
