@@ -59,18 +59,6 @@ def gvf2tsv(gvf):
     #rename 'dp' column to 'sequence_depth', make 'viral_lineage' plural
     df = df.rename(columns={'dp': 'sequence_depth', 'viral_lineage': 'viral_lineages'})
     
-    #reorder columns
-    cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
-       'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
-       'mutation_type', 'sequence_depth', 'ps_filter', 'ps_exc', 'mat_pep_id',
-       'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
-       'variant_seq', 'viral_lineages', 'function_category', 'citation',
-       'comb_mutation', 'function_description', 'heterozygosity',
-       'clade_defining', 'who_label', 'variant', 'variant_status',
-       'voi_designation_date', 'voc_designation_date',
-       'alert_designation_date']
-    df = df[cols]
-
     return df
 
 
@@ -81,12 +69,73 @@ if __name__ == '__main__':
     filepath = args.outtsv
     gvf_files = args.gvf #this is a list of strings
 
+    #convert all gvf files to tsv and concatenate them
+    print("Processing:")
+    print(gvf_files[0])
     tsv_df = gvf2tsv(gvf_files[0])
-
     for gvf in gvf_files[1:]:
+        print(gvf)
         new_tsv_df = gvf2tsv(gvf)
-        tsv_df = pd.concat([tsv_df, new_tsv_df], ignore_index=True)
-
-    tsv_df.to_csv(filepath, sep='\t', index=False)
+        tsv_df = pd.concat([tsv_df, new_tsv_df], ignore_index=True)   
     
+    
+    #find identical rows across strains, and keep only one row.
+
+    #change n/a to 0 in 'ao' for counting purposes
+    tsv_df['ao'] = tsv_df['ao'].str.replace("n/a", "0")
+
+    for colname in ['sequence_depth', 'ao', 'ro']:
+        #split up at commas into new columns: make a new mini-df
+        split_series = tsv_df[colname].str.split(pat=',').apply(pd.Series)
+        #rename series columns to 'ao_0', 'a0_1', etc.
+        split_series.columns = [colname + '_' + str(name) for name in split_series.columns.values]
+        #ensure all counts are numeric
+        for column in split_series.columns:
+            split_series[column] = pd.to_numeric(split_series[column], errors='coerce')
+        #append series to tsv_df
+        tsv_df = pd.concat([tsv_df, split_series], axis=1)
+        
+    cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 'multiaa_comb_mutation', 'start', 'function_category', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']
+
+    agg_dict = dict((col,'first') for col in tsv_df.columns.values.tolist())
+    agg_dict['viral_lineages'] = ', '.join
+    agg_dict['clade_defining'] = ', '.join
+    
+    #sum split columns
+    for string in ['sequence_depth_', 'ao_', 'ro_']:
+        relevant_keys = [key for key, value in agg_dict.items() if string in key.lower()]
+        for key in relevant_keys:
+            agg_dict[key] = 'sum'
+   
+    final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
+    
+    #rejoin split columns (ao, sequence_depth, ro) with comma separation
+    for string in ['sequence_depth_', 'ao_', 'ro_']:
+        colnames = [i for i in tsv_df.columns.values.tolist() if string in i]
+        final_df[string + 'combined'] = final_df[colnames].apply(lambda row: ','.join(row.values.astype(str)), axis=1)
+        #drop split columns
+        final_df = final_df.drop(labels=colnames, axis=1)
+ 
+    #replace ao, ro, sequence_depth with the added up columns
+    final_df = final_df.drop(labels=['ao', 'ro', 'sequence_depth'], axis=1)
+    final_df = final_df.rename(columns={'sequence_depth_combined': 'sequence_depth', 'ro_combined': 'ro', 'ao_combined': 'ao'})
+
+    #reorder columns
+    cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
+       'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
+       'mutation_type', 'sequence_depth', 'ps_filter', 'ps_exc', 'mat_pep_id',
+       'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
+       'variant_seq', 'viral_lineages', 'function_category', 'citation',
+       'comb_mutation', 'function_description', 'heterozygosity',
+       'clade_defining', 'who_label', 'variant', 'variant_status',
+       'voi_designation_date', 'voc_designation_date',
+       'alert_designation_date']
+    final_df = final_df[cols]
+    
+    #save the final df to a .tsv
+    final_df.to_csv(filepath, sep='\t', index=False)
+    print("")
+    print("Processing complete.")
     print("Saved as: " + filepath)
+
+    

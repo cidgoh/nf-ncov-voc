@@ -35,7 +35,7 @@ def parse_args():
                         default=None,
                         help='.tsv of multi-aa mutation names to split up into individual aa names')
     parser.add_argument('--strain', type=str,
-                        default=None,
+                        default='n/a',
                         help='lineage')
     parser.add_argument('--outvcf', type=str,
                         help='Filename for the output GVF file')
@@ -128,7 +128,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     info = df['INFO'].str.split(pat=';').apply(pd.Series) #split at ;, form dataframe
     for column in info.columns:
         split = info[column].str.split(pat='=').apply(pd.Series)
-        title = split[0].drop_duplicates().tolist()[0].lower()
+        title = split[0].drop_duplicates().tolist()[0]
+        if isinstance(title, str):
+            title = title.lower()
         content = split[1]
         info[column] = content #ignore "tag=" in column content
         info.rename(columns={column:title}, inplace=True) #make attribute tag as column label
@@ -285,7 +287,9 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "voi_designation_date=" + voi_designation_date + ';'
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "voc_designation_date=" + voc_designation_date + ';'
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "alert_designation_date=" + alert_designation_date + ';'
-        
+    else:
+        merged_df["#attributes"] = merged_df["#attributes"].astype(str)  + "clade_defining=n/a;" + "who_label=n/a;" + "variant=n/a;" + "variant_status=n/a;" + "voi_designation_date=n/a;" + "voc_designation_date=n/a;" + "alert_designation_date=n/a;"
+
         
     #add ID to attributes
     merged_df["#attributes"] = 'ID=' + merged_df['id'].astype(str) + ';' + merged_df["#attributes"].astype(str)
@@ -326,6 +330,7 @@ if __name__ == '__main__':
 
     file = args.vcffile
 
+
     print("Processing: " + file)
         
     #create gvf from annotated vcf (ignoring pragmas for now)
@@ -352,22 +357,21 @@ if __name__ == '__main__':
         all_strains_mutations.append(mutations)
         leftover_df = leftover_df.append(leftover_names)
         unmatched_clade_names = unmatched_clade_names.append(leftover_clade_names)
-        
         #save unmatched names (in tsv but not in functional_annotations) across all strains to a .tsv file
-        leftover_names_filepath = args.strain + "_leftover_names.tsv"
+        leftover_names_filepath = "leftover_names.tsv"
         leftover_df.to_csv(leftover_names_filepath, sep='\t', index=False)
         print("")
         print("Mutation names not found in functional annotations file saved to " + leftover_names_filepath)
     
         #save unmatched clade-defining mutation names to a .tsv file
-        leftover_clade_names_filepath = args.strain + "_leftover_clade_defining_names.tsv"
+        leftover_clade_names_filepath = "leftover_clade_defining_names.tsv"
         unmatched_clade_names.to_csv(leftover_clade_names_filepath, sep='\t', index=False)
         print("Clade-defining mutation names not found in the annotated VCF saved to " + leftover_clade_names_filepath)
 
         #print number of unique mutations across all strains    
         flattened = [val for sublist in all_strains_mutations for val in sublist]
         arr = np.array(flattened)
-        print("# unique mutations in " + args.strain + " VCF file: ", np.unique(arr).shape[0])
+        print("# unique mutations in VCF file: ", np.unique(arr).shape[0])
 
     print("")        
     print("Processing complete.")
