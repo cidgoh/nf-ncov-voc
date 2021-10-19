@@ -65,6 +65,16 @@ def map_pos_to_gene(pos, GENE_POSITIONS_DICT):
     return gene_names
 
 
+def clade_defining_threshold(df):
+    """Specifies the clade_defining attribute as True if AF > 0.75, False if AF <= 0.75, and n/a if the VCF is for a single genome"""
+    if args.single_genome:
+        df["#attributes"] = df["#attributes"].astype(str)  + "clade_defining=n/a;"
+    else:
+        df.loc[df.AF > 0.75, "#attributes"] = df.loc[df.AF > 0.75, "#attributes"].astype(str)  + "clade_defining=True;"
+        df.loc[df.AF <= 0.75, "#attributes"] = df.loc[df.AF <= 0.75, "#attributes"].astype(str)  + "clade_defining=False;"
+    return df
+
+
 gvf_columns = ['#seqid','#source','#type','#start','#end','#score','#strand','#phase','#attributes']
 vcf_colnames = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO', 'FORMAT', 'unknown']
 
@@ -149,6 +159,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
         new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ao=' + unknown[5].astype(str) + ';'
         new_df['#attributes'] = new_df['#attributes'].astype(str) + 'dp=' + info['dp'].astype(str) + ';'
 
+    #add af column for clade-defining cutoff (af=ao/dp)
+    new_df['AF'] =  unknown[5].astype(int) / info['dp'].astype(int)
+        
     #add columns copied straight from Zohaib's file
     for column in ['REF','ALT']:
         key = column.lower()
@@ -191,7 +204,7 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     new_df['#attributes'] = new_df['#attributes'] + "multi_aa_name=" + new_df["multi_name"] + ';'
     new_df['#attributes'] = new_df['#attributes'] + "multiaa_comb_mutation=" + new_df["multiaa_comb_mutation"] + ';'    
       
-    new_df = new_df[gvf_columns + ['multiaa_comb_mutation']] #only keep the columns needed for a gvf file, plus multiaa_comb_mutation to add to comb_mutation later
+    new_df = new_df[gvf_columns + ['multiaa_comb_mutation', 'AF']] #only keep the columns needed for a gvf file, plus multiaa_comb_mutation to add to comb_mutation later
     #new_df.to_csv('new_df.tsv', sep='\t', index=False, header=False)
     return new_df
 
@@ -279,8 +292,12 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         #merge clades with function-annotated dataframe
         merged_df = pd.merge(clades, merged_df, on=['mutation'], how='right') #add clade-defining mutations
         #change clade-defining attribute to True/False depending on content of 'strain' column
+        '''
         merged_df.loc[merged_df.strain == strain, "#attributes"] = merged_df.loc[merged_df.strain == strain, "#attributes"].astype(str)  + "clade_defining=True;"
         merged_df.loc[merged_df.strain != strain, "#attributes"] = merged_df.loc[merged_df.strain != strain, "#attributes"].astype(str)  + "clade_defining=False;"
+        '''
+        merged_df = clade_defining_threshold(merged_df)
+        #add remaining attributes from clades file
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "who_label=" + who_label + ';'
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "variant=" + variant + ';'
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "variant_status=" + variant_status + ';'
