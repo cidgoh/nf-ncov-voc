@@ -28,6 +28,9 @@ def parse_args():
                         help='TSV file of functional annotations')
     parser.add_argument('--clades', type=str, default=None,
                         help='TSV file of outbreak.info clade-defining mutations')
+    parser.add_argument('--clades_threshold', type=float,
+                        default=0.75,
+                        help='Alternate frequency cutoff for clade-defining mutations')
     parser.add_argument('--gene_positions', type=str,
                         default=None,
                         help='gene positions in JSON format')
@@ -65,13 +68,13 @@ def map_pos_to_gene(pos, GENE_POSITIONS_DICT):
     return gene_names
 
 
-def clade_defining_threshold(df):
+def clade_defining_threshold(threshold, df):
     """Specifies the clade_defining attribute as True if AF > 0.75, False if AF <= 0.75, and n/a if the VCF is for a single genome"""
     if args.single_genome:
         df["#attributes"] = df["#attributes"].astype(str)  + "clade_defining=n/a;"
     else:
-        df.loc[df.AF > 0.75, "#attributes"] = df.loc[df.AF > 0.75, "#attributes"].astype(str)  + "clade_defining=True;"
-        df.loc[df.AF <= 0.75, "#attributes"] = df.loc[df.AF <= 0.75, "#attributes"].astype(str)  + "clade_defining=False;"
+        df.loc[df.AF > threshold, "#attributes"] = df.loc[df.AF > threshold, "#attributes"].astype(str)  + "clade_defining=True;"
+        df.loc[df.AF <= threshold, "#attributes"] = df.loc[df.AF <= threshold, "#attributes"].astype(str)  + "clade_defining=False;"
     return df
 
 
@@ -295,7 +298,7 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         merged_df.loc[merged_df.strain == strain, "#attributes"] = merged_df.loc[merged_df.strain == strain, "#attributes"].astype(str)  + "clade_defining=True;"
         merged_df.loc[merged_df.strain != strain, "#attributes"] = merged_df.loc[merged_df.strain != strain, "#attributes"].astype(str)  + "clade_defining=False;"
         '''
-        merged_df = clade_defining_threshold(merged_df)
+        merged_df = clade_defining_threshold(args.clades_threshold, merged_df)
         #add remaining attributes from clades file
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "who_variant=" + who_variant + ';'
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "status=" + status + ';'
