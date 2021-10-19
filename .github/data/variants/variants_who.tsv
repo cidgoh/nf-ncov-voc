@@ -1,13 +1,13 @@
-who_variant	pango_lineage	status  voi_designation_date  voc_designation_date  vum_designation_date
-Alpha	B.1.1.7,Q.*	VOC 		18-Dec-2020
-Beta	B.1.351	VOC 		18-Dec-2020
-Gamma	P.1	VOC 		11-Jan-2021
-Delta	B.1.617.2,AY.*	VOC 	4-Apr-2021 	11-May-2021
-Lambda	C.37	VOI 	14-Jun-2021
-Mu	B.1.621	VOI  30-Aug-2021
-Kappa	B.1.617.1	VUM 	4-Apr-2021    20-Sep-2021
-Iota	B.1.526	VUM 24-Mar-2021   20-Sep-2021 
-Eta	B.1.525	VUM 	17-Mar-2021   20-Sep-2021
-Epsilon	B.1.427,B.1.429	VUM 	5-Mar-2021 		6-Jul-2021
-Zeta	P.2	inactive 			6-Jul-2021
+who_variant	pango_lineage	status	voi_designation_date	voc_designation_date	vum_designation_date
+Alpha	B.1.1.7,Q.*	VOC		18-Dec-2020	
+Beta	B.1.351	VOC		18-Dec-2020	
+Gamma	P.1	VOC		11-Jan-2021	
+Delta	B.1.617.2,AY.*	VOC	4-Apr-2021	11-May-2021	
+Lambda	C.37	VOI	14-Jun-2021		
+Mu	B.1.621	VOI	30-Aug-2021		
+Kappa	B.1.617.1	VUM	4-Apr-2021		20-Sep-2021
+Iota	B.1.526	VUM	24-Mar-2021		20-Sep-2021
+Eta	B.1.525	VUM	17-Mar-2021		20-Sep-2021
+Epsilon	B.1.427,B.1.429	VUM	5-Mar-2021		6-Jul-2021
+Zeta	P.2	inactive			6-Jul-2021
 Theta	P.3	inactive 			6-Jul-2021
