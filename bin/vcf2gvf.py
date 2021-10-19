@@ -282,8 +282,10 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     #if strain is in clades file, merge that too
     clades = pd.read_csv(clade_file, sep='\t', header=0) #load clade-defining mutations file
     available_strains = clades['pango_lineage'].drop_duplicates().tolist() 
-    if strain in available_strains:
-        clades = clades.loc[clades.strain == strain] #only look at the relevant part of that file
+    relevant_clade_file_strains = [a for a in available_strains if strain.startswith(a.replace("*",""))]
+    #if strain in available_strains:
+    if len(relevant_clade_file_strains) > 0:
+        clades = clades.loc[clades.pango_lineage == relevant_clade_file_strains[0]] #only look at the relevant part of that file
         clades = clades.replace(np.nan, '', regex=True)
         #extract status and WHO strain name from clades file
         who_variant = clades['who_variant'].drop_duplicates().tolist()[0]
@@ -292,12 +294,13 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         voc_designation_date = clades['voc_designation_date'].drop_duplicates().tolist()[0]
         vum_designation_date = clades['vum_designation_date'].drop_duplicates().tolist()[0]
         #merge clades with function-annotated dataframe
-        merged_df = pd.merge(clades, merged_df, on=['mutation'], how='right') #add clade-defining mutations
+        #merged_df = pd.merge(clades, merged_df, on=['mutation'], how='right') #add clade-defining mutations
         #change clade-defining attribute to True/False depending on content of 'strain' column
         '''
         merged_df.loc[merged_df.strain == strain, "#attributes"] = merged_df.loc[merged_df.strain == strain, "#attributes"].astype(str)  + "clade_defining=True;"
         merged_df.loc[merged_df.strain != strain, "#attributes"] = merged_df.loc[merged_df.strain != strain, "#attributes"].astype(str)  + "clade_defining=False;"
         '''
+        
         merged_df = clade_defining_threshold(args.clades_threshold, merged_df)
         #add remaining attributes from clades file
         merged_df["#attributes"] = merged_df["#attributes"].astype(str) + "who_variant=" + who_variant + ';'
