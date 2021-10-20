@@ -10,21 +10,25 @@
 
 **nf-ncov-voc** is a bioinformatics analysis workflow used to perform variant calling for SARS-CoV-2 genomes to identify and profile mutations in Variants of Concern (VOCs) and Variants of Interest (VOIs). This workflow has three main stages - **Genomic Analysis** , **Functional Annotation** and **Surveillance Reports** and it is being developed in combination with an interactive visualization tool [COVID-MVP](https://github.com/cidgoh/COVID-MVP). This workflow takes SARS-CoV-2 consensus sequences and Metadata (GISAID/non-GISAID) as input and produces mutation profiles which are then annotated with their respective biological functional impact using the manually curated effort [Pokay](https://github.com/nodrogluap/pokay) by Paul Gordon [@nodrogluap](https://github.com/nodrogluap).
 
+The workflow is built using [Nextflow](https://www.nextflow.io)-[DSL2](https://www.nextflow.io/docs/latest/dsl2.html), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It can use Conda/Docker/Singularity containers making installation trivial and results highly reproducible.
+
 ### Genomic Analysis
 This module currently supports in two different modes - "reference" & "user" which can be passed with `--mode [reference | user]`. By default, `--mode reference` is activated which allows user to build a reference library of each lineage and subsequently each variant for comparative analysis. This mode can take `fasta` file with multiple genomes (recommended & default) or single genome (`--single_genome`) with a metadata file that should have two columns (`strain`, `pango_lineage`) as minimal standard (see [Workflow Summary](#workflow-summary) for detailed options) if data is not from [GISAID](https://www.gisaid.org) (default). Data from [GISAID](https://www.gisaid.org) can be used directly by downloading from the **Genomic Epidemiology** section and passing `--gisaid` parameter.  The user mode (`--mode user`) is by default active with interactive visualization where a user can upload dataset for comparison against the reference data. Uploaded dataset can be variant called file (recommended) with `--input_type vcf` / `--input_type tsv` extensions or a `--input_type fasta` file with multiple or single genomes.
 
-Based on the `--mode` different workflows are developed and further `--input type` determines entrance points to these workflows. The overall workflow consists of Quality Control of consensus sequences (details below in Workflow Summary), mapping consensus sequences to SARS-CoV-2 reference strain [MN908947.3 - Wuhan-Hu-1](https://www.ncbi.nlm.nih.gov/nuccore/MN908947.3), variant calling, post processing that includes flagging problematics sites; functional annotation; and mature peptide annotation. Final part of the worklfow is to collate different lineage files from the same variant and produce a surveillance report for each e.g. Delta variant report.
+Based on the `--mode` different workflows are developed and further `--input type` determines entrance points to these workflows. The overall workflow consists of Quality Control of consensus sequences (details below in Workflow Summary), mapping consensus sequences to SARS-CoV-2 reference strain [MN908947.3 - Wuhan-Hu-1](https://www.ncbi.nlm.nih.gov/nuccore/MN908947.3), variant calling, post processing that includes flagging problematics sites; functional annotation; and mature peptide annotation. Final part of the workflow is to collate different lineage files from the same variant and produce a surveillance report for each e.g. Delta variant report.
 
 ### Functional Annotation
 
-In this module, the consensus sequences for each lineage is converted to a GVF (Genomic Variant Format) file and annotated with functional information.  GVF is a variant of GFF3 that is standardized for describing genomic mutations; it is used here because it can describe mutations across multiple rows, and because the "#attributes" column can store information in custom key-value pairs.  The key-value pairs added at this stage include for each mutation: VOC/VOI status, clade-defining status (for reference lineages), and functional annotations parsed from Paul Gordon's Pokay repository.  The annotated GVFs are the input to the visualization module.
+In this module, the variant called `vcf` file for each lineage is converted into a `GVF` (Genomic Variant Format) file and annotated with functional information using [Pokay](https://github.com/nodrogluap/pokay). GVF is a variant of GFF3 format that is standardized for describing genomic mutations; it is used here because it can describe mutations across multiple rows, and because the "#attributes" column can store information in custom key-value pairs. The key-value pairs added at this stage include for each mutation: VOC/VOI status, clade-defining status (for reference lineages), and functional annotations parsed using [vcf2gvf.py](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/vcf2gvf.py) file written in python.
 
 ### Surveillance Reports
 
-A TSV file can be produced that summarizes mutation information for SARS-CoV-2 variants.  This file contains much of the same information found in the GVF files in a more human-readable format, with all reference lineages per variant merged into one concise TSV.
+Different `GVF` files for the same variant are then collated and summarized into a `TSV` file that contains mutation prevalence,
+
+### nf-ncov-voc Dataflow
 
 
-The workflow is built using [Nextflow](https://www.nextflow.io)-[DSL2](https://www.nextflow.io/docs/latest/dsl2.html), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It can use Conda/Docker/Singularity containers making installation trivial and results highly reproducible.
+
 
 ## Workflow Summary
 
@@ -32,7 +36,7 @@ The pipeline has numerous options to allow you to run only specific aspects of t
 
 The SRA download functionality has been removed from the pipeline (`>=2.1`) and ported to an independent workflow called [nf-core/fetchngs](https://nf-co.re/fetchngs). You can provide `--nf_core_pipeline viralrecon` when running nf-core/fetchngs to download and auto-create a samplesheet containing publicly available samples that can be accepted directly by the Illumina processing mode of nf-core/viralrecon.
 
-### Illumina
+### Reference Mode
 
 1. Merge re-sequenced FastQ files ([`cat`](http://www.linfo.org/cat.html))
 2. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
@@ -61,7 +65,7 @@ The SRA download functionality has been removed from the pipeline (`>=2.1`) and 
         * Assembly assessment report ([`QUAST`](http://quast.sourceforge.net/quast))
 7. Present QC and visualisation for raw read, alignment, assembly and variant calling results ([`MultiQC`](http://multiqc.info/))
 
-### Nanopore
+### User Mode
 
 1. Sequencing QC ([`pycoQC`](https://github.com/a-slide/pycoQC))
 2. Aggregate pre-demultiplexed reads from MinKNOW/Guppy ([`artic guppyplex`](https://artic.readthedocs.io/en/latest/commands/))
@@ -82,7 +86,7 @@ The SRA download functionality has been removed from the pipeline (`>=2.1`) and 
 
 1. Install [`Nextflow`](https://www.nextflow.io/docs/latest/getstarted.html#installation) (`>=21.04.0`)
 
-2. Install any of [`Docker`](https://docs.docker.com/engine/installation/), [`Singularity`](https://www.sylabs.io/guides/3.0/user-guide/), [`Podman`](https://podman.io/), [`Shifter`](https://nersc.gitlab.io/development/shifter/how-to-use/) or [`Charliecloud`](https://hpc.github.io/charliecloud/) for full pipeline reproducibility _(please only use [`Conda`](https://conda.io/miniconda.html) as a last resort; see [docs](https://nf-co.re/usage/configuration#basic-configuration-profiles))_
+2. Install any of [`Docker`](https://docs.docker.com/engine/installation/), [`Singularity`](https://www.sylabs.io/guides/3.0/user-guide/) or [`Conda`](https://conda.io/miniconda.html) for full pipeline reproducibility _see [recipes](https://github.com/cidgoh/nf-ncov-voc/tree/master/environments)_
 
 3. Download the pipeline and test it on a minimal dataset with a single command:
 
@@ -140,9 +144,6 @@ The SRA download functionality has been removed from the pipeline (`>=2.1`) and 
 
     * You can find the default keys used to specify `--genome` in the [genomes config file](https://github.com/nf-core/configs/blob/master/conf/pipeline/viralrecon/genomes.config). Where possible we are trying to collate links and settings for standard primer sets to make it easier to run the pipeline with standard keys; see [usage docs](https://nf-co.re/viralrecon/usage#illumina-primer-sets).
 
-## Documentation
-
-The nf-core/viralrecon pipeline comes with documentation about the pipeline [usage](https://nf-co.re/viralrecon/usage), [parameters](https://nf-co.re/viralrecon/parameters) and [output](https://nf-co.re/viralrecon/output).
 
 ## Acknowledgments
 
