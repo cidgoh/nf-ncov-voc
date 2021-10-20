@@ -38,7 +38,7 @@ The SRA download functionality has been removed from the pipeline (`>=2.1`) and 
 
 ### Reference Mode
 
-1. Metadata extraction ([`bin/extract_metadata.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/extract_metadata.py) && `[modules/custom.nf/extractMetadata](https://github.com/cidgoh/nf-ncov-voc/blob/master/modules/custom.nf)`)
+1. Metadata extraction ([`bin/extract_metadata.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/extract_metadata.py) && [`modules/custom.nf/extractMetadata`](https://github.com/cidgoh/nf-ncov-voc/blob/master/modules/custom.nf))
 2. Sequence extraction ([`SEQKIT`](https://github.com/shenwei356/seqkit))
 2. Consensus QC ([`BBMAP`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
 3. _Variant Calling_
