@@ -38,41 +38,37 @@ The SRA download functionality has been removed from the pipeline (`>=2.1`) and 
 
 ### Reference Mode
 * _Data Extraction & Quality Control_
-    1. Metadata extraction ([`bin/extract_metadata.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/extract_metadata.py) && [`modules/custom.nf/extractMetadata`](https://github.com/cidgoh/nf-ncov-voc/blob/master/modules/custom.nf))
-    2. Sequence extraction ([`SEQKIT`](https://github.com/shenwei356/seqkit))
-    3. Consensus QC ([`BBMAP`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
+    1.  Metadata extraction ([`bin/extract_metadata.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/extract_metadata.py) && [`modules/custom.nf/extractMetadata`](https://github.com/cidgoh/nf-ncov-voc/blob/master/modules/custom.nf))
+    2.  Sequence extraction ([`SEQKIT`](https://github.com/shenwei356/seqkit))
+    3.  Consensus QC ([`BBMAP`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
 * _Variant Calling_
-    1. Mapping ([`Minimap2`](); *default* [`BWA`](); *optional* )
-    2. Sort and index alignments ([`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/))
-    3. Choice of multiple variant calling routes
+    1.  Mapping ([`Minimap2`](); *default* [`BWA`](); *optional* )
+    2.  Sort and index alignments ([`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/))
+    3.  Choice of multiple variant calling routes
       1.  [`Freebayes`]() *default & recommended*;
       2.  [`iVar variants`](https://github.com/andersen-lab/ivar); *optional*)
 * _Post-Processing_
-    1. Variant annotation ([`SnpEff`](http://snpeff.sourceforge.net/SnpEff.html), [`SnpSift`](http://snpeff.sourceforge.net/SnpSift.html))
-    1. Primer trimming ([`Cutadapt`](https://cutadapt.readthedocs.io/en/stable/guide.html); *amplicon data only*)
-    2. Choice of multiple assembly tools ([`SPAdes`](http://cab.spbu.ru/software/spades/) *||* [`Unicycler`](https://github.com/rrwick/Unicycler) *||* [`minia`](https://github.com/GATB/minia))
-        * Blast to reference genome ([`blastn`](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch))
-        * Contiguate assembly ([`ABACAS`](https://www.sanger.ac.uk/science/tools/pagit))
-        * Assembly report ([`PlasmidID`](https://github.com/BU-ISCIII/plasmidID))
-        * Assembly assessment report ([`QUAST`](http://quast.sourceforge.net/quast))
-7. Present QC and visualisation for raw read, alignment, assembly and variant calling results ([`MultiQC`](http://multiqc.info/))
+    1.  Filtering Problematic sites ([`problematic_sites_tag.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/problematic_sites_tag.py) using [ProblematicSites_SARS-CoV-2](https://github.com/W-L/ProblematicSites_SARS-CoV2))
+    2.  Variant annotation ([`SnpEff`](http://snpeff.sourceforge.net/SnpEff.html))
+    3.  Peptide annotation ([]())
 
 ### User Mode
 
-1. Sequencing QC ([`pycoQC`](https://github.com/a-slide/pycoQC))
-2. Aggregate pre-demultiplexed reads from MinKNOW/Guppy ([`artic guppyplex`](https://artic.readthedocs.io/en/latest/commands/))
-3. Read QC ([`NanoPlot`](https://github.com/wdecoster/NanoPlot))
-4. Align reads, call variants and generate consensus sequence ([`artic minion`](https://artic.readthedocs.io/en/latest/commands/))
-5. Remove unmapped reads and obtain alignment metrics ([`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/))
-6. Genome-wide and amplicon coverage QC plots ([`mosdepth`](https://github.com/brentp/mosdepth/))
-7. Downstream variant analysis:
-    * Count metrics ([`BCFTools`](http://samtools.github.io/bcftools/bcftools.html))
-    * Variant annotation ([`SnpEff`](http://snpeff.sourceforge.net/SnpEff.html), [`SnpSift`](http://snpeff.sourceforge.net/SnpSift.html))
-    * Consensus assessment report ([`QUAST`](http://quast.sourceforge.net/quast))
-    * Lineage analysis ([`Pangolin`](https://github.com/cov-lineages/pangolin))
-    * Clade assignment, mutation calling and sequence quality checks ([`Nextclade`](https://github.com/nextstrain/nextclade))
-    * Individual variant screenshots with annotation tracks ([`ASCIIGenome`](https://asciigenome.readthedocs.io/en/latest/))
-8. Present QC, visualisation and custom reporting for sequencing, raw reads, alignment and variant calling results ([`MultiQC`](http://multiqc.info/))
+1. * _Data Extraction & Quality Control_
+    1.  Metadata extraction ([`bin/extract_metadata.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/extract_metadata.py) && [`modules/custom.nf/extractMetadata`](https://github.com/cidgoh/nf-ncov-voc/blob/master/modules/custom.nf))
+    2.  Sequence extraction ([`SEQKIT`](https://github.com/shenwei356/seqkit))
+    3.  Consensus QC ([`BBMAP`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
+* _Variant Calling_
+    1.  Mapping ([`Minimap2`](); *default* [`BWA`](); *optional* )
+    2.  Sort and index alignments ([`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/))
+    3.  Choice of multiple variant calling routes
+      1.  [`Freebayes`]() *default & recommended*;
+      2.  [`iVar variants`](https://github.com/andersen-lab/ivar); *optional*)
+* _Post-Processing_
+    1.  Filtering Problematic sites ([`problematic_sites_tag.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/problematic_sites_tag.py) using [ProblematicSites_SARS-CoV-2](https://github.com/W-L/ProblematicSites_SARS-CoV2))
+    2.  Variant annotation ([`SnpEff`](http://snpeff.sourceforge.net/SnpEff.html))
+    3.  Peptide annotation ([]())
+
 
 ## Quick Start
 
@@ -83,7 +79,7 @@ The SRA download functionality has been removed from the pipeline (`>=2.1`) and 
 3. Download the pipeline and test it on a minimal dataset with a single command:
 
     ```console
-    nextflow run nf-core/viralrecon -profile test,<docker/singularity/podman/shifter/charliecloud/conda/institute>
+    nextflow run nf-ncov-voc/main.nf -profile test,<docker/singularity/podman/shifter/charliecloud/conda/institute>
     ```
 
 4. Start running your own analysis!
@@ -91,7 +87,7 @@ The SRA download functionality has been removed from the pipeline (`>=2.1`) and 
     * Typical command for Illumina shotgun analysis:
 
         ```bash
-        nextflow run nf-core/viralrecon \
+        nextflow run nf-ncov-voc/main.nf \
             --input samplesheet.csv \
             --platform illumina \
             --protocol metagenomic \
@@ -102,7 +98,7 @@ The SRA download functionality has been removed from the pipeline (`>=2.1`) and 
     * Typical command for Illumina amplicon analysis:
 
         ```bash
-        nextflow run nf-core/viralrecon \
+        nextflow run nf-ncov-voc/main.nf \
             --input samplesheet.csv \
             --platform illumina \
             --protocol amplicon \
@@ -116,7 +112,7 @@ The SRA download functionality has been removed from the pipeline (`>=2.1`) and 
     * Typical command for Nanopore amplicon analysis:
 
         ```bash
-        nextflow run nf-core/viralrecon \
+        nextflow run nf-ncov-voc/main.nf \
             --input samplesheet.csv \
             --platform nanopore \
             --genome 'MN908947.3' \
