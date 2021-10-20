@@ -38,25 +38,16 @@ The SRA download functionality has been removed from the pipeline (`>=2.1`) and 
 
 ### Reference Mode
 
-1. Merge re-sequenced FastQ files ([`cat`](http://www.linfo.org/cat.html))
-2. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-3. Adapter trimming ([`fastp`](https://github.com/OpenGene/fastp))
-4. Removal of host reads ([`Kraken 2`](http://ccb.jhu.edu/software/kraken2/); *optional*)
-5. Variant calling
-    1. Read alignment ([`Bowtie 2`](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml))
+1. Metadata extraction (`bin/extract_metadata.py modules/custom.nf/extractMetadata`)
+2. Sequence extraction ([`SEQKIT`](https://github.com/shenwei356/seqkit))
+2. Consensus QC ([`BBMAP`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
+3. _Variant Calling_
+    1. Mapping ([`Minimap2`](); *default* [`BWA`](); *optional* ) ([`Bowtie 2`](http://bowtie-bio.sourceforge.net/bowtie2/index.shtml))
     2. Sort and index alignments ([`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/))
-    3. Primer sequence removal ([`iVar`](https://github.com/andersen-lab/ivar); *amplicon data only*)
-    4. Duplicate read marking ([`picard`](https://broadinstitute.github.io/picard/); *optional*)
-    5. Alignment-level QC ([`picard`](https://broadinstitute.github.io/picard/), [`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/))
-    6. Genome-wide and amplicon coverage QC plots ([`mosdepth`](https://github.com/brentp/mosdepth/))
-    7. Choice of multiple variant calling and consensus sequence generation routes ([`iVar variants and consensus`](https://github.com/andersen-lab/ivar); *default for amplicon data* *||* [`BCFTools`](http://samtools.github.io/bcftools/bcftools.html), [`BEDTools`](https://github.com/arq5x/bedtools2/); *default for metagenomics data*)
+    3. Choice of multiple variant calling and consensus sequence generation routes ([`iVar variants and consensus`](https://github.com/andersen-lab/ivar); *default for amplicon data* *||* [`BCFTools`](http://samtools.github.io/bcftools/bcftools.html), [`BEDTools`](https://github.com/arq5x/bedtools2/); *default for metagenomics data*)
         * Variant annotation ([`SnpEff`](http://snpeff.sourceforge.net/SnpEff.html), [`SnpSift`](http://snpeff.sourceforge.net/SnpSift.html))
-        * Consensus assessment report ([`QUAST`](http://quast.sourceforge.net/quast))
-        * Lineage analysis ([`Pangolin`](https://github.com/cov-lineages/pangolin))
-        * Clade assignment, mutation calling and sequence quality checks ([`Nextclade`](https://github.com/nextstrain/nextclade))
-        * Individual variant screenshots with annotation tracks ([`ASCIIGenome`](https://asciigenome.readthedocs.io/en/latest/))
     8. Intersect variants across callers ([`BCFTools`](http://samtools.github.io/bcftools/bcftools.html))
-6. _De novo_ assembly
+6. _Post-Processing_
     1. Primer trimming ([`Cutadapt`](https://cutadapt.readthedocs.io/en/stable/guide.html); *amplicon data only*)
     2. Choice of multiple assembly tools ([`SPAdes`](http://cab.spbu.ru/software/spades/) *||* [`Unicycler`](https://github.com/rrwick/Unicycler) *||* [`minia`](https://github.com/GATB/minia))
         * Blast to reference genome ([`blastn`](https://blast.ncbi.nlm.nih.gov/Blast.cgi?PAGE_TYPE=BlastSearch))
