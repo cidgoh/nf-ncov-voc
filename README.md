@@ -45,8 +45,8 @@ The SRA download functionality has been removed from the pipeline (`>=2.1`) and 
     1. Mapping ([`Minimap2`](); *default* [`BWA`](); *optional* )
     2. Sort and index alignments ([`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/))
     3. Choice of multiple variant calling routes
-      1. [`Freebayes`]() *default & recommended*;
-      2. [`iVar variants`](https://github.com/andersen-lab/ivar); *optional*)
+      1.  [`Freebayes`]() *default & recommended*;
+      2.  [`iVar variants`](https://github.com/andersen-lab/ivar); *optional*)
 * _Post-Processing_
     1. Variant annotation ([`SnpEff`](http://snpeff.sourceforge.net/SnpEff.html), [`SnpSift`](http://snpeff.sourceforge.net/SnpSift.html))
     1. Primer trimming ([`Cutadapt`](https://cutadapt.readthedocs.io/en/stable/guide.html); *amplicon data only*)
