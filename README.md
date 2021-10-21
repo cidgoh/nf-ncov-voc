@@ -13,6 +13,7 @@
 The workflow is built using [Nextflow](https://www.nextflow.io)-[DSL2](https://www.nextflow.io/docs/latest/dsl2.html), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It can use **Conda**/**Docker**/**Singularity** containers making installation trivial and results highly reproducible.
 
 ### Genomic Analysis
+
 This module currently supports two different modes - "_reference_" & "_user_" which can be passed with `--mode reference` or `--mode user`. By default, `--mode reference` is activated which allows user to build a reference library for each lineage and subsequently each variant for comparative analysis. This mode can take `FASTA` file with multiple genomes (**recommended** & **default**) or single genome (passed as `--single_genome`) with a metadata file that should have two columns atleast (`strain`, `pango_lineage`) as minimal metadata (see [Workflow Summary](#workflow-summary) for detailed options). Data can directly be used from [GISAID](https://www.gisaid.org) after downloading from the **Genomic Epidemiology** section and passing `--gisaid` parameter. Similarly, _non-GISAID_ (**default**) data can also be used with minimal metadata file. The user mode (`--mode user`) is by default active when using interactive visualization through [COVID-MVP](https://github.com/cidgoh/COVID-MVP) where a user can upload dataset for comparative analysis against the reference data. Uploaded dataset can be a variant called file `VCF` or `TSV` with `--input_type vcf` (**recommended**) or `--input_type tsv`. Alternatively, a `FASTA` file can be provided using `--input_type fasta` file with a single or multiple genomes.
 
 Based on the `--mode` different workflows are developed and further `--input type` determines entrance points to these workflows. The overall workflow consists of Quality Control of consensus sequences (details below in Workflow Summary), mapping consensus sequences to SARS-CoV-2 reference strain [MN908947.3 - Wuhan-Hu-1](https://www.ncbi.nlm.nih.gov/nuccore/MN908947.3), variant calling, post processing that includes flagging problematics sites; functional annotation; and mature peptide annotation (see [Usage](#usage) for guideline). Final part of the workflow is to collate different lineage files from the same variant and produce a surveillance report for each e.g. Delta variant report.
@@ -29,7 +30,6 @@ Different `GVF` files for the same variant are then collated and summarized into
 
 ![DataFlow](figs/COVIDMVP.drawio.png)
 
-
 ## Workflow Summary
 
 The workflow has numerous options to allow you to run workflow with modes and alternate options for major step if you so wish. For example, in `mode --reference` user can use `BWAMEM` using `--bwa` instead of `MINIMAP2` (*default*) for mapping consensus sequences to reference genome. Similarly, `ivar` with parameter `--ivar` for variant calling instead of `freebayes` (*default*) option.
@@ -37,6 +37,7 @@ The workflow has numerous options to allow you to run workflow with modes and al
 See the [parameters]() docs for all of the available options when running the workflow.
 
 ### Reference Mode
+
 * _Data Extraction & Quality Control_
     1.  Metadata extraction ([`bin/extract_metadata.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/extract_metadata.py) && [`modules/custom.nf/extractMetadata`](https://github.com/cidgoh/nf-ncov-voc/blob/master/modules/custom.nf))
     2.  Sequence extraction ([`SEQKIT`](https://github.com/shenwei356/seqkit))
@@ -53,6 +54,7 @@ See the [parameters]() docs for all of the available options when running the wo
     3.  Peptide annotation ([]())
 
 ### User Mode
+
 * _Data Extraction & Quality Control_
     1.  Metadata extraction ([`bin/extract_metadata.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/extract_metadata.py) && [`modules/custom.nf/extractMetadata`](https://github.com/cidgoh/nf-ncov-voc/blob/master/modules/custom.nf))
     2.  Sequence extraction ([`SEQKIT`](https://github.com/shenwei356/seqkit))
@@ -131,23 +133,20 @@ See the [parameters]() docs for all of the available options when running the wo
 
     * You can find the default keys used to specify `--genome` in the [genomes config file](https://github.com/nf-core/configs/blob/master/conf/pipeline/viralrecon/genomes.config). Where possible we are trying to collate links and settings for standard primer sets to make it easier to run the pipeline with standard keys; see [usage docs](https://nf-co.re/viralrecon/usage#illumina-primer-sets).
 
-
 ## Acknowledgments
 
 This workflow and scripts are written and conceptually designed by
 | Name                                                      | Affiliation                                                                           |
 |-----------------------------------------------------------|---------------------------------------------------------------------------------------|
-| [Zohaib Anwar](https://github.com/anwarMZ)               | [Centre for Infectious Disease Genomics and One Health, Simon Fraser University, Canada](https://cidgoh.ca)                           |
-| [Madeline Iseminger](https://github.com/miseminger)         | [Centre for Infectious Disease Genomics and One Health, Simon Fraser University, Canada](https://cidgoh.ca)                 |
-| [Anoosha Sehar](https://github.com/Anoosha-Sehar)              | [Centre for Infectious Disease Genomics and One Health, Simon Fraser University, Canada](https://cidgoh.ca)                            |
-| [Ivan Gill](https://github.com/ivansg44)                       | [Centre for Infectious Disease Genomics and One Health, Simon Fraser University, Canada](https://cidgoh.ca)                 |
-| [William Hsiao](https://github.com/wwhsiao)              | [Centre for Infectious Disease Genomics and One Health, Simon Fraser University, Canada](https://cidgoh.ca)                         |
-| [Paul Gordon](https://github.com/nodrogluap)                | [CSM Center for Health Genomics and Informatics, University of Calgary, Canada](http://www.ucalgary.ca/~gordonp)                         |
-| [Gary Van Domselaar](https://github.com/phac-nml)                | [Public Health Agency of Canada, Canada](https://umanitoba.ca/faculties/health_sciences/medicine/units/medical_microbiology/faculty/vandomselaar.html)                         |
-
+| Zohaib Anwar; [@anwarMZ](https://github.com/anwarMZ)               | [Centre for Infectious Disease Genomics and One Health, Simon Fraser University, Canada](https://cidgoh.ca)                           |
+| Madeline Iseminger; [@miseminger](https://github.com/miseminger)         | [Centre for Infectious Disease Genomics and One Health, Simon Fraser University, Canada](https://cidgoh.ca)                 |
+| Anoosha Sehar; [@Anoosha-Sehar]](https://github.com/Anoosha-Sehar)              | [Centre for Infectious Disease Genomics and One Health, Simon Fraser University, Canada](https://cidgoh.ca)                            |
+| Ivan Gill; [@ivansg44](https://github.com/ivansg44)                       | [Centre for Infectious Disease Genomics and One Health, Simon Fraser University, Canada](https://cidgoh.ca)                 |
+| William Hsiao; [@wwhsiao](https://github.com/wwhsiao)              | [Centre for Infectious Disease Genomics and One Health, Simon Fraser University, Canada](https://cidgoh.ca)                         |
+| Paul Gordon; [@nodrogluap](https://github.com/nodrogluap)                | [CSM Center for Health Genomics and Informatics, University of Calgary, Canada](http://www.ucalgary.ca/~gordonp)                         |
+| Gary Van Domselaar; [@phac-nml](https://github.com/phac-nml)                | [Public Health Agency of Canada](https://umanitoba.ca/faculties/health_sciences/medicine/units/medical_microbiology/faculty/vandomselaar.html)                         |
 
 Many thanks to others who have helped out and contributed along the way too, including (but not limited to)\*: [Canadian COVID Genomics Network - VirusSeq, Data Analytics Working Group](https://virusseq.ca/about/governance/)
-
 
 ## Contributions and Support
 
