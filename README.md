@@ -77,10 +77,49 @@ See the [parameters]() docs for all of the available options when running the wo
 
 2. Install any of [`Docker`](https://docs.docker.com/engine/installation/), [`Singularity`](https://www.sylabs.io/guides/3.0/user-guide/) or [`Conda`](https://conda.io/miniconda.html) for full pipeline reproducibility _see [recipes](https://github.com/cidgoh/nf-ncov-voc/tree/master/environments)_
 
-3. Download the pipeline and test it on a minimal dataset with a single command:
+3. Download the pipeline and run with help for detailed parameter options:
 
     ```console
-    nextflow run nf-ncov-voc/main.nf -profile test,<docker/singularity/podman/shifter/charliecloud/conda/institute>
+    nextflow run nf-ncov-voc/main.nf --help
+    ```
+
+    ```bash
+    N E X T F L O W  ~  version 21.04.3
+    Launching `main.nf` [berserk_austin] - revision: 93ccc86071
+
+    Usage:
+      nextflow run main.nf -profile [singularity | docker | conda) --prefix [prefix] --mode [reference | user]  [workflow-options]
+
+    Description:
+      Variant Calling workflow for SARS-CoV-2 Variant of Concern (VOC) and Variant of Interest (VOI) consensus sequences to generate data for Visualization
+      All options set via CLI can be set in conf directory
+
+    Nextflow arguments (single DASH):
+      -profile                  Allowed values: conda & singularity
+
+    Mandatory workflow arguments (mutually exclusive):
+      --prefix                  A (unique) string prefix for output directory for each run.
+      --mode                    A flag for user uploaded data through visualization app or high-throughput analyses (reference | user) (Default: reference)
+
+    Optional:
+      --variants                Provide a variants file (tsv) (Default: /Users/au572806/GitHub/nf-ncov-voc/.github/data/variants/variants_who.tsv)
+      --input_type              Specify type of input file (vcf | tsv | fasta) (Default: vcf)
+      --gisaid                  Specify if the dataset is from GISAID (gisaid) (Default: None)
+      --single-genome           Specify if the dataset is single genome (single-genome) (Default: None)
+      --userfile                Specify userfile (fasta | tsv | vcf) (Default: None)
+      --outdir                  Output directory (Default: /Users/au572806/GitHub/nf-ncov-voc/results)
+      --ivar                    Run the ivar workflow (Default: false, use freebayes workflow)
+      --startdate               Start date (Submission date) to extract dataset (yyyy-mm-dd) (Default: "None")
+      --enddate                 Start date (Submission date) to extract dataset (yyyy-mm-dd) (Default: "None")
+      --ref                     Path to SARS-CoV-2 reference fasta file (Default: /Users/au572806/GitHub/nf-ncov-voc/.github/data/refdb)
+      --bwa                     Use BWA for mapping reads (Default: false, use Minimap2)
+      --bwa_index               Path to BWA index files (Default: /Users/au572806/GitHub/nf-ncov-voc/.github/data/refdb)
+      --gff                     Path to annotation gff for variant consequence calling and typing. (Default: /Users/au572806/GitHub/nf-ncov-voc/.github/data/features)
+      --mpileupDepth            Mpileup depth (Default: unlimited)
+      --var_FreqThreshold       Variant Calling frequency threshold for consensus variant (Default: 0.75)
+      --var_MinDepth            Minimum coverage depth to call variant (ivar variants -m, freebayes -u Default: 10)
+      --var_MinFreqThreshold    Minimum frequency threshold to call variant (ivar variants -t, Default: 0.25)
+      --varMinVariantQuality    Minimum mapQ to call variant (ivar variants -q, Default: 20)
     ```
 
 4. Start running your own analysis!
