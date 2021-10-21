@@ -127,9 +127,9 @@ if __name__ == '__main__':
        'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
        'variant_seq', 'viral_lineages', 'function_category', 'citation',
        'comb_mutation', 'function_description', 'heterozygosity',
-       'clade_defining', 'who_label', 'variant', 'variant_status',
+       'clade_defining', 'who_variant', 'status',
        'voi_designation_date', 'voc_designation_date',
-       'alert_designation_date']
+       'vum_designation_date']
     final_df = final_df[cols]
     
     #save the final df to a .tsv
