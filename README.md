@@ -27,7 +27,7 @@ Different `GVF` files for the same variant are then collated and summarized into
 
 ### nf-ncov-voc Dataflow
 
-
+[DataFlow]: figs/COVIDMVP.drawio.png
 
 
 ## Workflow Summary
