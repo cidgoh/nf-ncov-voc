@@ -124,7 +124,7 @@ See the [parameters]() docs for all of the available options when running the wo
 
 4. Start running your own analysis!
 
-    * Typical command for GISAID dataset with data from specific dates :
+    * Typical command for reference mode with GISAID dataset from specific dates :
 
         ```bash
         nextflow nf-ncov-voc/main.nf \
@@ -133,46 +133,34 @@ See the [parameters]() docs for all of the available options when running the wo
             --mode reference \
             --gisaid \
             --startdate 2020-01-01 \
-            --enddate 2020-01-01
+            --enddate 2020-01-01\
+            --outdir results
         ```
 
-    * Typical command for Illumina amplicon analysis:
+    * Typical command for reference mode with non-GISAID dataset:
 
         ```bash
-        nextflow run nf-ncov-voc/main.nf \
-            --input samplesheet.csv \
-            --platform illumina \
-            --protocol amplicon \
-            --genome 'MN908947.3' \
-            --primer_set artic \
-            --primer_set_version 3 \
-            --skip_assembly \
-            -profile <docker/singularity/podman/conda/institute>
+        nextflow nf-ncov-voc/main.nf \
+            -profile <conda | singularity | docker> \
+            --prefix testing \
+            --mode reference \
+            --outdir results
         ```
 
-    * Typical command for Nanopore amplicon analysis:
+    * Typical command for reference mode with single genome:
 
         ```bash
-        nextflow run nf-ncov-voc/main.nf \
-            --input samplesheet.csv \
-            --platform nanopore \
-            --genome 'MN908947.3' \
-            --primer_set_version 3 \
-            --fastq_dir fastq_pass/ \
-            --fast5_dir fast5_pass/ \
-            --sequencing_summary sequencing_summary.txt \
-            -profile <docker/singularity/podman/conda/institute>
+        nextflow nf-ncov-voc/main.nf \
+            -profile <conda | singularity | docker> \
+            --prefix testing \
+            --mode reference \
+            --single_genome \
+            --outdir results            
         ```
 
-    * An executable Python script called [`fastq_dir_to_samplesheet.py`](https://github.com/nf-core/viralrecon/blob/master/bin/fastq_dir_to_samplesheet.py) has been provided if you are using `--platform illumina` and would like to auto-create an input samplesheet based on a directory containing FastQ files **before** you run the pipeline (requires Python 3 installed locally) e.g.
+    * An executable Python script called [`functional_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/functional_annotation.py) has been provided if you would like to update the functional annotations from `POKAY`. This will create a new file which **should replace** the file in [.github/data/functional_annotation](https://github.com/cidgoh/nf-ncov-voc/blob/master/.github/data/functional_annotation).
 
-        ```console
-        wget -L https://raw.githubusercontent.com/nf-core/viralrecon/master/bin/fastq_dir_to_samplesheet.py
-        ./fastq_dir_to_samplesheet.py <FASTQ_DIR> samplesheet.csv
-        ```
-
-    * You can find the default keys used to specify `--genome` in the [genomes config file](https://github.com/nf-core/configs/blob/master/conf/pipeline/viralrecon/genomes.config). Where possible we are trying to collate links and settings for standard primer sets to make it easier to run the pipeline with standard keys; see [usage docs](https://nf-co.re/viralrecon/usage#illumina-primer-sets).
-
+        
 ## Acknowledgments
 
 This workflow and scripts are written and conceptually designed by
