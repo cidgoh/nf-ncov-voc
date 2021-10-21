@@ -56,20 +56,19 @@ See the [parameters](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs/PARA
 
 ### User Mode
 
-* _Data Extraction & Quality Control_
-    1.  Metadata extraction ([`bin/extract_metadata.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/extract_metadata.py) && [`modules/custom.nf/extractMetadata`](https://github.com/cidgoh/nf-ncov-voc/blob/master/modules/custom.nf))
-    2.  Sequence extraction ([`SEQKIT`](https://github.com/shenwei356/seqkit))
-    3.  Consensus QC ([`BBMAP`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
+* _Data Extraction & Quality Control_ (**Entrance Point for `FASTA` input file**)
+    1.  Consensus QC ([`BBMAP`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
 * _Variant Calling_
-    1.  Mapping ([`Minimap2`](); *default* [`BWA`](); *optional* )
+    1.  Mapping ([`Minimap2`](https://github.com/lh3/minimap2); *default* [`BWA`](https://github.com/lh3/bwa); *optional* )
     2.  Sort and index alignments ([`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/))
-    3.  Choice of multiple variant calling routes
-      1.  [`Freebayes`]() *default & recommended*;
-      2.  [`iVar variants`](https://github.com/andersen-lab/ivar); *optional*)
-* _Post-Processing_
+    3.  Choice of multiple variant calling routes: [`Freebayes`](https://github.com/freebayes/freebayes) *default & recommended*; [`iVar variants`](https://github.com/andersen-lab/ivar); *optional*)
+* _Post-Processing_ (**Entrance Point for `VCF` & `TSV` input files**)
     1.  Filtering Problematic sites ([`problematic_sites_tag.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/problematic_sites_tag.py) using [ProblematicSites_SARS-CoV-2](https://github.com/W-L/ProblematicSites_SARS-CoV2))
     2.  Variant annotation ([`SnpEff`](http://snpeff.sourceforge.net/SnpEff.html))
-    3.  Peptide annotation ([]())
+    3.  Peptide annotation ([`mature_peptide_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/mature_peptide_annotation.py))
+    4.  Functional Annotation ([`vcf2gvf.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/vcf2gvf.py))
+    5.  Surveillance Report ([`gvf2tsv.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/gvf2tsv.py))
+
 
 
 ## Usage
