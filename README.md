@@ -34,7 +34,7 @@ Different `GVF` files for the same variant are then collated and summarized into
 
 The workflow has numerous options to allow you to run workflow with modes and alternate options for major step if you so wish. For example, in `mode --reference` user can use `BWAMEM` using `--bwa` instead of `MINIMAP2` (*default*) for mapping consensus sequences to reference genome. Similarly, `ivar` with parameter `--ivar` for variant calling instead of `freebayes` (*default*) option.
 
-See the [parameters]() docs for all of the available options when running the workflow.
+See the [parameters](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs/PARAMETERS.md) docs for all of the available options when running the workflow.
 
 ### Reference Mode
 
@@ -43,15 +43,16 @@ See the [parameters]() docs for all of the available options when running the wo
     2.  Sequence extraction ([`SEQKIT`](https://github.com/shenwei356/seqkit))
     3.  Consensus QC ([`BBMAP`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
 * _Variant Calling_
-    1.  Mapping ([`Minimap2`](); *default* [`BWA`](); *optional* )
+    1.  Mapping ([`Minimap2`](https://github.com/lh3/minimap2); *default* [`BWA`](https://github.com/lh3/bwa); *optional* )
     2.  Sort and index alignments ([`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/))
-    3.  Choice of multiple variant calling routes
-      1.  [`Freebayes`]() *default & recommended*;
-      2.  [`iVar variants`](https://github.com/andersen-lab/ivar); *optional*)
+    3.  Choice of multiple variant calling routes: [`Freebayes`](https://github.com/freebayes/freebayes) *default & recommended*; [`iVar variants`](https://github.com/andersen-lab/ivar); *optional*)
 * _Post-Processing_
     1.  Filtering Problematic sites ([`problematic_sites_tag.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/problematic_sites_tag.py) using [ProblematicSites_SARS-CoV-2](https://github.com/W-L/ProblematicSites_SARS-CoV2))
     2.  Variant annotation ([`SnpEff`](http://snpeff.sourceforge.net/SnpEff.html))
-    3.  Peptide annotation ([]())
+    3.  Peptide annotation ([`mature_peptide_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/mature_peptide_annotation.py))
+    4.  Functional Annotation ([`vcf2gvf.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/vcf2gvf.py))
+    5.  Surveillance Report ([`gvf2tsv.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/gvf2tsv.py))
+
 
 ### User Mode
 
@@ -160,7 +161,7 @@ See the [parameters]() docs for all of the available options when running the wo
 
     * An executable Python script called [`functional_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/functional_annotation.py) has been provided if you would like to update the functional annotations from `POKAY`. This will create a new file which **should replace** the file in [.github/data/functional_annotation](https://github.com/cidgoh/nf-ncov-voc/blob/master/.github/data/functional_annotation).
 
-        
+
 ## Acknowledgments
 
 This workflow and scripts are written and conceptually designed by
