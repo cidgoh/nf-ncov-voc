@@ -79,7 +79,7 @@ See the [parameters]() docs for all of the available options when running the wo
 
 3. Download the pipeline and run with help for detailed parameter options:
 
-    ```console
+    ```bash
     nextflow run nf-ncov-voc/main.nf --help
     ```
 
@@ -124,15 +124,16 @@ See the [parameters]() docs for all of the available options when running the wo
 
 4. Start running your own analysis!
 
-    * Typical command for Illumina shotgun analysis:
+    * Typical command for GISAID dataset with data from specific dates :
 
         ```bash
-        nextflow run nf-ncov-voc/main.nf \
-            --input samplesheet.csv \
-            --platform illumina \
-            --protocol metagenomic \
-            --genome 'MN908947.3' \
-            -profile <docker/singularity/podman/conda/institute>
+        nextflow nf-ncov-voc/main.nf \
+            -profile <conda | singularity | docker> \
+            --prefix testing \
+            --mode reference \
+            --gisaid \
+            --startdate 2020-01-01 \
+            --enddate 2020-01-01
         ```
 
     * Typical command for Illumina amplicon analysis:
