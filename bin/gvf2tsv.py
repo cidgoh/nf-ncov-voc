@@ -19,7 +19,7 @@ def parse_args():
     
     parser = argparse.ArgumentParser(
         description='Converts a GVF file to a TSV')
-    parser.add_argument('--gvf', type=str, default=None, nargs='*',
+    parser.add_argument('--gvf_directory', type=str, default=None, nargs='*',
                         help='Paths to n GVF files, separated by a space')
     parser.add_argument('--outtsv', type=str, default=None,
                         help='Output filepath for finished .tsv')
