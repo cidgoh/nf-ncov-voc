@@ -162,9 +162,13 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
         new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ao=' + unknown[5].astype(str) + ';'
         new_df['#attributes'] = new_df['#attributes'].astype(str) + 'dp=' + info['dp'].astype(str) + ';'
 
-    #add af column for clade-defining cutoff (af=ao/dp)
-    new_df['AF'] =  unknown[5].astype(int) / info['dp'].astype(int)
-        
+    #add alternate frequency (AF) column for clade-defining cutoff (af=ao/dp)
+    if unknown[5][unknown[5].str.contains(",")].empty: #if there are no commas anywhere in the 'ao' column, calculate AF straight out
+        new_df['AF'] =  unknown[5].astype(int) / info['dp'].astype(int)
+    else: #if there is a comma, add the numbers together to calculate alternate frequency
+        new_df['added_ao'] = unknown[5].apply(lambda x: sum(map(int, x.split(','))))
+        new_df['AF'] =  new_df['added_ao'].astype(int) / info['dp'].astype(int)
+
     #add columns copied straight from Zohaib's file
     for column in ['REF','ALT']:
         key = column.lower()
