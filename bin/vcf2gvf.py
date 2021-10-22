@@ -155,10 +155,10 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
        
     #add ro, ao, dp
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ro=' + unknown[3].astype(str) + ';'
     if args.single_genome:
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ao=n/a;dp=1;'
+        new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ro=n/a;ao=n/a;dp=1;'
     else:
+        new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ro=' + unknown[3].astype(str) + ';'
         new_df['#attributes'] = new_df['#attributes'].astype(str) + 'ao=' + unknown[5].astype(str) + ';'
         new_df['#attributes'] = new_df['#attributes'].astype(str) + 'dp=' + info['dp'].astype(str) + ';'
 
