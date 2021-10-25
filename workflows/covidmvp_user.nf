@@ -21,15 +21,12 @@ workflow ncov_voc_user {
       ch_probvcf
       ch_geneannot
       ch_funcannot
-      ch_cladedef
+      ch_variant
       ch_genecoord
       ch_mutationsplit
 
-    main:
-      //extractMetadata(ch_metadata, ch_voc)
-      //SEQKIT(extractMetadata.out.ids.combine(ch_seq))
-      //BBMAP(SEQKIT.out.fasta)
 
+    main:
 
       if(params.userfile){
         Channel.fromPath( "$params.userfile", checkIfExists: true)
@@ -66,6 +63,6 @@ workflow ncov_voc_user {
 
       SNPEFF(tagProblematicSites.out.filtered_vcf)
       annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
-      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_cladedef).combine(ch_genecoord).combine(ch_mutationsplit))
+      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_variant).combine(ch_genecoord).combine(ch_mutationsplit))
 
 }
