@@ -37,9 +37,10 @@ workflow ncov_voc {
       ch_cladedef
       ch_genecoord
       ch_mutationsplit
+      ch_variant
 
     main:
-      if(!params.single_genome){}
+      if(!params.single_genome){
         extractMetadata(ch_metadata, ch_voc)
         SEQKIT(extractMetadata.out.ids.combine(ch_seq))
         BBMAP(SEQKIT.out.fasta)
@@ -77,6 +78,6 @@ workflow ncov_voc {
       }
       SNPEFF(tagProblematicSites.out.filtered_vcf)
       annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
-      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_cladedef).combine(ch_genecoord).combine(ch_mutationsplit))
+      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_variant).combine(ch_genecoord).combine(ch_mutationsplit))
 
 }
