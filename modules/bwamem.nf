@@ -1,10 +1,10 @@
 process BWAMEM {
 
     tag {"${seq.baseName}"}
-    
+
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.sorted.bam", mode: 'copy'
 
-    cpus 8
+    label 'smallcpu'
 
     input:
         tuple(path(seq),path(ref))
