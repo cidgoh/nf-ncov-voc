@@ -67,7 +67,7 @@ See the [parameters](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs/PARA
     2.  Variant annotation ([`SnpEff`](http://snpeff.sourceforge.net/SnpEff.html))
     3.  Peptide annotation ([`mature_peptide_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/mature_peptide_annotation.py))
     4.  Functional Annotation ([`vcf2gvf.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/vcf2gvf.py))
-    5.  Surveillance Report ([`gvf2tsv.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/gvf2tsv.py))
+    
 
 
 
