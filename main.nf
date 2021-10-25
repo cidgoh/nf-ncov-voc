@@ -55,7 +55,17 @@ if ( ! params.prefix ) {
 workflow {
 
    main:
-    println(params.mode)
+      println(params.mode)
+      if(params.variants){
+        Channel.fromPath( "$params.variants", checkIfExists: true)
+              .set{ ch_variants }
+          }
+      else{
+        Channel.fromPath( "$baseDir/.github/data/variants/*.tsv", checkIfExists: true)
+              .set{ ch_variant }
+          }
+
+
       if(params.mode == 'user'){
 
         Channel.fromPath( "$params.prob_sites/*.vcf", checkIfExists: true)
@@ -77,20 +87,12 @@ workflow {
               .set{ ch_mutationsplit }
 
 
-        ncov_voc_user( ch_probvcf, ch_geneannot, ch_funcannot, ch_cladedef, ch_genecoord, ch_mutationsplit)
+        ncov_voc_user( ch_probvcf, ch_geneannot, ch_funcannot, ch_variant, ch_genecoord, ch_mutationsplit)
       }
 
 
       else if(params.mode == 'reference'){
 
-        if(params.variants){
-          Channel.fromPath( "$params.variants", checkIfExists: true)
-               .set{ ch_variants }
-        }
-        else{
-          Channel.fromPath( "$baseDir/.github/data/variants/*.tsv", checkIfExists: true)
-               .set{ ch_variant }
-        }
 
 
         if(params.seq){
@@ -112,7 +114,6 @@ workflow {
                 .set{ ch_metadata }
         }
 
-
         extractVariants(ch_variant.combine(ch_metadata))
         extractVariants.out.lineages
                 .splitText()
@@ -120,6 +121,7 @@ workflow {
 
 
         ch_voc.view()
+
         Channel.fromPath( "$params.ref_gff/*.gff3", checkIfExists: true)
               .set{ ch_refgff }
 
@@ -148,7 +150,7 @@ workflow {
               .set{ ch_mutationsplit }
 
 
-        ncov_voc(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai, ch_probvcf, ch_geneannot, ch_funcannot, ch_cladedef, ch_genecoord, ch_mutationsplit )
+        ncov_voc(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai, ch_probvcf, ch_geneannot, ch_funcannot, ch_cladedef, ch_genecoord, ch_mutationsplit, ch_variant )
       }
 
 }
