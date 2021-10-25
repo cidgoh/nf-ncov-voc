@@ -38,7 +38,6 @@
 * [GVF](https://pubmed.ncbi.nlm.nih.gov/20796305/)
     > Reese MG. A standard variation file format for human genome sequences. Genome Biol. 2010;11(8):R88.  doi: 10.1186/gb-2010-11-8-r88. PubMed PMID: 20796305.
 
-
 ## Software packaging/containerisation tools
 
 * [Anaconda](https://anaconda.com)
