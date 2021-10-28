@@ -62,7 +62,7 @@ def gvf2tsv(gvf):
     df = df.drop(labels=['source', 'seqid', 'type', 'end', 'strand', 'score', 'phase', 'id'], axis=1)
 
     #rename 'dp' column to 'sequence_depth', make 'viral_lineage' plural
-    df = df.rename(columns={'dp': 'sequence_depth', 'num_seqs': 'sample_size', 'viral_lineage': 'viral_lineages'})
+    df = df.rename(columns={'dp': 'sequence_depth', 'viral_lineage': 'viral_lineages'})
     
     return df
 
@@ -94,7 +94,7 @@ if __name__ == '__main__':
     print(str(len(gvf_files)) + " GVF files found for " + args.who_variant + " variant.")
 
 
-    #if any files are found, create a surveillance report
+    #if any GVF files are found, create a surveillance report
     
     if len(gvf_files) > 0:
 
