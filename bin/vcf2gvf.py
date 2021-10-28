@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--strain_tsv', type=str, default=None,
                         help='Multi-strain TSV file generated in workflow that contains num_seqs column')
     parser.add_argument('--clades', type=str, default=None,
-                        help='TSV file of outbreak.info clade-defining mutations')
+                        help='TSV file of WHO strain names and VOC/VOI status')
     parser.add_argument('--clades_threshold', type=float,
                         default=0.75,
                         help='Alternate frequency cutoff for clade-defining mutations')
