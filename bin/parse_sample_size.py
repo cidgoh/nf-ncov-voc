@@ -34,11 +34,15 @@ if __name__ == '__main__':
     
     args = parse_args()
     
-    table = args.table
-    lineage = args.lineage
-    
-    sample_size = find_sample_size(table, lineage)
+    sample_size = find_sample_size(args.table, args.lineage)
     
     print(sample_size)
     
-    #return sample_size
+    
+    
+'''
+In bash:
+sample_size=$(python parse_sample_size.py --lineage B.1.621 --table samples_stats.tsv)
+echo $sample_size
+'''
+
