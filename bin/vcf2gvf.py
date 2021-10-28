@@ -27,7 +27,7 @@ def parse_args():
     parser.add_argument('--functional_annotations', type=str, default=None,
                         help='TSV file of functional annotations')
     parser.add_argument('--strain_tsv', type=str, default=None,
-                        help='Strain-specific TSV file generated in workflow that contains num_seqs column')
+                        help='Multi-strain TSV file generated in workflow that contains num_seqs column')
     parser.add_argument('--clades', type=str, default=None,
                         help='TSV file of outbreak.info clade-defining mutations')
     parser.add_argument('--clades_threshold', type=float,
