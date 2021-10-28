@@ -144,9 +144,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
         title = split[0].drop_duplicates().tolist()[0]
         if isinstance(title, str):
             title = title.lower()
-        content = split[1]
-        info[column] = content #ignore "tag=" in column content
-        info.rename(columns={column:title}, inplace=True) #make attribute tag as column label
+            content = split[1]
+            info[column] = content #ignore "tag=" in column content
+            info.rename(columns={column:title}, inplace=True) #make attribute tag as column label
     
     #add 'INFO' attributes by name
     for column in ['ps_filter', 'ps_exc', 'mat_pep_id', 'mat_pep_desc', 'mat_pep_acc']:
