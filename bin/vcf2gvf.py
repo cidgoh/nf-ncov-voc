@@ -214,8 +214,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split, strain_tsv):
     new_df['#attributes'] = new_df['#attributes'] + "multiaa_comb_mutation=" + new_df["multiaa_comb_mutation"] + ';'    
       
     #add num_seqs attribute from strain_tsv
-    strain_tsv_df = pd.read_csv(strain_tsv, header=0, delim_whitespace=True, usecols=['num_seqs'])  
-    new_df['#attributes'] = new_df['#attributes'] + "num_seqs=" + strain_tsv_df['num_seqs'].astype(str) + ';' 
+    strain_tsv_df = pd.read_csv(strain_tsv, header=0, delim_whitespace=True, usecols=['file', 'num_seqs'])  
+    num_seqs = strain_tsv_df[strain_tsv_df['file'].str.contains(strain)]['num_seqs'].values[0]
+    new_df['#attributes'] = new_df['#attributes'] + "num_seqs=" + num_seqs + ';' 
     
     new_df = new_df[gvf_columns + ['multiaa_comb_mutation', 'AF']] #only keep the columns needed for a gvf file, plus multiaa_comb_mutation to add to comb_mutation later
     #new_df.to_csv('new_df.tsv', sep='\t', index=False, header=False)
