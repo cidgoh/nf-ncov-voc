@@ -21,10 +21,10 @@ def parse_args():
     return parser.parse_args()
 
 
-def find_sample_size(strain_tsv, strain):
+def find_sample_size(table, lineage):
     
-    strain_tsv_df = pd.read_csv(strain_tsv, header=0, delim_whitespace=True, usecols=['file', 'num_seqs'])  
-    num_seqs = strain_tsv_df[strain_tsv_df['file'].str.contains(strain)]['num_seqs'].values[0]
+    strain_tsv_df = pd.read_csv(table, header=0, delim_whitespace=True, usecols=['file', 'num_seqs'])  
+    num_seqs = strain_tsv_df[strain_tsv_df['file'].str.contains(lineage)]['num_seqs'].values[0]
 
     return num_seqs
 
@@ -33,15 +33,13 @@ def find_sample_size(strain_tsv, strain):
 if __name__ == '__main__':
     
     args = parse_args()
-    
     sample_size = find_sample_size(args.table, args.lineage)
-    
     print(sample_size)
     
     
     
 '''
-In bash:
+Example use case:
 sample_size=$(python parse_sample_size.py --lineage B.1.621 --table samples_stats.tsv)
 echo $sample_size
 '''
