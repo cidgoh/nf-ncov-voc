@@ -16,24 +16,28 @@ def parse_args():
 
     parser.add_argument('--table', type=str, default=None,
                         help='Multi-strain TSV file generated in workflow that contains num_seqs column')
-    parser.add_argument("--lineage", default='n/a',
-                        help='lineage')
+    parser.add_argument("--filename", default=None,
+                        help='Entry in "file" column to parse (usually "strain" + "qc.fasta"')
     return parser.parse_args()
 
 
 def find_sample_size(table, lineage):
     
     strain_tsv_df = pd.read_csv(table, header=0, delim_whitespace=True, usecols=['file', 'num_seqs'])  
-    num_seqs = strain_tsv_df[strain_tsv_df['file'].str.contains(lineage)]['num_seqs'].values[0]
+    num_seqs = strain_tsv_df[strain_tsv_df['file']==lineage]['num_seqs'].values
 
-    return num_seqs
+    if len(num_seqs) == 0:
+        return "n/a"
+    else:
+        return num_seqs[0]
+    
 
 
 
 if __name__ == '__main__':
     
     args = parse_args()
-    sample_size = find_sample_size(args.table, args.lineage)
+    sample_size = find_sample_size(args.table, args.filename)
     print(sample_size)
     
     
