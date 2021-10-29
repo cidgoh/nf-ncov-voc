@@ -17,7 +17,7 @@ def parse_args():
     parser.add_argument('--table', type=str, default=None,
                         help='Multi-strain TSV file generated in workflow that contains num_seqs column')
     parser.add_argument("--filename", default=None,
-                        help='Entry in "file" column to parse (usually "strain" + "qc.fasta"')
+                        help='Entry in "file" column to parse (usually "strain" + "qc.fasta")')
     return parser.parse_args()
 
 
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     
 '''
 Example use case:
-sample_size=$(python parse_sample_size.py --lineage B.1.621 --table samples_stats.tsv)
+sample_size=$(python parse_sample_size.py --lineage B.1.621.qc.fasta --table samples_stats.tsv)
 echo $sample_size
 '''
 
