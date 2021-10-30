@@ -24,12 +24,29 @@ def parse_args():
                         help='Path to GVF-containing directory')
     parser.add_argument('--clades', type=str, default=None,
                         help='TSV file of WHO strain names and VOC/VOI status')
-    parser.add_argument('--who_variant', type=str, default=None,
-                        help='Name of WHO variant to make report for')
     parser.add_argument('--outtsv', type=str, default=None,
                         help='Output filepath for finished .tsv')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--specify_variants', type=str, default=None, nargs='*',
+                        help='Name(s) of WHO variant to make report for.  Not case-sensitive.')
+    group.add_argument('--all_variants', action="store_true",
+                        help='Create reports for all variants, using all available reference lineage gvf files.  Not case-sensitive.')
 
     return parser.parse_args()
+
+
+def find_gvfs(pango_lineage_list, gvf_directory):
+    
+    #list gvf filenames that match PANGO lineages of a variant
+    gvf_files = []
+    
+    for pango_lineage in pango_lineage_list:
+        for path, dirs, filenames in os.walk(gvf_directory):
+            for f in filenames:
+                if f.startswith(pango_lineage.replace("*","")) and f.endswith(".gvf"):
+                    gvf_files.append(gvf_directory + '/' + f)
+
+    return gvf_files
 
 
 def gvf2tsv(gvf):
@@ -67,105 +84,113 @@ def gvf2tsv(gvf):
     return df
 
 
+
+def streamline_tsv(tsv_df):
+    #find identical rows across strains, and keep only one row.
+    
+    #change n/a to 0 in 'ao' for counting purposes
+    tsv_df['ao'] = tsv_df['ao'].str.replace("n/a", "0")
+
+    for colname in ['sequence_depth', 'ao', 'ro']:
+        #split up at commas into new columns: make a new mini-df
+        split_series = tsv_df[colname].str.split(pat=',').apply(pd.Series)
+        #rename series columns to 'ao_0', 'a0_1', etc.
+        split_series.columns = [colname + '_' + str(name) for name in split_series.columns.values]
+        #ensure all counts are numeric
+        for column in split_series.columns:
+            split_series[column] = pd.to_numeric(split_series[column], errors='coerce')
+        #append series to tsv_df
+        tsv_df = pd.concat([tsv_df, split_series], axis=1)
+        
+    cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 'multiaa_comb_mutation', 'start', 'function_category', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']
+
+    agg_dict = dict((col,'first') for col in tsv_df.columns.values.tolist())
+    agg_dict['viral_lineages'] = ', '.join
+    agg_dict['clade_defining'] = ', '.join
+    
+    #sum split columns
+    for string in ['sequence_depth_', 'ao_', 'ro_']:
+        relevant_keys = [key for key, value in agg_dict.items() if string in key.lower()]
+        for key in relevant_keys:
+            agg_dict[key] = 'sum'
+   
+    final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
+    
+    #rejoin split columns (ao, sequence_depth, ro) with comma separation
+    for string in ['sequence_depth_', 'ao_', 'ro_']:
+        colnames = [i for i in tsv_df.columns.values.tolist() if string in i]
+        final_df[string + 'combined'] = final_df[colnames].apply(lambda row: ','.join(row.values.astype(str)), axis=1)
+        #drop split columns
+        final_df = final_df.drop(labels=colnames, axis=1)
+ 
+    #replace ao, ro, sequence_depth with the added up columns
+    final_df = final_df.drop(labels=['ao', 'ro', 'sequence_depth'], axis=1)
+    final_df = final_df.rename(columns={'sequence_depth_combined': 'sequence_depth', 'ro_combined': 'ro', 'ao_combined': 'ao'})
+
+    #reorder columns
+    cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
+       'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
+       'mutation_type', 'sequence_depth', 'sample_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
+       'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
+       'variant_seq', 'viral_lineages', 'function_category', 'citation',
+       'comb_mutation', 'function_description', 'heterozygosity',
+       'clade_defining', 'who_variant', 'status',
+       'voi_designation_date', 'voc_designation_date',
+       'vum_designation_date']
+    final_df = final_df[cols]
+    
+    return final_df
+
+
+
+
 if __name__ == '__main__':
     
     args = parse_args()
     
     filepath = args.outtsv
     clade_file = args.clades
-    if args.who_variant:
-        who_variant = args.who_variant.lower()
     gvf_directory = args.gvf_directory #directory to search
-
-    #get list of PANGO lineage names that correspond to WHO variant name
+    
+    #read in WHO variant/PANGO lineage .tsv
     clades = pd.read_csv(clade_file, sep='\t', header=0, usecols=['who_variant', 'pango_lineage']) #load clade-defining mutations file
-    clades['who_variant'] = clades['who_variant'].str.lower()
-    pango_lineages = clades[clades['who_variant']==who_variant]['pango_lineage'].values[0].split(',')  #list of pango lineages from that variant
-
-    #list gvf filenames that match those PANGO lineages
-    gvf_files = []
     
-    for pango_lineage in pango_lineages:
-        for path, dirs, filenames in os.walk(gvf_directory):
-            for f in filenames:
-                if f.startswith(pango_lineage.replace("*","")) and f.endswith(".gvf"):
-                    gvf_files.append(gvf_directory + '/' + f)
-                    
-    print(str(len(gvf_files)) + " GVF files found for " + args.who_variant + " variant.")
+    #get lowercase WHO variant names    
+    if args.specify_variants:
+        who_variants_list = args.specify_variants 
+    elif args.all_variants:
+        who_variants_list = clades['who_variant'].tolist()
 
-
-    #if any GVF files are found, create a surveillance report
+    #for each variant, create a surveillance report
+    for who_variant in who_variants_list:
+        who_variant = who_variant.capitalize()
+        #get list of relevant pango lineages
+        pango_lineages = clades[clades['who_variant']==who_variant]['pango_lineage'].values[0].split(',')  #list of pango lineages from that variant
     
-    if len(gvf_files) > 0:
-
-        #convert all gvf files to tsv and concatenate them
-        print("Processing:")
-        print(gvf_files[0])
-        tsv_df = gvf2tsv(gvf_files[0])
-        for gvf in gvf_files[1:]:
-            print(gvf)
-            new_tsv_df = gvf2tsv(gvf)
-            tsv_df = pd.concat([tsv_df, new_tsv_df], ignore_index=True)   
-        
-        
-        #find identical rows across strains, and keep only one row.
+        #get list of gvf files pertaining to variant
+        gvf_files = find_gvfs(pango_lineages, gvf_directory)
+        print(str(len(gvf_files)) + " GVF files found for " + who_variant + " variant.")
     
-        #change n/a to 0 in 'ao' for counting purposes
-        tsv_df['ao'] = tsv_df['ao'].str.replace("n/a", "0")
+        #if any GVF files are found, create a surveillance report
+        if len(gvf_files) > 0:
     
-        for colname in ['sequence_depth', 'ao', 'ro']:
-            #split up at commas into new columns: make a new mini-df
-            split_series = tsv_df[colname].str.split(pat=',').apply(pd.Series)
-            #rename series columns to 'ao_0', 'a0_1', etc.
-            split_series.columns = [colname + '_' + str(name) for name in split_series.columns.values]
-            #ensure all counts are numeric
-            for column in split_series.columns:
-                split_series[column] = pd.to_numeric(split_series[column], errors='coerce')
-            #append series to tsv_df
-            tsv_df = pd.concat([tsv_df, split_series], axis=1)
+            #convert all gvf files to tsv and concatenate them
+            print("Processing:")
+            print(gvf_files[0])
+            tsv_df = gvf2tsv(gvf_files[0])
+            for gvf in gvf_files[1:]:
+                print(gvf)
+                new_tsv_df = gvf2tsv(gvf)
+                tsv_df = pd.concat([tsv_df, new_tsv_df], ignore_index=True)   
             
-        cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 'multiaa_comb_mutation', 'start', 'function_category', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']
-    
-        agg_dict = dict((col,'first') for col in tsv_df.columns.values.tolist())
-        agg_dict['viral_lineages'] = ', '.join
-        agg_dict['clade_defining'] = ', '.join
-        
-        #sum split columns
-        for string in ['sequence_depth_', 'ao_', 'ro_']:
-            relevant_keys = [key for key, value in agg_dict.items() if string in key.lower()]
-            for key in relevant_keys:
-                agg_dict[key] = 'sum'
-       
-        final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
-        
-        #rejoin split columns (ao, sequence_depth, ro) with comma separation
-        for string in ['sequence_depth_', 'ao_', 'ro_']:
-            colnames = [i for i in tsv_df.columns.values.tolist() if string in i]
-            final_df[string + 'combined'] = final_df[colnames].apply(lambda row: ','.join(row.values.astype(str)), axis=1)
-            #drop split columns
-            final_df = final_df.drop(labels=colnames, axis=1)
-     
-        #replace ao, ro, sequence_depth with the added up columns
-        final_df = final_df.drop(labels=['ao', 'ro', 'sequence_depth'], axis=1)
-        final_df = final_df.rename(columns={'sequence_depth_combined': 'sequence_depth', 'ro_combined': 'ro', 'ao_combined': 'ao'})
-    
-        #reorder columns
-        cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
-           'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
-           'mutation_type', 'sequence_depth', 'sample_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
-           'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
-           'variant_seq', 'viral_lineages', 'function_category', 'citation',
-           'comb_mutation', 'function_description', 'heterozygosity',
-           'clade_defining', 'who_variant', 'status',
-           'voi_designation_date', 'voc_designation_date',
-           'vum_designation_date']
-        final_df = final_df[cols]
-        
-        #save the final df to a .tsv
-        final_df.to_csv(filepath, sep='\t', index=False)
-        print("")
-        print("Processing complete.")
-        print("Saved as: " + filepath)
-
+            #streamline final concatenated df, reorder/rename columns where needed
+            final_df = streamline_tsv(tsv_df)
+            
+            #save report as a .tsv
+            filename = filepath + '_' + who_variant + '.tsv'
+            final_df.to_csv(filename, sep='\t', index=False)
+            print("Processing complete.")
+            print(who_variant + " surveillance report saved as: " + filename)
+            print("")
 
     
