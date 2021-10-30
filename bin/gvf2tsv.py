@@ -24,8 +24,8 @@ def parse_args():
                         help='Path to GVF-containing directory')
     parser.add_argument('--clades', type=str, default=None,
                         help='TSV file of WHO strain names and VOC/VOI status')
-    parser.add_argument('--outtsv', type=str, default=None,
-                        help='Output filepath for finished .tsv')
+    parser.add_argument('--outtsv', type=str, default="surveillance_report",
+                        help='Filepath for finished .tsv')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--specify_variants', type=str, default=None, nargs='*',
                         help='Name(s) of WHO variant to make report for.  Not case-sensitive.')
@@ -36,8 +36,13 @@ def parse_args():
 
 
 def find_gvfs(pango_lineage_list, gvf_directory):
-    
-    #list gvf filenames that match PANGO lineages of a variant
+    """This function searches for gvf files in a directory which have filenames that contain specified lineage names.
+    :param pango_lineage_list: Pangolin lineages to include in the report
+    :type pango_lineage_list: list of strings
+    :param gvf_directory: directory to search for gvf files
+    :type gvf_directory: string 
+    :return: list of gvf filenames to process for the report
+    """
     gvf_files = []
     
     for pango_lineage in pango_lineage_list:
