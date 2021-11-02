@@ -102,17 +102,6 @@ process processGVCF {
       path("*.txt")
 
   script:
-    if( params.single_genome ){
-      """
-      process_gvcf.py -d 1 \
-      -l 0 \
-      -u 1 \
-      -m ${gvcf.baseName}.mask.txt \
-      -v ${gvcf.baseName}.variants.vcf \
-      -c ${gvcf.baseName}.consensus.vcf ${gvcf}
-      """
-    }
-    else{
       """
       process_gvcf.py -d ${params.var_MinDepth} \
       -l ${params.lower_ambiguityFrequency} \
@@ -121,7 +110,6 @@ process processGVCF {
       -v ${gvcf.baseName}.variants.vcf \
       -c ${gvcf.baseName}.consensus.vcf ${gvcf}
       """
-    }
 }
 
 
