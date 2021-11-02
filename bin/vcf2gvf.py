@@ -91,10 +91,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
 
     new_df = pd.DataFrame(index=range(0,len(df)),columns=gvf_columns)
 
-    #fill in first 8 GVF columns
+    #fill in first 7 GVF columns, excluding 'type'
     new_df['#seqid'] = df['#CHROM']
     new_df['#source'] = '.'
-    new_df['#type'] = '.' #info['type']
     new_df['#start'] = df['POS']
     new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() - 1).astype(str)  #this needs fixing
     new_df['#score'] = '.'
@@ -149,6 +148,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
             content = split[1]
             info[column] = content #ignore "tag=" in column content
             info.rename(columns={column:title}, inplace=True) #make attribute tag as column label
+
+    #fill in 'type' column
+    new_df['#type'] = info['type']
     
     #add 'INFO' attributes by name
     for column in ['ps_filter', 'ps_exc', 'mat_pep_id', 'mat_pep_desc', 'mat_pep_acc']:
