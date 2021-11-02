@@ -12,7 +12,8 @@ process MINIMAP2 {
     output:
         path("*.sorted.bam"), emit: bam
         path("*.bai"), emit: index
-
+    when:
+      seq.size() > 0
     script:
       """
       minimap2 -t ${task.cpus} -ax asm5 -a ${ref} ${seq} | \
