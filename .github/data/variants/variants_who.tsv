@@ -1,24 +1,24 @@
 who_variant	pango_lineage	status	voi_designation_date	voc_designation_date	vum_designation_date
-Alpha	B.1.1.7,Q.*	VOC		18-Dec-2020
-Beta	B.1.351	VOC		18-Dec-2020
-Gamma	P.1	VOC		11-Jan-2021
-Delta	B.1.617.2,AY.*	VOC	4-Apr-2021	11-May-2021
-Lambda	C.37	VOI	14-Jun-2021
-Mu	B.1.621	VOI	30-Aug-2021
-Kappa	B.1.617.1	VUM	4-Apr-2021		20-Sep-2021
-Iota	B.1.526	VUM	24-Mar-2021		20-Sep-2021
-Eta	B.1.525	VUM	17-Mar-2021		20-Sep-2021
-Epsilon	B.1.427,B.1.429	VUM	5-Mar-2021		06-Jul-2021
-Zeta	P.2	inactive			06-Jul-2021
-Theta	P.3	inactive 			06-Jul-2021
-n/a R.1 VUM 07-Apr-2021
-n/a B.1.466.2 VUM 28-Apr-2021
-n/a B.1.1.318 02-Jun-2021
-n/a B.1.1.519 VUM 02-Jun-2021
-n/a C.36.3 VUM 16-Jun-2021
-n/a B.1.214.2 VUM 30-Jun-2021
-n/a B.1.1.523 VUM 14-Jul-2021
-n/a B.1.619 VUM 14-Jul-2021
-n/a B.1.620 VUM 14-Jul-2021
-n/a C.1.2 VUM 01-Sep-2021
-n/a B.1.630 VUM 12-Oct-2021
+Alpha	B.1.1.7,Q.*	VOC	n/a	18-Dec-2020	n/a
+Beta	B.1.351	VOC	n/a	18-Dec-2020	n/a
+Gamma	P.1	VOC	n/a	11-Jan-2021	n/a
+Delta	B.1.617.2,AY.*	VOC	04-Apr-2021	11-May-2021	n/a
+Lambda	C.37	VOI	14-Jun-2021	n/a	n/a
+Mu	B.1.621	VOI	30-Aug-2021	n/a	n/a
+Kappa	B.1.617.1	VUM	4-Apr-2021	n/a	20-Sep-2021
+Iota	B.1.526	VUM	24-Mar-2021	n/a	20-Sep-2021
+Eta	B.1.525	VUM	17-Mar-2021	n/a	20-Sep-2021
+Epsilon	B.1.427,B.1.429	VUM	5-Mar-2021	n/a	06-Jul-2021
+Zeta	P.2	inactive	n/a	n/a	06-Jul-2021
+Theta	P.3	inactive	n/a	n/a	06-Jul-2021
+Unnamed	R.1	VUM	n/a	n/a	07-Apr-2021
+Unnamed	B.1.466.2	VUM	n/a	n/a	28-Apr-2021
+Unnamed	B.1.1.318	VUM	n/a	n/a	02-Jun-2021
+Unnamed	B.1.1.519	VUM	n/a	n/a	02-Jun-2021
+Unnamed	C.36.3	VUM	n/a	n/a	16-Jun-2021
+Unnamed	B.1.214.2	VUM	n/a	n/a	30-Jun-2021
+Unnamed	B.1.1.523	VUM	n/a	n/a	14-Jul-2021
+Unnamed	B.1.619	VUM	n/a	n/a	14-Jul-2021
+Unnamed	B.1.620	VUM	n/a	n/a	14-Jul-2021
+Unnamed	C.1.2	VUM	n/a	n/a	01-Sep-2021
+Unnamed	B.1.630	VUM	n/a	n/a	12-Oct-2021
