@@ -25,6 +25,7 @@ if __name__ == '__main__':
                            low_memory=False)
 
     for var in variants["pango_lineage"]:
+        print(var)
         if "," in var:
             temp = var.split(",")
             who_lineages.extend(temp)
@@ -39,15 +40,13 @@ if __name__ == '__main__':
         for who_lin in who_lineages:
             if "*" in who_lin:
                 who_lin = who_lin[:-1]
-                #print(lineage)
+
                 if isinstance(lineage, str) and lineage.startswith(
                         who_lin):
                     parsed_lineages.append(lineage)
             else:
                 if lineage == who_lin:
                     parsed_lineages.append(lineage)
-
-    #print(sorted(parsed_lineages))
 
     with open(args.outfile, 'w') as f:
         for item in sorted(parsed_lineages):
