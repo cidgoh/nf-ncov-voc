@@ -13,6 +13,7 @@ This script converts GVF files to TSVs, for later conversion to an HTML case rep
 
 import argparse
 import pandas as pd
+import os
 
 
 def parse_args():
@@ -21,10 +22,36 @@ def parse_args():
         description='Converts a GVF file to a TSV')
     parser.add_argument('--gvf_directory', type=str, default=None,
                         help='Path to GVF-containing directory')
-    parser.add_argument('--outtsv', type=str, default=None,
-                        help='Output filepath for finished .tsv')
+    parser.add_argument('--clades', type=str, default=None,
+                        help='TSV file of WHO strain names and VOC/VOI status')
+    parser.add_argument('--outtsv', type=str, default="surveillance_report",
+                        help='Filepath for finished .tsv')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--specify_variants', type=str, default=None, nargs='*',
+                        help='Name(s) of WHO variant to make report for.  Not case-sensitive.')
+    group.add_argument('--all_variants', action="store_true",
+                        help='Create reports for all variants, using all available reference lineage gvf files.  Not case-sensitive.')
 
     return parser.parse_args()
+
+
+def find_gvfs(pango_lineage_list, gvf_directory):
+    """This function searches for gvf files in a directory which have filenames that contain specified lineage names.
+    :param pango_lineage_list: Pangolin lineages to include in the report
+    :type pango_lineage_list: list of strings
+    :param gvf_directory: directory to search for gvf files
+    :type gvf_directory: string 
+    :return: list of gvf filenames to process for the report
+    """
+    gvf_files = []
+    
+    for pango_lineage in pango_lineage_list:
+        for path, dirs, filenames in os.walk(gvf_directory):
+            for f in filenames:
+                if f.startswith(pango_lineage.replace("*","")) and f.endswith(".gvf"):
+                    gvf_files.append(gvf_directory + '/' + f)
+
+    return gvf_files
 
 
 def gvf2tsv(gvf):
@@ -62,25 +89,10 @@ def gvf2tsv(gvf):
     return df
 
 
-if __name__ == '__main__':
-    
-    args = parse_args()
-    
-    filepath = args.outtsv
-    gvf_files = args.gvf #this is a list of strings
 
-    #convert all gvf files to tsv and concatenate them
-    print("Processing:")
-    print(gvf_files[0])
-    tsv_df = gvf2tsv(gvf_files[0])
-    for gvf in gvf_files[1:]:
-        print(gvf)
-        new_tsv_df = gvf2tsv(gvf)
-        tsv_df = pd.concat([tsv_df, new_tsv_df], ignore_index=True)   
-    
-    
+def streamline_tsv(tsv_df):
     #find identical rows across strains, and keep only one row.
-
+    
     #change n/a to 0 in 'ao' for counting purposes
     tsv_df['ao'] = tsv_df['ao'].str.replace("n/a", "0")
 
@@ -123,7 +135,7 @@ if __name__ == '__main__':
     #reorder columns
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
        'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
-       'mutation_type', 'sequence_depth', 'ps_filter', 'ps_exc', 'mat_pep_id',
+       'mutation_type', 'sequence_depth', 'sample_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
        'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
        'variant_seq', 'viral_lineages', 'function_category', 'citation',
        'comb_mutation', 'function_description', 'heterozygosity',
@@ -132,10 +144,58 @@ if __name__ == '__main__':
        'vum_designation_date']
     final_df = final_df[cols]
     
-    #save the final df to a .tsv
-    final_df.to_csv(filepath, sep='\t', index=False)
-    print("")
-    print("Processing complete.")
-    print("Saved as: " + filepath)
+    return final_df
+
+
+
+
+if __name__ == '__main__':
+    
+    args = parse_args()
+    
+    filepath = args.outtsv
+    clade_file = args.clades
+    gvf_directory = args.gvf_directory #directory to search
+    
+    #read in WHO variant/PANGO lineage .tsv
+    clades = pd.read_csv(clade_file, sep='\t', header=0, usecols=['who_variant', 'pango_lineage']) #load clade-defining mutations file
+    
+    #get lowercase WHO variant names    
+    if args.specify_variants:
+        who_variants_list = args.specify_variants 
+    elif args.all_variants:
+        who_variants_list = clades['who_variant'].tolist()
+
+    #for each variant, create a surveillance report
+    for who_variant in who_variants_list:
+        who_variant = who_variant.capitalize()
+        #get list of relevant pango lineages
+        pango_lineages = clades[clades['who_variant']==who_variant]['pango_lineage'].values[0].split(',')  #list of pango lineages from that variant
+    
+        #get list of gvf files pertaining to variant
+        gvf_files = find_gvfs(pango_lineages, gvf_directory)
+        print(str(len(gvf_files)) + " GVF files found for " + who_variant + " variant.")
+    
+        #if any GVF files are found, create a surveillance report
+        if len(gvf_files) > 0:
+    
+            #convert all gvf files to tsv and concatenate them
+            print("Processing:")
+            print(gvf_files[0])
+            tsv_df = gvf2tsv(gvf_files[0])
+            for gvf in gvf_files[1:]:
+                print(gvf)
+                new_tsv_df = gvf2tsv(gvf)
+                tsv_df = pd.concat([tsv_df, new_tsv_df], ignore_index=True)   
+            
+            #streamline final concatenated df, reorder/rename columns where needed
+            final_df = streamline_tsv(tsv_df)
+            
+            #save report as a .tsv
+            filename = filepath + '_' + who_variant + '.tsv'
+            final_df.to_csv(filename, sep='\t', index=False)
+            print("Processing complete.")
+            print(who_variant + " surveillance report saved as: " + filename)
+            print("")
 
     

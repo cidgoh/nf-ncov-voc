@@ -26,10 +26,10 @@ def parse_args():
                         help='Path to a snpEFF-annotated VCF file')
     parser.add_argument('--functional_annotations', type=str, default=None,
                         help='TSV file of functional annotations')
-    parser.add_argument('--strain_tsv', type=str, default=None,
-                        help='Multi-strain TSV file generated in workflow that contains num_seqs column')
+    parser.add_argument('--strain_size', type=str, default=None,
+                        help='num_seqs for this strain, found with parse_sample_size.py')
     parser.add_argument('--clades', type=str, default=None,
-                        help='TSV file of outbreak.info clade-defining mutations')
+                        help='TSV file of WHO strain names and VOC/VOI status')
     parser.add_argument('--clades_threshold', type=float,
                         default=0.75,
                         help='Alternate frequency cutoff for clade-defining mutations')
@@ -83,7 +83,7 @@ def clade_defining_threshold(threshold, df):
 gvf_columns = ['#seqid','#source','#type','#start','#end','#score','#strand','#phase','#attributes']
 vcf_colnames = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL', 'FILTER', 'INFO', 'FORMAT', 'unknown']
 
-def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split, strain_tsv):
+def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
      
     df = pd.read_csv(var_data, sep='\t', names=vcf_colnames)    
     df = df[~df['#CHROM'].str.contains("#")] #remove pragmas
@@ -91,10 +91,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split, strain_tsv):
 
     new_df = pd.DataFrame(index=range(0,len(df)),columns=gvf_columns)
 
-    #fill in first 8 GVF columns
+    #fill in first 7 GVF columns, excluding 'type'
     new_df['#seqid'] = df['#CHROM']
     new_df['#source'] = '.'
-    new_df['#type'] = '.' #info['type']
     new_df['#start'] = df['POS']
     new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() - 1).astype(str)  #this needs fixing
     new_df['#score'] = '.'
@@ -149,6 +148,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split, strain_tsv):
             content = split[1]
             info[column] = content #ignore "tag=" in column content
             info.rename(columns={column:title}, inplace=True) #make attribute tag as column label
+
+    #fill in 'type' column
+    new_df['#type'] = info['type']
     
     #add 'INFO' attributes by name
     for column in ['ps_filter', 'ps_exc', 'mat_pep_id', 'mat_pep_desc', 'mat_pep_acc']:
@@ -208,15 +210,11 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split, strain_tsv):
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'vcf_gene=' + new_df['vcf_gene'] + ';' #gene names
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + new_df['mutation_type'] + ';' #mutation type 
 
-    #add strain name, multi-aa notes
+    #add strain name, multi-aa notes, sample_size
     new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + strain + ';'
     new_df['#attributes'] = new_df['#attributes'] + "multi_aa_name=" + new_df["multi_name"] + ';'
     new_df['#attributes'] = new_df['#attributes'] + "multiaa_comb_mutation=" + new_df["multiaa_comb_mutation"] + ';'    
-      
-    #add num_seqs attribute from strain_tsv
-    strain_tsv_df = pd.read_csv(strain_tsv, header=0, delim_whitespace=True, usecols=['file', 'num_seqs'])  
-    num_seqs = strain_tsv_df[strain_tsv_df['file'].str.contains(strain)]['num_seqs'].values[0]
-    new_df['#attributes'] = new_df['#attributes'] + "num_seqs=" + num_seqs + ';' 
+    new_df['#attributes'] = new_df['#attributes'] + "sample_size=" + args.strain_size + ';' 
     
     new_df = new_df[gvf_columns + ['multiaa_comb_mutation', 'AF']] #only keep the columns needed for a gvf file, plus multiaa_comb_mutation to add to comb_mutation later
     #new_df.to_csv('new_df.tsv', sep='\t', index=False, header=False)
@@ -366,7 +364,7 @@ if __name__ == '__main__':
     print("Processing: " + file)
         
     #create gvf from annotated vcf (ignoring pragmas for now)
-    gvf = vcftogvf(file, args.strain, GENE_POSITIONS_DICT, args.names_to_split, args.strain_tsv)
+    gvf = vcftogvf(file, args.strain, GENE_POSITIONS_DICT, args.names_to_split)
     #add functional annotations
     if args.names:
         '''
