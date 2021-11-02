@@ -93,8 +93,6 @@ workflow {
 
       else if(params.mode == 'reference'){
 
-
-
         if(params.seq){
           Channel.fromPath( "$params.seq", checkIfExists: true)
     	         .set{ ch_seq }
@@ -118,9 +116,6 @@ workflow {
         extractVariants.out.lineages
                 .splitText()
                 .set{ ch_voc }
-
-
-        ch_voc.view()
 
         Channel.fromPath( "$params.ref_gff/*.gff3", checkIfExists: true)
               .set{ ch_refgff }
