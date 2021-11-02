@@ -39,13 +39,13 @@ def sub_sampling(dataframe, subsampling):
 
 def write_ids(dataframe):
     ids = dataframe['strain'].tolist()
-    with open(dataframe['pango_lineage'].iloc[1] + ".txt", 'w') as \
+    with open(args.voc + ".txt", 'w') as \
             filehandle:
         filehandle.writelines("%s\n" % id for id in ids)
 
 
 def write_metadata(dataframe):
-    dataframe.to_csv(dataframe['pango_lineage'].iloc[1] +
+    dataframe.to_csv(args.voc +
                      "_Metadata.tsv", sep="\t",
                      quoting=csv.QUOTE_NONE, index=False, header=True)
 
