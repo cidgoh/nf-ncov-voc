@@ -14,22 +14,7 @@ process FREEBAYES {
     path("*.gvcf"), emit: gvcf
 
     script:
-      if( params.single_genome ){
-        """
-        freebayes \
-        -p 1 \
-        -f ${ref} \
-        -F 0.2 \
-        -C 1 \
-        --pooled-continuous \
-        --min-coverage 1 \
-        ${bam} |
-        sed s/QR,Number=1,Type=Integer/QR,Number=1,Type=Float/ > ${bam.baseName}.gvcf
-        """
-      }
 
-
-      else{
         """
         freebayes \
         -p 1 \
@@ -43,7 +28,5 @@ process FREEBAYES {
         sed s/QR,Number=1,Type=Integer/QR,Number=1,Type=Float/ > ${bam.baseName}.gvcf
 
         """
-      }
-
 
 }
