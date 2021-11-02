@@ -9,6 +9,7 @@ include { BWAINDEX             } from '../modules/bwaindex.nf'
 include { BBMAP                } from  '../modules/bbmap_reformat.nf'
 include { extractMetadata      } from '../modules/custom.nf'
 include { SEQKIT               } from '../modules/seqkit.nf'
+include { SEQKITSTATS          } from '../modules/seqkitstats.nf'
 include { BWAMEM               } from '../modules/bwamem.nf'
 include { MINIMAP2             } from '../modules/minimap2.nf'
 include { FREEBAYES            } from '../modules/freebayes.nf'
@@ -40,15 +41,11 @@ workflow ncov_voc {
       ch_variant
 
     main:
-      if(!params.single_genome){
-        extractMetadata(ch_metadata, ch_voc)
-        SEQKIT(extractMetadata.out.ids.combine(ch_seq))
-        BBMAP(SEQKIT.out.fasta)
-      }
 
-      else{
-        BBMAP(ch_seq)
-      }
+      extractMetadata(ch_metadata, ch_voc)
+      SEQKIT(extractMetadata.out.ids.combine(ch_seq))
+      BBMAP(SEQKIT.out.fasta)
+      SEQKITSTATS(BBMAP.out.qcfasta)
 
       if (params.bwa){
         if ( params.bwa_index ){
@@ -78,6 +75,6 @@ workflow ncov_voc {
       }
       SNPEFF(tagProblematicSites.out.filtered_vcf)
       annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
-      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_variant).combine(ch_genecoord).combine(ch_mutationsplit))
+      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_variant).combine(ch_genecoord).combine(ch_mutationsplit).combine(SEQKITSTATS.out.stats))
 
 }
