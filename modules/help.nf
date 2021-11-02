@@ -18,7 +18,6 @@ def printHelp() {
     --variants                Provide a variants file (tsv) (Default: $baseDir/.github/data/variants/variants_who.tsv)
     --input_type              Specify type of input file (vcf | tsv | fasta) (Default: vcf)
     --gisaid                  Specify if the dataset is from GISAID (gisaid) (Default: None)
-    --single-genome           Specify if the dataset is single genome (single-genome) (Default: None)
     --userfile                Specify userfile (fasta | tsv | vcf) (Default: None)
     --outdir                  Output directory (Default: $baseDir/results)
     --ivar                    Run the ivar workflow (Default: false, use freebayes workflow)
