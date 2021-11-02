@@ -13,6 +13,9 @@ process BWAMEM {
     output:
         path("*.sorted.bam"), emit: bam
 
+    when:
+      seq.size() > 0
+      
     script:
       """
       bwa mem -t ${task.cpus} ${ref} ${seq} | \
