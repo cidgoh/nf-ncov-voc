@@ -5,11 +5,8 @@ process SEQTK {
 
   input:
       tuple(path(ids),path(sequence))
-      //path(sequence)
-      //each x
 
   output:
-      //path("*.tsv")
       path("*.fasta"), emit: fasta
 
   script:
