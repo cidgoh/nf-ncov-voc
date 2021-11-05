@@ -45,7 +45,7 @@ workflow ncov_voc {
       extractMetadata(ch_metadata, ch_voc)
       SEQKIT(extractMetadata.out.ids.combine(ch_seq))
       BBMAP(SEQKIT.out.fasta)
-      SEQKITSTATS(BBMAP.out.qcfasta)
+      SEQKITSTATS(BBMAP.out.qcfasta.collect())
 
       if (params.bwa){
         if ( params.bwa_index ){
