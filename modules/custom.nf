@@ -163,45 +163,23 @@ process vcfTogvf {
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.gvf", mode: 'copy'
 
   input:
-      tuple(path(annotated_vcf), path(func_annot), path(variants), path(gene_coord), path(mutation_split))
+      tuple(path(annotated_vcf), path(func_annot), path(variants), path(gene_coord), path(mutation_split), path (stats))
 
   output:
       path("*.gvf"), emit: gvf
 
   script:
 
-  if( params.single_genome && params.user ){
+  if( params.user ){
     """
       vcf2gvf.py --vcffile ${annotated_vcf} \
       --functional_annotations ${func_annot}  \
       --clades ${variants}\
       --gene_positions ${gene_coord}\
       --names_to_split ${mutation_split}\
-      --single_genome \
+      --size_stats ${stats} \
       --outvcf ${annotated_vcf.baseName}.gvf
     """
-  }
-  else if( !params.single_genome && params.user ){
-      """
-        vcf2gvf.py --vcffile ${annotated_vcf} \
-        --functional_annotations ${func_annot}  \
-        --clades ${variants}\
-        --gene_positions ${gene_coord}\
-        --names_to_split ${mutation_split}\
-        --outvcf ${annotated_vcf.baseName}.gvf
-      """
-  }
-  else if( params.single_genome && params.reference ){
-      """
-        vcf2gvf.py --vcffile ${annotated_vcf} \
-        --functional_annotations ${func_annot}  \
-        --clades ${variants}\
-        --gene_positions ${gene_coord}\
-        --names_to_split ${mutation_split}\
-        --strain ${annotated_vcf.baseName.replaceAll(".qc.sorted.variants.normalized.filtered.SNPEFF.annotated","")}\
-        --single_genome\
-        --outvcf ${annotated_vcf.baseName}.gvf
-      """
   }
   else{
       """
@@ -210,6 +188,7 @@ process vcfTogvf {
         --clades ${variants}\
         --gene_positions ${gene_coord}\
         --names_to_split ${mutation_split}\
+        --size_stats ${stats} \
         --strain ${annotated_vcf.baseName.replaceAll(".qc.sorted.variants.normalized.filtered.SNPEFF.annotated","")}\
         --outvcf ${annotated_vcf.baseName}.gvf
       """
