@@ -4,7 +4,7 @@ process BWAMEM {
 
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.sorted.bam", mode: 'copy'
 
-    label 'smallcpu'
+    label 'dev_env'
 
     input:
         tuple(path(seq),path(ref))
@@ -15,7 +15,7 @@ process BWAMEM {
 
     when:
       seq.size() > 0
-      
+
     script:
       """
       bwa mem -t ${task.cpus} ${ref} ${seq} | \

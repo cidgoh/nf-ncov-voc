@@ -4,6 +4,8 @@ process SNPEFF {
 
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
 
+    label 'dev_env'
+
     input:
         path(filtered_vcf)
 
