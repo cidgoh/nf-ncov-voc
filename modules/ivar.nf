@@ -4,6 +4,8 @@ process IVAR {
 
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.variants.tsv", mode: 'copy'
 
+    label 'dev_env'
+
     input:
     tuple(path(bam), path(ref), path(ref_gff))
 

@@ -4,7 +4,7 @@ process MINIMAP2 {
 
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.sorted.bam", mode: 'copy'
 
-    cpus 8
+    label 'dev_env'
 
     input:
         tuple(path(seq),path(ref))

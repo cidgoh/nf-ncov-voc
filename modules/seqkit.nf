@@ -3,6 +3,8 @@ process SEQKIT {
 
   tag { "${ids.Name}" }
 
+  label 'dev_env'
+
   input:
       tuple(path(ids),path(sequence))
 
