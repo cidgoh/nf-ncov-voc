@@ -1,7 +1,7 @@
 process extractVariants {
   tag {"Extracting VOCs, VOIs and VUMs"}
   input:
-      tuple path(variants), path(metadata)
+      tuple (path(variants), path(metadata))
   output:
       path("*.txt"), emit: lineages
 
@@ -31,6 +31,24 @@ process grabIndex {
       """
 }
 
+process virusseqMapLineage{
+
+    tag {"Mapping VirusSeq dataset to GISAID for lineages"}
+
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
+
+    input:
+      tuple (path(virusseq_meta), path(meta))
+
+    output:
+      path("VirusSeq_Mapped.tsv"), emit: mapped
+
+    script:
+      """
+      map_virusseq_GISAID.py --virusseq ${virusseq_meta} --gisaid ${meta} --output VirusSeq_Mapped.tsv
+
+      """
+}
 
 process extractMetadata {
   tag { "Extracting Metadata and IDS for VOCs, VOIs, & VUMs" }
@@ -48,7 +66,7 @@ process extractMetadata {
 
   script:
 
-  if( params.gisaid )
+  if( params.data == "gisaid" )
     """
     extract_metadata.py \
     --table ${metadata} \
@@ -64,7 +82,6 @@ process extractMetadata {
     --table ${metadata} \
     --voc ${x}
     """
-
 }
 
 
@@ -214,54 +231,25 @@ process vcfTotsv {
       """
 }
 
-process mutation_profile {
+process surveillance {
 
-  tag {"${gvf.baseName}"}
+  tag {"Generating Surveillance Reports"}
 
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
 
   input:
-      tuple(gvf)
+      path(gvf)
+      path(variants)
 
   output:
       path("*.tsv")
 
   script:
 
-  if( params.user ){
     """
-      vcf2gvf.py --vcffile ${annotated_vcf} \
-      --functional_annotations ${func_annot}\
-      --clades ${clade_def}\
-      --gene_positions ${gene_coord}\
-      --names_to_split ${mutation_split}\
-      --outvcf ${annotated_vcf.baseName}.gvf
+    gvf2tsv.py --gvf_files ${gvf} \
+    --clades ${variants} \
+    --all_variants
+
     """
-  }
-  else{
-    if( !params.single_genome ){
-      """
-        vcf2gvf.py --vcffile ${annotated_vcf}\
-        --functional_annotations ${func_annot}\
-        --clades ${clade_def}\
-        --gene_positions ${gene_coord}\
-        --names_to_split ${mutation_split}\
-        --strain ${annotated_vcf.baseName.replaceAll(".qc.sorted.variants.normalized.filtered.SNPEFF.annotated","")}\
-        --outvcf ${annotated_vcf.baseName}.gvf
-      """
-    }
-    else{
-      """
-        vcf2gvf.py --vcffile ${annotated_vcf}\
-        --functional_annotations ${func_annot}\
-        --clades ${clade_def}\
-        --gene_positions ${gene_coord}\
-        --names_to_split ${mutation_split}\
-        --outvcf ${annotated_vcf.baseName}.gvf
-        """
-    }
-
-  }
-
-
 }
