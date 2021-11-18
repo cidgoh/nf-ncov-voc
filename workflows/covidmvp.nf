@@ -21,6 +21,7 @@ include { SNPEFF               } from '../modules/snpeff.nf'
 include { tagProblematicSites  } from '../modules/custom.nf'
 include { annotate_mat_peptide } from '../modules/custom.nf'
 include { vcfTogvf             } from '../modules/custom.nf'
+include { surveillance         } from '../modules/custom.nf'
 
 
 
@@ -35,7 +36,6 @@ workflow ncov_voc {
       ch_probvcf
       ch_geneannot
       ch_funcannot
-      ch_cladedef
       ch_genecoord
       ch_mutationsplit
       ch_variant
@@ -76,5 +76,6 @@ workflow ncov_voc {
       SNPEFF(tagProblematicSites.out.filtered_vcf)
       annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
       vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_variant).combine(ch_genecoord).combine(ch_mutationsplit).combine(SEQKITSTATS.out.stats))
+      surveillance(vcfTogvf.out.gvf.collect(), ch_variant)
 
 }
