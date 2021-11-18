@@ -10,6 +10,6 @@ process BWAINDEX {
 
     script:
       """
-      bwa index -a bwtsw $ref
+      bwa index -a bwtsw ${ref}
       """
 }
