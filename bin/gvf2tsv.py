@@ -128,8 +128,8 @@ def streamline_tsv(tsv_df):
         #drop split columns
         final_df = final_df.drop(labels=colnames, axis=1)
  
-    #replace ao, ro, sequence_depth with the added up columns
-    final_df = final_df.drop(labels=['ao', 'ro', 'sequence_depth'], axis=1)
+    #replace ao, ro, sequence_depth with the added up columns; remove 'who_variant'
+    final_df = final_df.drop(labels=['ao', 'ro', 'sequence_depth', 'who_variant'], axis=1)
     final_df = final_df.rename(columns={'sequence_depth_combined': 'sequence_depth', 'ro_combined': 'ro', 'ao_combined': 'ao'})
 
     #reorder columns
@@ -139,7 +139,7 @@ def streamline_tsv(tsv_df):
        'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
        'variant_seq', 'viral_lineages', 'function_category', 'citation',
        'comb_mutation', 'function_description', 'heterozygosity',
-       'clade_defining', 'who_variant', 'status',
+       'clade_defining', 'status',
        'voi_designation_date', 'voc_designation_date',
        'vum_designation_date']
     final_df = final_df[cols]
