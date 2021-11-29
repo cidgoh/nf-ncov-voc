@@ -84,7 +84,7 @@ def gvf2tsv(gvf):
     df = df.drop(labels=['source', 'seqid', 'type', 'end', 'strand', 'score', 'phase', 'id'], axis=1)
 
     #rename 'dp' column to 'sequence_depth', make 'viral_lineage' plural
-    df = df.rename(columns={'dp': 'sequence_depth', 'viral_lineage': 'viral_lineages'})
+    df = df.rename(columns={'sample_size':'obs_sample_size', 'viral_lineage': 'viral_lineages'})
     
     return df
 
@@ -96,7 +96,7 @@ def streamline_tsv(tsv_df):
     #change n/a to 0 in 'ao' for counting purposes
     tsv_df['ao'] = tsv_df['ao'].str.replace("n/a", "0")
 
-    for colname in ['sequence_depth', 'ao', 'ro']:
+    for colname in ['dp', 'ao', 'ro']:
         #split up at commas into new columns: make a new mini-df
         split_series = tsv_df[colname].str.split(pat=',').apply(pd.Series)
         #rename series columns to 'ao_0', 'a0_1', etc.
@@ -114,7 +114,7 @@ def streamline_tsv(tsv_df):
     agg_dict['clade_defining'] = ', '.join
     
     #sum split columns
-    for string in ['sequence_depth_', 'ao_', 'ro_']:
+    for string in ['dp_', 'ao_', 'ro_']:
         relevant_keys = [key for key, value in agg_dict.items() if string in key.lower()]
         for key in relevant_keys:
             agg_dict[key] = 'sum'
@@ -122,20 +122,24 @@ def streamline_tsv(tsv_df):
     final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
     
     #rejoin split columns (ao, sequence_depth, ro) with comma separation
-    for string in ['sequence_depth_', 'ao_', 'ro_']:
+    for string in ['dp_', 'ao_', 'ro_']:
         colnames = [i for i in tsv_df.columns.values.tolist() if string in i]
         final_df[string + 'combined'] = final_df[colnames].apply(lambda row: ','.join(row.values.astype(str)), axis=1)
         #drop split columns
         final_df = final_df.drop(labels=colnames, axis=1)
  
     #replace ao, ro, sequence_depth with the added up columns; remove 'who_variant'
-    final_df = final_df.drop(labels=['ao', 'ro', 'sequence_depth', 'who_variant'], axis=1)
-    final_df = final_df.rename(columns={'sequence_depth_combined': 'sequence_depth', 'ro_combined': 'ro', 'ao_combined': 'ao'})
+    final_df = final_df.drop(labels=['ao', 'ro', 'dp', 'who_variant'], axis=1)
+    final_df = final_df.rename(columns={'dp_combined': 'dp', 'ro_combined': 'ro', 'ao_combined': 'ao'})
 
+    #remove trailing zeros and commas from 'ao'
+
+    #make 'ao' integer type
+    
     #reorder columns
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
        'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
-       'mutation_type', 'sequence_depth', 'sample_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
+       'mutation_type', 'dp', 'obs_sample_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
        'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
        'variant_seq', 'viral_lineages', 'function_category', 'citation',
        'comb_mutation', 'function_description', 'heterozygosity',
