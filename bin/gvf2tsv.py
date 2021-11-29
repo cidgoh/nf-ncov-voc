@@ -133,9 +133,10 @@ def streamline_tsv(tsv_df):
     final_df = final_df.rename(columns={'dp_combined': 'dp', 'ro_combined': 'ro', 'ao_combined': 'ao'})
 
     #remove trailing zeros and commas from 'ao'
-
+    final_df.ao = final_df.ao.str.replace(',0.0','')
     #make 'ao' integer type
-    
+    final_df.ao = final_df.ao.astype(int)
+
     #reorder columns
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
        'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
