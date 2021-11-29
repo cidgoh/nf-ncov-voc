@@ -31,6 +31,8 @@ def parse_args():
                         help='Name(s) of WHO variant to make report for.  Not case-sensitive.')
     group.add_argument('--all_variants', action="store_true",
                         help='Create reports for all variants, using all available reference lineage gvf files.  Not case-sensitive.')
+    parser.add_argument('--table', type=str, default=None,
+                        help='Multi-strain TSV file generated in workflow that contains num_seqs column')
 
     return parser.parse_args()
 
@@ -53,6 +55,19 @@ def find_gvfs(pango_lineage_list, gvf_directory):
 
     return gvf_files
 
+
+def find_variant_pop_size(table, pango_lineage_list):
+    strain_tsv_df = pd.read_csv(table, header=0, delim_whitespace=True, usecols=['file', 'num_seqs'])  
+    variant_num_seqs = []
+    for lineage in pango_lineage_list:
+        num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(lineage.replace("*",""))]['num_seqs'].values.tolist()
+        num_seqs = [x.split(",") for x in num_seqs]
+        num_seqs = [item for sublist in num_seqs for item in sublist]
+        variant_num_seqs = variant_num_seqs + num_seqs
+    variant_pop_size = sum(list(map(int, variant_num_seqs)))
+
+    return variant_pop_size
+    
 
 def gvf2tsv(gvf):
     #read in gvf
@@ -86,6 +101,8 @@ def gvf2tsv(gvf):
     #rename 'dp' column to 'sequence_depth', make 'viral_lineage' plural
     df = df.rename(columns={'sample_size':'obs_sample_size', 'viral_lineage': 'viral_lineages'})
     
+    #get variant_pop_size column
+        
     return df
 
 
@@ -133,14 +150,16 @@ def streamline_tsv(tsv_df):
     final_df = final_df.rename(columns={'dp_combined': 'dp', 'ro_combined': 'ro', 'ao_combined': 'ao'})
 
     #remove trailing zeros and commas from 'ao'
-    final_df.ao = final_df.ao.str.replace(',0.0','')
+    final_df.ao = final_df.ao.str.replace(',0.0','', regex=True)
     #make 'ao' integer type
     final_df.ao = final_df.ao.astype(int)
+    
+    final_df['variant_pop_size'] = variant_pop_size
 
     #reorder columns
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
        'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
-       'mutation_type', 'dp', 'obs_sample_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
+       'mutation_type', 'dp', 'obs_sample_size', 'variant_pop_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
        'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
        'variant_seq', 'viral_lineages', 'function_category', 'citation',
        'comb_mutation', 'function_description', 'heterozygosity',
@@ -177,6 +196,9 @@ if __name__ == '__main__':
         #get list of relevant pango lineages
         pango_lineages = clades[clades['who_variant']==who_variant]['pango_lineage'].values[0].split(',')  #list of pango lineages from that variant
     
+        #get variant population size
+        variant_pop_size = find_variant_pop_size(args.table, pango_lineages)
+        
         #get list of gvf files pertaining to variant
         gvf_files = find_gvfs(pango_lineages, gvf_directory)
         print(str(len(gvf_files)) + " GVF files found for " + who_variant + " variant.")
