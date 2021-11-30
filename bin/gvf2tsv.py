@@ -116,7 +116,7 @@ def streamline_tsv(tsv_df):
     for colname in ['dp', 'ao', 'ro']:
         #split up at commas into new columns: make a new mini-df
         split_series = tsv_df[colname].str.split(pat=',').apply(pd.Series)
-        #rename series columns to 'ao_0', 'a0_1', etc.
+        #rename series columns to 'ao_0', 'ao_1', etc.
         split_series.columns = [colname + '_' + str(name) for name in split_series.columns.values]
         #ensure all counts are numeric
         for column in split_series.columns:
@@ -131,7 +131,7 @@ def streamline_tsv(tsv_df):
     agg_dict['clade_defining'] = ', '.join
     
     #sum split columns
-    for string in ['dp_', 'ao_', 'ro_']:
+    for string in ['dp_', 'ao_', 'ro_', 'sample_size']:
         relevant_keys = [key for key, value in agg_dict.items() if string in key.lower()]
         for key in relevant_keys:
             agg_dict[key] = 'sum'
@@ -154,8 +154,13 @@ def streamline_tsv(tsv_df):
     #make 'ao' integer type
     final_df.ao = final_df.ao.astype(int)
     
+    #add variant_pop_size
     final_df['variant_pop_size'] = variant_pop_size
-
+    '''
+    #combine viral_lineages and clade_defining
+    final_df['new_col'] = list(zip(final_df.viral_lineages, final_df.clade_defining))
+    print(final_df['new_col'])
+    '''
     #reorder columns
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
        'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
