@@ -123,15 +123,18 @@ def streamline_tsv(tsv_df):
             split_series[column] = pd.to_numeric(split_series[column], errors='coerce')
         #append series to tsv_df
         tsv_df = pd.concat([tsv_df, split_series], axis=1)
-        
+    
+    #make sample size numeric
+    tsv_df['obs_sample_size'] = pd.to_numeric(tsv_df['obs_sample_size'], errors='coerce')
+    
     cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 'multiaa_comb_mutation', 'start', 'function_category', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']
 
     agg_dict = dict((col,'first') for col in tsv_df.columns.values.tolist())
     agg_dict['viral_lineages'] = ', '.join
     agg_dict['clade_defining'] = ', '.join
     
-    #sum split columns
-    for string in ['dp_', 'ao_', 'ro_', 'sample_size']:
+    #sum split columns and sample_size
+    for string in ['dp_', 'ao_', 'ro_', 'obs_sample_size']:
         relevant_keys = [key for key, value in agg_dict.items() if string in key.lower()]
         for key in relevant_keys:
             agg_dict[key] = 'sum'
@@ -156,19 +159,32 @@ def streamline_tsv(tsv_df):
     
     #add variant_pop_size
     final_df['variant_pop_size'] = variant_pop_size
-    '''
-    #combine viral_lineages and clade_defining
-    final_df['new_col'] = list(zip(final_df.viral_lineages, final_df.clade_defining))
-    print(final_df['new_col'])
-    '''
+
+
+    #combine viral_lineages and clade_defining into key-value pairs
+
+    #split viral_lineages and clade_defining by ','
+    split_lineages = final_df['viral_lineages'].str.split(pat=',').apply(pd.Series) #split at ,, form dataframe
+    split_clade_defining = final_df['clade_defining'].str.split(pat=',').apply(pd.Series) #split at ,, form dataframe
+    #go through and make key-value pairs of corresponding columns from each
+    final_df['viral_clade_defining'] = ''
+    for col in split_clade_defining.columns:
+        final_df['viral_clade_defining'] = final_df['viral_clade_defining'] + split_lineages[col].astype(str) + '=' + split_clade_defining[col].astype(str) + '; '
+    #drop clade_defining status for n/a strains and empty nan=nan pairs
+    final_df.viral_clade_defining = final_df.viral_clade_defining.str.replace('n/a=n/a; ', 'n/a; ')
+    final_df.viral_clade_defining = final_df.viral_clade_defining.str.replace('= n/a', '=n/a')
+    final_df.viral_clade_defining = final_df.viral_clade_defining.str.replace('nan=nan; ', '')
+    #drop repeated key-value pairs in each row
+    
+    
     #reorder columns
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
        'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
        'mutation_type', 'dp', 'obs_sample_size', 'variant_pop_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
        'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
-       'variant_seq', 'viral_lineages', 'function_category', 'citation',
+       'variant_seq', 'function_category', 'citation',
        'comb_mutation', 'function_description', 'heterozygosity',
-       'clade_defining', 'status',
+       'viral_clade_defining', 'status',
        'voi_designation_date', 'voc_designation_date',
        'vum_designation_date']
     final_df = final_df[cols]
