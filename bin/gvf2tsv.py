@@ -65,7 +65,8 @@ def find_variant_pop_size(table, pango_lineage_list):
         num_seqs = [item for sublist in num_seqs for item in sublist]
         variant_num_seqs = variant_num_seqs + num_seqs
     variant_pop_size = sum(list(map(int, variant_num_seqs)))
-
+    print(variant_num_seqs)
+    print(variant_pop_size)
     return variant_pop_size
     
 
@@ -100,9 +101,7 @@ def gvf2tsv(gvf):
 
     #rename 'dp' column to 'sequence_depth', make 'viral_lineage' plural
     df = df.rename(columns={'sample_size':'obs_sample_size', 'viral_lineage': 'viral_lineages'})
-    
-    #get variant_pop_size column
-        
+    print(df.columns)
     return df
 
 
@@ -167,16 +166,30 @@ def streamline_tsv(tsv_df):
     split_lineages = final_df['viral_lineages'].str.split(pat=',').apply(pd.Series) #split at ,, form dataframe
     split_clade_defining = final_df['clade_defining'].str.split(pat=',').apply(pd.Series) #split at ,, form dataframe
     #go through and make key-value pairs of corresponding columns from each
-    final_df['viral_clade_defining'] = ''
+    final_df['clade_defining_status'] = ''
     for col in split_clade_defining.columns:
-        final_df['viral_clade_defining'] = final_df['viral_clade_defining'] + split_lineages[col].astype(str) + '=' + split_clade_defining[col].astype(str) + '; '
+        final_df['clade_defining_status'] = final_df['clade_defining_status'] + split_lineages[col].astype(str) + '=' + split_clade_defining[col].astype(str) + '; '
     #drop clade_defining status for n/a strains and empty nan=nan pairs
-    final_df.viral_clade_defining = final_df.viral_clade_defining.str.replace('n/a=n/a; ', 'n/a; ')
-    final_df.viral_clade_defining = final_df.viral_clade_defining.str.replace('= n/a', '=n/a')
-    final_df.viral_clade_defining = final_df.viral_clade_defining.str.replace('nan=nan; ', '')
-    #drop repeated key-value pairs in each row
-    
-    
+    final_df.clade_defining_status = final_df.clade_defining_status.str.replace('n/a=n/a; ', 'n/a; ')
+    final_df.clade_defining_status = final_df.clade_defining_status.str.replace('= n/a', '=n/a')
+    final_df.clade_defining_status = final_df.clade_defining_status.str.replace('nan=nan; ', '')
+    #strip trailing spaces
+    final_df.clade_defining_status = final_df.clade_defining_status.str.rstrip(" ")
+    #drop repeated key-value pairs in each row (find these rows as they contain spaces)
+    for row in final_df['clade_defining_status']:
+        if ' ' in row:
+            mylist = row.split('; ')
+            newlist = []
+            for pair in mylist:
+                pair = pair.replace(';', '')
+                pair = pair.lstrip(' ')
+                newlist.append(pair)
+            mylist = list(set(newlist))
+            row_str = ', '.join(str(e) for e in mylist)
+            mask = final_df['clade_defining_status']==row
+            final_df.loc[mask, 'clade_defining_status'] = row_str
+
+
     #reorder columns
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
        'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
@@ -184,7 +197,7 @@ def streamline_tsv(tsv_df):
        'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
        'variant_seq', 'function_category', 'citation',
        'comb_mutation', 'function_description', 'heterozygosity',
-       'viral_clade_defining', 'status',
+       'clade_defining_status', 'status',
        'voi_designation_date', 'voc_designation_date',
        'vum_designation_date']
     final_df = final_df[cols]
