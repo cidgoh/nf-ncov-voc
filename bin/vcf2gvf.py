@@ -28,6 +28,8 @@ def parse_args():
                         help='TSV file of functional annotations')
     parser.add_argument('--strain_size', type=str, default=None,
                         help='num_seqs for this strain, found with parse_sample_size.py')
+    parser.add_argument('--variant_pop_size', type=str, default=None,
+                        help='num_seqs for this variant, found with parse_sample_size.py')
     parser.add_argument('--clades', type=str, default=None,
                         help='TSV file of WHO strain names and VOC/VOI status')
     parser.add_argument('--clades_threshold', type=float,
@@ -210,11 +212,13 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'vcf_gene=' + new_df['vcf_gene'] + ';' #gene names
     new_df['#attributes'] = new_df['#attributes'].astype(str) + 'mutation_type=' + new_df['mutation_type'] + ';' #mutation type 
 
-    #add strain name, multi-aa notes, sample_size
+    #add strain name, multi-aa notes, sample_size, variant_pop_size
     new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + strain + ';'
     new_df['#attributes'] = new_df['#attributes'] + "multi_aa_name=" + new_df["multi_name"] + ';'
     new_df['#attributes'] = new_df['#attributes'] + "multiaa_comb_mutation=" + new_df["multiaa_comb_mutation"] + ';'    
     new_df['#attributes'] = new_df['#attributes'] + "sample_size=" + args.strain_size + ';' 
+    new_df['#attributes'] = new_df['#attributes'] + "variant_pop_size=" + args.variant_pop_size + ';' 
+    new_df['#attributes'] = new_df['#attributes'] + "alternate_frequency=" + new_df['AF'].astype(str) + ';' 
     
     new_df = new_df[gvf_columns + ['multiaa_comb_mutation', 'AF']] #only keep the columns needed for a gvf file, plus multiaa_comb_mutation to add to comb_mutation later
     #new_df.to_csv('new_df.tsv', sep='\t', index=False, header=False)
