@@ -65,8 +65,7 @@ def find_variant_pop_size(table, pango_lineage_list):
         num_seqs = [item for sublist in num_seqs for item in sublist]
         variant_num_seqs = variant_num_seqs + num_seqs
     variant_pop_size = sum(list(map(int, variant_num_seqs)))
-    print(variant_num_seqs)
-    print(variant_pop_size)
+
     return variant_pop_size
     
 
@@ -101,7 +100,7 @@ def gvf2tsv(gvf):
 
     #rename 'dp' column to 'sequence_depth', make 'viral_lineage' plural
     df = df.rename(columns={'sample_size':'obs_sample_size', 'viral_lineage': 'viral_lineages'})
-    print(df.columns)
+
     return df
 
 
@@ -149,7 +148,7 @@ def streamline_tsv(tsv_df):
  
     #replace ao, ro, sequence_depth with the added up columns; remove 'who_variant'
     final_df = final_df.drop(labels=['ao', 'ro', 'dp', 'who_variant'], axis=1)
-    final_df = final_df.rename(columns={'dp_combined': 'dp', 'ro_combined': 'ro', 'ao_combined': 'ao'})
+    final_df = final_df.rename(columns={'dp_combined': 'dp', 'ro_combined': 'ro', 'ao_combined': 'ao', 'multiaa_comb_mutation': 'multiaa_mutation_split_names'})
 
     #remove trailing zeros and commas from 'ao'
     final_df.ao = final_df.ao.str.replace(',0.0','', regex=True)
@@ -192,7 +191,7 @@ def streamline_tsv(tsv_df):
 
     #reorder columns
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
-       'multiaa_comb_mutation', 'start', 'vcf_gene', 'chrom_region',
+       'multiaa_mutation_split_names', 'start', 'vcf_gene', 'chrom_region',
        'mutation_type', 'dp', 'obs_sample_size', 'variant_pop_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
        'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
        'variant_seq', 'function_category', 'citation',
