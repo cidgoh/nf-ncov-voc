@@ -1,6 +1,6 @@
 process BWAINDEX {
 
-    tag { "bwa_index_Covid_19" }
+    tag { "indexing_SARS-CoV-2_genome" }
 
     input:
       path(ref)
@@ -10,6 +10,6 @@ process BWAINDEX {
 
     script:
       """
-      bwa index -a bwtsw $ref
+      bwa index -a bwtsw ${ref}
       """
 }

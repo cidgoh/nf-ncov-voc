@@ -163,4 +163,3 @@ if __name__ == '__main__':
     writer = pd.ExcelWriter('VoC_1.xlsx')
     dataFrame.to_excel(writer, index=False)
     writer.save()
-

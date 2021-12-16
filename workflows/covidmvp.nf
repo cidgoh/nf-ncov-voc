@@ -1,48 +1,52 @@
 #!/usr/bin/env nextflow
 
-// enable dsl2
-nextflow.preview.dsl = 2
-//params.ref = ".github/data/referencedb"
+nextflow.enable.dsl = 2
 
 // import modules
-
+include { extractVariants      } from '../modules/custom.nf'
 include { grabIndex            } from '../modules/custom.nf'
 include { BWAINDEX             } from '../modules/bwaindex.nf'
 include { BBMAP                } from  '../modules/bbmap_reformat.nf'
 include { extractMetadata      } from '../modules/custom.nf'
-include { processGVCF          } from '../modules/custom.nf'
+include { SEQKIT               } from '../modules/seqkit.nf'
+include { SEQKITSTATS          } from '../modules/seqkitstats.nf'
 include { BWAMEM               } from '../modules/bwamem.nf'
 include { MINIMAP2             } from '../modules/minimap2.nf'
-include { IVAR                 } from '../modules/ivar.nf'
 include { FREEBAYES            } from '../modules/freebayes.nf'
-include { SEQTK                } from '../modules/seqtk.nf'
-include { SEQKIT               } from '../modules/seqkit.nf'
+include { processGVCF          } from '../modules/custom.nf'
 include { BCFTOOLS             } from '../modules/bcftools.nf'
+include { IVAR                 } from '../modules/ivar.nf'
 include { tsvTovcf             } from '../modules/custom.nf'
 include { SNPEFF               } from '../modules/snpeff.nf'
 include { tagProblematicSites  } from '../modules/custom.nf'
 include { annotate_mat_peptide } from '../modules/custom.nf'
 include { vcfTogvf             } from '../modules/custom.nf'
+include { surveillance         } from '../modules/custom.nf'
+
 
 
 workflow ncov_voc {
     take:
-      ch_seq
-      ch_metadata
       ch_voc
+      ch_metadata
+      ch_seq
       ch_ref
       ch_refgff
       ch_reffai
       ch_probvcf
       ch_geneannot
       ch_funcannot
-      ch_cladedef
       ch_genecoord
+      ch_mutationsplit
+      ch_variant
 
     main:
+
       extractMetadata(ch_metadata, ch_voc)
       SEQKIT(extractMetadata.out.ids.combine(ch_seq))
       BBMAP(SEQKIT.out.fasta)
+      SEQKITSTATS(BBMAP.out.qcfasta.collect())
+
       if (params.bwa){
         if ( params.bwa_index ){
         grabIndex("${params.bwa_index}")
@@ -71,6 +75,7 @@ workflow ncov_voc {
       }
       SNPEFF(tagProblematicSites.out.filtered_vcf)
       annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
-      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_cladedef).combine(ch_genecoord))
+      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_variant).combine(ch_genecoord).combine(ch_mutationsplit).combine(SEQKITSTATS.out.stats))
+      surveillance(vcfTogvf.out.gvf.collect(), ch_variant)
 
 }

@@ -1,8 +1,10 @@
 process IVAR {
 
-    tag { "${bam.baseName.replace(".sorted","")}" }
+    tag { "${bam.baseName}" }
 
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.variants.tsv", mode: 'copy'
+
+    label 'dev_env'
 
     input:
     tuple(path(bam), path(ref), path(ref_gff))
@@ -17,7 +19,7 @@ process IVAR {
         ivar variants \
         -r ${ref} \
         -m ${params.var_MinDepth} \
-        -p ${bam.baseName.replace(".sorted","")}.variants \
+        -p ${bam.baseName}.variants \
         -q ${params.var_MinVariantQuality} \
         -t ${params.var_MinFreqThreshold} \
         -g ${ref_gff}

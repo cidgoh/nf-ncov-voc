@@ -1,15 +1,10 @@
 process BWAMEM {
-    /**
-    * Maps trimmed paired fastq using BWA (http://bio-bwa.sourceforge.net/)
-    * Uses samtools to convert to BAM, sort and index sorted BAM (http://www.htslib.org/doc/samtools.html)
-    * @input
-    * @output
-    */
 
-    tag {"Mapping_${seq}"}
+    tag {"${seq.baseName}"}
+
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.sorted.bam", mode: 'copy'
 
-    cpus 1
+    label 'dev_env'
 
     input:
         tuple(path(seq),path(ref))
@@ -17,6 +12,9 @@ process BWAMEM {
 
     output:
         path("*.sorted.bam"), emit: bam
+
+    when:
+      seq.size() > 0
 
     script:
       """

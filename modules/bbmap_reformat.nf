@@ -1,9 +1,10 @@
 process BBMAP {
-  //publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
-  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
-  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.log", mode: 'copy'
 
-  tag { "${sequence.baseName}" }
+  tag { "${sequence.baseName}.fasta" }
+
+  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
+
+  label 'dev_env'
 
   input:
       path(sequence)
@@ -11,11 +12,14 @@ process BBMAP {
   output:
       path("*.fasta"), emit: qcfasta
 
+  when:
+      sequence.size() > 0
+
   script:
     """
     reformat.sh \
     in=${sequence} \
-    out=${sequence.baseName}_qc.fasta \
-    maxns=580 minavgquality=20 minlength=29000 addunderscore tossjunk > ${sequence.baseName}.log
+    out=${sequence.baseName}.qc.fasta \
+    maxns=${params.maxns} minlength=${params.minlength} addunderscore tossjunk
     """
 }

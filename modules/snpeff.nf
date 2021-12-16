@@ -1,7 +1,10 @@
 process SNPEFF {
 
+    tag {"${filtered_vcf.baseName}"}
+
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
-    tag {"${filtered_vcf.baseName.replace(".variants.normalized.filtered", "")}"}
+
+    label 'dev_env'
 
     input:
         path(filtered_vcf)
@@ -18,6 +21,6 @@ process SNPEFF {
       -noShiftHgvs \
       -sequenceOntology \
       ${filtered_vcf} \
-      > ${filtered_vcf.baseName}.SNPEFF_annotated.vcf
+      > ${filtered_vcf.baseName}.SNPEFF.vcf
       """
 }
