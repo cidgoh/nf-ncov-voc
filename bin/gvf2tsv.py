@@ -33,9 +33,9 @@ def parse_args():
                                        'make report for (Not '
                                        'case-sensitive).')
     group.add_argument('--all_variants', action="store_true",
-                       help='Create reports for all variants, using '
-                            'all available reference lineage gvf '
-                            'files')
+                        help='Create reports for all variants, using all available reference lineage gvf files.  Not case-sensitive.')
+    parser.add_argument('--table', type=str, default=None,
+                        help='Multi-strain TSV file generated in workflow that contains num_seqs column')
 
     return parser.parse_args()
 
@@ -64,6 +64,19 @@ def find_gvfs(lineages, gvf_list):
 
     return file_list
 
+
+def find_variant_pop_size(table, pango_lineage_list):
+    strain_tsv_df = pd.read_csv(table, header=0, delim_whitespace=True, usecols=['file', 'num_seqs'])  
+    variant_num_seqs = []
+    for lineage in pango_lineage_list:
+        num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(lineage.replace("*",""))]['num_seqs'].values.tolist()
+        num_seqs = [x.split(",") for x in num_seqs]
+        num_seqs = [item for sublist in num_seqs for item in sublist]
+        variant_num_seqs = variant_num_seqs + num_seqs
+    variant_pop_size = sum(list(map(int, variant_num_seqs)))
+
+    return variant_pop_size
+    
 
 def gvf2tsv(gvf):
     # read in gvf
@@ -100,14 +113,9 @@ def gvf2tsv(gvf):
     # remove '#' from column names
     df.columns = df.columns.str.replace("#", "")
 
-    # drop unwanted columns
-    df = df.drop(labels=['source', 'seqid', 'type', 'end', 'strand',
-                         'score', 'phase', 'id'], axis=1)
+    #rename 'dp' column to 'sequence_depth', make 'viral_lineage' plural
+    df = df.rename(columns={'sample_size':'obs_sample_size', 'viral_lineage': 'viral_lineages'})
 
-    # rename 'dp' column to 'sequence_depth', make 'viral_lineage'
-    # plural
-    df = df.rename(columns={'dp': 'sequence_depth',
-                            'viral_lineage': 'viral_lineages'})
 
     return df
 
@@ -118,20 +126,22 @@ def streamline_tsv(df):
     # change n/a to 0 in 'ao' for counting purposes
     df['ao'] = df['ao'].str.replace("n/a", "0")
 
-    for colname in ['sequence_depth', 'ao', 'ro']:
-        # split up at commas into new columns: make a new mini-df
-        split_series = df[colname].str.split(pat=',').apply(
-            pd.Series)
-        # rename series columns to 'ao_0', 'a0_1', etc.
-        split_series.columns = [colname + '_' + str(name) for name in
-                                split_series.columns.values]
-        # ensure all counts are numeric
+
+    for colname in ['dp', 'ao', 'ro']:
+        #split up at commas into new columns: make a new mini-df
+        split_series = tsv_df[colname].str.split(pat=',').apply(pd.Series)
+        #rename series columns to 'ao_0', 'ao_1', etc.
+        split_series.columns = [colname + '_' + str(name) for name in split_series.columns.values]
+        #ensure all counts are numeric
         for column in split_series.columns:
-            split_series[column] = pd.to_numeric(split_series[
-                                                     column],
-                                                 errors='coerce')
-        # append series to df
-        df = pd.concat([df, split_series], axis=1)
+            split_series[column] = pd.to_numeric(split_series[column], errors='coerce')
+        #append series to tsv_df
+        tsv_df = pd.concat([tsv_df, split_series], axis=1)
+    
+    #make sample size numeric
+    tsv_df['obs_sample_size'] = pd.to_numeric(tsv_df['obs_sample_size'], errors='coerce')
+    
+    cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 'multiaa_comb_mutation', 'start', 'function_category', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']
 
     cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name',
                      'multiaa_comb_mutation', 'start',
@@ -144,48 +154,77 @@ def streamline_tsv(df):
     agg_dict['viral_lineages'] = ', '.join
     agg_dict['clade_defining'] = ', '.join
 
-    # sum split columns
-    for string in ['sequence_depth_', 'ao_', 'ro_']:
-        relevant_keys = [key for key, value in agg_dict.items() if
-                         string in key.lower()]
+    
+    #sum split columns and sample_size
+    for string in ['dp_', 'ao_', 'ro_', 'obs_sample_size']:
+        relevant_keys = [key for key, value in agg_dict.items() if string in key.lower()]
         for key in relevant_keys:
             agg_dict[key] = 'sum'
-
-    final_df = df.groupby(cols_to_check).agg(agg_dict)
-
-    # rejoin split columns (ao, sequence_depth, ro) with comma
-    # separation
-    for string in ['sequence_depth_', 'ao_', 'ro_']:
-        colnames = [i for i in df.columns.values.tolist() if
-                    string in i]
-        final_df[string + 'combined'] = final_df[colnames].apply(
-            lambda row: ','.join(row.values.astype(str)), axis=1)
-        # drop split columns
+   
+    final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
+    
+    #rejoin split columns (ao, sequence_depth, ro) with comma separation
+    for string in ['dp_', 'ao_', 'ro_']:
+        colnames = [i for i in tsv_df.columns.values.tolist() if string in i]
+        final_df[string + 'combined'] = final_df[colnames].apply(lambda row: ','.join(row.values.astype(str)), axis=1)
+        #drop split columns
         final_df = final_df.drop(labels=colnames, axis=1)
+ 
+    #replace ao, ro, sequence_depth with the added up columns; remove 'who_variant'
+    final_df = final_df.drop(labels=['ao', 'ro', 'dp', 'who_variant'], axis=1)
+    final_df = final_df.rename(columns={'dp_combined': 'dp', 'ro_combined': 'ro', 'ao_combined': 'ao', 'multiaa_comb_mutation': 'multiaa_mutation_split_names'})
 
-    # replace ao, ro, sequence_depth with the added up columns
-    final_df = final_df.drop(labels=['ao', 'ro', 'sequence_depth'],
-                             axis=1)
-    final_df = final_df.rename(columns={'sequence_depth_combined':
-                                            'sequence_depth',
-                                        'ro_combined': 'ro',
-                                        'ao_combined': 'ao'})
+    #remove trailing zeros and commas from 'ao'
+    final_df.ao = final_df.ao.str.replace(',0.0','', regex=True)
+    #make 'ao' integer type
+    final_df.ao = final_df.ao.astype(int)
+    
+    #add variant_pop_size
+    final_df['variant_pop_size'] = variant_pop_size
 
-    # reorder columns
-    cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name',
-            'multiaa_comb_mutation', 'start', 'vcf_gene',
-            'chrom_region',
-            'mutation_type', 'sequence_depth', 'sample_size',
-            'ps_filter', 'ps_exc', 'mat_pep_id',
-            'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
-            'variant_seq', 'viral_lineages', 'function_category',
-            'citation',
-            'comb_mutation', 'function_description', 'heterozygosity',
-            'clade_defining', 'who_variant', 'status',
-            'voi_designation_date', 'voc_designation_date',
-            'vum_designation_date']
+
+    #combine viral_lineages and clade_defining into key-value pairs
+
+    #split viral_lineages and clade_defining by ','
+    split_lineages = final_df['viral_lineages'].str.split(pat=',').apply(pd.Series) #split at ,, form dataframe
+    split_clade_defining = final_df['clade_defining'].str.split(pat=',').apply(pd.Series) #split at ,, form dataframe
+    #go through and make key-value pairs of corresponding columns from each
+    final_df['clade_defining_status'] = ''
+    for col in split_clade_defining.columns:
+        final_df['clade_defining_status'] = final_df['clade_defining_status'] + split_lineages[col].astype(str) + '=' + split_clade_defining[col].astype(str) + '; '
+    #drop clade_defining status for n/a strains and empty nan=nan pairs
+    final_df.clade_defining_status = final_df.clade_defining_status.str.replace('n/a=n/a; ', 'n/a; ')
+    final_df.clade_defining_status = final_df.clade_defining_status.str.replace('= n/a', '=n/a')
+    final_df.clade_defining_status = final_df.clade_defining_status.str.replace('nan=nan; ', '')
+    #strip trailing spaces
+    final_df.clade_defining_status = final_df.clade_defining_status.str.rstrip(" ")
+    #drop repeated key-value pairs in each row (find these rows as they contain spaces)
+    for row in final_df['clade_defining_status']:
+        if ' ' in row:
+            mylist = row.split('; ')
+            newlist = []
+            for pair in mylist:
+                pair = pair.replace(';', '')
+                pair = pair.lstrip(' ')
+                newlist.append(pair)
+            mylist = list(set(newlist))
+            row_str = ', '.join(str(e) for e in mylist)
+            mask = final_df['clade_defining_status']==row
+            final_df.loc[mask, 'clade_defining_status'] = row_str
+
+
+    #reorder columns
+    cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
+       'multiaa_mutation_split_names', 'start', 'vcf_gene', 'chrom_region',
+       'mutation_type', 'dp', 'obs_sample_size', 'variant_pop_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
+       'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
+       'variant_seq', 'function_category', 'citation',
+       'comb_mutation', 'function_description', 'heterozygosity',
+       'clade_defining_status', 'status',
+       'voi_designation_date', 'voc_designation_date',
+       'vum_designation_date']
     final_df = final_df[cols]
-
+    
     return final_df
 
 
@@ -219,22 +258,19 @@ if __name__ == '__main__':
     # for each variant called, create a surveillance report
     for who_variant in sorted(who_variants_list):
         who_variant = who_variant.capitalize()
-        # get list of relevant pango lineages
-        # list of pango lineages from that variant
-        if not "." in who_variant:
-            pango_lineages = \
-                clades[clades['who_variant'] == who_variant][
-                    'pango_lineage'].values[0].split(',')
-        else:
-            pango_lineages = who_variant
 
-        # get list of gvf files pertaining to variant
-        gvf_files = find_gvfs(lineages=pango_lineages,
-                              gvf_list=gvf_files_list)
-        print(str(len(gvf_files)) + " GVF files found for " +
-              who_variant + " variant.")
+        #get list of relevant pango lineages
+        pango_lineages = clades[clades['who_variant']==who_variant]['pango_lineage'].values[0].split(',')  #list of pango lineages from that variant
+    
+        #get variant population size
+        variant_pop_size = find_variant_pop_size(args.table, pango_lineages)
+        
+        #get list of gvf files pertaining to variant
+        gvf_files = find_gvfs(pango_lineages, gvf_directory)
+        print(str(len(gvf_files)) + " GVF files found for " + who_variant + " variant.")
+    
+        #if any GVF files are found, create a surveillance report
 
-        # if any GVF files are found, create a surveillance report
         if len(gvf_files) > 0:
 
             # convert all gvf files to tsv and concatenate them
