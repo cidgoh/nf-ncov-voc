@@ -11,7 +11,7 @@ Created on Mon Aug  9 10:47:11 2021
 @author: madeline
 """
 
-'''This script converts GVF files to TSVs, for later conversion to an 
+'''This script converts GVF files to TSVs, for later conversion to an
 HTML case report. '''
 
 
@@ -66,7 +66,7 @@ def find_gvfs(lineages, gvf_list):
 
 
 def find_variant_pop_size(table, pango_lineage_list):
-    strain_tsv_df = pd.read_csv(table, header=0, delim_whitespace=True, usecols=['file', 'num_seqs'])  
+    strain_tsv_df = pd.read_csv(table, header=0, delim_whitespace=True, usecols=['file', 'num_seqs'])
     variant_num_seqs = []
     for lineage in pango_lineage_list:
         num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(lineage.replace("*",""))]['num_seqs'].values.tolist()
@@ -76,7 +76,7 @@ def find_variant_pop_size(table, pango_lineage_list):
     variant_pop_size = sum(list(map(int, variant_num_seqs)))
 
     return variant_pop_size
-    
+
 
 def gvf2tsv(gvf):
     # read in gvf
@@ -129,18 +129,18 @@ def streamline_tsv(df):
 
     for colname in ['dp', 'ao', 'ro']:
         #split up at commas into new columns: make a new mini-df
-        split_series = tsv_df[colname].str.split(pat=',').apply(pd.Series)
+        split_series = df[colname].str.split(pat=',').apply(pd.Series)
         #rename series columns to 'ao_0', 'ao_1', etc.
         split_series.columns = [colname + '_' + str(name) for name in split_series.columns.values]
         #ensure all counts are numeric
         for column in split_series.columns:
             split_series[column] = pd.to_numeric(split_series[column], errors='coerce')
         #append series to tsv_df
-        tsv_df = pd.concat([tsv_df, split_series], axis=1)
-    
+        df = pd.concat([df, split_series], axis=1)
+
     #make sample size numeric
-    tsv_df['obs_sample_size'] = pd.to_numeric(tsv_df['obs_sample_size'], errors='coerce')
-    
+    df['obs_sample_size'] = pd.to_numeric(df['obs_sample_size'], errors='coerce')
+
     cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 'multiaa_comb_mutation', 'start', 'function_category', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']
 
     cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name',
@@ -154,22 +154,22 @@ def streamline_tsv(df):
     agg_dict['viral_lineages'] = ', '.join
     agg_dict['clade_defining'] = ', '.join
 
-    
+
     #sum split columns and sample_size
     for string in ['dp_', 'ao_', 'ro_', 'obs_sample_size']:
         relevant_keys = [key for key, value in agg_dict.items() if string in key.lower()]
         for key in relevant_keys:
             agg_dict[key] = 'sum'
-   
-    final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
-    
+
+    final_df = df.groupby(cols_to_check).agg(agg_dict)
+
     #rejoin split columns (ao, sequence_depth, ro) with comma separation
     for string in ['dp_', 'ao_', 'ro_']:
-        colnames = [i for i in tsv_df.columns.values.tolist() if string in i]
+        colnames = [i for i in df.columns.values.tolist() if string in i]
         final_df[string + 'combined'] = final_df[colnames].apply(lambda row: ','.join(row.values.astype(str)), axis=1)
         #drop split columns
         final_df = final_df.drop(labels=colnames, axis=1)
- 
+
     #replace ao, ro, sequence_depth with the added up columns; remove 'who_variant'
     final_df = final_df.drop(labels=['ao', 'ro', 'dp', 'who_variant'], axis=1)
     final_df = final_df.rename(columns={'dp_combined': 'dp', 'ro_combined': 'ro', 'ao_combined': 'ao', 'multiaa_comb_mutation': 'multiaa_mutation_split_names'})
@@ -178,7 +178,7 @@ def streamline_tsv(df):
     final_df.ao = final_df.ao.str.replace(',0.0','', regex=True)
     #make 'ao' integer type
     final_df.ao = final_df.ao.astype(int)
-    
+
     #add variant_pop_size
     final_df['variant_pop_size'] = variant_pop_size
 
@@ -214,7 +214,7 @@ def streamline_tsv(df):
 
 
     #reorder columns
-    cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
+    cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name',
        'multiaa_mutation_split_names', 'start', 'vcf_gene', 'chrom_region',
        'mutation_type', 'dp', 'obs_sample_size', 'variant_pop_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
        'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
@@ -224,7 +224,7 @@ def streamline_tsv(df):
        'voi_designation_date', 'voc_designation_date',
        'vum_designation_date']
     final_df = final_df[cols]
-    
+
     return final_df
 
 
@@ -261,14 +261,14 @@ if __name__ == '__main__':
 
         #get list of relevant pango lineages
         pango_lineages = clades[clades['who_variant']==who_variant]['pango_lineage'].values[0].split(',')  #list of pango lineages from that variant
-    
+
         #get variant population size
         variant_pop_size = find_variant_pop_size(args.table, pango_lineages)
-        
+
         #get list of gvf files pertaining to variant
-        gvf_files = find_gvfs(pango_lineages, gvf_directory)
+        gvf_files = find_gvfs(pango_lineages, gvf_files_list)
         print(str(len(gvf_files)) + " GVF files found for " + who_variant + " variant.")
-    
+
         #if any GVF files are found, create a surveillance report
 
         if len(gvf_files) > 0:
