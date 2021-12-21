@@ -185,7 +185,7 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
         new_df['#attributes'] = new_df['#attributes'].astype(str) + 'dp=' + info['dp'].astype(str) + ';'
 
     #add sample_size attribute
-    new_df['#attributes'] = new_df['#attributes'] + "sample_size=" + sample_size.astype(str) + ';' 
+    new_df['#attributes'] = new_df['#attributes'] + "sample_size=" + sample_size + ';' 
 
 
     #add alternate frequency (AF) column for clade-defining cutoff (af=ao/dp)
@@ -236,9 +236,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     new_df['#attributes'] = new_df['#attributes'] + 'viral_lineage=' + strain + ';'
     new_df['#attributes'] = new_df['#attributes'] + "multi_aa_name=" + new_df["multi_name"] + ';'
 
-    new_df['#attributes'] = new_df['#attributes'] + "multiaa_comb_mutation=" + new_df["multiaa_comb_mutation"] + ';'    
-    new_df['#attributes'] = new_df['#attributes'] + "alternate_frequency=" + new_df['AF'].astype(str) + ';' 
-    
+    new_df['#attributes'] = new_df['#attributes'] + "multiaa_comb_mutation=" + new_df["multiaa_comb_mutation"] + ';'
+    new_df['#attributes'] = new_df['#attributes'] + "alternate_frequency=" + new_df['AF'].astype(str) + ';'
+
     new_df = new_df[gvf_columns + ['multiaa_comb_mutation', 'AF']] #only keep the columns needed for a gvf file, plus multiaa_comb_mutation to add to comb_mutation later
     #new_df.to_csv('new_df.tsv', sep='\t', index=False, header=False)
     return new_df
