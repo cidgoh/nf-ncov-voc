@@ -239,7 +239,7 @@ process surveillance {
 
   input:
       path(gvf)
-      path(variants)
+      tuple(path(variants), path(stats))
 
   output:
       path("*.tsv")
@@ -249,6 +249,7 @@ process surveillance {
     """
     gvf2tsv.py --gvf_files ${gvf} \
     --clades ${variants} \
+    --table ${stats} \
     --all_variants
 
     """
