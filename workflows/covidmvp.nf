@@ -76,6 +76,6 @@ workflow ncov_voc {
       SNPEFF(tagProblematicSites.out.filtered_vcf)
       annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
       vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_variant).combine(ch_genecoord).combine(ch_mutationsplit).combine(SEQKITSTATS.out.stats))
-      surveillance(vcfTogvf.out.gvf.collect(), ch_variant)
+      surveillance(vcfTogvf.out.gvf.collect(), ch_variant.combine(SEQKITSTATS.out.stats))
 
 }
