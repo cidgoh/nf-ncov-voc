@@ -46,6 +46,9 @@ workflow ncov_voc_user {
         processGVCF(FREEBAYES.out.gvcf)
         BCFTOOLS(processGVCF.out.vcf.combine(ch_ref))
         tagProblematicSites(BCFTOOLS.out.normalized_vcf.combine(ch_probvcf))
+        SNPEFF(tagProblematicSites.out.filtered_vcf)
+        annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
+        vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_variant).combine(ch_genecoord).combine(ch_mutationsplit).combine(SEQKITSTATS.out.stats))
       }
 
       else if(params.input_type == 'tsv'){
@@ -61,8 +64,6 @@ workflow ncov_voc_user {
         tagProblematicSites(ch_user_file.combine(ch_probvcf))
       }
 
-      SNPEFF(tagProblematicSites.out.filtered_vcf)
-      annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
-      vcfTogvf(annotate_mat_peptide.out.annotated_vcf.combine(ch_funcannot).combine(ch_variant).combine(ch_genecoord).combine(ch_mutationsplit).combine(SEQKITSTATS.out.stats))
+
 
 }
