@@ -95,8 +95,6 @@ def gvf2tsv(gvf):
 
     #rename 'dp' column to 'sequence_depth', make 'viral_lineage' plural
     df = df.rename(columns={'sample_size':'obs_sample_size', 'viral_lineage': 'viral_lineages'})
-    
-    #get variant_pop_size column
         
     return df
 
@@ -104,7 +102,7 @@ def gvf2tsv(gvf):
 
 def streamline_tsv(tsv_df):
     #find identical rows across strains, and keep only one row.
-    
+
     #change n/a to 0 in 'ao' for counting purposes
     tsv_df['ao'] = tsv_df['ao'].str.replace("n/a", "0")
 
@@ -146,11 +144,12 @@ def streamline_tsv(tsv_df):
     #replace ao, ro, sequence_depth with the added up columns; remove 'who_variant'
     final_df = final_df.drop(labels=['ao', 'ro', 'dp', 'who_variant'], axis=1)
     final_df = final_df.rename(columns={'dp_combined': 'dp', 'ro_combined': 'ro', 'ao_combined': 'ao', 'multiaa_comb_mutation': 'multiaa_mutation_split_names'})
-
     #remove trailing zeros and commas from 'ao'
     final_df.ao = final_df.ao.str.replace(',0.0','', regex=True)
     #make 'ao' into comma-separated integers
-    final_df.ao = final_df.ao.str.replace('.0','', regex=True)
+    final_df.ao = final_df.ao.str.replace('.0,',',', regex=True) 
+    #remove any last trailing '.0'
+    final_df.ao = final_df.ao.str.split('.').str[0]
     
     #add variant_pop_size
     final_df['variant_pop_size'] = variant_pop_size
@@ -169,8 +168,10 @@ def streamline_tsv(tsv_df):
     final_df.clade_defining_status = final_df.clade_defining_status.str.replace('n/a=n/a; ', 'n/a; ')
     final_df.clade_defining_status = final_df.clade_defining_status.str.replace('= n/a', '=n/a')
     final_df.clade_defining_status = final_df.clade_defining_status.str.replace('nan=nan; ', '')
-    #strip trailing spaces
-    final_df.clade_defining_status = final_df.clade_defining_status.str.rstrip(" ")
+    #strip trailing spaces and semicolons
+    final_df.clade_defining_status = final_df.clade_defining_status.str.rstrip("; ")
+    #remove spaces after '='
+    final_df.clade_defining_status = final_df.clade_defining_status.str.replace("= ", "=")
     #drop repeated key-value pairs in each row (find these rows as they contain spaces)
     for row in final_df['clade_defining_status']:
         if ' ' in row:
