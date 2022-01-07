@@ -55,9 +55,8 @@ def find_variant_pop_size(table, pango_lineage_list):
     strain_tsv_df = pd.read_csv(table, header=0, delim_whitespace=True, usecols=['file', 'num_seqs'])  
     variant_num_seqs = []
     for lineage in pango_lineage_list:
-        num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(lineage.replace("*",""))]['num_seqs'].values.tolist()
-        num_seqs = [x.split(",") for x in num_seqs]
-        num_seqs = [item for sublist in num_seqs for item in sublist]
+        num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(lineage.replace("*",""))]['num_seqs']
+        num_seqs = num_seqs.str.replace(",","").values.tolist()
         variant_num_seqs = variant_num_seqs + num_seqs
     variant_pop_size = sum(list(map(int, variant_num_seqs)))
 
