@@ -185,6 +185,16 @@ def streamline_tsv(tsv_df):
             row_str = ', '.join(str(e) for e in mylist)
             mask = final_df['clade_defining_status']==row
             final_df.loc[mask, 'clade_defining_status'] = row_str
+            
+    #drop repeated lineage names in each row of viral_lineages
+    for row in final_df['viral_lineages']:
+        if ' ' in row:
+            lineage_list = row.split(', ')
+            mylist = list(set(lineage_list))
+            row_str = ', '.join(str(e) for e in mylist)
+            mask = final_df['viral_lineages']==row
+            final_df.loc[mask, 'viral_lineages'] = row_str
+
     
     
     #reorder columns
@@ -194,7 +204,7 @@ def streamline_tsv(tsv_df):
        'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
        'variant_seq', 'function_category', 'citation',
        'comb_mutation', 'function_description', 'heterozygosity',
-       'clade_defining_status', 'status',
+       'viral_lineages', 'clade_defining_status', 'status',
        'voi_designation_date', 'voc_designation_date',
        'vum_designation_date']
     final_df = final_df[cols]
