@@ -105,7 +105,7 @@ def streamline_tsv(tsv_df):
     #change n/a to 0 in 'ao' for counting purposes
     tsv_df['ao'] = tsv_df['ao'].str.replace("n/a", "0")
 
-    for colname in ['dp', 'ao', 'ro']:
+    for colname in ['ao']:
         #split up at commas into new columns: make a new mini-df
         split_series = tsv_df[colname].str.split(pat=',').apply(pd.Series)
         #rename series columns to 'ao_0', 'ao_1', etc.
@@ -116,8 +116,9 @@ def streamline_tsv(tsv_df):
         #append series to tsv_df
         tsv_df = pd.concat([tsv_df, split_series], axis=1)
     
-    #make sample size numeric
-    tsv_df['obs_sample_size'] = pd.to_numeric(tsv_df['obs_sample_size'], errors='coerce')
+    #make ro, dp, and obs_sample_size numeric
+    for colname in ['ro', 'dp', 'obs_sample_size']:
+        tsv_df[colname] = pd.to_numeric(tsv_df[colname], errors='coerce')
     
     cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 'multiaa_comb_mutation', 'start', 'function_category', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']
 
@@ -125,24 +126,28 @@ def streamline_tsv(tsv_df):
     agg_dict['viral_lineages'] = ', '.join
     agg_dict['clade_defining'] = ', '.join
     
-    #sum split columns and sample_size
-    for string in ['dp_', 'ao_', 'ro_', 'obs_sample_size']:
+    #sum split columns of ao
+    for string in ['ao_']:
         relevant_keys = [key for key, value in agg_dict.items() if string in key.lower()]
         for key in relevant_keys:
             agg_dict[key] = 'sum'
+            
+    #sum dp, ro and sample_size
+    for key in ['dp', 'ro', 'obs_sample_size']:
+        agg_dict[key] = 'sum'
    
     final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
     
-    #rejoin split columns (ao, sequence_depth, ro) with comma separation
-    for string in ['dp_', 'ao_', 'ro_']:
+    #rejoin split columns of ao with comma separation
+    for string in ['ao_']:
         colnames = [i for i in tsv_df.columns.values.tolist() if string in i]
         final_df[string + 'combined'] = final_df[colnames].apply(lambda row: ','.join(row.values.astype(str)), axis=1)
         #drop split columns
         final_df = final_df.drop(labels=colnames, axis=1)
  
-    #replace ao, ro, sequence_depth with the added up columns; remove 'who_variant'
-    final_df = final_df.drop(labels=['ao', 'ro', 'dp', 'who_variant'], axis=1)
-    final_df = final_df.rename(columns={'dp_combined': 'dp', 'ro_combined': 'ro', 'ao_combined': 'ao', 'multiaa_comb_mutation': 'multiaa_mutation_split_names'})
+    #replace ao with the added up columns; remove 'who_variant'; rename 'multiaa_comb_mutation'
+    final_df = final_df.drop(labels=['ao', 'who_variant'], axis=1)
+    final_df = final_df.rename(columns={'ao_combined': 'ao', 'multiaa_comb_mutation': 'multiaa_mutation_split_names'})
     #remove trailing zeros and commas from 'ao'
     final_df.ao = final_df.ao.str.replace(',0.0','', regex=True)
     #make 'ao' into comma-separated integers
@@ -185,11 +190,18 @@ def streamline_tsv(tsv_df):
             mask = final_df['clade_defining_status']==row
             final_df.loc[mask, 'clade_defining_status'] = row_str
             
+            
     #drop repeated lineage names in each row of viral_lineages
+    #return an ordered list of lineages
     for row in final_df['viral_lineages']:
         if ' ' in row:
             lineage_list = row.split(', ')
             mylist = list(set(lineage_list))
+            '''
+            #order lineages alphanumerically
+            #split each element of mylist into a sublist, split at the first '.'
+            split_list = 
+            '''
             row_str = ', '.join(str(e) for e in mylist)
             mask = final_df['viral_lineages']==row
             final_df.loc[mask, 'viral_lineages'] = row_str
