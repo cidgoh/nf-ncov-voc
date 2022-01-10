@@ -61,6 +61,32 @@ def find_variant_pop_size(table, pango_lineage_list):
     variant_pop_size = sum(list(map(int, variant_num_seqs)))
 
     return variant_pop_size
+
+
+def add_ao_by_variant_seq(ao_str, variant_seq_str):
+    '''
+    Takes a pair of strings like ao_str="7,7,24" and variant_seq_str="T,T,T" or "8,21,3" and "T,T,A".
+    Output should be a string "T=38" (first case) or "T=29, A=3" (second case).
+    '''
+    ao_list = ao_str.split(',')
+    ao_list = [int(x) for x in ao_list]
+    var_str_list = variant_seq_str.split(',')
+    zipped_lists = list(zip(var_str_list, ao_list))
+    
+    ao_dict = dict()
+    for pair in zipped_lists:
+        #if a variant seq isn't in the dictionary, add it
+        if pair[0] not in ao_dict:
+            ao_dict[pair[0]] = pair[1]
+        else:
+            ao_dict[pair[0]] += pair[1]
+    
+    joined_string = ''
+    for item in list(ao_dict.items()):
+        joined_string = joined_string + item[0] + '=' + str(item[1]) + ', '
+    joined_string = joined_string.rstrip(", ")
+    
+    return joined_string
     
 
 def gvf2tsv(gvf):
@@ -125,14 +151,9 @@ def streamline_tsv(tsv_df):
    
     final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
    
-    '''
-    #remove trailing zeros and commas from 'ao'
-    final_df.ao = final_df.ao.str.replace(',0.0','', regex=True)
-    #make 'ao' into comma-separated integers
-    final_df.ao = final_df.ao.str.replace('.0,',',', regex=True) 
-    #remove any last trailing '.0'
-    final_df.ao = final_df.ao.str.split('.').str[0]
-    '''
+
+    #add ao according to the heterogeneous mutations
+    final_df['ao_by_var_seq'] = [add_ao_by_variant_seq(x, y) for x, y in zip(final_df['ao'], final_df['variant_seq'])]
     
     #remove 'who_variant'; rename 'multiaa_comb_mutation'
     final_df = final_df.drop(labels=['who_variant'], axis=1)
@@ -190,7 +211,7 @@ def streamline_tsv(tsv_df):
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
        'multiaa_mutation_split_names', 'start', 'vcf_gene', 'chrom_region',
        'mutation_type', 'dp', 'obs_sample_size', 'variant_pop_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
-       'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'reference_seq',
+       'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'ao_by_var_seq', 'reference_seq',
        'variant_seq', 'function_category', 'citation',
        'comb_mutation', 'function_description', 'heterozygosity',
        'viral_lineages', 'clade_defining_status', 'status',
