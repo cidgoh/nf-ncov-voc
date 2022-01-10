@@ -104,17 +104,6 @@ def streamline_tsv(tsv_df):
 
     #change n/a to 0 in 'ao' for counting purposes
     tsv_df['ao'] = tsv_df['ao'].str.replace("n/a", "0")
-
-    for colname in ['ao']:
-        #split up at commas into new columns: make a new mini-df
-        split_series = tsv_df[colname].str.split(pat=',').apply(pd.Series)
-        #rename series columns to 'ao_0', 'ao_1', etc.
-        split_series.columns = [colname + '_' + str(name) for name in split_series.columns.values]
-        #ensure all counts are numeric
-        for column in split_series.columns:
-            split_series[column] = pd.to_numeric(split_series[column], errors='coerce')
-        #append series to tsv_df
-        tsv_df = pd.concat([tsv_df, split_series], axis=1)
     
     #make ro, dp, and obs_sample_size numeric
     for colname in ['ro', 'dp', 'obs_sample_size']:
@@ -123,38 +112,31 @@ def streamline_tsv(tsv_df):
     cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 'multiaa_comb_mutation', 'start', 'function_category', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']
 
     agg_dict = dict((col,'first') for col in tsv_df.columns.values.tolist())
+
+    #join some columns with commas
     agg_dict['viral_lineages'] = ', '.join
-    agg_dict['clade_defining'] = ', '.join
-    
-    #sum split columns of ao
-    for string in ['ao_']:
-        relevant_keys = [key for key, value in agg_dict.items() if string in key.lower()]
-        for key in relevant_keys:
-            agg_dict[key] = 'sum'
+    agg_dict['clade_defining'] = ','.join
+    agg_dict['ao'] = ','.join
+    agg_dict['variant_seq'] = ','.join
             
     #sum dp, ro and sample_size
     for key in ['dp', 'ro', 'obs_sample_size']:
         agg_dict[key] = 'sum'
    
     final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
-    
-    #rejoin split columns of ao with comma separation
-    for string in ['ao_']:
-        colnames = [i for i in tsv_df.columns.values.tolist() if string in i]
-        final_df[string + 'combined'] = final_df[colnames].apply(lambda row: ','.join(row.values.astype(str)), axis=1)
-        #drop split columns
-        final_df = final_df.drop(labels=colnames, axis=1)
- 
-    #replace ao with the added up columns; remove 'who_variant'; rename 'multiaa_comb_mutation'
-    final_df = final_df.drop(labels=['ao', 'who_variant'], axis=1)
-    final_df = final_df.rename(columns={'ao_combined': 'ao', 'multiaa_comb_mutation': 'multiaa_mutation_split_names'})
+   
+    '''
     #remove trailing zeros and commas from 'ao'
     final_df.ao = final_df.ao.str.replace(',0.0','', regex=True)
     #make 'ao' into comma-separated integers
     final_df.ao = final_df.ao.str.replace('.0,',',', regex=True) 
     #remove any last trailing '.0'
     final_df.ao = final_df.ao.str.split('.').str[0]
+    '''
     
+    #remove 'who_variant'; rename 'multiaa_comb_mutation'
+    final_df = final_df.drop(labels=['who_variant'], axis=1)
+    final_df = final_df.rename(columns={'multiaa_comb_mutation': 'multiaa_mutation_split_names'})
     #add variant_pop_size
     final_df['variant_pop_size'] = variant_pop_size
 
@@ -170,12 +152,10 @@ def streamline_tsv(tsv_df):
         final_df['clade_defining_status'] = final_df['clade_defining_status'] + split_lineages[col].astype(str) + '=' + split_clade_defining[col].astype(str) + '; '
     #drop clade_defining status for n/a strains and empty nan=nan pairs
     final_df.clade_defining_status = final_df.clade_defining_status.str.replace('n/a=n/a; ', 'n/a; ')
-    final_df.clade_defining_status = final_df.clade_defining_status.str.replace('= n/a', '=n/a')
     final_df.clade_defining_status = final_df.clade_defining_status.str.replace('nan=nan; ', '')
     #strip trailing spaces and semicolons
     final_df.clade_defining_status = final_df.clade_defining_status.str.rstrip("; ")
-    #remove spaces after '='
-    final_df.clade_defining_status = final_df.clade_defining_status.str.replace("= ", "=")
+
     #drop repeated key-value pairs in each row (find these rows as they contain spaces)
     for row in final_df['clade_defining_status']:
         if ' ' in row:
@@ -204,9 +184,7 @@ def streamline_tsv(tsv_df):
             '''
             row_str = ', '.join(str(e) for e in mylist)
             mask = final_df['viral_lineages']==row
-            final_df.loc[mask, 'viral_lineages'] = row_str
-
-    
+            final_df.loc[mask, 'viral_lineages'] = row_str  
     
     #reorder columns
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
