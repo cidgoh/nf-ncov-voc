@@ -78,15 +78,23 @@ def add_ao_by_variant_seq(ao_str, variant_seq_str):
         #if a variant seq isn't in the dictionary, add it
         if pair[0] not in ao_dict:
             ao_dict[pair[0]] = pair[1]
+        #if it's already there, add this ao to the existing key
         else:
             ao_dict[pair[0]] += pair[1]
     
+    #create 3 strings: one for ao, one for var_seq, one for both joined together with an '=' between
     joined_string = ''
+    ao_string = ''
+    var_string = ''
     for item in list(ao_dict.items()):
         joined_string = joined_string + item[0] + '=' + str(item[1]) + ', '
+        ao_string = ao_string + str(item[1]) + ','
+        var_string = var_string + item[0] + ','
     joined_string = joined_string.rstrip(", ")
+    ao_string = ao_string.rstrip(", ")
+    var_string = var_string.rstrip(", ")
     
-    return joined_string
+    return joined_string, ao_string, var_string
     
 
 def gvf2tsv(gvf):
@@ -135,8 +143,6 @@ def streamline_tsv(tsv_df):
     for colname in ['ro', 'dp', 'obs_sample_size']:
         tsv_df[colname] = pd.to_numeric(tsv_df[colname], errors='coerce')
     
-    cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 'multiaa_comb_mutation', 'start', 'function_category', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']
-
     agg_dict = dict((col,'first') for col in tsv_df.columns.values.tolist())
 
     #join some columns with commas
@@ -148,16 +154,19 @@ def streamline_tsv(tsv_df):
     #sum dp, ro and sample_size
     for key in ['dp', 'ro', 'obs_sample_size']:
         agg_dict[key] = 'sum'
-   
+        
+    cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 'multiaa_comb_mutation', 'start', 'function_category', 'citation', 'comb_mutation', 'function_description', 'heterozygosity']
     final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
    
+    final_df = final_df.rename(columns={'ao':'ao_all', 'variant_seq':'variant_seq_all', 'multiaa_comb_mutation': 'multiaa_mutation_split_names'})
 
     #add ao according to the heterogeneous mutations
-    final_df['ao_by_var_seq'] = [add_ao_by_variant_seq(x, y) for x, y in zip(final_df['ao'], final_df['variant_seq'])]
+    final_df['ao_by_var_seq'] = [add_ao_by_variant_seq(x, y)[0] for x, y in zip(final_df['ao_all'], final_df['variant_seq_all'])]
+    final_df['ao'] = [add_ao_by_variant_seq(x, y)[1] for x, y in zip(final_df['ao_all'], final_df['variant_seq_all'])]
+    final_df['variant_seq'] = [add_ao_by_variant_seq(x, y)[2] for x, y in zip(final_df['ao_all'], final_df['variant_seq_all'])]
     
     #remove 'who_variant'; rename 'multiaa_comb_mutation'
     final_df = final_df.drop(labels=['who_variant'], axis=1)
-    final_df = final_df.rename(columns={'multiaa_comb_mutation': 'multiaa_mutation_split_names'})
     #add variant_pop_size
     final_df['variant_pop_size'] = variant_pop_size
 
@@ -211,8 +220,8 @@ def streamline_tsv(tsv_df):
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name', 
        'multiaa_mutation_split_names', 'start', 'vcf_gene', 'chrom_region',
        'mutation_type', 'dp', 'obs_sample_size', 'variant_pop_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
-       'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao', 'ao_by_var_seq', 'reference_seq',
-       'variant_seq', 'function_category', 'citation',
+       'mat_pep_desc', 'mat_pep_acc', 'ro', 'variant_seq_all', 'ao_all', 'ao_by_var_seq', 'ao', 'variant_seq', 
+       'reference_seq', 'function_category', 'citation',
        'comb_mutation', 'function_description', 'heterozygosity',
        'viral_lineages', 'clade_defining_status', 'status',
        'voi_designation_date', 'voc_designation_date',
