@@ -110,6 +110,40 @@ def add_ao_by_variant_seq(ao_str, variant_seq_str):
     return joined_string, ao_string, var_string
 
 
+def add_one_from_each_lineage(count_str, lineage_str, mode):
+    """
+    Takes a pair of strings like count_str="7,7,24" and
+    lineage_str="Q.3,Q.3,Q.1".
+    Output should be a string "31", adding unique lineage
+    values only, if mode='add'.
+    If mode='comma', returns a comma-separated set of values,
+    like "7,24".
+    """
+    count_list = count_str.split(';')
+    if mode=='add':
+        count_list = [int(x) for x in count_list]
+    lineage_str_list = lineage_str.replace(" ","")
+    lineage_str_list = lineage_str.split(',')
+    zipped_lists = list(zip(lineage_str_list, count_list))
+
+    count_dict = dict()
+    for pair in zipped_lists:
+        # if a lineage isn't in the dictionary, add it
+        if pair[0] not in count_dict:
+            count_dict[pair[0]] = pair[1]
+        #if it's already there, do nothing
+
+    # if mode=='comma', return a comma-separated string of values
+    if mode=='comma':
+        return_str = ','.join(list(count_dict.values()))
+    # elif mode=='add', add up all the keys and return the value as a string
+    elif mode=='add':
+        return_str = str(sum(list(count_dict.values())))
+    
+    return return_str
+
+
+
 def gvf2tsv(gvf):
     # read in gvf
     gvf_columns = ['#seqid', '#source', '#type', '#start', '#end',
@@ -162,23 +196,28 @@ def streamline_tsv(tsv_df):
     # change n/a to 0 in 'ao' for counting purposes
     tsv_df['ao'] = tsv_df['ao'].str.replace("n/a", "0")
 
+    '''
     # make ro, dp, and obs_sample_size numeric
     for colname in ['ro', 'dp', 'obs_sample_size']:
         tsv_df[colname] = pd.to_numeric(tsv_df[colname],
                                         errors='coerce')
-
+    '''
+    # make obs_sample_size numeric
+    tsv_df['obs_sample_size'] = pd.to_numeric(tsv_df['obs_sample_size'],
+                                        errors='coerce')
+    
     agg_dict = dict((col, 'first') for col in
                     tsv_df.columns.values.tolist())
-
+    
+    agg_dict['obs_sample_size'] = 'sum'
     # join some columns with commas
     agg_dict['viral_lineages'] = ', '.join
     agg_dict['clade_defining'] = ','.join
-    agg_dict['ao'] = ','.join
+    agg_dict['ao'] = ';'.join
+    agg_dict['dp'] = ';'.join
+    agg_dict['ro'] = ';'.join
     agg_dict['variant_seq'] = ','.join
 
-    # sum dp, ro and sample_size
-    for key in ['dp', 'ro', 'obs_sample_size']:
-        agg_dict[key] = 'sum'
 
     cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name',
                      'multiaa_comb_mutation', 'start',
@@ -192,6 +231,18 @@ def streamline_tsv(tsv_df):
                                         'multiaa_comb_mutation':
                                         'multiaa_mutation_split_names'})
 
+    #add dp, ro per mutation
+    for colname in ['dp', 'ro']:
+        final_df[colname] = [add_one_from_each_lineage(x, y, mode='add') for x, y in
+                      zip(final_df[colname],
+                          final_df['viral_lineages'])]
+
+    #add ao, variant_seq per mutation
+    for colname in ['ao_all', 'variant_seq_all']:
+        final_df[colname] = [add_one_from_each_lineage(x, y, mode='comma') for x, y in
+                      zip(final_df[colname],
+                          final_df['viral_lineages'])]
+        
     # add ao according to the heterogeneous mutations
     final_df['ao_by_var_seq'] = [add_ao_by_variant_seq(x, y)[0] for x, y
                                  in zip(final_df['ao_all'],
@@ -202,7 +253,7 @@ def streamline_tsv(tsv_df):
     final_df['variant_seq'] = [add_ao_by_variant_seq(x, y)[2] for x, y
                                in zip(final_df['ao_all'],
                                       final_df['variant_seq_all'])]
-
+    
     # remove 'who_variant'; rename 'multiaa_comb_mutation'
     final_df = final_df.drop(labels=['who_variant'], axis=1)
     # add variant_pop_size
