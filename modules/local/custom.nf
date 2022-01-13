@@ -1,3 +1,41 @@
+process mergePangolinMetadata{
+
+    tag {"Merge Pangolin report into Metadata"}
+
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
+
+    input:
+      tuple (path(metadata), path(pangolin_report))
+
+    output:
+      path("Metadata_lineage.tsv"), emit: lineage_assigned
+
+    script:
+      """
+      merge_pangolin_metada.py --metadata ${metadata} --pangolin ${pangolin_report} --output Metadata_lineage.tsv
+
+      """
+}
+
+process virusseqMapLineage{
+
+    tag {"Mapping VirusSeq dataset to GISAID for lineages"}
+
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
+
+    input:
+      tuple (path(metadata), path(gisaid_metadata))
+
+    output:
+      path("VirusSeq_Mapped.tsv"), emit: mapped
+
+    script:
+      """
+      map_virusseq_GISAID.py --virusseq ${metadata} --gisaid ${gisaid_metadata} --output VirusSeq_Mapped.tsv
+
+      """
+}
+
 process extractVariants {
   tag {"Extracting VOCs, VOIs and VUMs"}
   input:
@@ -28,25 +66,6 @@ process grabIndex {
     script:
       """
       ln -sf $index_folder/*.fasta.* ./
-      """
-}
-
-process virusseqMapLineage{
-
-    tag {"Mapping VirusSeq dataset to GISAID for lineages"}
-
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
-
-    input:
-      tuple (path(virusseq_meta), path(meta))
-
-    output:
-      path("VirusSeq_Mapped.tsv"), emit: mapped
-
-    script:
-      """
-      map_virusseq_GISAID.py --virusseq ${virusseq_meta} --gisaid ${meta} --output VirusSeq_Mapped.tsv
-
       """
 }
 
@@ -117,6 +136,9 @@ process processGVCF {
       path("*.variants.vcf"), emit: vcf
       path("*.consensus.vcf")
       path("*.txt")
+
+  when:
+      gvcf.size()>0
 
   script:
       """
@@ -231,9 +253,9 @@ process vcfTotsv {
       """
 }
 
-process surveillance {
+process surveillanceRawTsv {
 
-  tag {"Generating Surveillance Reports"}
+  tag {"Generating Raw Surveillance Data (TSV)"}
 
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
 

@@ -3,6 +3,8 @@ process SEQKITSTATS {
 
   tag { "Data Statistics" }
 
+  label 'dev_env'
+
   input:
       path(samples)
 
@@ -11,6 +13,7 @@ process SEQKITSTATS {
 
   script:
     """
+
     seqkit stats ${samples} -o samples_stats.tsv
     """
 }
