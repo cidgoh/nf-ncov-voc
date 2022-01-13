@@ -16,12 +16,6 @@ def parse_args():
     parser.add_argument('--samplingsize', type=int, default=0,
                         help='Sample size, if "0" all sequences '
                              'extracted; Default=0')
-    parser.add_argument('--gisaid', type=bool,
-                        choices=[True], help='Bool Value to '
-                                             'confirm if the '
-                                             'metadata file is '
-                                             'from GISAID; '
-                                             'Default=True')
     parser.add_argument('--startdate', type=str, default=None,
                         help='Date of submission from (yyyy-mm-dd); '
                              'Default=None')
@@ -51,40 +45,36 @@ def write_metadata(dataframe):
 
 
 def data_filtering(dataframe):
-    dataframe = dataframe[(dataframe['host'].str.lower() ==
-                           'Human'.lower()) & (
-                                  dataframe['length'] >=
-                                  29000)]
-    if (not args.startdate == None) and (not args.enddate == None):
+    dataframe = dataframe[dataframe['host (scientific name)'].str.lower() ==
+                          'Homo sapiens'.lower()]
+    if 'length' in dataframe.columns:
+        dataframe = dataframe[dataframe['length'] >= 29000]
+    if (not args.startdate == None) and (not args.enddate == None) \
+            and ('sample collection date' in dataframe.columns):
         sdate = pd.to_datetime(args.startdate).date()
         edate = pd.to_datetime(args.enddate).date()
         dataframe = dataframe[dataframe[
-            'date_submitted'].isin(pd.date_range(sdate, edate))]
+            'sample collection date'].isin(pd.date_range(sdate, edate))]
     return dataframe
 
 
 if __name__ == '__main__':
     args = parse_args()
 
-    if not args.gisaid:
-        Metadata = pd.read_csv(args.table, sep="\t", low_memory=False)
-        df = Metadata[Metadata['pango_lineage'] == args.voc]
-        df = sub_sampling(dataframe=df,subsampling=args.samplingsize)
-        write_ids(dataframe=df)
-        write_metadata(dataframe=df)
+    Metadata = pd.read_csv(args.table, sep="\t", low_memory=False,
+                           parse_dates=['sample collection date'])
 
-    else:
-        Metadata = pd.read_csv(args.table, sep="\t", low_memory=False,
-                               parse_dates=['date_submitted'])
+    if 'sample collection date' in Metadata.columns:
+        Metadata['sample collection date'] = pd.to_datetime(Metadata[
+                                            'sample collection date'],
+                                            format='%Y-%m-%d',
+                                            errors='coerce')
 
-        Metadata['date_submitted'] = pd.to_datetime(Metadata[
-                                    'date_submitted'],
-                                    format='%Y-%m-%d', errors='coerce')
-
-        """ Filtering for human associated and consensus sequence of
-            at least 29Kb """
-        df = Metadata[Metadata['pango_lineage'] == args.voc]
-        df = data_filtering(dataframe=df)
-        df = sub_sampling(dataframe=df, subsampling=args.samplingsize)
-        write_ids(dataframe=df)
-        write_metadata(dataframe=df)
+    """ Filtering for human associated and consensus sequence of
+        at least 29Kb """
+    Metadata = Metadata[Metadata['pango_lineage'] == args.voc]
+    Metadata = data_filtering(dataframe=Metadata)
+    Metadata = sub_sampling(dataframe=Metadata,
+                            subsampling=args.samplingsize)
+    write_ids(dataframe=Metadata)
+    write_metadata(dataframe=Metadata)
