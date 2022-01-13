@@ -1,0 +1,11 @@
+{
+    "name": "nf-ncov-voc",
+    "homePage": "https://github.com/cidgoh/nf-ncov-voc",
+    "repos": {
+        "nf-core/modules": {
+            "pangolin": {
+                "git_sha": "9d0cad583b9a71a6509b754fdf589cbfbed08961"
+            }
+        }
+    }
+}
