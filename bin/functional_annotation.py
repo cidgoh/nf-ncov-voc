@@ -1,10 +1,37 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+
+@author: anoosha
+
+This script converts Pokay .txt files into a functional annotation
+key (tsv) files that can be used by nf-ncov-voc workflow for
+annotation of variant called files.
+
+"""
+
 import os
+import argparse
 from pathlib import Path
 import pandas as pd
+import csv
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='This script produces a TSV file from TXT files '
+                    'in POKAY  '
+                    'https://github.com/nodrogluap/pokay/tree/master'
+                    '/data for annotating SARS-COV-2 mutations')
+    parser.add_argument('--inputdir', type=str, default=None,
+                        help='directory path for input files')
+    parser.add_argument('--outputfile', type=str, default=None,
+                        help='output file (.TSV) format')
+    return parser.parse_args()
 
 
 def combination_mutation(c_mutations, c_mutation):
-    comb_mutation=[]
+    comb_mutation = []
     for y in range(len(c_mutations)):
         if c_mutations[y] != c_mutation:
             comb_mutation.append(c_mutations[y])
@@ -21,8 +48,8 @@ def data_cleanup(dframe):
     dframe['function_description'] = dframe[
         'function_description'].str.replace('#', '')
 
-    dframe['comb_mutation']= dframe['comb_mutation'].apply(lambda x:
-    x[1:-1])
+    dframe['comb_mutation'] = dframe['comb_mutation'].apply(
+        lambda x: x[1:-1])
 
     return dframe
 
@@ -38,19 +65,18 @@ def extract_source_citation(dframe):
         dframe['citation'] = dframe.url.str.split(
             "http").str[0]
         dframe['citation'] = dframe['citation'].str.replace('#',
-                                                              '')
+                                                            '')
         dframe['source'] = dframe.url.str.split(
             ")").str[1]
     return dframe
 
 
 def extract_metadata(inp_file, chunk, df):
-
     mutation_name = chunk[-1].strip()
-    check_combination=0
+    check_combination = 0
     if ";" in mutation_name:
         mutation_name = mutation_name.split(";")
-        check_combination=1
+        check_combination = 1
     elif "," in mutation_name:
         mutation_name = mutation_name.split(",")
     else:
@@ -88,9 +114,8 @@ def extract_metadata(inp_file, chunk, df):
                                                           1] + 1: url[
                                                           index_url]]
                 else:
-                    new_key = str(chunk[url[
-                        index_url - 1]]).strip() + " | " + chunk[url[
-                        index_url]]
+                    new_key = str(chunk[url[index_url - 1]]).strip() \
+                              + " | " + chunk[url[index_url]]
                     function[new_key] = chunk[
                                         url[index_url - 2] + 1: url[
                                             index_url - 1]]
@@ -101,10 +126,10 @@ def extract_metadata(inp_file, chunk, df):
 
         df_list = [x, gene_name,
                    function_category, comb_mutation, heterozygosity]
-        #print(df_list)
+        # print(df_list)
         df1 = pd.DataFrame(
             columns=['mutation', 'gene', 'function_category',
-                     'comb_mutation','heterozygosity'])
+                     'comb_mutation', 'heterozygosity'])
         df1.loc[len(df1)] = df_list
 
         df_func['mutation'] = df1['mutation'].iloc[0]
@@ -113,21 +138,28 @@ def extract_metadata(inp_file, chunk, df):
         df_func['comb_mutation'] = str(df1['comb_mutation'].iloc[0])
         df_func['heterozygosity'] = str(df1['heterozygosity'].iloc[0])
 
-
         df_func = data_cleanup(dframe=df_func)
         df_func = extract_source_citation(dframe=df_func)
 
         df = pd.concat([df, df_func], ignore_index=True)
-        df = df.drop('url',1)
+        df = df.drop('url', 1)
     return df
+
+
+def write_tsv(dframe):
+    dframe.to_csv(args.outputfile, sep="\t", escapechar='|',
+                  quoting=csv.QUOTE_ALL, index=False, header=True)
+
 
 if __name__ == '__main__':
 
+    args = parse_args()
+
     # Folder Path
-    path = '/Users/anoosha/GitHub/pokay/data'
+    path = args.inputdir
 
     # Change the directory
-    os.chdir(path)
+    # os.chdir(path)
 
     dataFrame = pd.DataFrame(
         columns=['mutation', 'gene', 'function_category',
@@ -135,8 +167,8 @@ if __name__ == '__main__':
 
     for file in os.listdir(path):
         if file.endswith(".txt") and "_" in file:
-            file_path = f"{path}/{file}"
-            #print(file)
+            file_path = os.path.join(path, file)
+            # print(file)
             f = open(file_path, 'r')
             lines = f.readlines()
             mutations = []
@@ -153,13 +185,13 @@ if __name__ == '__main__':
                                                  chunk=func_chunk,
                                                  df=dataFrame)
                 else:
-                    func_chunk = lines[
-                                 mutations[index - 1] + 2:mutations[
-                                                              index] + 1]
+                    func_chunk = lines[mutations[index - 1] +
+                                       2:mutations[index] + 1]
                     dataFrame = extract_metadata(inp_file=file,
                                                  chunk=func_chunk,
                                                  df=dataFrame)
-
-    writer = pd.ExcelWriter('VoC_1.xlsx')
-    dataFrame.to_excel(writer, index=False)
-    writer.save()
+    dataFrame_cols = ['mutation', 'gene', 'function_category',
+                      'comb_mutation', 'heterozygosity', 'citation',
+                      'source', 'function_description']
+    dataFrame = dataFrame[dataFrame_cols]
+    write_tsv(dframe=dataFrame)
