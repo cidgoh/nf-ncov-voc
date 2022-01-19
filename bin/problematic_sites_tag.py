@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 
+@author: zohaib
+
+This script flags mutations for the problematics sites in the
+nf-ncov-voc workflow curated by
+EMBL-EBI at https://github.com/W-L/ProblematicSites_SARS-CoV2/
+"""
 
 import argparse
 import pandas as pd

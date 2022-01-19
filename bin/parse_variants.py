@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+
+@author: zohaib
+
+This script uses assets/ncov_variants_who_variants.tsv as key and
+lists the lineages corresponding to VOCs, VOIs and VUMs in input
+dataset for extracting metadata.
+
+"""
 
 import argparse
 import pandas as pd

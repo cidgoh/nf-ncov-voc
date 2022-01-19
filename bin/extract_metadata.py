@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+
+@author: zohaib
+
+This script extracts metadata for each VOC, VOI and VUM from the
+provided Metadata file based on the assigned lineages. This script
+also filters sequences based on the provided criteria.
+
+
+"""
 
 import argparse
 import pandas as pd
