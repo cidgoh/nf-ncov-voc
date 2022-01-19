@@ -4,26 +4,30 @@
 nextflow.enable.dsl = 2
 
 // path to required files
-params.refdb = "$baseDir/.github/data/refdb"
-params.ref_gff = "$baseDir/.github/data/features"
-params.prob_sites = "$baseDir/.github/data/problematic_sites"
-params.genome_annotation = "$baseDir/.github/data/genome_annotation"
-params.functional_annotation = "$baseDir/.github/data/functional_annotation"
-//params.clade_defining_mutations = "$baseDir/.github/data/clade_defining"
-params.gene_coordinates = "$baseDir/.github/data/gene_coordinates"
-params.mutation_names = "$baseDir/.github/data/multi_aa_names"
+params.refdb = "$baseDir/assets/ncov_refdb"
+params.ref_gff = "$baseDir/assets/ncov_genomeFeatures"
+params.prob_sites = "$baseDir/assets/ncov_problematicSites"
+params.genome_annotation = "$baseDir/assets/ncov_genomeAnnotation"
+params.functional_annotation = "$baseDir/assets/ncov_functionalAnnotation"
+params.gene_coordinates = "$baseDir/assets/ncov_geneCoordinates"
+params.mutation_names = "$baseDir/assets/ncov_multiNames"
+params.surveillance_indicators = "$baseDir/assets/ncov_surveillanceIndicators"
 
 
 // include modules
-include {printHelp              } from './modules/help.nf'
-include {cidgohHeader           } from './modules/header.nf'
-include {workflowHeader         } from './modules/wf_header.nf'
-include {extractVariants        } from './modules/custom.nf'
-include { virusseqMapLineage    } from './modules/custom.nf'
+include {printHelp              } from './modules/local/help'
+include {cidgohHeader           } from './modules/local/header'
+include {workflowHeader         } from './modules/local/wf_header'
 
-// import subworkflows
-include {ncov_voc         } from './workflows/covidmvp.nf'
-include {ncov_voc_user    } from './workflows/covidmvp_user.nf'
+
+
+
+// import workflows
+include {preprocessing          } from './workflows/covidmvp_preprocessing'
+include {variant_calling        } from './workflows/covidmvp_variantcalling'
+include {annotation             } from './workflows/covidmvp_annotation'
+include {surveillance           } from './workflows/covidmvp_surveillance'
+include {ncov_voc_user          } from './workflows/covidmvp_user.nf'
 
 if (params.help){
     log.info cidgohHeader()
@@ -69,11 +73,11 @@ workflow {
       if(params.variants){
         Channel.fromPath( "$params.variants", checkIfExists: true)
               .set{ ch_variants }
-          }
+      }
       else{
-        Channel.fromPath( "$baseDir/.github/data/variants/*.tsv", checkIfExists: true)
+        Channel.fromPath( "$baseDir/assets/ncov_variants/*.tsv", checkIfExists: true)
               .set{ ch_variant }
-          }
+      }
 
       if(params.mode == 'user'){
 
@@ -104,7 +108,7 @@ workflow {
     	         .set{ ch_seq }
         }
         else{
-          Channel.fromPath( "$baseDir/.github/data/sequence/*.fasta", checkIfExists: true)
+          Channel.fromPath( "$baseDir/assets/data/sequence/*.fasta", checkIfExists: true)
     	         .set{ ch_seq }
         }
 
@@ -114,31 +118,9 @@ workflow {
         }
 
         else{
-          Channel.fromPath( "$baseDir/.github/data/metadata/*.tsv", checkIfExists: true)
+          Channel.fromPath( "$baseDir/assets/data/metadata/*.tsv", checkIfExists: true)
                 .set{ ch_metadata }
         }
-
-        if(params.data == "virusseq"){
-          if(params.virusseq_meta){
-
-          Channel.fromPath( "$params.virusseq_meta", checkIfExists: true)
-               .set{ ch_virusseq_metadata }
-             }
-
-          virusseqMapLineage(ch_virusseq_metadata.combine(ch_metadata))
-          virusseqMapLineage.out.mapped
-              .set{ch_metadata}
-          //extractVariants(ch_variant.combine(virusseqMapLineage.out.mapped))
-          //extractVariants.out.lineages
-          //    .splitText()
-          //    .set{ ch_voc }
-
-        }
-
-        extractVariants(ch_variant.combine(ch_metadata))
-        extractVariants.out.lineages
-                .splitText()
-                .set{ ch_voc }
 
 
         Channel.fromPath( "$params.ref_gff/*.gff3", checkIfExists: true)
@@ -165,8 +147,18 @@ workflow {
         Channel.fromPath( "$params.mutation_names/*.tsv", checkIfExists: true)
               .set{ ch_mutationsplit }
 
+        Channel.fromPath( "$params.surveillance_indicators/*.tsv", checkIfExists: true)
+                    .set{ ch_surveillanceIndicators}
 
-        ncov_voc(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant )
+
+
+        preprocessing(ch_metadata, ch_seq, ch_variant)
+        variant_calling(preprocessing.out.ch_voc, preprocessing.out.ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai)
+        annotation(variant_calling.out.ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, variant_calling.out.ch_stats)
+        surveillance(annotation.out.ch_gvf, annotation.out.ch_variant, annotation.out.ch_stats, ch_surveillanceIndicators, variant_calling.out.ch_metadata)
+        //ncov_voc(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant )
+
+
       }
 
 }
