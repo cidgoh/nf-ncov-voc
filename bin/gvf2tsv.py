@@ -188,7 +188,8 @@ def gvf2tsv(gvf):
     # rename 'dp' column to 'sequence_depth', make 'viral_lineage'
     # plural
     df = df.rename(columns={'sample_size': 'obs_sample_size',
-                            'viral_lineage': 'viral_lineages'})
+                            'viral_lineage': 'viral_lineages',
+                            'source': 'citation_url'})
 
     return df
 
@@ -329,7 +330,7 @@ def streamline_tsv(tsv_df):
             'mat_pep_desc', 'mat_pep_acc', 'ro', 'variant_seq_all',
             'ao_all', 'ao_by_var_seq', 'ao', 'variant_seq',
             'reference_seq', 'function_category', 'citation',
-            'source', 'comb_mutation', 'function_description',
+            'citation_url', 'comb_mutation', 'function_description',
             'heterozygosity', 'viral_lineages',
             'clade_defining_status', 'status',
             'voi_designation_date', 'voc_designation_date',
