@@ -3,7 +3,7 @@
 """
 Created on Mon Aug  9 10:47:11 2021
 
-@author: madeline & zohaib
+@authors: madeline & zohaib
 
 This script converts GVF files to TSVs, for later conversion to a PDF
 case report.
@@ -120,9 +120,9 @@ def add_one_from_each_lineage(count_str, lineage_str, mode):
     like "7,24".
     """
     count_list = count_str.split(';')
-    if mode=='add':
+    if mode == 'add':
         count_list = [int(x) for x in count_list]
-    lineage_str_list = lineage_str.replace(" ","")
+    lineage_str_list = lineage_str.replace(" ", "")
     lineage_str_list = lineage_str.split(',')
     zipped_lists = list(zip(lineage_str_list, count_list))
 
@@ -131,17 +131,17 @@ def add_one_from_each_lineage(count_str, lineage_str, mode):
         # if a lineage isn't in the dictionary, add it
         if pair[0] not in count_dict:
             count_dict[pair[0]] = pair[1]
-        #if it's already there, do nothing
+        # if it's already there, do nothing
 
     # if mode=='comma', return a comma-separated string of values
-    if mode=='comma':
+    if mode == 'comma':
         return_str = ','.join(list(count_dict.values()))
-    # elif mode=='add', add up all the keys and return the value as a string
-    elif mode=='add':
+    # elif mode=='add', add up all the keys and return the value as a
+    # string
+    elif mode == 'add':
         return_str = str(sum(list(count_dict.values())))
-    
-    return return_str
 
+    return return_str
 
 
 def gvf2tsv(gvf):
@@ -165,7 +165,9 @@ def gvf2tsv(gvf):
     for column in attributes.columns:
         split = attributes[column].str.split(pat='=').apply(pd.Series)
         title = split[0].drop_duplicates().tolist()[0].lower()
+
         content = split[1]
+
         # ignore "tag=" in column content
         attributes[column] = content
         # make attribute tag as column label
@@ -204,11 +206,11 @@ def streamline_tsv(tsv_df):
     '''
     # make obs_sample_size numeric
     tsv_df['obs_sample_size'] = pd.to_numeric(tsv_df['obs_sample_size'],
-                                        errors='coerce')
-    
+                                              errors='coerce')
+
     agg_dict = dict((col, 'first') for col in
                     tsv_df.columns.values.tolist())
-    
+
     agg_dict['obs_sample_size'] = 'sum'
     # join some columns with commas
     agg_dict['viral_lineages'] = ', '.join
@@ -218,7 +220,6 @@ def streamline_tsv(tsv_df):
     agg_dict['ro'] = ';'.join
     agg_dict['variant_seq'] = ','.join
 
-
     cols_to_check = ['name', 'nt_name', 'aa_name', 'multi_aa_name',
                      'multiaa_comb_mutation', 'start',
                      'function_category', 'citation',
@@ -227,22 +228,25 @@ def streamline_tsv(tsv_df):
 
     final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
     final_df = final_df.rename(columns={'ao': 'ao_all',
-                                        'variant_seq':'variant_seq_all',
+                                        'variant_seq':
+                                        'variant_seq_all',
                                         'multiaa_comb_mutation':
                                         'multiaa_mutation_split_names'})
 
-    #add dp, ro per mutation
+    # add dp, ro per mutation
     for colname in ['dp', 'ro']:
-        final_df[colname] = [add_one_from_each_lineage(x, y, mode='add') for x, y in
-                      zip(final_df[colname],
-                          final_df['viral_lineages'])]
+        final_df[colname] = [add_one_from_each_lineage(x, y, mode='add')
+                             for x, y in
+                             zip(final_df[colname],
+                                 final_df['viral_lineages'])]
 
-    #add ao, variant_seq per mutation
+    # add ao, variant_seq per mutation
     for colname in ['ao_all', 'variant_seq_all']:
-        final_df[colname] = [add_one_from_each_lineage(x, y, mode='comma') for x, y in
-                      zip(final_df[colname],
-                          final_df['viral_lineages'])]
-        
+        final_df[colname] = [
+            add_one_from_each_lineage(x, y, mode='comma') for x, y in
+            zip(final_df[colname],
+                final_df['viral_lineages'])]
+
     # add ao according to the heterogeneous mutations
     final_df['ao_by_var_seq'] = [add_ao_by_variant_seq(x, y)[0] for x, y
                                  in zip(final_df['ao_all'],
@@ -253,7 +257,7 @@ def streamline_tsv(tsv_df):
     final_df['variant_seq'] = [add_ao_by_variant_seq(x, y)[2] for x, y
                                in zip(final_df['ao_all'],
                                       final_df['variant_seq_all'])]
-    
+
     # remove 'who_variant'; rename 'multiaa_comb_mutation'
     final_df = final_df.drop(labels=['who_variant'], axis=1)
     # add variant_pop_size
@@ -309,9 +313,9 @@ def streamline_tsv(tsv_df):
             mylist = list(set(lineage_list))
             '''
             #order lineages alphanumerically
-            #split each element of mylist into a sublist, split at 
+            #split each element of mylist into a sublist, split at
             the first '.'
-            split_list = 
+            split_list =
             '''
             row_str = ', '.join(str(e) for e in mylist)
             mask = final_df['viral_lineages'] == row
@@ -403,7 +407,7 @@ if __name__ == '__main__':
             out_df = streamline_tsv(tsv_df=gvf_df)
 
             # save report as a .tsv
-            filename = outfile + '_' + who_variant + '.tsv'
+            filename = who_variant+'_'+ outfile + '.tsv'
             out_df.to_csv(filename, sep='\t', index=False)
             print("Processing complete.")
             print(who_variant + " surveillance report saved as: " +
