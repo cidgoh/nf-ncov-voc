@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+
+@author: zohaib
+
+This script uses a variant called vcf file and annotates the
+mutations with mature peptides using the SARS-CoV-2 genome features
+from NCBI.
+
+"""
+
 import argparse
 import gffutils
 from cyvcf2 import VCF, Writer
@@ -50,7 +61,6 @@ if __name__ == '__main__':
          'Type': 'String', 'Number': '.'})
     output_file_name = args.output_vcf
     w = Writer(output_file_name, data_vcf)
-    # gene = db[gene_protein["orf1ab"]]
 
     for record in data_vcf:
         gene = db[gene_protein[record.INFO.get('EFF').split("|")[5]]]
