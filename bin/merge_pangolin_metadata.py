@@ -1,4 +1,14 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+
+@author: zohaib
+
+This script merges Pangolin report (assigned lineages) with the
+metadata file which allows data extraction and filtering based on
+lineage information in nf-ncov-voc workflow.
+
+"""
 
 import argparse
 import pandas as pd
@@ -7,8 +17,8 @@ import csv
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='Map VirusSeq data to GISAID Metadata for '
-                    'pangolin')
+        description='Merges pangolin output report and metadata file '
+                    'using isolate as key')
     parser.add_argument('--metadata', type=str, default=None,
                         help='Metadata file (.tsv) format')
     parser.add_argument('--pangolin', type=str, default=None,
