@@ -4,16 +4,16 @@ nextflow.enable.dsl = 2
 
 // import modules
 
-include { SEQKITSTATS          } from '../modules/seqkitstats.nf'
-include { tsvTovcf             } from '../modules/custom.nf'
-include { MINIMAP2             } from '../modules/minimap2.nf'
-include { FREEBAYES            } from '../modules/freebayes.nf'
-include { BCFTOOLS             } from '../modules/bcftools.nf'
-include { processGVCF          } from '../modules/custom.nf'
-include { SNPEFF               } from '../modules/snpeff.nf'
-include { tagProblematicSites  } from '../modules/custom.nf'
-include { annotate_mat_peptide } from '../modules/custom.nf'
-include { vcfTogvf             } from '../modules/custom.nf'
+include { SEQKITSTATS          } from '../modules/local/seqkitstats.nf'
+include { tsvTovcf             } from '../modules/local/custom.nf'
+include { MINIMAP2             } from '../modules/local/minimap2.nf'
+include { FREEBAYES            } from '../modules/local/freebayes.nf'
+include { BCFTOOLS             } from '../modules/local/bcftools.nf'
+include { processGVCF          } from '../modules/local/custom.nf'
+include { SNPEFF               } from '../modules/local/snpeff.nf'
+include { tagProblematicSites  } from '../modules/local/custom.nf'
+include { annotate_mat_peptide } from '../modules/local/custom.nf'
+include { vcfTogvf             } from '../modules/local/custom.nf'
 
 
 workflow ncov_voc_user {
