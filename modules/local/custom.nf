@@ -12,7 +12,7 @@ process mergePangolinMetadata{
 
     script:
       """
-      merge_pangolin_metada.py --metadata ${metadata} --pangolin ${pangolin_report} --output Metadata_lineage.tsv
+      merge_pangolin_metadata.py --metadata ${metadata} --pangolin ${pangolin_report} --output Metadata_lineage.tsv
 
       """
 }
@@ -70,37 +70,22 @@ process grabIndex {
 }
 
 process extractMetadata {
-  tag { "Extracting Metadata and IDS for VOCs, VOIs, & VUMs" }
+    tag { "Extracting Metadata and IDS for VOCs, VOIs, & VUMs" }
 
-  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
 
-  input:
+    input:
       path(metadata)
       each x
 
-  output:
+    output:
       path("*.tsv")
       path("*.txt"), emit: ids
 
-
-  script:
-
-  if( params.data == "gisaid" )
-    """
-    extract_metadata.py \
-    --table ${metadata} \
-    --voc ${x} \
-    --gisaid True \
-    --startdate ${params.startdate} \
-    --enddate ${params.enddate}
-    """
-
-  else
-    """
-    extract_metadata.py \
-    --table ${metadata} \
-    --voc ${x}
-    """
+    script:
+      """
+      extract_metadata.py --startdate ${params.startdate} --enddate ${params.enddate} --table ${metadata} --voc ${x}
+      """
 }
 
 
@@ -264,7 +249,7 @@ process surveillanceRawTsv {
       tuple(path(variants), path(stats))
 
   output:
-      path("*.tsv")
+      path("*.tsv"), emit: surveillancetsv
 
   script:
 
@@ -273,6 +258,36 @@ process surveillanceRawTsv {
     --clades ${variants} \
     --table ${stats} \
     --all_variants
+
+    """
+}
+
+process surveillancePDF {
+
+  tag {"Generating Surveillance reports PDF"}
+
+  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.pdf", mode: 'copy'
+
+  input:
+      each tsv
+      tuple(path(surveillanceindicators), path(metadata), path(logo))
+
+  output:
+      path("*.pdf")
+
+  script:
+
+    """
+    surveillance_report_pdf.py --tsv ${tsv} \
+    --functions_table ${surveillanceindicators} \
+    --metadata ${metadata} \
+    --logo ${logo} \
+    --virusseq True > ${tsv.baseName}.tex
+
+    xelatex  ${tsv.baseName}.tex &&
+    xelatex  ${tsv.baseName}.tex &&
+    xelatex  ${tsv.baseName}.tex
+
 
     """
 }
