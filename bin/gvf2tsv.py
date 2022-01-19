@@ -176,13 +176,13 @@ def gvf2tsv(gvf):
     # replace attributes column in the original df with the new
     # separated out attributes
     df = pd.concat((df, attributes), axis=1)
-    df = df.drop(labels='#attributes', axis=1)
+    df = df.drop(labels=['#source', '#attributes'], axis=1)
 
     # remove '#' from column names
     df.columns = df.columns.str.replace("#", "")
 
     # drop unwanted columns
-    df = df.drop(labels=['source', 'seqid', 'type', 'end',
+    df = df.drop(labels=['seqid', 'type', 'end',
                          'strand', 'score', 'phase', 'id'], axis=1)
 
     # rename 'dp' column to 'sequence_depth', make 'viral_lineage'
@@ -329,7 +329,7 @@ def streamline_tsv(tsv_df):
             'mat_pep_desc', 'mat_pep_acc', 'ro', 'variant_seq_all',
             'ao_all', 'ao_by_var_seq', 'ao', 'variant_seq',
             'reference_seq', 'function_category', 'citation',
-            'comb_mutation', 'function_description',
+            'source', 'comb_mutation', 'function_description',
             'heterozygosity', 'viral_lineages',
             'clade_defining_status', 'status',
             'voi_designation_date', 'voc_designation_date',
