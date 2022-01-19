@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+
+@author: zohaib
+
+This script is a utility script made for mapping VirusSeq Data
+portal dataset to GISAID metadata in order to fetch lineage
+information that is not updated at data portal. If pangolin is used,
+this script is not required in the nf-ncov-voc workflow.
+
+"""
 
 import argparse
 import pandas as pd
