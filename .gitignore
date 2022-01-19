@@ -5,3 +5,6 @@ results/*
 .github/data/metadata
 .github/data/sequence
 .DS_store
+testing/*
+*.ipynb
+data/*
