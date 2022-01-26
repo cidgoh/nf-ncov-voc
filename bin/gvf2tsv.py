@@ -37,6 +37,8 @@ def parse_args():
     parser.add_argument('--table', type=str, default=None,
                         help='Multi-strain TSV file generated in '
                              'workflow that contains num_seqs column')
+    parser.add_argument('--user', action="store_true",
+                        help='Use user-uploaded file')
 
     return parser.parse_args()
 
@@ -344,72 +346,83 @@ if __name__ == '__main__':
     args = parse_args()
 
     outfile = args.outtsv
-    clade_file = args.clades
     gvf_list = args.gvf_files
-
-    # read in WHO variant/PANGO lineage .tsv
-    clades = pd.read_csv(clade_file, sep='\t', header=0, usecols=[
-        'who_variant', 'pango_lineage'])
-
-    # get lowercase WHO variant names
-    who_variants_list = []
-    if args.specify_variants:
-        who_variants_list = args.specify_variants
-    elif args.all_variants:
-        # if all variants, read the file and add from who_variant
-        # column, in case of Variant under monitoring, lineage will
-        # be added as the variant name to avoid several lineages
-        # being combined as one variant
-        for i in range(0, len(clades['who_variant'])):
-            if not clades.loc[i, 'who_variant'] == "Unnamed":
-                who_variants_list.append(clades.loc[i, 'who_variant'])
+    
+    if not args.user:
+    
+        clade_file = args.clades
+    
+        # read in WHO variant/PANGO lineage .tsv
+        clades = pd.read_csv(clade_file, sep='\t', header=0, usecols=[
+            'who_variant', 'pango_lineage'])
+    
+        # get lowercase WHO variant names
+        who_variants_list = []
+        if args.specify_variants:
+            who_variants_list = args.specify_variants
+        elif args.all_variants:
+            # if all variants, read the file and add from who_variant
+            # column, in case of Variant under monitoring, lineage will
+            # be added as the variant name to avoid several lineages
+            # being combined as one variant
+            for i in range(0, len(clades['who_variant'])):
+                if not clades.loc[i, 'who_variant'] == "Unnamed":
+                    who_variants_list.append(clades.loc[i, 'who_variant'])
+                else:
+                    who_variants_list.append(clades.loc[i, 'pango_lineage'])
+    
+        # for each variant, create a surveillance report
+        for who_variant in who_variants_list:
+            who_variant = who_variant.capitalize()
+            # get list of relevant pango lineages
+            if "." not in who_variant:
+                pango_lineages = \
+                    clades[clades['who_variant'] == who_variant][
+                        'pango_lineage'].values[0].split(',')
             else:
-                who_variants_list.append(clades.loc[i, 'pango_lineage'])
-
-    # for each variant, create a surveillance report
-    for who_variant in who_variants_list:
-        who_variant = who_variant.capitalize()
-        # get list of relevant pango lineages
-        if "." not in who_variant:
-            pango_lineages = \
-                clades[clades['who_variant'] == who_variant][
-                    'pango_lineage'].values[0].split(',')
-        else:
-            pango_lineages = [who_variant]
-
-        # get list of gvf files pertaining to varia
-        gvf_files = match_gvfs_to_who_variant(
-            pango_lineage_list=pango_lineages,
-            gvf_files_list=gvf_list)
-        print(str(len(gvf_files)) + " GVF files found for " +
-              who_variant + " variant.")
-
+                pango_lineages = [who_variant]
+    
+            # get list of gvf files pertaining to varia
+            gvf_files = match_gvfs_to_who_variant(
+                pango_lineage_list=pango_lineages,
+                gvf_files_list=gvf_list)
+            print(str(len(gvf_files)) + " GVF files found for " +
+                  who_variant + " variant.")
+            
+    #if user-provided, who_variant is the provided filename
+    else:
+        gvf_files = gvf_list
+        who_variant = gvf_list[0]  #assumes only one provided file per report
+        
+    if args.table:
         # get variant population size
         variant_pop_size = find_variant_pop_size(table=args.table,
                                                  pango_lineage_list=
                                                  pango_lineages)
+    else:
+        variant_pop_size = "n/a"
+           
+    # if any GVF files are found, create a surveillance report
+    if len(gvf_files) > 0:
 
-        # if any GVF files are found, create a surveillance report
-        if len(gvf_files) > 0:
+        # convert all gvf files to tsv and concatenate them
+        print("Processing:")
+        print(gvf_files[0])
+        gvf_df = gvf2tsv(gvf=gvf_files[0])
+        for gvf in gvf_files[1:]:
+            print(gvf)
+            new_gvf_df = gvf2tsv(gvf=gvf)
+            gvf_df = pd.concat([gvf_df, new_gvf_df],
+                               ignore_index=True)
 
-            # convert all gvf files to tsv and concatenate them
-            print("Processing:")
-            print(gvf_files[0])
-            gvf_df = gvf2tsv(gvf=gvf_files[0])
-            for gvf in gvf_files[1:]:
-                print(gvf)
-                new_gvf_df = gvf2tsv(gvf=gvf)
-                gvf_df = pd.concat([gvf_df, new_gvf_df],
-                                   ignore_index=True)
+        # streamline final concatenated df, reorder/rename
+        # columns where needed
+        out_df = streamline_tsv(tsv_df=gvf_df)
 
-            # streamline final concatenated df, reorder/rename
-            # columns where needed
-            out_df = streamline_tsv(tsv_df=gvf_df)
-
-            # save report as a .tsv
-            filename = who_variant+'_'+ outfile + '.tsv'
-            out_df.to_csv(filename, sep='\t', index=False)
-            print("Processing complete.")
-            print(who_variant + " surveillance report saved as: " +
-                  filename)
-            print("")
+        # save report as a .tsv
+        filename = who_variant+'_'+ outfile + '.tsv'
+        out_df.to_csv(filename, sep='\t', index=False)
+        print("Processing complete.")
+        print(who_variant + " surveillance report saved as: " +
+              filename)
+        print("")
