@@ -196,6 +196,23 @@ def gvf2tsv(gvf):
     return df
 
 
+def streamline_user(tsv_df):
+    tsv_df = tsv_df.rename(columns={'multiaa_comb_mutation':
+                                    'multiaa_mutation_split_names'})
+    cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name',
+            'multiaa_mutation_split_names', 'start', 'vcf_gene',
+            'chrom_region', 'mutation_type', 'dp', 'obs_sample_size',
+            'ps_filter', 'ps_exc', 'mat_pep_id',
+            'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao',
+            'variant_seq', 'reference_seq', 'function_category',
+            'citation', 'citation_url', 'comb_mutation',
+            'function_description',
+            'heterozygosity']
+    tsv_df = tsv_df[cols]
+
+    return tsv_df
+
+
 def streamline_tsv(tsv_df):
     # find identical rows across strains, and keep only one row.
     # change n/a to 0 in 'ao' for counting purposes
@@ -232,9 +249,9 @@ def streamline_tsv(tsv_df):
     final_df = tsv_df.groupby(cols_to_check).agg(agg_dict)
     final_df = final_df.rename(columns={'ao': 'ao_all',
                                         'variant_seq':
-                                        'variant_seq_all',
+                                            'variant_seq_all',
                                         'multiaa_comb_mutation':
-                                        'multiaa_mutation_split_names'})
+                                            'multiaa_mutation_split_names'})
 
     # add dp, ro per mutation
     for colname in ['dp', 'ro']:
@@ -330,7 +347,8 @@ def streamline_tsv(tsv_df):
             'chrom_region', 'mutation_type', 'dp', 'obs_sample_size',
             'variant_pop_size', 'ps_filter', 'ps_exc', 'mat_pep_id',
             'mat_pep_desc', 'mat_pep_acc', 'ro', 'ao_by_var_seq', 'ao',
-            'variant_seq', 'reference_seq', 'function_category', 'citation',
+            'variant_seq', 'reference_seq', 'function_category',
+            'citation',
             'citation_url', 'comb_mutation', 'function_description',
             'heterozygosity', 'viral_lineages',
             'clade_defining_status', 'status',
@@ -344,18 +362,15 @@ def streamline_tsv(tsv_df):
 if __name__ == '__main__':
 
     args = parse_args()
-
     outfile = args.outtsv
     gvf_list = args.gvf_files
-    
+
     if not args.user:
-    
         clade_file = args.clades
-    
         # read in WHO variant/PANGO lineage .tsv
         clades = pd.read_csv(clade_file, sep='\t', header=0, usecols=[
             'who_variant', 'pango_lineage'])
-    
+
         # get lowercase WHO variant names
         who_variants_list = []
         if args.specify_variants:
@@ -367,10 +382,12 @@ if __name__ == '__main__':
             # being combined as one variant
             for i in range(0, len(clades['who_variant'])):
                 if not clades.loc[i, 'who_variant'] == "Unnamed":
-                    who_variants_list.append(clades.loc[i, 'who_variant'])
+                    who_variants_list.append(clades.loc[i,
+                                                        'who_variant'])
                 else:
-                    who_variants_list.append(clades.loc[i, 'pango_lineage'])
-    
+                    who_variants_list.append(clades.loc[i,
+                                                        'pango_lineage'])
+
         # for each variant, create a surveillance report
         for who_variant in who_variants_list:
             who_variant = who_variant.capitalize()
@@ -381,19 +398,20 @@ if __name__ == '__main__':
                         'pango_lineage'].values[0].split(',')
             else:
                 pango_lineages = [who_variant]
-    
+
             # get list of gvf files pertaining to varia
             gvf_files = match_gvfs_to_who_variant(
                 pango_lineage_list=pango_lineages,
                 gvf_files_list=gvf_list)
             print(str(len(gvf_files)) + " GVF files found for " +
                   who_variant + " variant.")
-            
-    #if user-provided, who_variant is the provided filename
+
+    # if user-provided, who_variant is the provided filename
     else:
         gvf_files = gvf_list
-        who_variant = gvf_list[0]  #assumes only one provided file per report
-        
+        who_variant = gvf_list[
+            0]  # assumes only one provided file per report
+
     if args.table:
         # get variant population size
         variant_pop_size = find_variant_pop_size(table=args.table,
@@ -401,26 +419,29 @@ if __name__ == '__main__':
                                                  pango_lineages)
     else:
         variant_pop_size = "n/a"
-           
+
     # if any GVF files are found, create a surveillance report
     if len(gvf_files) > 0:
-
         # convert all gvf files to tsv and concatenate them
         print("Processing:")
         print(gvf_files[0])
         gvf_df = gvf2tsv(gvf=gvf_files[0])
-        for gvf in gvf_files[1:]:
-            print(gvf)
-            new_gvf_df = gvf2tsv(gvf=gvf)
-            gvf_df = pd.concat([gvf_df, new_gvf_df],
-                               ignore_index=True)
+        if len(gvf_files) > 1:
+            for gvf in gvf_files[1:]:
+                print(gvf)
+                new_gvf_df = gvf2tsv(gvf=gvf)
+                gvf_df = pd.concat([gvf_df, new_gvf_df],
+                                   ignore_index=True)
 
         # streamline final concatenated df, reorder/rename
         # columns where needed
-        out_df = streamline_tsv(tsv_df=gvf_df)
+        if not args.user:
+            out_df = streamline_tsv(tsv_df=gvf_df)
+        else:
+            out_df = streamline_user(tsv_df=gvf_df)
 
         # save report as a .tsv
-        filename = who_variant+'_'+ outfile + '.tsv'
+        filename = who_variant + '_' + outfile + '.tsv'
         out_df.to_csv(filename, sep='\t', index=False)
         print("Processing complete.")
         print(who_variant + " surveillance report saved as: " +
