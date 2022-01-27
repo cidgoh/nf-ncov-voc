@@ -21,16 +21,22 @@ workflow preprocessing {
 
       if (!params.skip_pangolin) {
         PANGOLIN( ch_seq )
-        mergePangolinMetadata(ch_metadata.combine(PANGOLIN.out.report))
-        mergePangolinMetadata.out.lineage_assigned
-            .set{ch_metadata}
-        extractVariants(ch_variant.combine(mergePangolinMetadata.out.lineage_assigned))
-        extractVariants.out.lineages
-              .splitText()
-              .set{ ch_voc }
+        if (!params.mode == 'user'){
+          mergePangolinMetadata(ch_metadata.combine(PANGOLIN.out.report))
+          mergePangolinMetadata.out.lineage_assigned
+              .set{ch_metadata}
+          extractVariants(ch_variant.combine(mergePangolinMetadata.out.lineage_assigned))
+          extractVariants.out.lineages
+                .splitText()
+                .set{ ch_voc }
+        }
+        else{
+          ch_voc=Channel.empty()
+        }
+
       }
 
-      else if (!params.skip_mapping && params.virusseq_meta) {
+      else if (!params.skip_mapping && params.virusseq_meta && !params.mode =='user') {
         Channel.fromPath( "$params.gisaid_metadata", checkIfExists: true)
              .set{ ch_gisaid_metadata }
 
@@ -44,7 +50,7 @@ workflow preprocessing {
             .set{ ch_voc }
       }
 
-      else{
+      else if(!params.mode =='user' && params.skip_mapping && params.skip_pangolin) {
         extractVariants(ch_variant.combine(ch_metadata))
         extractVariants.out.lineages
               .splitText()
@@ -55,5 +61,6 @@ workflow preprocessing {
       emit:
       ch_metadata
       ch_voc
+      ch_variant
 
 }
