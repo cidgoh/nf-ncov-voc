@@ -51,10 +51,6 @@ if ( ! params.prefix ) {
          System.exit(1)
      }
 }
-if ( params.data == 'virusseq' && ! params.virusseq_meta ) {
-    println("VirusSeq metadata file is required when data type is virusSeq, provide a .tsv file with --virusseq")
-    System.exit(1)
-}
 
 if ( params.mode == 'user' && ! params.userfile ) {
     println("When --mode user, userfile (.vcf or .fasta or .tsv) should e provided with --userfile")
@@ -70,6 +66,54 @@ workflow {
       log.info workflowHeader()
       println(params.mode+ " activated!!\n\n\n")
 
+
+      if(params.seq){
+        Channel.fromPath( "$params.seq", checkIfExists: true)
+             .set{ ch_seq }
+      }
+
+      //else if (!params.user && !params.seq){
+      //  Channel.fromPath( "$baseDir/assets/data/sequence/*.fasta", checkIfExists: true)
+      //       .set{ ch_seq }
+      //}
+
+      if(params.meta){
+        Channel.fromPath( "$params.meta", checkIfExists: true)
+             .set{ ch_metadata }
+      }
+
+      //else if (!params.user && !params.meta){
+      //  Channel.fromPath( "$baseDir/assets/data/metadata/*.tsv", checkIfExists: true)
+      //        .set{ ch_metadata }
+      //}
+
+      Channel.fromPath( "$params.ref_gff/*.gff3", checkIfExists: true)
+            .set{ ch_refgff }
+
+      Channel.fromPath( "$params.refdb/*.fai", checkIfExists: true)
+            .set{ ch_reffai }
+
+      Channel.fromPath( "$params.refdb/MN908947.3.fasta", checkIfExists: true)
+            .set{ ch_ref }
+
+      Channel.fromPath( "$params.prob_sites/*.vcf", checkIfExists: true)
+            .set{ ch_probvcf }
+
+      Channel.fromPath( "$params.genome_annotation/*.gff", checkIfExists: true)
+            .set{ ch_geneannot }
+
+      Channel.fromPath( "$params.functional_annotation/*.tsv", checkIfExists: true)
+            .set{ ch_funcannot }
+
+      Channel.fromPath( "$params.gene_coordinates/*.json", checkIfExists: true)
+            .set{ ch_genecoord }
+
+      Channel.fromPath( "$params.mutation_names/*.tsv", checkIfExists: true)
+            .set{ ch_mutationsplit }
+
+      Channel.fromPath( "$params.surveillance_indicators/*.tsv", checkIfExists: true)
+                  .set{ ch_surveillanceIndicators}
+
       if(params.variants){
         Channel.fromPath( "$params.variants", checkIfExists: true)
               .set{ ch_variants }
@@ -79,84 +123,88 @@ workflow {
               .set{ ch_variant }
       }
 
-      if(params.mode == 'user'){
 
-        Channel.fromPath( "$params.prob_sites/*.vcf", checkIfExists: true)
-              .set{ ch_probvcf }
+      if (params.mode == 'user' && params.userfile){
+        input_file = file(params.userfile)
+          if (input_file.getExtension() == "fasta" || input_file.getExtension() == "fa"){
+            Channel.fromPath( "$params.userfile", checkIfExists: true)
+              .set{ ch_seq }
+              if (!params.skip_preprocessing) {
+                ch_metadata=Channel.empty()
 
-        Channel.fromPath( "$params.genome_annotation/*.gff", checkIfExists: true)
-              .set{ ch_geneannot }
+                preprocessing(ch_metadata, ch_seq, ch_variant)
+              }
 
-        Channel.fromPath( "$params.functional_annotation/*.tsv", checkIfExists: true)
-              .set{ ch_funcannot }
+              if (!params.skip_variantcalling) {
+                  ch_metadata=Channel.empty()
+                  ch_voc=Channel.empty()
 
-        Channel.fromPath( "$params.gene_coordinates/*.json", checkIfExists: true)
-              .set{ ch_genecoord }
+                  variant_calling(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai)
 
-        Channel.fromPath( "$params.mutation_names/*.tsv", checkIfExists: true)
-              .set{ ch_mutationsplit }
+                  ch_vcf=variant_calling.out.ch_vcf
+                  ch_stats=variant_calling.out.ch_stats
+              }
+              if (!params.skip_annotation) {
+                ch_variant=preprocessing.out.ch_variant
 
+                annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
 
-        ncov_voc_user( ch_probvcf, ch_geneannot, ch_funcannot, ch_variant, ch_genecoord, ch_mutationsplit)
-      }
+                ch_gvf=annotation.out.ch_gvf
+                ch_variant=annotation.out.ch_variant
+                ch_stats=annotation.out.ch_stats
 
+              }
+              if (!params.skip_surveillance) {
+
+                ch_metadata=Channel.empty()
+
+                surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
+              }
+
+          }
+
+          if (input_file.getExtension() == "vcf" || input_file.getExtension() == "tsv"){
+            if(input_file.getExtension() == "vcf"){
+              Channel.fromPath( "$params.userfile", checkIfExists: true)
+                .set{ ch_vcf }
+            }
+            else if (input_file.getExtension() == "tsv"){
+              //add module to change tsv to vcf
+              ch_vcf=Channel.empty()
+            }
+            if (!params.skip_annotation) {
+              //ch_variant=Channel.empty()
+              ch_stats=ch_refgff
+              annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
+              ch_gvf=annotation.out.ch_gvf
+              ch_stats=annotation.out.ch_stats
+            }
+            if (!params.skip_surveillance) {
+              ch_metadata=Channel.empty()
+              surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
+            }
+          }
+        }
 
       else if(params.mode == 'reference'){
 
-        if(params.seq){
-          Channel.fromPath( "$params.seq", checkIfExists: true)
-    	         .set{ ch_seq }
-        }
-        else{
-          Channel.fromPath( "$baseDir/assets/data/sequence/*.fasta", checkIfExists: true)
-    	         .set{ ch_seq }
-        }
-
-        if(params.meta){
-          Channel.fromPath( "$params.meta", checkIfExists: true)
-               .set{ ch_metadata }
-        }
-
-        else{
-          Channel.fromPath( "$baseDir/assets/data/metadata/*.tsv", checkIfExists: true)
-                .set{ ch_metadata }
-        }
-
-
-        Channel.fromPath( "$params.ref_gff/*.gff3", checkIfExists: true)
-              .set{ ch_refgff }
-
-        Channel.fromPath( "$params.refdb/*.fai", checkIfExists: true)
-              .set{ ch_reffai }
-
-        Channel.fromPath( "$params.refdb/MN908947.3.fasta", checkIfExists: true)
-              .set{ ch_ref }
-
-        Channel.fromPath( "$params.prob_sites/*.vcf", checkIfExists: true)
-              .set{ ch_probvcf }
-
-        Channel.fromPath( "$params.genome_annotation/*.gff", checkIfExists: true)
-              .set{ ch_geneannot }
-
-        Channel.fromPath( "$params.functional_annotation/*.tsv", checkIfExists: true)
-              .set{ ch_funcannot }
-
-        Channel.fromPath( "$params.gene_coordinates/*.json", checkIfExists: true)
-              .set{ ch_genecoord }
-
-        Channel.fromPath( "$params.mutation_names/*.tsv", checkIfExists: true)
-              .set{ ch_mutationsplit }
-
-        Channel.fromPath( "$params.surveillance_indicators/*.tsv", checkIfExists: true)
-                    .set{ ch_surveillanceIndicators}
-
-
 
         preprocessing(ch_metadata, ch_seq, ch_variant)
-        variant_calling(preprocessing.out.ch_voc, preprocessing.out.ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai)
-        annotation(variant_calling.out.ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, variant_calling.out.ch_stats)
-        surveillance(annotation.out.ch_gvf, annotation.out.ch_variant, annotation.out.ch_stats, ch_surveillanceIndicators, variant_calling.out.ch_metadata)
-        //ncov_voc(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant )
+        ch_voc=preprocessing.out.ch_voc
+        ch_metadata=preprocessing.out.ch_metadata
+        ch_metadata.view()
+
+        variant_calling(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai)
+        ch_vcf=variant_calling.out.ch_vcf
+        ch_stats=variant_calling.out.ch_stats
+        ch_metadata=variant_calling.out.ch_metadata
+
+        annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
+        ch_gvf=annotation.out.ch_gvf
+        ch_variant=annotation.out.ch_variant
+        ch_stats=annotation.out.ch_stats
+
+        surveillance(ch_gvf, ch_variant, ch_stats, ch_surveillanceIndicators, ch_metadata )
 
 
       }
