@@ -182,39 +182,52 @@ process annotate_mat_peptide {
 
 process vcfTogvf {
 
-  tag {"${annotated_vcf.baseName}"}
+  tag {"${ch_annotated_vcf.baseName}"}
 
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.gvf", mode: 'copy'
 
   input:
-      tuple(path(annotated_vcf), path(func_annot), path(variants), path(gene_coord), path(mutation_split), path (stats))
+      path(ch_annotated_vcf)
+      tuple(path(func_annot), path(gene_coord), path(mutation_split), path(variants))
+      path(stats)
+
 
   output:
       path("*.gvf"), emit: gvf
 
   script:
 
-  if( params.user ){
+  if( params.mode == 'user' && !ch_annotated_vcf.getExtension() == "vcf"){
     """
-      vcf2gvf.py --vcffile ${annotated_vcf} \
+      vcf2gvf.py --vcffile ${ch_annotated_vcf} \
       --functional_annotations ${func_annot}  \
-      --clades ${variants}\
-      --gene_positions ${gene_coord}\
-      --names_to_split ${mutation_split}\
+      --clades ${variants} \
+      --gene_positions ${gene_coord} \
+      --names_to_split ${mutation_split} \
       --size_stats ${stats} \
-      --outvcf ${annotated_vcf.baseName}.gvf
+      --outvcf ${ch_annotated_vcf.baseName}.gvf
+    """
+  }
+  else if( params.mode == 'user' &&  ch_annotated_vcf.getExtension() == "vcf"){
+    """
+      vcf2gvf.py --vcffile ${ch_annotated_vcf} \
+      --functional_annotations ${func_annot}  \
+      --clades ${variants} \
+      --gene_positions ${gene_coord} \
+      --names_to_split ${mutation_split} \
+      --outvcf ${ch_annotated_vcf.baseName}.gvf
     """
   }
   else{
       """
-        vcf2gvf.py --vcffile ${annotated_vcf} \
+        vcf2gvf.py --vcffile ${ch_annotated_vcf} \
         --functional_annotations ${func_annot}  \
-        --clades ${variants}\
-        --gene_positions ${gene_coord}\
-        --names_to_split ${mutation_split}\
+        --clades ${variants} \
+        --gene_positions ${gene_coord} \
+        --names_to_split ${mutation_split} \
         --size_stats ${stats} \
-        --strain ${annotated_vcf.baseName.replaceAll(".qc.sorted.variants.normalized.filtered.SNPEFF.annotated","")}\
-        --outvcf ${annotated_vcf.baseName}.gvf
+        --strain ${ch_annotated_vcf.baseName.replaceAll(".qc.sorted.variants.normalized.filtered.SNPEFF.annotated","")}\
+        --outvcf ${ch_annotated_vcf.baseName}.gvf
       """
   }
 
@@ -252,7 +265,13 @@ process surveillanceRawTsv {
       path("*.tsv"), emit: surveillancetsv
 
   script:
-
+  if( params.mode == 'user' ){
+    """
+    gvf2tsv.py --gvf_files ${gvf} \
+    --user
+    """
+  }
+  else{
     """
     gvf2tsv.py --gvf_files ${gvf} \
     --clades ${variants} \
@@ -260,6 +279,9 @@ process surveillanceRawTsv {
     --all_variants
 
     """
+  }
+
+
 }
 
 process surveillancePDF {
