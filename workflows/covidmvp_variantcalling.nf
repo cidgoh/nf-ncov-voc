@@ -34,11 +34,16 @@ workflow variant_calling {
 
     main:
 
-      extractMetadata(ch_metadata, ch_voc)
-      SEQKIT(extractMetadata.out.ids.combine(ch_seq))
-      BBMAP(SEQKIT.out.fasta)
-      ch_BBMap=BBMAP.out.qcfasta.unique().collect()
-      SEQKITSTATS(ch_BBMap)
+      if (!params.mode == 'user'){
+        extractMetadata(ch_metadata, ch_voc)
+        SEQKIT(extractMetadata.out.ids.combine(ch_seq))
+        ch_seq=SEQKIT.out.fasta
+      }
+
+      BBMAP(ch_seq)
+      ch_BBMap_combine=BBMAP.out.qcfasta.unique().collect()
+      ch_BBMap=BBMAP.out.qcfasta
+      SEQKITSTATS(ch_BBMap_combine)
       ch_stats=SEQKITSTATS.out.stats
 
       if (params.bwa){
@@ -49,21 +54,24 @@ workflow variant_calling {
       } else {
         BWAINDEX(ch_ref)
         BWAINDEX.out
-                .set{ ch_index }
+                .set{ ch_bindex }
               }
-        BWAMEM(BBMAP.out.qcfasta.combine(ch_ref), ch_index)
+        BWAMEM(ch_BBMap.combine(ch_ref), ch_index)
+        ch_bam=BWAMEM.out.bam
       }
       else{
-        MINIMAP2(BBMAP.out.qcfasta.combine(ch_ref))
+        MINIMAP2(ch_BBMap.combine(ch_ref))
+        ch_bam=MINIMAP2.out.bam
+        ch_index=MINIMAP2.out.index
       }
       if(params.ivar){
-        IVAR(MINIMAP2.out.bam.combine(ch_ref).combine(ch_refgff))
+        IVAR(ch_bam.combine(ch_ref).combine(ch_refgff))
         tsvTovcf(IVAR.out.variants)
         ch_vcf=tsvTovcf.out.vcf
 
       }
       else{
-        FREEBAYES(MINIMAP2.out.bam.combine(ch_ref).combine(ch_reffai),MINIMAP2.out.index)
+        FREEBAYES(ch_bam.combine(ch_ref).combine(ch_reffai),ch_index)
         processGVCF(FREEBAYES.out.gvcf)
         BCFTOOLS(processGVCF.out.vcf.combine(ch_ref))
         ch_vcf=BCFTOOLS.out.normalized_vcf
