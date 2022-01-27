@@ -205,13 +205,17 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
 
     # add ro, ao, dp
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
-    if not strain == 'n/a':
+
+    if not strain == 'n/a' and not args.size_stats is None:
         sample_size = find_sample_size(table=args.size_stats,
                                        lineage=args.strain)
-    else:
+    elif not args.size_stats is None:
         sample_size = find_sample_size(table=args.size_stats,
                                        lineage=args.vcffile.replace(
-                                           "vcf", "fasta"))
+                                           ".qc.sorted.variants.normalized.filtered.SNPEFF.annotated.vcf",
+                                           ""))
+    else:
+        sample_size = "n/a"
 
     if sample_size == 1:
         new_df['#attributes'] = new_df['#attributes'].astype(str) + \
@@ -225,8 +229,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
                                 'dp=' + info['dp'].astype(str) + ';'
 
     # add sample_size attribute
+    # print(sample_size)
     new_df['#attributes'] = new_df['#attributes'] + "sample_size=" + \
-                            sample_size + ';'
+                            str(sample_size) + ';'
 
     # add alternate frequency (AF) column for clade-defining cutoff (
     # af=ao/dp)
@@ -501,8 +506,8 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         print(str(np.setdiff1d(tsv_names,
                                functional_annotation_names).shape[0])
               + "/" + str(tsv_names.shape[0]) + " mutation names were "
-                                        "not found in "
-                                        "functional_annotations")
+                                                "not found in "
+                                                "functional_annotations")
         leftover_names = pd.DataFrame({'in_tsv_only': np.setdiff1d(
             tsv_names, functional_annotation_names)})
         leftover_names["strain"] = strain
@@ -521,9 +526,9 @@ def add_functions(gvf, annotation_file, clade_file, strain):
 def find_sample_size(table, lineage):
     strain_tsv_df = pd.read_csv(table, delim_whitespace=True,
                                 usecols=['file', 'num_seqs'])
+    # print(lineage)
     num_seqs = strain_tsv_df[strain_tsv_df['file'] ==
-                             lineage + ".qc.fasta"][
-        'num_seqs'].values
+                             lineage + ".qc.fasta"]['num_seqs'].values
 
     return num_seqs[0]
 
@@ -544,7 +549,8 @@ if __name__ == '__main__':
     # unmatched_clade_names = pd.DataFrame() #empty dataframe to hold
     # unmatched clade-defining mutation names
     pragmas = pd.DataFrame([['##gff-version 3'], ['##gvf-version '
-                                                  '1.10'], ['##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])  # pragmas are in column 0
+                                                  '1.10'], [
+                                '##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])  # pragmas are in column 0
 
     file = args.vcffile
 
