@@ -158,7 +158,7 @@ workflow {
 
                 ch_metadata=Channel.empty()
 
-                surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
+                // surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
               }
 
           }
@@ -181,7 +181,7 @@ workflow {
             }
             if (!params.skip_surveillance) {
               ch_metadata=Channel.empty()
-              surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
+              // surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
             }
           }
         }
