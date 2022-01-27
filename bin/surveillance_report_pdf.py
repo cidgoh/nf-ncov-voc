@@ -81,28 +81,43 @@ def summarize_functions(tsv, functions_df_template):
 
 
 def calculate_frequency(dataframe, newcolname, divisor):
-    if dataframe['ao'][dataframe['ao'].astype(str).str.contains(",")].empty: #if there are no commas anywhere in the 'ao' column, calculate AF straight out
-        dataframe[newcolname] = dataframe['ao'].astype(int) / dataframe[divisor].astype(int)
-    else: #if there is a comma, add the numbers together to calculate alternate frequency
-        #tsv_df['added_ao'] = tsv_df['ao'].astype(str).apply(lambda x: sum(map(int, x.split(','))))
-        split_series = dataframe['ao'].str.split(pat=',').apply(pd.Series)
-        #rename series columns to 'ao_0', 'ao_1', etc.
-        split_series.columns = ['ao_' + str(name) for name in split_series.columns.values]
-        #ensure all counts are numeric
+    if dataframe['ao'][dataframe['ao'].astype(str).str.contains(
+            ",")].empty:  # if there are no commas anywhere in the 'ao' column, calculate AF straight out
+        dataframe[newcolname] = dataframe['ao'].astype(int) / dataframe[
+            divisor].astype(int)
+    else:  # if there is a comma, add the numbers together to calculate alternate frequency
+        # tsv_df['added_ao'] = tsv_df['ao'].astype(str).apply(lambda x: sum(map(int, x.split(','))))
+        split_series = dataframe['ao'].str.split(pat=',').apply(
+            pd.Series)
+        # rename series columns to 'ao_0', 'ao_1', etc.
+        split_series.columns = ['ao_' + str(name) for name in
+                                split_series.columns.values]
+        # ensure all counts are numeric
         for column in split_series.columns:
-            split_series[column] = pd.to_numeric(split_series[column], errors='coerce')
-        #append series to tsv_df
+            split_series[column] = pd.to_numeric(split_series[column],
+                                                 errors='coerce')
+        # append series to tsv_df
         dataframe = pd.concat([dataframe, split_series], axis=1)
-        #calculate frequency for each column
-        colnames = [i for i in dataframe.columns.values.tolist() if 'ao_' in i]
+        # calculate frequency for each column
+        colnames = [i for i in dataframe.columns.values.tolist() if
+                    'ao_' in i]
         for column in colnames:
-            dataframe[column] = dataframe[column] / dataframe[divisor].astype(int)
-        #combine columns into one column
-        dataframe[newcolname] = dataframe[colnames].apply(lambda row: ','.join(row.values.astype(str)), axis=1)
-        #drop split columns
+            dataframe[column] = dataframe[column] / dataframe[
+                divisor].astype(int)
+        # combine columns into one column
+        dataframe[newcolname] = dataframe[colnames].apply(
+            lambda row: ','.join(row.values.astype(str)), axis=1)
+        # drop split columns
         dataframe = dataframe.drop(labels=colnames, axis=1)
-        dataframe[newcolname] = dataframe[newcolname].str.replace(',nan','')
+        dataframe[newcolname] = dataframe[newcolname].str.replace(
+            ',nan', '')
 
+    return dataframe
+
+
+def add_source_hyperref(dataframe):
+    dataframe["Citation"] = "\href{" + dataframe["Citation URL"].astype(
+        str) + "}{" + dataframe["Citation"] + "}"
     return dataframe
 
 
@@ -111,14 +126,14 @@ def summarize_mutations(tsv, functions_dataframe):
     named_mutations = ', '.join(str(e) for e in named_mutations).split(
         ', ')
     named_mutations = set(named_mutations)
-    #named_mutations.remove('')
+    # named_mutations.remove('')
 
     # tsv columns to use
     # Removing 'Frequency (Variant)' for now
     # Renaming 'dp' to 'sequence_depth'
     tsv_df_cols = ['name', 'function_category',
                    'function_description', 'viral_lineages',
-                   'citation', 'ao', 'dp', 'variant_seq']
+                   'citation', 'ao', 'dp', 'variant_seq', 'citation_url']
 
     # create empty dataframe
     df = pd.DataFrame(columns=tsv_df_cols)
@@ -145,7 +160,7 @@ def summarize_mutations(tsv, functions_dataframe):
     final_mutations_df_cols = ['Mutations', 'Sub-category',
                                'Function', 'Lineages', 'Citation',
                                'Alternate Allele Obs', 'Sequence Depth',
-                               'Alternate Allele']
+                               'Alternate Allele', 'Citation URL']
     renaming_dict = dict(zip(tsv_df_cols, final_mutations_df_cols))
     df = df.rename(columns=renaming_dict)
 
@@ -155,8 +170,9 @@ def summarize_mutations(tsv, functions_dataframe):
     # anywhere in the 'ao' column, calculate AF straight out
     if df['Alternate Allele Obs'][df['Alternate Allele Obs'].astype(
             str).str.contains(",")].empty:
-        df['Alternate Frequency'] = round(df['Alternate Allele Obs'].astype(
-            int) / df['Sequence Depth'].astype(int), 2)
+        df['Alternate Frequency'] = round(
+            df['Alternate Allele Obs'].astype(
+                int) / df['Sequence Depth'].astype(int), 2)
     else:
         # if there is a comma, add the numbers together to calculate
         # alternate frequency tsv_df['added_ao'] = tsv_df[
@@ -166,9 +182,10 @@ def summarize_mutations(tsv, functions_dataframe):
             lambda x: sum(map(int, x.split(','))))
         # rename series columns to 'ao_0', 'ao_1', etc.
         df['Alternate Frequency'] = round(df['Agg Alternate ' \
-                                          'Allele'].astype(
+                                             'Allele'].astype(
             int) / df['Sequence Depth'].astype(int), 2)
 
+    df = add_source_hyperref(dataframe=df)
     mask = df['Alternate Frequency'] >= args.frequency_threshold
     df = df[mask]
     mutations_df_cols = ['Mutations', 'Sub-category',
@@ -262,21 +279,15 @@ def count_tsv(filename):
     return c
 
 
-def format_ct(s):
-    try:
-        return "%.1f" % (float(s))
-    except:
-        return "NA"
-
-
 def escape_latex(s):
     s = s.replace("_", "\_")
     s = s.replace("&", "\&")
     s = s.replace("%", "\%")
     s = s.replace("#", "\#")
     s = s.replace("$", "\$")
-    s = s.replace("{", "\{")
-    s = s.replace("}", "\}")
+    if not "href" in s:
+        s = s.replace("{", "\{")
+        s = s.replace("}", "\}")
     s = s.replace("~", "\textasciitilde")
     s = s.replace("^", "\textasciicircum}")
     return s
@@ -368,20 +379,13 @@ def write_mutation_summary(df):
     df_to_table(df, tf)
 
 
-# this is used to pull out samples from the summary qc file that should
-# appear in the flagged sample section
-def flagged_sample_accept(accept_lineages, row):
-    return row['watch_mutations'] != "none" or row[
-        'lineage'] in accept_lineages
-
-
 if __name__ == '__main__':
 
     args = parse_args()
     functions_template = args.functions_table
     report_tsv = args.tsv
     metadata = args.metadata
-    #logo_img = args.logo
+    # logo_img = args.logo
 
     # load tsv and remove all rows that don't meet the frequency cutoff
     tsv_df = pd.read_csv(report_tsv, sep='\t', header=0)
