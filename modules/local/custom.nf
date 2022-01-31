@@ -292,18 +292,18 @@ process surveillancePDF {
 
   input:
       each tsv
-      tuple(path(surveillanceindicators), path(metadata), path(logo))
+      tuple(path(surveillanceindicators), path(metadata))
 
   output:
       path("*.pdf")
 
   script:
+  if( !params.mode == 'user' ){
 
     """
     surveillance_report_pdf.py --tsv ${tsv} \
     --functions_table ${surveillanceindicators} \
     --metadata ${metadata} \
-    --logo ${logo} \
     --virusseq True > ${tsv.baseName}.tex
 
     xelatex  ${tsv.baseName}.tex &&
@@ -312,4 +312,18 @@ process surveillancePDF {
 
 
     """
+  }
+  else{
+    """
+    surveillance_report_pdf.py --tsv ${tsv} \
+    --functions_table ${surveillanceindicators} \
+    --user True > ${tsv.baseName}.tex
+
+    xelatex  ${tsv.baseName}.tex &&
+    xelatex  ${tsv.baseName}.tex &&
+    xelatex  ${tsv.baseName}.tex
+
+
+    """
+  }
 }
