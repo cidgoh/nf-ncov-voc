@@ -39,14 +39,14 @@ def parse_args():
                              'category mappings')
     parser.add_argument('--metadata', type=str, default=None,
                         help='Metadata file for contextual data')
-    parser.add_argument('--logo', type=str, default=None,
-                        help='logo file for header/footer')
     parser.add_argument('--frequency_threshold', type=float,
                         default=0.25,
                         help='Alternate frequency threshold cutoff '
                              'for inclusion in report')
-    parser.add_argument('--virusseq', type=bool, default=True,
+    parser.add_argument('--virusseq', type=bool, default=False,
                         help='VirusSeq dataset')
+    parser.add_argument('--user', type=bool, default=False,
+                        help='If user provided file')
 
     return parser.parse_args()
 
@@ -126,14 +126,16 @@ def summarize_mutations(tsv, functions_dataframe):
     named_mutations = ', '.join(str(e) for e in named_mutations).split(
         ', ')
     named_mutations = set(named_mutations)
-    # named_mutations.remove('')
-
-    # tsv columns to use
-    # Removing 'Frequency (Variant)' for now
-    # Renaming 'dp' to 'sequence_depth'
-    tsv_df_cols = ['name', 'function_category',
-                   'function_description', 'viral_lineages',
-                   'citation', 'ao', 'dp', 'variant_seq', 'citation_url']
+    if not args.user:
+        tsv_df_cols = ['name', 'function_category',
+                       'function_description', 'viral_lineages',
+                       'citation', 'ao', 'dp', 'reference_seq',
+                       'variant_seq', 'citation_url']
+    else:
+        tsv_df_cols = ['name', 'function_category',
+                       'function_description',
+                       'citation', 'ao', 'dp', 'reference_seq',
+                       'variant_seq', 'citation_url']
 
     # create empty dataframe
     df = pd.DataFrame(columns=tsv_df_cols)
@@ -148,19 +150,27 @@ def summarize_mutations(tsv, functions_dataframe):
 
     # remove clade-defining values from strains column
     # renaming 'viral_clade_defining' to 'viral_lineages'
-    df['viral_lineages'] = df[
-        'viral_lineages'].str.replace(r"=.*?;", ",", regex=True)
-    # remove trailing commas
-    df['viral_lineages'] = df[
-        'viral_lineages'].str.rstrip(' ').str.rstrip(',')
+    if not args.user:
+        df['viral_lineages'] = df[
+            'viral_lineages'].str.replace(r"=.*?;", ",", regex=True)
+        # remove trailing commas
+        df['viral_lineages'] = df[
+            'viral_lineages'].str.rstrip(' ').str.rstrip(',')
 
-    # rename mutations_df columns
-    # Removing 'Frequency (Variant)' for now
-    # Renaming 'dp' to 'sequence_depth'
-    final_mutations_df_cols = ['Mutations', 'Sub-category',
-                               'Function', 'Lineages', 'Citation',
-                               'Alternate Allele Obs', 'Sequence Depth',
-                               'Alternate Allele', 'Citation URL']
+        # rename mutations_df columns
+        # Removing 'Frequency (Variant)' for now
+        # Renaming 'dp' to 'sequence_depth'
+        final_mutations_df_cols = ['Mutations', 'Sub-category',
+                                   'Function', 'Lineages', 'Citation',
+                                   'Alternate Allele Obs',
+                                   'Sequence Depth', 'Reference Allele',
+                                   'Alternate Allele', 'Citation URL']
+    else:
+        final_mutations_df_cols = ['Mutations', 'Sub-category',
+                                   'Function', 'Citation',
+                                   'Alternate Allele Obs',
+                                   'Sequence Depth', 'Reference Allele',
+                                   'Alternate Allele', 'Citation URL']
     renaming_dict = dict(zip(tsv_df_cols, final_mutations_df_cols))
     df = df.rename(columns=renaming_dict)
 
@@ -188,10 +198,17 @@ def summarize_mutations(tsv, functions_dataframe):
     df = add_source_hyperref(dataframe=df)
     mask = df['Alternate Frequency'] >= args.frequency_threshold
     df = df[mask]
-    mutations_df_cols = ['Mutations', 'Sub-category',
-                         'Function', 'Lineages', 'Citation',
-                         'Sequence Depth', 'Alternate Allele',
-                         'Alternate Frequency']
+    if not args.user:
+        mutations_df_cols = ['Mutations', 'Sub-category',
+                             'Function', 'Lineages', 'Citation',
+                             'Sequence Depth', 'Reference Allele',
+                             'Alternate Allele',
+                             'Alternate Frequency']
+    else:
+        mutations_df_cols = ['Mutations', 'Sub-category',
+                             'Function', 'Citation',
+                             'Sequence Depth', 'Reference Allele',
+                             'Alternate Allele', 'Alternate Frequency']
     df = df[mutations_df_cols]
     return df
 
@@ -245,7 +262,7 @@ def write_preamble():
         \vspace{-2.0\baselineskip}CIDGOH\textsuperscript{
         \textcopyright}}
 \renewcommand{\footrulewidth}{1pt}% default is 0pt
-\lfoot{\includegraphics[width=1cm]{LogoCIDGOH1.png}}
+
 
 \usepackage{longtable}
 
@@ -370,7 +387,10 @@ def write_func_summary(df):
 def write_mutation_summary(df):
     tf = TableFormatter()
     tf.size = "scriptsize"
-    tf.table_spec = "{|p{1.2cm}|p{2.5cm}|p{3.0cm}|p{1.8cm}|p{1.8cm}|p{1.0cm}|p{1.5cm}|p{1.5cm}|}"
+    if not args.user:
+        tf.table_spec = "{|p{1.2cm}|p{2.5cm}|p{3.3cm}|p{1.8cm}|p{1.8cm}|p{1.0cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|}"
+    else:
+        tf.table_spec = "{|p{1.2cm}|p{2.5cm}|p{3.3cm}|p{1.8cm}|p{1.0cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|}"
 
     print(r"\section*{Mutation Significance}")
     print(
@@ -384,76 +404,87 @@ if __name__ == '__main__':
     args = parse_args()
     functions_template = args.functions_table
     report_tsv = args.tsv
-    metadata = args.metadata
-    # logo_img = args.logo
-
-    # load tsv and remove all rows that don't meet the frequency cutoff
     tsv_df = pd.read_csv(report_tsv, sep='\t', header=0)
 
-    # make functions_df
-    functions_df = summarize_functions(tsv=tsv_df,
-                                       functions_df_template=
-                                       functions_template)
+    if not args.user:
+        metadata = args.metadata
+        metadata_df = pd.read_csv(metadata, sep="\t", low_memory=False,
+                                  parse_dates=[
+                                      'sample collection date'])
 
-    # make mutations_df
-    mutations_df = summarize_mutations(tsv=tsv_df,
-                                       functions_dataframe=functions_df)
-    # mutations_df.to_csv('mutations.tsv', sep='\t', index=False)
+        metadata_df['sample collection date'] = pd.to_datetime(
+            metadata_df['sample collection date'], format='%Y-%m-%d',
+            errors='coerce')
+        lineages = []
+        for lineage in tsv_df['viral_lineages']:
+            lineage = lineage.split(", ")
+            lineages.extend(lineage)
 
-    write_preamble()
-    metadata_df = pd.read_csv(metadata, sep="\t", low_memory=False,
-                              parse_dates=['sample collection date'])
+        base = os.path.basename(args.tsv)
+        variant = base.split('_')[0]
+        # make functions_df
+        functions_df = summarize_functions(tsv=tsv_df,
+                                           functions_df_template=
+                                           functions_template)
 
-    metadata_df['sample collection date'] = pd.to_datetime(
-        metadata_df['sample collection date'], format='%Y-%m-%d',
-        errors='coerce')
+        # make mutations_df
+        mutations_df = summarize_mutations(tsv=tsv_df,
+                                           functions_dataframe=functions_df)
+        write_preamble()
 
-    lineages = []
-    for lineage in tsv_df['viral_lineages']:
-        lineage = lineage.split(", ")
-        lineages.extend(lineage)
+        print(r"\section*{Surveillance report}")
+        print(
+            r"Surveillance generated by nf-ncov-voc for %s variant" % (
+                variant))
 
-    base = os.path.basename(args.tsv)
-    variant = base.split('_')[0]
-    # variant = variant.replace(".tsv", "")
+        print(r"\subsection*{Date }")
+        print(
+            r"This report is generated on %s using %s number of genomes collected between %s and %s "
+            % (
+                datetime.today().strftime('%Y-%m-%d'),
+                len(metadata_df.index),
+                pd.to_datetime(metadata_df['sample collection '
+                                           'date'].min()).date(),
+                pd.to_datetime(metadata_df['sample collection '
+                                           'date'].max()).date()))
 
-    print(r"\section*{Surveillance report}")
-    print(r"Surveillance generated by nf-ncov-voc for %s variant" % (
-        variant))
+        print(r"\section*{Pango Lineages}")
+        print(r"{Pango Lineages in this report }%s "
+              % sorted(set(lineages)))
+        write_func_summary(df=functions_df)
+        write_mutation_summary(df=mutations_df)
 
-    print(r"\subsection*{Date }")
-    print(r"This report is generated on %s using %s number of genomes "
-          r"collected between %s and %s "
-          % (
-              datetime.today().strftime('%Y-%m-%d'),
-              len(metadata_df.index),
-              pd.to_datetime(metadata_df['sample collection '
-                                         'date'].min()).date(),
-              pd.to_datetime(metadata_df['sample collection '
-                                         'date'].max()).date()))
+        if args.virusseq is True:
+            print(r"\newpage")
+            print("The results here are in whole or "
+                  "part based upon data hosted at the "
+                  "Canadian VirusSeq Data Portal: "
+                  " \href{https://virusseq-dataportal.ca/}{"
+                  "https://virusseq-dataportal.ca/}."
+                  "We wish to acknowledge the following "
+                  "organisations/laboratories for "
+                  "contributing data to the Portal: "
+                  "Canadian Public Health Laboratory "
+                  "Network (CPHLN), CanCOGGeN VirusSeq "
+                  "and the list of labs available at "
+                  "\href{https://virusseq-dataportal.ca/acknowledgements"
+                  "}{https://virusseq-dataportal.ca/acknowledgements})")
 
-    print(r"\section*{Pango Lineages}")
-    print(r"{Pango Lineages in this report }%s "
-          % sorted(set(lineages)))
+        write_postamble()
 
-    write_func_summary(df=functions_df)
-
-    write_mutation_summary(df=mutations_df)
-
-    if args.virusseq is True:
-        print(r"\newpage")
-        print("The results here are in whole or "
-              "part based upon data hosted at the "
-              "Canadian VirusSeq Data Portal: "
-              " \href{https://virusseq-dataportal.ca/}{"
-              "https://virusseq-dataportal.ca/}."
-              "We wish to acknowledge the following "
-              "organisations/laboratories for "
-              "contributing data to the Portal: "
-              "Canadian Public Health Laboratory "
-              "Network (CPHLN), CanCOGGeN VirusSeq "
-              "and the list of labs available at "
-              "\href{https://virusseq-dataportal.ca/acknowledgements"
-              "}{https://virusseq-dataportal.ca/acknowledgements})")
-
-    write_postamble()
+        # mutations_df.to_csv('mutations.tsv', sep='\t', index=False)
+    else:
+        # base = os.path.basename(args.tsv)
+        # variant = base.split('_')[0]
+        # make functions_df
+        functions_df = summarize_functions(tsv=tsv_df,
+                                           functions_df_template=
+                                           functions_template)
+        # make mutations_df
+        mutations_df = summarize_mutations(tsv=tsv_df,
+                                           functions_dataframe=functions_df)
+        write_preamble()
+        print(r"\section*{Surveillance report}")
+        write_func_summary(df=functions_df)
+        write_mutation_summary(df=mutations_df)
+        write_postamble()
