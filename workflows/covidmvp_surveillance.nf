@@ -19,12 +19,7 @@ workflow surveillance {
 
 
     main:
-      // Make changes to surveillanceRawTsv toa accomodate user file
       surveillanceRawTsv(ch_gvf, ch_variant.combine(ch_stats))
-      Channel.fromPath( "$baseDir/assets/logo/*.png", checkIfExists: true)
-            .set{ ch_logo }
-      // Make use of Metadata and logo optional to make it available for user file      
-      surveillancePDF(surveillanceRawTsv.out.surveillancetsv.flatten(), ch_surveillanceIndicators.combine(ch_metadata).combine(ch_logo))
-
+      surveillancePDF(surveillanceRawTsv.out.surveillancetsv.flatten(), ch_surveillanceIndicators.combine(ch_metadata))
 
 }
