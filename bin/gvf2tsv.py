@@ -409,8 +409,8 @@ if __name__ == '__main__':
     # if user-provided, who_variant is the provided filename
     else:
         gvf_files = gvf_list
-        who_variant = gvf_list[
-            0]  # assumes only one provided file per report
+        who_variant = gvf_list[0].replace(".filtered.SNPEFF.annotated.gvf", "")
+
 
     if args.table:
         # get variant population size
