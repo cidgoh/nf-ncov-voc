@@ -27,7 +27,6 @@ include {preprocessing          } from './workflows/covidmvp_preprocessing'
 include {variant_calling        } from './workflows/covidmvp_variantcalling'
 include {annotation             } from './workflows/covidmvp_annotation'
 include {surveillance           } from './workflows/covidmvp_surveillance'
-include {ncov_voc_user          } from './workflows/covidmvp_user.nf'
 
 if (params.help){
     log.info cidgohHeader()
@@ -64,28 +63,16 @@ workflow {
    main:
       log.info cidgohHeader()
       log.info workflowHeader()
-      println(params.mode+ " activated!!\n\n\n")
-
 
       if(params.seq){
         Channel.fromPath( "$params.seq", checkIfExists: true)
              .set{ ch_seq }
       }
 
-      //else if (!params.user && !params.seq){
-      //  Channel.fromPath( "$baseDir/assets/data/sequence/*.fasta", checkIfExists: true)
-      //       .set{ ch_seq }
-      //}
-
       if(params.meta){
         Channel.fromPath( "$params.meta", checkIfExists: true)
              .set{ ch_metadata }
       }
-
-      //else if (!params.user && !params.meta){
-      //  Channel.fromPath( "$baseDir/assets/data/metadata/*.tsv", checkIfExists: true)
-      //        .set{ ch_metadata }
-      //}
 
       Channel.fromPath( "$params.ref_gff/*.gff3", checkIfExists: true)
             .set{ ch_refgff }
@@ -112,7 +99,7 @@ workflow {
             .set{ ch_mutationsplit }
 
       Channel.fromPath( "$params.surveillance_indicators/*.tsv", checkIfExists: true)
-                  .set{ ch_surveillanceIndicators}
+            .set{ ch_surveillanceIndicators}
 
       if(params.variants){
         Channel.fromPath( "$params.variants", checkIfExists: true)
@@ -155,10 +142,8 @@ workflow {
 
               }
               if (!params.skip_surveillance) {
-
-                ch_metadata=Channel.empty()
-
-                // surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
+                ch_metadata=ch_refgff
+                surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
               }
 
           }
@@ -173,15 +158,15 @@ workflow {
               ch_vcf=Channel.empty()
             }
             if (!params.skip_annotation) {
-              //ch_variant=Channel.empty()
+
               ch_stats=ch_refgff
               annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
               ch_gvf=annotation.out.ch_gvf
               ch_stats=annotation.out.ch_stats
             }
             if (!params.skip_surveillance) {
-              ch_metadata=Channel.empty()
-              // surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
+              ch_metadata=ch_refgff
+              surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
             }
           }
         }
@@ -192,7 +177,6 @@ workflow {
         preprocessing(ch_metadata, ch_seq, ch_variant)
         ch_voc=preprocessing.out.ch_voc
         ch_metadata=preprocessing.out.ch_metadata
-        ch_metadata.view()
 
         variant_calling(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai)
         ch_vcf=variant_calling.out.ch_vcf
