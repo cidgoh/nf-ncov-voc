@@ -73,16 +73,13 @@ to build a reference library for each lineage and subsequently each
 variant for comparative analysis. This mode can take `FASTA` file 
 with multiple genomes (**recommended** & **default**) or single 
 genome with a metadata file that should have one column atleast 
-(`strain`) as minimal metadata (see [Workflow Summary](#workflow-summary) 
-for detailed options). The user mode (`--mode user`) is by default 
-active when using interactive visualization through 
+(`pango_lineage`) as minimal metadata 
+(see [Workflow Summary](#workflow-summary) for detailed options). 
+The user mode (`--mode user`) is by defaultactive when using 
+interactive visualization through 
 [COVID-MVP](https://github.com/cidgoh/COVID-MVP) where a user can 
-upload dataset for comparative analysis against the reference data. 
+upload `GVF` file for comparative analysis against the reference data. 
 Uploaded dataset can be a `FASTA` file or variant called `VCF` file.
-
-Based on the `--mode` different _entry points_ are developed. 
-*nf-ncov-voc* determines entrance point for each file.
-
 
 ### Functional Annotation
 
