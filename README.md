@@ -235,8 +235,11 @@ Many thanks to others who have helped out and contributed along the way too, inc
 
 ## Contributions and Support
 
-If you would like to contribute to this pipeline, please see the [contributing guidelines](.github/CONTRIBUTING.md).
-For further information or help, don't hesitate to get in touch at <mzanwar@sfu.ca> or <wwhsiao@sfu.ca>
+If you would like to contribute to this workflow, please see the 
+[contributing guidelines](.github/CONTRIBUTING.md).
+For further information or help, don't hesitate to get in touch at 
+<mzanwar@sfu.ca> or <wwhsiao@sfu.ca>
 
 ## Citations
-An extensive list of references for the tools used by the workflow can be found in the [`CITATIONS.md`](CITATIONS.md) file.
+An extensive list of references for the tools used by the workflow 
+can be found in the [`CITATIONS.md`](CITATIONS.md) file.
