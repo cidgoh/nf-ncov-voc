@@ -100,11 +100,13 @@ file written in python.
 
 Different `GVF` files for the same variant are then collated and 
 summarized into a `TSV` file that contains mutation prevalence, 
-profile and functional impact. This feature can be used for identify 
-and track transmission trends in a dataset, aid detection of new 
-cluster important mutations with severe impact based on the datasets 
-used.
-
+profile and functional impact. Further `TSV` file is also summarized 
+as a more human friendly and impactful surveillance report in a 
+`PDF` format. Relevant/important indicators can be specified in the 
+[tsv file](https://github.com/cidgoh/nf-ncov-voc/blob/master/assets/ncov_surveillanceIndicators/functions_df_template.tsv). This 
+This feature can be used to identify and tracktransmission trends in 
+a dataset, aid detection of new cluster important mutations with 
+severe impact based on the datasets used.
 
 ## Workflow Summary
 
@@ -211,17 +213,6 @@ docs for all available options when running the workflow.
             --prefix testing \
             --mode reference \
             --outdir results
-        ```
-
-    * Typical command for reference mode with single genome:
-
-        ```bash
-        nextflow nf-ncov-voc/main.nf \
-            -profile <conda | singularity | docker> \
-            --prefix testing \
-            --mode reference \
-            --single_genome \
-            --outdir results            
         ```
 
     * An executable Python script called [`functional_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/functional_annotation.py) has been provided if you would like to update the functional annotations from `POKAY`. This will create a new file which **should replace** the file in [.github/data/functional_annotation](https://github.com/cidgoh/nf-ncov-voc/blob/master/.github/data/functional_annotation).
