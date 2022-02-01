@@ -51,7 +51,15 @@ below in the dataflow diagram
 
 ### Pre-Processing
 
-This module 
+This module offers two ways to get lineage information for each 
+genome in `FASTA` file and listed respectively in Metadata file 
+unless a column `pango_lineage` is already available in which case 
+both options can be skipped. First option is to use 
+[PANGOLIN](https://github.com/cov-lineages/pangolin) to assign 
+lineages and merge the metadata with pangolin report. This 
+step can be skipped by passing `--skip_pangolin`. The second option 
+is to map metadata to GISAID metadata file to extract lineages if 
+the genomes are available in GISAID. This is 
 
 ### Genomic Analysis
 This module currently supports two different modes - "_reference_" & 
