@@ -58,8 +58,12 @@ both options can be skipped. First option is to use
 [PANGOLIN](https://github.com/cov-lineages/pangolin) to assign 
 lineages and merge the metadata with pangolin report. This 
 step can be skipped by passing `--skip_pangolin`. The second option 
-is to map metadata to GISAID metadata file to extract lineages if 
-the genomes are available in GISAID. This is 
+is to map input metadata to [GISAID](https://www.gisaid.org) metadata 
+file (which can be provided by `--gisaid_metadata` parameter) if the 
+genomes are available in GISAID. This option is faster and 
+computationally less expensive, though limits to only genomes 
+available in GISAID. This option can be skipped by 
+using `--skip_mapping`.
 
 ### Genomic Analysis
 This module currently supports two different modes - "_reference_" & 
