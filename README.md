@@ -8,33 +8,107 @@
 
 ## Introduction
 
-**nf-ncov-voc** is a bioinformatics analysis workflow used for performing variant calling on SARS-CoV-2 genomes to identify and profile mutations in Variants of Concern (VOCs) and Variants of Interest (VOIs). This workflow has three main stages - **Genomic Analysis** , **Functional Annotation** and **Surveillance Reports**. This workflow is developed in combination with an interactive visualization tool [COVID-MVP](https://github.com/cidgoh/COVID-MVP). As an input, **nf-ncov-voc** takes SARS-CoV-2 consensus sequences and Metadata (GISAID/non-GISAID) and produces mutation profiles which are then annotated with their respective biological functional impact using the manually curated effort [Pokay](https://github.com/nodrogluap/pokay) lead by Paul Gordon [@nodrogluap](https://github.com/nodrogluap).
+**nf-ncov-voc** is a bioinformatics analysis workflow used for 
+performing variant calling on SARS-CoV-2 genomes to identify and 
+profile mutations in Variants of Concern (VOCs), Variants of 
+Interest (VOIs) and Variants under Monitoring (VUMs). This workflow has 
+four main stages - **Preprocessing**, **Genomic Analysis (Variant 
+Calling)** , **Functional Annotation** and **Surveillance**. 
+**nf-ncov-voc** workflow can be used in combination with an interactive 
+visualization tool [COVID-MVP](https://github.com/cidgoh/COVID-MVP) 
+or as a stand-alone high-throughput analysis tool to produce 
+mutation profiles and surveillance reports. 
 
-The workflow is built using [Nextflow](https://www.nextflow.io)-[DSL2](https://www.nextflow.io/docs/latest/dsl2.html), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It can use **Conda**/**Docker**/**Singularity** containers making installation trivial and results highly reproducible.
+As an input, **nf-ncov-voc** workflow requires SARS-CoV-2 consensus 
+sequences in `FASTA` format and Metadata file in `TSV` format. 
+Sequences in pre-processing stage are filtered using Metadata 
+variables, quality filtered and assigned lineages. Sequences 
+assigned as VOCs, VOIs and VUMs are then mapped to SARS-CoV-2 genome,
+variant called and normalized in Genomic Analysis (Variant Calling) 
+module. Mutations called are then annotated in several stages 
+including flagging the potential contaminated sites, mutation 
+annotation, genomic feature annotation, mature peptide annotation 
+and finally respective biological functional impact using the 
+manually curated effort [Pokay](https://github.com/nodrogluap/pokay).
+(lead by Paul Gordon [@nodrogluap](https://github.com/nodrogluap)). 
+Finally, in the surveillance module, these functional profiles are 
+summarized using functional indicators to highlight key functions 
+and mutations responsible for them for e.g. **P618H** role in 
+_convalescent plasma escape_.
 
-### Genomic Analysis
+The workflow is built using [Nextflow](https://www.nextflow.io)-
+[DSL2](https://www.nextflow.io/docs/latest/dsl2.html), a workflow 
+tool to run tasks across multiple compute infrastructures in a very 
+portable manner. It can use `conda`/`Docker`/`Singularity` 
+containers making installation trivial and results highly reproducible.
 
-This module currently supports two different modes - "_reference_" & "_user_" which can be passed with `--mode reference` or `--mode user`. By default, `--mode reference` is activated which allows user to build a reference library for each lineage and subsequently each variant for comparative analysis. This mode can take `FASTA` file with multiple genomes (**recommended** & **default**) or single genome (passed as `--single_genome`) with a metadata file that should have two columns atleast (`strain`, `pango_lineage`) as minimal metadata (see [Workflow Summary](#workflow-summary) for detailed options). Data can directly be used from [GISAID](https://www.gisaid.org) after downloading from the **Genomic Epidemiology** section and passing `--gisaid` parameter. Similarly, _non-GISAID_ (**default**) data can also be used with minimal metadata file. The user mode (`--mode user`) is by default active when using interactive visualization through [COVID-MVP](https://github.com/cidgoh/COVID-MVP) where a user can upload dataset for comparative analysis against the reference data. Uploaded dataset can be a variant called file `VCF` or `TSV` with `--input_type vcf` (**recommended**) or `--input_type tsv`. Alternatively, a `FASTA` file can be provided using `--input_type fasta` file with a single or multiple genomes.
-
-Based on the `--mode` different workflows are developed and further `--input type` determines entrance points to these workflows. The overall workflow consists of Quality Control of consensus sequences (details below in Workflow Summary), mapping consensus sequences to SARS-CoV-2 reference strain [MN908947.3 - Wuhan-Hu-1](https://www.ncbi.nlm.nih.gov/nuccore/MN908947.3), variant calling, post processing that includes flagging problematics sites; functional annotation; and mature peptide annotation (see [Usage](#usage) for guideline). Final part of the workflow is to collate different lineage files from the same variant and produce a surveillance report for each e.g. Delta variant report.
-
-### Functional Annotation
-
-In this module, the variant called `VCF` file for each lineage is converted into a `GVF` (Genomic Variant Format) file and annotated with functional information using [Pokay](https://github.com/nodrogluap/pokay). GVF is a variant of GFF3 format that is standardized for describing genomic mutations; it is used here because it can describe mutations across multiple rows, and because the "#attributes" column can store information in custom key-value pairs. The key-value pairs added at this stage include for each mutation: VOC/VOI status, clade-defining status (for reference lineages), and functional annotations parsed using [vcf2gvf.py](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/vcf2gvf.py) file written in python.
-
-### Surveillance Reports
-
-Different `GVF` files for the same variant are then collated and summarized into a `TSV` file that contains mutation prevalence, profile and functional impact. This feature can be used for identify and track transmission trends in a dataset, aid detection of new cluster important mutations with severe impact based on the datasets used.
-
+A detailed structure and each module of the workflow is presented 
+below in the dataflow diagram 
 ### nf-ncov-voc Dataflow
 
 ![DataFlow](figs/COVIDMVP.drawio.png)
 
+
+### Pre-Processing
+
+This module 
+
+### Genomic Analysis
+This module currently supports two different modes - "_reference_" & 
+"_user_" which can be passed with `--mode reference` or `--mode 
+user`. By default, `--mode reference` is activated which allows you 
+to build a reference library for each lineage and subsequently each 
+variant for comparative analysis. This mode can take `FASTA` file 
+with multiple genomes (**recommended** & **default**) or single 
+genome with a metadata file that should have one column atleast 
+(`strain`) as minimal metadata (see [Workflow Summary](#workflow-summary) 
+for detailed options). The user mode (`--mode user`) is by default 
+active when using interactive visualization through 
+[COVID-MVP](https://github.com/cidgoh/COVID-MVP) where a user can 
+upload dataset for comparative analysis against the reference data. 
+Uploaded dataset can be a `FASTA` file or variant called `VCF` file.
+
+Based on the `--mode` different _entry points_ are developed. 
+*nf-ncov-voc* determines entrance point for each file.
+
+
+### Functional Annotation
+
+In this module, the variant called `VCF` file for each lineage is 
+converted into a `GVF` (Genomic Variant Format) file and annotated 
+with functional information using 
+[Pokay](https://github.com/nodrogluap/pokay). GVF is a variant of 
+GFF3 format that is standardized for describing genomic mutations; 
+it is used here because it can describe mutations across multiple 
+rows, and because the "#attributes" column can store information in 
+custom key-value pairs. The key-value pairs added at this stage 
+include for each mutation: VOC/VOI status, clade-defining status 
+(for reference lineages), and functional annotations parsed using 
+[vcf2gvf.py](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/vcf2gvf.py) 
+file written in python.
+
+### Surveillance Reports
+
+Different `GVF` files for the same variant are then collated and 
+summarized into a `TSV` file that contains mutation prevalence, 
+profile and functional impact. This feature can be used for identify 
+and track transmission trends in a dataset, aid detection of new 
+cluster important mutations with severe impact based on the datasets 
+used.
+
+
 ## Workflow Summary
 
-The workflow has numerous options to allow you to run workflow with modes and alternate options for major step if you so wish. For example, in `mode --reference` user can use `BWAMEM` using `--bwa` instead of `MINIMAP2` (*default*) for mapping consensus sequences to reference genome. Similarly, `ivar` with parameter `--ivar` for variant calling instead of `freebayes` (*default*) option.
+The workflow has numerous options to allow you to run workflow with 
+modes and alternate options for major step if you so wish. For 
+example, in `mode --reference` user can use `BWAMEM` using `--bwa` 
+instead of `MINIMAP2` (*default*) for mapping consensus sequences to 
+reference genome. Similarly, `ivar` with parameter `--ivar` for 
+variant calling instead of `freebayes` (*default*) option.
 
-See the [parameters](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs/PARAMETERS.md) docs for all of the available options when running the workflow.
+See the 
+[parameters](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs/PARAMETERS.md) 
+docs for all available options when running the workflow.
 
 ### Reference Mode
 
@@ -52,24 +126,7 @@ See the [parameters](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs/PARA
     3.  Peptide annotation ([`mature_peptide_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/mature_peptide_annotation.py))
     4.  Functional Annotation ([`vcf2gvf.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/vcf2gvf.py))
     5.  Surveillance Report ([`gvf2tsv.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/gvf2tsv.py))
-
-
-### User Mode
-
-* _Data Extraction & Quality Control_ (**Entrance Point for `FASTA` input file**)
-    1.  Consensus QC ([`BBMAP`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
-* _Variant Calling_
-    1.  Mapping ([`Minimap2`](https://github.com/lh3/minimap2); *default* [`BWA`](https://github.com/lh3/bwa); *optional* )
-    2.  Sort and index alignments ([`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/))
-    3.  Choice of multiple variant calling routes: [`Freebayes`](https://github.com/freebayes/freebayes) *default & recommended*; [`iVar variants`](https://github.com/andersen-lab/ivar); *optional*)
-* _Post-Processing_ (**Entrance Point for `VCF` & `TSV` input files**)
-    1.  Filtering Problematic sites ([`problematic_sites_tag.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/problematic_sites_tag.py) using [ProblematicSites_SARS-CoV-2](https://github.com/W-L/ProblematicSites_SARS-CoV2))
-    2.  Variant annotation ([`SnpEff`](http://snpeff.sourceforge.net/SnpEff.html))
-    3.  Peptide annotation ([`mature_peptide_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/mature_peptide_annotation.py))
-    4.  Functional Annotation ([`vcf2gvf.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/vcf2gvf.py))
     
-
-
 
 ## Usage
 
