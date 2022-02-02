@@ -306,9 +306,7 @@ process surveillancePDF {
     --metadata ${metadata} \
     --virusseq True > ${tsv.baseName}.tex
 
-    xelatex  ${tsv.baseName}.tex &&
-    xelatex  ${tsv.baseName}.tex &&
-    xelatex  ${tsv.baseName}.tex
+    tectonic -X compile ${tsv.baseName}.tex --reruns 3 --keep-intermediates --keep-logs
 
 
     """
@@ -319,10 +317,7 @@ process surveillancePDF {
     --functions_table ${surveillanceindicators} \
     --user True > ${tsv.baseName}.tex
 
-    xelatex  ${tsv.baseName}.tex &&
-    xelatex  ${tsv.baseName}.tex &&
-    xelatex  ${tsv.baseName}.tex
-
+    tectonic -X compile ${tsv.baseName}.tex --reruns 3 --keep-intermediates --keep-logs
 
     """
   }

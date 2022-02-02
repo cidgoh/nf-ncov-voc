@@ -198,7 +198,7 @@ def gvf2tsv(gvf):
 
 def streamline_user(tsv_df):
     tsv_df = tsv_df.rename(columns={'multiaa_comb_mutation':
-                                    'multiaa_mutation_split_names'})
+                                        'multiaa_mutation_split_names'})
     cols = ['name', 'nt_name', 'aa_name', 'multi_aa_name',
             'multiaa_mutation_split_names', 'start', 'vcf_gene',
             'chrom_region', 'mutation_type', 'dp', 'obs_sample_size',
@@ -409,8 +409,13 @@ if __name__ == '__main__':
     # if user-provided, who_variant is the provided filename
     else:
         gvf_files = gvf_list
-        who_variant = gvf_list[0].replace(".filtered.SNPEFF.annotated.gvf", "")
-
+        if ".qc" not in gvf_list[0]:
+            who_variant = gvf_list[0].replace(
+                ".filtered.SNPEFF.annotated.gvf", "")
+        else:
+            who_variant = gvf_list[0].replace(
+                ".qc.sorted.variants.normalized.filtered.SNPEFF"
+                ".annotated.gvf", "")
 
     if args.table:
         # get variant population size
@@ -426,12 +431,6 @@ if __name__ == '__main__':
         print("Processing:")
         print(gvf_files[0])
         gvf_df = gvf2tsv(gvf=gvf_files[0])
-        if len(gvf_files) > 1:
-            for gvf in gvf_files[1:]:
-                print(gvf)
-                new_gvf_df = gvf2tsv(gvf=gvf)
-                gvf_df = pd.concat([gvf_df, new_gvf_df],
-                                   ignore_index=True)
 
         # streamline final concatenated df, reorder/rename
         # columns where needed
