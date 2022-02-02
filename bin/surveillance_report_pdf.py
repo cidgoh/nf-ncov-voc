@@ -250,6 +250,7 @@ def write_preamble():
 \pagestyle{fancy}
 \geometry{textwidth=6.0in}
 
+
 \lhead{\small
         \vspace{-2.0\baselineskip}\href{
         https://github.com/cidgoh/nf-ncov-voc}{nf-ncov-voc}}
@@ -375,7 +376,7 @@ def write_table(spec, header, rows, size):
 def write_func_summary(df):
     tf = TableFormatter()
     tf.size = "scriptsize"
-    tf.table_spec = "{|p{4.0cm}|p{4.0cm}|p{4.0cm}|}"
+    tf.table_spec = "{|p{4.0cm}|p{7.0cm}|p{5.0cm}|}"
 
     print(r"\section*{Indicator}")
     print(
