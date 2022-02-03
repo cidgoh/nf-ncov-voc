@@ -187,17 +187,38 @@ process vcfTogvf {
   publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.gvf", mode: 'copy'
 
   input:
-      path(ch_annotated_vcf)
-      tuple(path(func_annot), path(gene_coord), path(mutation_split), path(variants))
-      path(stats)
-
+      tuple(path(ch_annotated_vcf), path(func_annot), path(gene_coord), path(mutation_split), path(variants), path(stats))
 
   output:
       path("*.gvf"), emit: gvf
 
-  script:
 
-  if( params.mode == 'user' && !ch_annotated_vcf.getExtension() == "vcf"){
+  script:
+  input_file = file(params.userfile)
+  if( params.mode == 'reference'){
+    """
+      vcf2gvf.py --vcffile ${ch_annotated_vcf} \
+      --functional_annotations ${func_annot}  \
+      --clades ${variants} \
+      --gene_positions ${gene_coord} \
+      --names_to_split ${mutation_split} \
+      --size_stats ${stats} \
+      --strain ${ch_annotated_vcf.baseName.replaceAll(".qc.sorted.variants.normalized.filtered.SNPEFF.annotated","")}\
+      --outvcf ${ch_annotated_vcf.baseName}.gvf
+    """
+  }
+  else if( params.mode == 'user' && input_file.getExtension() == "vcf"){
+    """
+      vcf2gvf.py --vcffile ${ch_annotated_vcf} \
+      --functional_annotations ${func_annot}  \
+      --clades ${variants} \
+      --gene_positions ${gene_coord} \
+      --names_to_split ${mutation_split} \
+      --outvcf ${ch_annotated_vcf.baseName}.gvf
+    """
+  }
+
+  else{
     """
       vcf2gvf.py --vcffile ${ch_annotated_vcf} \
       --functional_annotations ${func_annot}  \
@@ -208,28 +229,8 @@ process vcfTogvf {
       --outvcf ${ch_annotated_vcf.baseName}.gvf
     """
   }
-  else if( params.mode == 'user' &&  ch_annotated_vcf.getExtension() == "vcf"){
-    """
-      vcf2gvf.py --vcffile ${ch_annotated_vcf} \
-      --functional_annotations ${func_annot}  \
-      --clades ${variants} \
-      --gene_positions ${gene_coord} \
-      --names_to_split ${mutation_split} \
-      --outvcf ${ch_annotated_vcf.baseName}.gvf
-    """
-  }
-  else{
-      """
-        vcf2gvf.py --vcffile ${ch_annotated_vcf} \
-        --functional_annotations ${func_annot}  \
-        --clades ${variants} \
-        --gene_positions ${gene_coord} \
-        --names_to_split ${mutation_split} \
-        --size_stats ${stats} \
-        --strain ${ch_annotated_vcf.baseName.replaceAll(".qc.sorted.variants.normalized.filtered.SNPEFF.annotated","")}\
-        --outvcf ${ch_annotated_vcf.baseName}.gvf
-      """
-  }
+
+
 
 }
 
@@ -262,7 +263,7 @@ process surveillanceRawTsv {
       tuple(path(variants), path(stats))
 
   output:
-      path("*.tsv"), emit: surveillancetsv
+      path ('*.tsv'), emit: surveillancetsv
 
   script:
   if( params.mode == 'user' ){
@@ -298,7 +299,7 @@ process surveillancePDF {
       path("*.pdf")
 
   script:
-  if( !params.mode == 'user' ){
+  if( params.mode == 'reference' ){
 
     """
     surveillance_report_pdf.py --tsv ${tsv} \
