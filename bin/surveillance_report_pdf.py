@@ -24,6 +24,7 @@ import csv
 import sys
 import re
 from collections import OrderedDict
+import numpy as np
 
 
 def parse_args():
@@ -179,6 +180,9 @@ def summarize_mutations(tsv, functions_dataframe):
     # if there are no commas
     # anywhere in the 'ao' column, calculate AF straight out
     if df['Alternate Allele Obs'][df['Alternate Allele Obs'].astype(
+            str).str.contains("n/a")].empty:
+        df['Alternate Frequency'] = np.nan
+    elif df['Alternate Allele Obs'][df['Alternate Allele Obs'].astype(
             str).str.contains(",")].empty:
         df['Alternate Frequency'] = round(
             df['Alternate Allele Obs'].astype(
@@ -196,8 +200,9 @@ def summarize_mutations(tsv, functions_dataframe):
             int) / df['Sequence Depth'].astype(int), 2)
 
     df = add_source_hyperref(dataframe=df)
-    mask = df['Alternate Frequency'] >= args.frequency_threshold
-    df = df[mask]
+    if not df['Alternate Frequency'].isnull().values.any():
+        mask = df['Alternate Frequency'] >= args.frequency_threshold
+        df = df[mask]
     if not args.user:
         mutations_df_cols = ['Mutations', 'Sub-category',
                              'Function', 'Lineages', 'Citation',
