@@ -23,22 +23,24 @@ workflow annotation {
 
     main:
 
-
       tagProblematicSites(ch_vcf.combine(ch_probvcf))
       SNPEFF(tagProblematicSites.out.filtered_vcf)
       annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
       ch_annotated_vcf=annotate_mat_peptide.out.annotated_vcf
-      vcfTogvf(ch_annotated_vcf, ch_funcannot.combine(ch_genecoord).combine(ch_mutationsplit).combine(ch_variant), ch_stats)
-      if(!params.mode == 'user'){
-          ch_gvf=vcfTogvf.out.gvf.collect()
+      vcfTogvf(ch_annotated_vcf.combine(ch_funcannot).combine(ch_genecoord).combine(ch_mutationsplit).combine(ch_variant).combine(ch_stats))
+
+      if(params.mode == 'reference'){
+        vcfTogvf.out.gvf
+              .collect()
+              .unique()
+              .set{ ch_gvf_surv }
       }
       else{
-        ch_gvf=vcfTogvf.out.gvf
+        ch_gvf_surv=vcfTogvf.out.gvf
       }
 
-
     emit:
-      ch_gvf
+      ch_gvf_surv
       ch_stats
       ch_variant
 }
