@@ -20,8 +20,6 @@ include {cidgohHeader           } from './modules/local/header'
 include {workflowHeader         } from './modules/local/wf_header'
 
 
-
-
 // import workflows
 include {preprocessing          } from './workflows/covidmvp_preprocessing'
 include {variant_calling        } from './workflows/covidmvp_variantcalling'
@@ -136,14 +134,14 @@ workflow {
 
                 annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
 
-                ch_gvf=annotation.out.ch_gvf
+                ch_gvf_surveillance=annotation.out.ch_gvf_surv
                 ch_variant=annotation.out.ch_variant
                 ch_stats=annotation.out.ch_stats
 
               }
               if (!params.skip_surveillance) {
                 ch_metadata=ch_refgff
-                surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
+                surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
               }
 
           }
@@ -161,18 +159,17 @@ workflow {
 
               ch_stats=ch_refgff
               annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
-              ch_gvf=annotation.out.ch_gvf
+              ch_gvf_surveillance=annotation.out.ch_gvf_surv
               ch_stats=annotation.out.ch_stats
             }
             if (!params.skip_surveillance) {
               ch_metadata=ch_refgff
-              surveillance(ch_gvf, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
+              surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
             }
           }
         }
 
-      else if(params.mode == 'reference'){
-
+      if(params.mode == 'reference'){
 
         preprocessing(ch_metadata, ch_seq, ch_variant)
         ch_voc=preprocessing.out.ch_voc
@@ -184,12 +181,11 @@ workflow {
         ch_metadata=variant_calling.out.ch_metadata
 
         annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
-        ch_gvf=annotation.out.ch_gvf
+        ch_gvf_surveillance=annotation.out.ch_gvf_surv
         ch_variant=annotation.out.ch_variant
         ch_stats=annotation.out.ch_stats
 
-        surveillance(ch_gvf, ch_variant, ch_stats, ch_surveillanceIndicators, ch_metadata )
-
+        surveillance(ch_gvf_surveillance, ch_variant, ch_stats, ch_surveillanceIndicators, ch_metadata )
 
       }
 
