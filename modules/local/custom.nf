@@ -194,7 +194,10 @@ process vcfTogvf {
 
 
   script:
-  input_file = file(params.userfile)
+  if (params.userfile){
+    input_file = file(params.userfile)
+  }
+
   if( params.mode == 'reference'){
     """
       vcf2gvf.py --vcffile ${ch_annotated_vcf} \
