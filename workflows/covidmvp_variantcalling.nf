@@ -19,8 +19,6 @@ include { IVAR                 } from '../modules/local/ivar'
 include { tsvTovcf             } from '../modules/local/custom'
 
 
-
-
 workflow variant_calling {
     take:
       ch_voc
@@ -31,10 +29,9 @@ workflow variant_calling {
       ch_reffai
 
 
-
     main:
 
-      if (!params.mode == 'user'){
+      if (params.mode == 'reference'){
         extractMetadata(ch_metadata, ch_voc)
         SEQKIT(extractMetadata.out.ids.combine(ch_seq))
         ch_seq=SEQKIT.out.fasta
