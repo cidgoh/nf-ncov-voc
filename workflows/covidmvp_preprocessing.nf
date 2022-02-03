@@ -19,24 +19,19 @@ workflow preprocessing {
 
     main:
 
-      if (!params.skip_pangolin) {
+      if (params.mode == 'reference' && !params.skip_pangolin){
         PANGOLIN( ch_seq )
-        if (!params.mode == 'user'){
-          mergePangolinMetadata(ch_metadata.combine(PANGOLIN.out.report))
-          mergePangolinMetadata.out.lineage_assigned
-              .set{ch_metadata}
-          extractVariants(ch_variant.combine(mergePangolinMetadata.out.lineage_assigned))
-          extractVariants.out.lineages
-                .splitText()
-                .set{ ch_voc }
-        }
-        else{
-          ch_voc=Channel.empty()
+        mergePangolinMetadata(ch_metadata.combine(PANGOLIN.out.report))
+        mergePangolinMetadata.out.lineage_assigned
+            .set{ch_metadata}
+        extractVariants(ch_variant.combine(mergePangolinMetadata.out.lineage_assigned))
+        extractVariants.out.lineages
+              .splitText()
+              .set{ ch_voc }
         }
 
-      }
 
-      else if (!params.skip_mapping && params.virusseq_meta && !params.mode =='user') {
+      else if (!params.skip_mapping && params.virusseq_meta && params.mode =='reference') {
         Channel.fromPath( "$params.gisaid_metadata", checkIfExists: true)
              .set{ ch_gisaid_metadata }
 
@@ -50,12 +45,16 @@ workflow preprocessing {
             .set{ ch_voc }
       }
 
-      else if(!params.mode =='user' && params.skip_mapping && params.skip_pangolin) {
+      else if(params.mode =='reference' && params.skip_mapping && params.skip_pangolin) {
         extractVariants(ch_variant.combine(ch_metadata))
         extractVariants.out.lineages
               .splitText()
               .set{ ch_voc }
 
+      }
+      else{
+        PANGOLIN( ch_seq )
+        ch_voc=Channel.empty()
       }
 
       emit:
