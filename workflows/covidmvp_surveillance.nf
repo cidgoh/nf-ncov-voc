@@ -8,7 +8,6 @@ include { surveillanceRawTsv         } from '../modules/local/custom'
 include { surveillancePDF            } from '../modules/local/custom'
 
 
-
 workflow surveillance {
     take:
       ch_gvf
@@ -16,7 +15,6 @@ workflow surveillance {
       ch_stats
       ch_surveillanceIndicators
       ch_metadata
-
 
     main:
       surveillanceRawTsv(ch_gvf, ch_variant.combine(ch_stats))
