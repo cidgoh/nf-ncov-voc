@@ -15,7 +15,7 @@ process IVAR {
 
     script:
         """
-        samtools mpileup -aa -A -d 0 -s --output-MQ -O --reference ${ref} ${bam} |\
+        samtools mpileup -aa -A -d ${params.var_MaxDepth} -s --output-MQ -O --reference ${ref} ${bam} |\
         ivar variants \
         -r ${ref} \
         -m ${params.var_MinDepth} \
