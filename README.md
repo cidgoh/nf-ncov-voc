@@ -75,7 +75,12 @@ with multiple genomes (**recommended** & **default**) or single
 genome with a metadata file that should have one column atleast 
 (`pango_lineage`) as minimal metadata 
 (see [Workflow Summary](#workflow-summary) for detailed options). 
-The user mode (`--mode user`) is by defaultactive when using 
+The workflow has numerous options for several steps. For
+example, in `mode --reference` user can use `BWAMEM` using `--bwa`
+instead of `MINIMAP2` (*default*) for mapping consensus sequences to 
+reference genome. Similarly, `ivar` with parameter `--ivar` for 
+variant calling instead of `freebayes` (*default*) option.
+The user mode (`--mode user`) is by default active when using 
 interactive visualization through 
 [COVID-MVP](https://github.com/cidgoh/COVID-MVP) where a user can 
 upload `GVF` file for comparative analysis against the reference data. 
@@ -103,41 +108,21 @@ summarized into a `TSV` file that contains mutation prevalence,
 profile and functional impact. Further `TSV` file is also summarized 
 as a more human friendly and impactful surveillance report in a 
 `PDF` format. Relevant/important indicators can be specified in the 
-[tsv file](https://github.com/cidgoh/nf-ncov-voc/blob/master/assets/ncov_surveillanceIndicators/functions_df_template.tsv). This 
-This feature can be used to identify and tracktransmission trends in 
-a dataset, aid detection of new cluster important mutations with 
-severe impact based on the datasets used.
+[tsv file](https://github.com/cidgoh/nf-ncov-voc/blob/master/assets/ncov_surveillanceIndicators/functions_df_template.tsv). 
+This feature of surveillance reports can be used to identify new 
+clusters, important mutations, and track their transmission and 
+prevalence trends. However, if not required, this step can be 
+skipped using `--skip_surveillance`. An example of surveillance file 
+for Omicron variant using 
+[VirusSeq Data Portal](https://virusseq-dataportal.ca) is available in 
+[Docs](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs)
 
-## Workflow Summary
 
-The workflow has numerous options to allow you to run workflow with 
-modes and alternate options for major step if you so wish. For 
-example, in `mode --reference` user can use `BWAMEM` using `--bwa` 
-instead of `MINIMAP2` (*default*) for mapping consensus sequences to 
-reference genome. Similarly, `ivar` with parameter `--ivar` for 
-variant calling instead of `freebayes` (*default*) option.
 
 See the 
 [parameters](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs/PARAMETERS.md) 
 docs for all available options when running the workflow.
 
-### Reference Mode
-
-* _Data Extraction & Quality Control_
-    1.  Metadata extraction ([`bin/extract_metadata.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/extract_metadata.py) && [`modules/custom.nf/extractMetadata`](https://github.com/cidgoh/nf-ncov-voc/blob/master/modules/custom.nf))
-    2.  Sequence extraction ([`SEQKIT`](https://github.com/shenwei356/seqkit))
-    3.  Consensus QC ([`BBMAP`](https://jgi.doe.gov/data-and-tools/bbtools/bb-tools-user-guide/bbmap-guide/))
-* _Variant Calling_
-    1.  Mapping ([`Minimap2`](https://github.com/lh3/minimap2); *default* [`BWA`](https://github.com/lh3/bwa); *optional* )
-    2.  Sort and index alignments ([`SAMtools`](https://sourceforge.net/projects/samtools/files/samtools/))
-    3.  Choice of multiple variant calling routes: [`Freebayes`](https://github.com/freebayes/freebayes) *default & recommended*; [`iVar variants`](https://github.com/andersen-lab/ivar); *optional*)
-* _Post-Processing_
-    1.  Filtering Problematic sites ([`problematic_sites_tag.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/problematic_sites_tag.py) using [ProblematicSites_SARS-CoV-2](https://github.com/W-L/ProblematicSites_SARS-CoV2))
-    2.  Variant annotation ([`SnpEff`](http://snpeff.sourceforge.net/SnpEff.html))
-    3.  Peptide annotation ([`mature_peptide_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/mature_peptide_annotation.py))
-    4.  Functional Annotation ([`vcf2gvf.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/vcf2gvf.py))
-    5.  Surveillance Report ([`gvf2tsv.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/gvf2tsv.py))
-    
 
 ## Usage
 
@@ -154,69 +139,134 @@ docs for all available options when running the workflow.
     ```bash
     N E X T F L O W  ~  version 21.04.3
     Launching `main.nf` [berserk_austin] - revision: 93ccc86071
-
-    Usage:
-      nextflow run main.nf -profile [singularity | docker | conda) --prefix [prefix] --mode [reference | user]  [workflow-options]
-
-    Description:
-      Variant Calling workflow for SARS-CoV-2 Variant of Concern (VOC) and Variant of Interest (VOI) consensus sequences to generate data for Visualization
-      All options set via CLI can be set in conf directory
-
-    Nextflow arguments (single DASH):
-      -profile                  Allowed values: conda & singularity
-
-    Mandatory workflow arguments (mutually exclusive):
-      --prefix                  A (unique) string prefix for output directory for each run.
-      --mode                    A flag for user uploaded data through visualization app or high-throughput analyses (reference | user) (Default: reference)
-
-    Optional:
-      --variants                Provide a variants file (tsv) (Default: /Users/au572806/GitHub/nf-ncov-voc/.github/data/variants/variants_who.tsv)
-      --input_type              Specify type of input file (vcf | tsv | fasta) (Default: vcf)
-      --gisaid                  Specify if the dataset is from GISAID (gisaid) (Default: None)
-      --single-genome           Specify if the dataset is single genome (single-genome) (Default: None)
-      --userfile                Specify userfile (fasta | tsv | vcf) (Default: None)
-      --outdir                  Output directory (Default: /Users/au572806/GitHub/nf-ncov-voc/results)
-      --ivar                    Run the ivar workflow (Default: false, use freebayes workflow)
-      --startdate               Start date (Submission date) to extract dataset (yyyy-mm-dd) (Default: "None")
-      --enddate                 Start date (Submission date) to extract dataset (yyyy-mm-dd) (Default: "None")
-      --ref                     Path to SARS-CoV-2 reference fasta file (Default: /Users/au572806/GitHub/nf-ncov-voc/.github/data/refdb)
-      --bwa                     Use BWA for mapping reads (Default: false, use Minimap2)
-      --bwa_index               Path to BWA index files (Default: /Users/au572806/GitHub/nf-ncov-voc/.github/data/refdb)
-      --gff                     Path to annotation gff for variant consequence calling and typing. (Default: /Users/au572806/GitHub/nf-ncov-voc/.github/data/features)
-      --mpileupDepth            Mpileup depth (Default: unlimited)
-      --var_FreqThreshold       Variant Calling frequency threshold for consensus variant (Default: 0.75)
-      --var_MinDepth            Minimum coverage depth to call variant (ivar variants -m, freebayes -u Default: 10)
-      --var_MinFreqThreshold    Minimum frequency threshold to call variant (ivar variants -t, Default: 0.25)
-      --varMinVariantQuality    Minimum mapQ to call variant (ivar variants -q, Default: 20)
+   
+   Usage:
+     nextflow run main.nf -profile [singularity | docker | conda) --prefix [prefix] --mode [reference | user]  [workflow-options]
+   
+   Description:
+     Variant Calling workflow for SARS-CoV-2 Variant of Concern (VOC) and
+     Variant of Interest (VOI) consensus sequences to generate data
+     for Visualization. All options set via CLI can be set in conf
+     directory
+   
+   Nextflow arguments (single DASH):
+     -profile                  Allowed values: conda & singularity
+   
+   Mandatory workflow arguments (mutually exclusive):
+     --prefix                  A (unique) string prefix for output directory for each run.
+     --mode                    A flag for user uploaded data through visualization app or
+                               high-throughput analyses (reference | user) (Default: reference)
+   
+   Optional:
+   
+   Input options:
+     --seq                     Input SARS-CoV-2 genomes or consensus sequences
+                               (.fasta file)
+     --meta                    Input Metadata file of SARS-CoV-2 genomes or consensus sequences
+                               (.tsv file)
+     --userfile                Specify userfile
+                               (fasta | vcf) (Default: None)
+     --gisaid_metadata         If lineage assignment is preferred by mapping metadata to GISAID
+                               metadata file, provide the metadata file (.tsv file)
+     --variants                Provide a variants file
+                               (.tsv) (Default: /Users/au572806/GitHub/nf-ncov-voc/assets/ncov_variants/variants_who.tsv)
+     --outdir                  Output directory
+                               (Default: /Users/au572806/GitHub/nf-ncov-voc/results)
+     --gff                     Path to annotation gff for variant consequence calling and typing.
+                               (Default: /Users/au572806/GitHub/nf-ncov-voc/assets/ncov_genomeFeatures/MN908947.3.gff3)
+     --ref                     Path to SARS-CoV-2 reference fasta file
+                               (Default: /Users/au572806/GitHub/nf-ncov-voc/assets/ncov_refdb/*)
+     --bwa_index               Path to BWA index files
+                               (Default: /Users/au572806/GitHub/nf-ncov-voc/assets/ncov_refdb/*)
+   
+   Selection options:
+   
+     --ivar                    Run the iVar workflow instead of Freebayes(default)
+     --bwamem                  Run the BWA workflow instead of MiniMap2(default)
+     --skip_pangolin           Skip PANGOLIN. Can be used if metadata already have lineage
+                               information or mapping is preferred method
+     --skip_mapping            Skip Mapping. Can be used if metadata already have lineage
+                               information or PANGOLIN is preferred method
+   
+   Preprocessing options:
+     --startdate               Start date (Submission date) to extract dataset
+                               (yyyy-mm-dd) (Default: "2020-01-01")
+     --enddate                 Start date (Submission date) to extract dataset
+                               (yyyy-mm-dd) (Default: "2022-12-31")
+   
+   Genomic Analysis parameters:
+   
+     BBMAP
+     --maxns                   Max number of Ns allowed in the sequence in qc process
+     --minlength               Minimun length of sequence required for sequences
+                               to pass qc filtration. Sequence less than minlength
+                               are not taken further
+   
+     IVAR/FREEBAYES
+     --ploidy                  Ploidy (Default: 1)
+     --mpileupDepth            Mpileup depth (Default: unlimited)
+     --var_FreqThreshold       Variant Calling frequency threshold for consensus variant
+                               (Default: 0.75)
+     --var_MaxDepth            Maximum reads per input file depth to call variant
+                               (mpileup -d, Default: 0)
+     --var_MinDepth            Minimum coverage depth to call variant
+                               (ivar variants -m, freebayes -u Default: 10)
+     --var_MinFreqThreshold    Minimum frequency threshold to call variant
+                               (ivar variants -t, Default: 0.25)
+     --varMinVariantQuality    Minimum mapQ to call variant
+                               (ivar variants -q, Default: 20)
+   
+   Surveillance parameters:
+     --virusseq                True/False (Default: False). If your data is from
+                               VirusSeq Data Portal (Canada's Nation COVID-19
+                               genomics data portal).
+                               Passing this argument adds an acknowledgment
+                               statement to the surveillance report.
+                               see https://virusseq-dataportal.ca/acknowledgements
     ```
 
 4. Start running your own analysis!
 
-    * Typical command for reference mode with GISAID dataset from specific dates :
+    * Typical command for reference mode when Metadata File don't have 
+      lineage information:
 
         ```bash
         nextflow nf-ncov-voc/main.nf \
-            -profile <conda | singularity | docker> \
-            --prefix testing \
+            -profile <conda, singularity, docker> \
+            --prefix <testing> \
             --mode reference \
-            --gisaid \
-            --startdate 2020-01-01 \
-            --enddate 2020-01-01\
-            --outdir results
+            --startdate <2020-01-01> \
+            --enddate <2020-01-01> \
+            --seq <Sequence File> \
+            --meta <Metadata File> \
+            --skip_mapping \
+            --outdir <Output Dir>
         ```
 
-    * Typical command for reference mode with non-GISAID dataset:
+    * Typical command for reference mode when Metadata File already 
+      have 
+      lineage information:
 
         ```bash
         nextflow nf-ncov-voc/main.nf \
-            -profile <conda | singularity | docker> \
-            --prefix testing \
+            -profile <conda, singularity, docker> \
+            --prefix <testing> \
             --mode reference \
-            --outdir results
+            --startdate <2020-01-01> \
+            --enddate <2020-01-01> \
+            --seq <Sequence File> \
+            --meta <Metadata File> \
+            --skip_mapping \
+            --skip_pangolin \
+            --outdir <Output Dir>
         ```
-
-    * An executable Python script called [`functional_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/functional_annotation.py) has been provided if you would like to update the functional annotations from `POKAY`. This will create a new file which **should replace** the file in [.github/data/functional_annotation](https://github.com/cidgoh/nf-ncov-voc/blob/master/.github/data/functional_annotation).
-
+    * An executable Python script called 
+   [`functional_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/functional_annotation.py)
+   has been provided if you would like to update the functional 
+      annotations from `POKAY`. This will create a new file which 
+      **should replace** the current file in 
+   [assets/functional_annotation](https://github.com/cidgoh/nf-ncov-voc/blob/master/assets/ncov_functionalAnnotation).
+      
 
 ## Acknowledgments
 
@@ -233,13 +283,11 @@ This workflow and scripts are written and conceptually designed by
 
 Many thanks to others who have helped out and contributed along the way too, including (but not limited to)\*: [Canadian COVID Genomics Network - VirusSeq, Data Analytics Working Group](https://virusseq.ca/about/governance/)
 
-## Contributions and Support
+## Support
 
-If you would like to contribute to this workflow, please see the 
-[contributing guidelines](.github/CONTRIBUTING.md).
 For further information or help, don't hesitate to get in touch at 
-<mzanwar@sfu.ca> or <wwhsiao@sfu.ca>
+[mzanwar@sfu.ca](mailto:mzanwar@sfu.ca) or [wwshiao](mailto:wwshiao@sfu.ca)
 
 ## Citations
 An extensive list of references for the tools used by the workflow 
-can be found in the [`CITATIONS.md`](CITATIONS.md) file.
+can be found in the [CITATIONS.md](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs/CITATIONS.md) file.
