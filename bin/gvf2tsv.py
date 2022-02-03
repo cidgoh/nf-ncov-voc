@@ -23,7 +23,7 @@ def parse_args():
                         help='TSV file of WHO strain names and '
                              'VOC/VOI status')
     parser.add_argument('--outtsv', type=str,
-                        default="surveillance_report",
+                        default="surveillance_report.tsv",
                         help='Filepath for finished .tsv')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--specify_variants', type=str, default=None,
@@ -67,7 +67,7 @@ def find_variant_pop_size(table, pango_lineage_list):
     files = match_gvfs_to_who_variant(
         pango_lineage_list=pango_lineage_list,
         gvf_files_list=strain_tsv_df['file'].tolist())
-    print(files)
+    # print(files)
 
     pop_size = strain_tsv_df.loc[strain_tsv_df['file'].isin(
         files), 'num_seqs'].sum()
@@ -364,6 +364,7 @@ if __name__ == '__main__':
     args = parse_args()
     outfile = args.outtsv
     gvf_list = args.gvf_files
+    gvf_files=[]
 
     if not args.user:
         clade_file = args.clades
@@ -406,6 +407,32 @@ if __name__ == '__main__':
             print(str(len(gvf_files)) + " GVF files found for " +
                   who_variant + " variant.")
 
+            if len(gvf_files) > 0:
+                # convert all gvf files to tsv and concatenate them
+                print("Processing:")
+                print(gvf_files[0])
+                gvf_df = gvf2tsv(gvf=gvf_files[0])
+                if len(gvf_files) > 1:
+                    for gvf in gvf_files[1:]:
+                        print(gvf)
+                        new_gvf_df = gvf2tsv(gvf=gvf)
+                        gvf_df = pd.concat([gvf_df, new_gvf_df],
+                                           ignore_index=True)
+            if args.table:
+                    # get variant population size
+                variant_pop_size = find_variant_pop_size(table=args.table,
+                                                             pango_lineage_list=
+                                                             pango_lineages)
+
+            out_df = streamline_tsv(tsv_df=gvf_df)
+            filename = who_variant + '_' + outfile
+            out_df.to_csv(filename, sep='\t', index=False)
+            print("Processing complete.")
+            print(who_variant + " surveillance report saved as: " +
+                  filename)
+            print("")
+
+
     # if user-provided, who_variant is the provided filename
     else:
         gvf_files = gvf_list
@@ -417,29 +444,27 @@ if __name__ == '__main__':
                 ".qc.sorted.variants.normalized.filtered.SNPEFF"
                 ".annotated.gvf", "")
 
-    if args.table:
-        # get variant population size
-        variant_pop_size = find_variant_pop_size(table=args.table,
-                                                 pango_lineage_list=
-                                                 pango_lineages)
-    else:
-        variant_pop_size = "n/a"
+        if args.table:
+            # get variant population size
+            variant_pop_size = find_variant_pop_size(table=args.table,
+                                                     pango_lineage_list=
+                                                     pango_lineages)
+        else:
+            variant_pop_size = "n/a"
 
     # if any GVF files are found, create a surveillance report
-    if len(gvf_files) > 0:
-        # convert all gvf files to tsv and concatenate them
+
+
+    # convert all gvf files to tsv and concatenate them
         print("Processing:")
         print(gvf_files[0])
         gvf_df = gvf2tsv(gvf=gvf_files[0])
 
         # streamline final concatenated df, reorder/rename
         # columns where needed
-        if not args.user:
-            out_df = streamline_tsv(tsv_df=gvf_df)
-        else:
-            out_df = streamline_user(tsv_df=gvf_df)
+        out_df = streamline_user(tsv_df=gvf_df)
 
-        # save report as a .tsv
+            # save report as a .tsv
         filename = who_variant + '_' + outfile + '.tsv'
         out_df.to_csv(filename, sep='\t', index=False)
         print("Processing complete.")
