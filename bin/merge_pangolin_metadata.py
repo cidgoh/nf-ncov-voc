@@ -42,9 +42,12 @@ if __name__ == '__main__':
     metadata_df = pd.read_csv(args.metadata, sep="\t")
     pangolin_df = pd.read_csv(args.pangolin)
 
-    merged_df = pd.merge(metadata_df, pangolin_df, left_on='isolate',
+    metadata_df['fasta header name'] = metadata_df['fasta header name'].str.strip()
+    pangolin_df['taxon'] = pangolin_df['taxon'].str.strip()
+
+    merged_df = pd.merge(metadata_df, pangolin_df, left_on='fasta header name',
                          right_on='taxon')
     merged_df = merged_df.rename(columns={"lineage": "pango_lineage",
-                                          "isolate": "strain"})
+                                          "fasta header name": "strain"})
 
     write_metadata(dataframe=merged_df)

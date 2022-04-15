@@ -32,7 +32,6 @@ workflow annotation {
       if(params.mode == 'reference'){
         vcfTogvf.out.gvf
               .collect()
-              .unique()
               .set{ ch_gvf_surv }
       }
       else{
