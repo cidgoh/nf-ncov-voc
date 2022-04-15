@@ -151,10 +151,11 @@ workflow {
               Channel.fromPath( "$params.userfile", checkIfExists: true)
                 .set{ ch_vcf }
             }
-            else if (input_file.getExtension() == "tsv"){
+            //else if (input_file.getExtension() == "tsv"){
               //add module to change tsv to vcf
-              ch_vcf=Channel.empty()
-            }
+            //  Channel.fromPath( "$params.userfile", checkIfExists: true)
+            //    .set{ ch_vcf }
+            //}
             if (!params.skip_annotation) {
 
               ch_stats=ch_refgff
