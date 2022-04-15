@@ -207,7 +207,7 @@ process vcfTogvf {
       --names_to_split ${mutation_split} \
       --size_stats ${stats} \
       --strain ${ch_annotated_vcf.baseName.replaceAll(".qc.sorted.variants.normalized.filtered.SNPEFF.annotated","")}\
-      --outvcf ${ch_annotated_vcf.baseName}.gvf
+      --outvcf ${ch_annotated_vcf.baseName.replaceAll(".qc","_qc")}.gvf
     """
   }
   else if( params.mode == 'user' && input_file.getExtension() == "vcf"){

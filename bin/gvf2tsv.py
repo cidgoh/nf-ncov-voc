@@ -12,6 +12,7 @@ case report.
 import argparse
 import pandas as pd
 import os
+import re
 
 
 def parse_args():
@@ -51,11 +52,15 @@ def match_gvfs_to_who_variant(pango_lineage_list, gvf_files_list):
                 lineage = lineage.replace("*", "")
             matched_files.extend([i for i in gvf_files_list if
                                   i.startswith(lineage)])
+
             matched_files = sorted(set(matched_files))
     else:
         for lineage in pango_lineage_list:
-            matched_files.extend([i for i in gvf_files_list if
-                                  i.startswith(lineage)])
+        #    matched_files.extend([i for i in gvf_files_list if
+        #                          i.startswith(lineage)])
+            matched_files = ([i for i in gvf_files_list if
+                            i[:i.find("_")]==lineage])
+
     return matched_files
 
 
@@ -364,7 +369,8 @@ if __name__ == '__main__':
     args = parse_args()
     outfile = args.outtsv
     gvf_list = args.gvf_files
-    gvf_files=[]
+
+
 
     if not args.user:
         clade_file = args.clades
@@ -382,66 +388,82 @@ if __name__ == '__main__':
             # be added as the variant name to avoid several lineages
             # being combined as one variant
             for i in range(0, len(clades['who_variant'])):
-                if not clades.loc[i, 'who_variant'] == "Unnamed":
-                    who_variants_list.append(clades.loc[i,
-                                                        'who_variant'])
-                else:
+                if clades.loc[i, 'who_variant'] == "Unnamed":
                     who_variants_list.append(clades.loc[i,
                                                         'pango_lineage'])
 
+                else:
+                    who_variants_list.append(clades.loc[i,
+                                                        'who_variant'])
+            #print(who_variants_list)
+
         # for each variant, create a surveillance report
         for who_variant in who_variants_list:
-            who_variant = who_variant.capitalize()
+            if "_" in who_variant:
+                who_variant = who_variant[0:who_variant.find(
+                "_")].capitalize() + who_variant[who_variant.find(
+                "_"):]
+            else:
+                who_variant = who_variant.capitalize()
+            #print(who_variant)
             # get list of relevant pango lineages
-            if "." not in who_variant:
+            if "." not in who_variant and "_" not in who_variant:
                 pango_lineages = \
                     clades[clades['who_variant'] == who_variant][
                         'pango_lineage'].values[0].split(',')
+                print(pango_lineages)
             else:
                 pango_lineages = [who_variant]
 
-            # get list of gvf files pertaining to varia
+            #print(pango_lineages)
+
+            # get list of gvf files pertaining to variant
+            gvf_files = []
             gvf_files = match_gvfs_to_who_variant(
                 pango_lineage_list=pango_lineages,
                 gvf_files_list=gvf_list)
             print(str(len(gvf_files)) + " GVF files found for " +
                   who_variant + " variant.")
+            print(gvf_files)
+
 
             if len(gvf_files) > 0:
                 # convert all gvf files to tsv and concatenate them
                 print("Processing:")
-                print(gvf_files[0])
+                #print(gvf_files[0])
                 gvf_df = gvf2tsv(gvf=gvf_files[0])
                 if len(gvf_files) > 1:
                     for gvf in gvf_files[1:]:
-                        print(gvf)
+                        #print(gvf)
                         new_gvf_df = gvf2tsv(gvf=gvf)
                         gvf_df = pd.concat([gvf_df, new_gvf_df],
                                            ignore_index=True)
-            if args.table:
+
+
+                if args.table:
                     # get variant population size
-                variant_pop_size = find_variant_pop_size(table=args.table,
+                    variant_pop_size = find_variant_pop_size(table=args.table,
                                                              pango_lineage_list=
                                                              pango_lineages)
 
-            out_df = streamline_tsv(tsv_df=gvf_df)
-            filename = who_variant + '_' + outfile
-            out_df.to_csv(filename, sep='\t', index=False)
-            print("Processing complete.")
-            print(who_variant + " surveillance report saved as: " +
-                  filename)
-            print("")
+                out_df = streamline_tsv(tsv_df=gvf_df)
+                filename = who_variant + '_' + outfile
+                out_df.to_csv(filename, sep='\t', index=False)
+                print("Processing complete.")
+                print(who_variant + " surveillance report saved as: " +
+                      filename)
+                print("")
 
 
     # if user-provided, who_variant is the provided filename
     else:
         gvf_files = gvf_list
-        if ".qc" not in gvf_list[0]:
+        if "_qc" not in gvf_list[0]:
             who_variant = gvf_list[0].replace(
                 ".filtered.SNPEFF.annotated.gvf", "")
         else:
             who_variant = gvf_list[0].replace(
-                ".qc.sorted.variants.normalized.filtered.SNPEFF"
+                "_qc.sorted.variants.normalized.filtered.SNPEFF"
                 ".annotated.gvf", "")
 
         if args.table:
