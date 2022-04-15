@@ -179,10 +179,10 @@ def summarize_mutations(tsv, functions_dataframe):
     # adding if condition
     # if there are no commas
     # anywhere in the 'ao' column, calculate AF straight out
+    #if df['Alternate Allele Obs'][df['Alternate Allele Obs'].astype(
+    #        str).str.contains("n/a")].empty:
+    #    df['Alternate Frequency'] = np.nan
     if df['Alternate Allele Obs'][df['Alternate Allele Obs'].astype(
-            str).str.contains("n/a")].empty:
-        df['Alternate Frequency'] = np.nan
-    elif df['Alternate Allele Obs'][df['Alternate Allele Obs'].astype(
             str).str.contains(",")].empty:
         df['Alternate Frequency'] = round(
             df['Alternate Allele Obs'].astype(
@@ -394,7 +394,7 @@ def write_mutation_summary(df):
     tf = TableFormatter()
     tf.size = "scriptsize"
     if not args.user:
-        tf.table_spec = "{|p{1.2cm}|p{2.5cm}|p{3.3cm}|p{1.8cm}|p{1.8cm}|p{1.0cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|}"
+        tf.table_spec = "{|p{1.2cm}|p{2.5cm}|p{3.3cm}|p{1.8cm}|p{1.5cm}|p{1.0cm}|p{1.6cm}|p{1.3cm}|p{1.3cm}|}"
     else:
         tf.table_spec = "{|p{1.2cm}|p{2.5cm}|p{3.3cm}|p{1.8cm}|p{1.0cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|}"
 
