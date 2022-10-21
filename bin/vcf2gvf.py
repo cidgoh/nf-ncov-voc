@@ -164,6 +164,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     Names = hgvs[0].str[:-1]
     # fill in empty protein name spaces with nucleotide names ("c."...)
     Names[~Names.str.contains("p.")] = hgvs_nucleotide
+    
+    # take "p." off the protein names
+    Names = Names.str.replace("p.", "")
 
     new_df["Names"] = Names
 
