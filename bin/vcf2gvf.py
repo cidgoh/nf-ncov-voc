@@ -147,15 +147,15 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     # hgvs names
     hgvs = eff_info[3].str.rsplit(pat='c.').apply(pd.Series)
     hgvs_protein = hgvs[0].str[:-1]
-    hgvs_nucleotide = 'c.' + hgvs[1]
+    hgvs_nucleotide = 'g.' + hgvs[1] # change 'c.' to 'g.' for nucleotide names
 
     new_df['nt_name'] = hgvs_nucleotide
     new_df['aa_name'] = hgvs_protein
 
-    # change nucleotide names of the form "c.C*4378A" to c.C4378AN;
+    # change nucleotide names of the form "g.C*4378A" to g.C4378AN;
     # change vcf_gene to "intergenic" here
     asterisk_mask = hgvs_nucleotide.str.contains('\*')
-    hgvs_nucleotide[asterisk_mask] = 'c.' + df['REF'] + df['POS'] + \
+    hgvs_nucleotide[asterisk_mask] = 'g.' + df['REF'] + df['POS'] + \
                                      df['ALT']
     eff_info[5][asterisk_mask] = "intergenic"
 
