@@ -35,22 +35,30 @@ if __name__ == '__main__':
                            low_memory=False)
 
     for var in variants["pango_lineage"]:
-        print(var)
+        #print(var)
         if "," in var:
-            temp = var.split(",")
-            who_lineages.extend(temp)
+            #temp = var.split(",")
+            for temp in var.split(","):
+                if not "[" in var:
+                    who_lineages.append(temp)
+                else:
+                    parent=temp[0]
+                    child=temp[2:-3].split("|")
+                    for c in child:
+                        who_lineages.append(parent + str(c))
+                        who_lineages.append(parent+str(c)+".*")
         else:
             who_lineages.append(var)
 
+
     Metadata = pd.read_csv(args.metadata, sep="\t", low_memory=False)
-    lineages = Metadata['pango_lineage'].unique()
+    lineages = Metadata['lineage'].unique()
 
     parsed_lineages=[]
     for lineage in lineages:
         for who_lin in who_lineages:
             if "*" in who_lin:
                 who_lin = who_lin[:-1]
-
                 if isinstance(lineage, str) and lineage.startswith(
                         who_lin):
                     parsed_lineages.append(lineage)
