@@ -455,12 +455,31 @@ def add_functions(gvf, annotation_file, clade_file, strain):
 
     # find the relevant pango_lineage line in the clade file that
     # matches args.strain
+
     cladefile_strain = 'None'
-    available_strains = clades['pango_lineage'].tolist()
+    available_strains = []
+    for var in clades['pango_lineage'].tolist():
+        if "," in var:
+            for temp in var.split(","):
+                if not "[" in var:
+                    available_strains.append(temp)
+                else:
+                    parent=temp[0]
+                    child=temp[2:-3].split("|")
+                    for c in child:
+                        available_strains.append(parent + str(c))
+                        available_strains.append(parent+str(c)+".*")
+        else:
+            available_strains.append(var)
+
+
+    #print(available_strains)
+    #print(strain)
+    #print(args.strain)
     for strain in available_strains:
-        for pango_strain in strain.replace("*", "").split(','):
-            if args.strain.startswith(pango_strain):
-                cladefile_strain = strain
+        #for pango_strain in strain.replace("*", "").split(','):
+        if args.strain.startswith(pango_strain):
+            cladefile_strain = strain
 
     # if strain in available_strains:
     if cladefile_strain != 'None':
@@ -469,12 +488,13 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         clades = clades.replace(np.nan, '', regex=True)
 
         # extract status, WHO strain name, etc. from clades file
-        who_variant = clades['who_variant']
-        who_variant = clades.iloc[0]['who_variant']
-        status = clades.iloc[0]['status']
+        who_variant = clades['variant']
+        who_variant = clades.iloc[0]['variant']
+        variant_type = clades.iloc[0]['variant_type']
         voi_designation_date = clades.iloc[0]['voi_designation_date']
         voc_designation_date = clades.iloc[0]['voc_designation_date']
         vum_designation_date = clades.iloc[0]['vum_designation_date']
+        status = clades.iloc[0]['status']
 
         # get True/False/n/a designation for clade-defining status
         merged_df = clade_defining_threshold(args.clades_threshold,
@@ -482,20 +502,22 @@ def add_functions(gvf, annotation_file, clade_file, strain):
 
         # add remaining attributes from clades file
         merged_df["#attributes"] = merged_df["#attributes"].astype(
-            str) + "who_variant=" + who_variant + ';' + "status=" + \
-                                   status + ';' + "voi_designation_date=" + \
+            str) + "variant=" + who_variant + ';' + "variant_type=" + \
+                                   variant_type + ';' + "voi_designation_date=" + \
                                    voi_designation_date + ';' + \
                                    "voc_designation_date=" + \
                                    voc_designation_date + ';' + \
                                    "vum_designation_date=" + \
-                                   vum_designation_date + ';'
+                                   vum_designation_date + ';' + \
+                                   "status=" + status + ';'
     else:
         merged_df["#attributes"] = merged_df["#attributes"].astype(
             str) + "clade_defining=n/a;" + "who_variant=n/a;" + \
-                                   "status=n/a;" + \
+                                   "variant_type=n/a;" + \
                                    "voi_designation_date=n/a;" + \
                                    "voc_designation_date=n/a;" + \
-                                   "vum_designation_date=n/a;"
+                                   "vum_designation_date=n/a;" + \
+                                    "status=n/a;"
 
     # add ID to attributes
     merged_df["#attributes"] = 'ID=' + merged_df['id'].astype(
