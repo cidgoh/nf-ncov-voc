@@ -478,7 +478,7 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     #print(args.strain)
     for strain in available_strains:
         #for pango_strain in strain.replace("*", "").split(','):
-        if args.strain.startswith(pango_strain):
+        if args.strain.startswith(strain):
             cladefile_strain = strain
 
     # if strain in available_strains:
