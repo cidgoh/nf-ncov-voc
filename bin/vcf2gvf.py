@@ -164,7 +164,7 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     Names = hgvs[0].str[:-1]
     # fill in empty protein name spaces with nucleotide names ("c."...)
     Names[~Names.str.contains("p.")] = hgvs_nucleotide
-    
+
     # take "p." off the protein names
     Names = Names.str.replace("p.", "")
 
@@ -481,6 +481,7 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         if args.strain.startswith(strain):
             cladefile_strain = strain
 
+
     # if strain in available_strains:
     if cladefile_strain != 'None':
         # only look at the relevant part of that file
@@ -562,7 +563,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     with open(args.gene_positions) as fp:
-        GENE_POSITIONS_DICT = json.load(fp)
+        GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
     annotation_file = args.functional_annotations
     clade_file = args.clades
 
