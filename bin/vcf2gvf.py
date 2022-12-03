@@ -69,19 +69,10 @@ def map_pos_to_gene_protein(pos, aa_names, GENE_POSITIONS_DICT):
     # make a dataframe of the same length as
     # pos to put gene names in (+ other things)
     df = pos.astype(str).to_frame()
-    df["gene_names"] = df["POS"]
-    df['prot_gene'] = "n/a"  # 'gene' to match for protein in constellations
 
     # loop through genes dict to get gene names
+    df["gene_names"] = df["POS"]
     for gene in GENE_POSITIONS_DICT["genes"]:
-        # save the corresponding "gene" label from the protein dictionary
-        if gene.isalpha():
-            prot_gene = gene
-        if gene == "ORF1a" or gene == "ORF1b":
-            prot_gene = "1ab"
-        else:
-            prot_gene = gene.replace("ORF", "")
-
         # get nucleotide coordinates for this gene
         start = GENE_POSITIONS_DICT["genes"][gene]["coordinates"]["from"]
         end = GENE_POSITIONS_DICT["genes"][gene]["coordinates"]["to"]
@@ -92,32 +83,21 @@ def map_pos_to_gene_protein(pos, aa_names, GENE_POSITIONS_DICT):
             df["gene_names"][gene_mask] = gene + ",3\' UTR"
         else:
             df["gene_names"][gene_mask] = gene
-        # for all the mutations that are found in this region, note prot_gene
-        df["prot_gene"][gene_mask] = prot_gene
     # label all mutations that didn't belong to any gene as "intergenic"
     df["gene_names"][df["gene_names"].str.isnumeric()] = "intergenic"
 
-    # extract numeric parts from mutation names
-    df['aa_pos'] = aa_names.str.findall(r'\d+').str.join(',')
-    df["protein_names"] = "n/a"
-    df["aa_pos_2"] = df['aa_pos']
-    df["aa_pos_2"][df["prot_gene"] == "n/a"] = 0
-    # for name with multiple amino acids, only look at the first one
-    df["aa_pos_2"] = df["aa_pos_2"].str.split(",", expand=True)[0].fillna(0)
-
     # loop through proteins dict to get protein names
+    df["protein_names"] = df["POS"]
     for protein in GENE_POSITIONS_DICT["proteins"]:
-        aa_start = GENE_POSITIONS_DICT["proteins"][protein][
-            "coordinates"]["from"]
-        aa_end = GENE_POSITIONS_DICT["proteins"][protein]["coordinates"]["to"]
+        start = GENE_POSITIONS_DICT["proteins"][protein][
+            "g.coordinates"]["from"]
+        end = GENE_POSITIONS_DICT["proteins"][protein]["g.coordinates"]["to"]
         protein_name = GENE_POSITIONS_DICT["proteins"][protein]["name"]
-        gene_field = GENE_POSITIONS_DICT["proteins"][protein]["gene"]
-        # find all mutations that match the gene field and are within range
-        # get protein names
-        df["protein_names"][(df["prot_gene"] == gene_field)
-                            & (df['aa_pos_2'].astype(int).between(
-                                aa_start, aa_end, inclusive="both"))] \
-            = protein_name
+        # get protein names for all mutations that are within range
+        protein_mask = pos.astype(int).between(start, end, inclusive="both")
+        df["protein_names"][protein_mask] = protein_name
+    # label all mutations that didn't belong to any protein as "n/a"
+    df["protein_names"][df["protein_names"].str.isnumeric()] = "n/a"
 
     return(df["gene_names"], df["protein_names"])
 
