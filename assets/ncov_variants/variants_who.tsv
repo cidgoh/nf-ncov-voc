@@ -11,5 +11,5 @@ Iota	B.1.526	VOI	24-Mar-2021	n/a	n/a	de_escalated
 Kappa	B.1.617.1	VOI	04-Apr-2021	n/a	n/a	de_escalated
 Lambda	C.37,C.37.*	VOI	14-Jun-2021	n/a	n/a	de_escalated
 Mu	B.1.621,B.1.621.*,BB.2	VOI	30-Aug-2021	n/a	n/a	de_escalate
-Omicron	B[A|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z].*,C[A|B|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z].*,D[A|B|C|D|E|F|F|G|H|J].*	VOC	n/a	26-Nov-2021	24-Nov-2021	actively_circulating\
+Omicron	B[A|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z].*,C[A|B|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z].*,D[A|B|C|D|E|F|F|G|H|J].*	VOC	n/a	26-Nov-2021	24-Nov-2021	actively_circulating
 Recombinant	X*	n/a	n/a	n/a	n/a	n/a
