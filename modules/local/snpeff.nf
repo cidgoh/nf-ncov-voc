@@ -17,9 +17,8 @@ process SNPEFF {
       snpEff MN908947.3 -v \
       -formatEff \
       -hgvs1LetterAa \
+      -hgvs \
       -hgvsOld \
-      -noShiftHgvs \
-      -sequenceOntology \
       ${filtered_vcf} \
       > ${filtered_vcf.baseName}.SNPEFF.vcf
       """
