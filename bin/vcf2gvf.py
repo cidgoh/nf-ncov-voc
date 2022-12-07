@@ -55,28 +55,51 @@ def parse_args():
     return parser.parse_args()
 
 
-def map_pos_to_gene(pos, GENE_POSITIONS_DICT):
+def map_pos_to_gene_protein(pos, aa_names, GENE_POSITIONS_DICT):
     """This function is inspired/lifted from Ivan's code.
     Map a series of nucleotide positions to SARS-CoV-2 genes.
     See https://www.ncbi.nlm.nih.gov/nuccore/MN908947.
-    :param pos: Nucleotide position pandas series
-    :param GENE_POSITIONS_DICT: Dictionary of gene positions
+    :param pos: Nucleotide position pandas series from VCF
+    :param aa_names: aa_names pandas series
+    :param GENE_POSITIONS_DICT: Dictionary of gene positions from cov_lineages
     :type pos: int
-    :return: series containing SARS-CoV-2 chromosome region names at each nucleotide position in ``pos``
+    :return: series containing SARS-CoV-2 chromosome region names at each
+    nucleotide position in ``pos``
     """
-    # make a series of the same size as
-    # pos to put gene names in
-    gene_names = pos.astype(str)
-    for gene in GENE_POSITIONS_DICT:
-        start = GENE_POSITIONS_DICT[gene]["start"]
-        end = GENE_POSITIONS_DICT[gene]["end"]
-        gene_mask = pos.between(start, end, inclusive=True)
-        if gene == "Stem-loop":
-            gene_names[gene_mask] = gene + ",3\' UTR"
+    # make a dataframe of the same length as
+    # pos to put gene names in (+ other things)
+    df = pos.astype(str).to_frame()
+
+    # loop through genes dict to get gene names
+    df["gene_names"] = df["POS"]
+    for gene in GENE_POSITIONS_DICT["genes"]:
+        # get nucleotide coordinates for this gene
+        start = GENE_POSITIONS_DICT["genes"][gene]["coordinates"]["from"]
+        end = GENE_POSITIONS_DICT["genes"][gene]["coordinates"]["to"]
+        # for all the mutations that are found in this region,
+        # assign this gene name
+        gene_mask = pos.astype(int).between(start, end, inclusive="both")
+        if gene == "Stem-loop":  # no stem_loop entry in SARS-CoV-2.json
+            df["gene_names"][gene_mask] = gene + ",3\' UTR"
         else:
-            gene_names[gene_mask] = gene
-    gene_names[gene_names.str.isnumeric()] = "intergenic"
-    return gene_names
+            df["gene_names"][gene_mask] = gene
+    # label all mutations that didn't belong to any gene as "intergenic"
+    df["gene_names"][df["gene_names"].str.isnumeric()] = "intergenic"
+
+    # loop through proteins dict to get protein names
+    df["protein_names"] = df["POS"]
+    for protein in GENE_POSITIONS_DICT["proteins"]:
+        start = GENE_POSITIONS_DICT["proteins"][protein][
+            "g.coordinates"]["from"]
+        end = GENE_POSITIONS_DICT["proteins"][protein]["g.coordinates"]["to"]
+        protein_name = GENE_POSITIONS_DICT["proteins"][protein]["name"]
+        # get protein names for all mutations that are within range
+        protein_mask = pos.astype(int).between(start, end, inclusive="both")
+        df["protein_names"][protein_mask] = protein_name
+    # label all mutations that didn't belong to any protein as "n/a"
+    df["protein_names"][df["protein_names"].str.isnumeric()] = "n/a"
+
+    return(df["gene_names"], df["protein_names"])
 
 
 def clade_defining_threshold(threshold, df):
@@ -164,9 +187,9 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     Names = hgvs[0].str[:-1]
     # fill in empty protein name spaces with nucleotide names ("c."...)
     Names[~Names.str.contains("p.")] = hgvs_nucleotide
-    
+
     # take "p." off the protein names
-    Names = Names.str.replace("p.", "")
+    Names = Names.str.replace("p.", "", regex=True)
 
     new_df["Names"] = Names
 
@@ -176,9 +199,12 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     new_df["multi_name"] = ''
     new_df["multiaa_comb_mutation"] = ''
 
-    # gene names including IGRs/UTRs
-    new_df['#attributes'] = 'chrom_region=' + map_pos_to_gene(
-        df['POS'].astype(int), GENE_POSITIONS_DICT) + ';'
+    # gene and protein name extraction
+    gene_names, protein_names = map_pos_to_gene_protein(
+        df['POS'].astype(int), new_df['aa_name'], GENE_POSITIONS_DICT)
+    new_df['#attributes'] = 'chrom_region=' + gene_names + ';'
+    new_df['#attributes'] = new_df['#attributes'] + 'protein=' + \
+        protein_names + ';'
 
     # make 'INFO' column easier to extract attributes from
     # split at ;, form dataframe
@@ -203,19 +229,19 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
         # drop nans if they exist
         info[column] = info[column].fillna('')
         new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                                column + '=' + info[column].astype(
-            str) + ';'
+            column + '=' + info[column].astype(str) + ';'
 
     # add ro, ao, dp
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
 
-    if not strain == 'n/a' and not args.size_stats is None:
+    if not strain == 'n/a' and args.size_stats is not None:
         sample_size = find_sample_size(table=args.size_stats,
                                        lineage=args.strain)
-    elif not args.size_stats is None:
+    elif args.size_stats is not None:
         sample_size = find_sample_size(table=args.size_stats,
                                        lineage=args.vcffile.replace(
-                                           ".qc.sorted.variants.normalized.filtered.SNPEFF.annotated.vcf",
+                                           ".qc.sorted.variants.normalized. \
+                                               filtered.SNPEFF.annotated.vcf",
                                            ""))
     else:
         sample_size = "n/a"
@@ -452,49 +478,53 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     # get clade_defining status, and then info from clades file
     # load clade-defining mutations file
     clades = pd.read_csv(clade_file, sep='\t', header=0)
+    clades = clades.replace(np.nan, '', regex=True)
 
     # find the relevant pango_lineage line in the clade file that
-    # matches args.strain
+    # matches args.strain (call this line "var_to_match")
 
     cladefile_strain = 'None'
     available_strains = []
     for var in clades['pango_lineage'].tolist():
         if "," in var:
             for temp in var.split(","):
-                if not "[" in var:
+                if "[" not in var:
                     available_strains.append(temp)
+                    if strain.startswith(temp):
+                        var_to_match = var
                 else:
-                    parent=temp[0]
-                    child=temp[2:-3].split("|")
+                    parent = temp[0]
+                    child = temp[2:-3].split("|")
                     for c in child:
                         available_strains.append(parent + str(c))
-                        available_strains.append(parent+str(c)+".*")
+                        available_strains.append(parent + str(c) + ".*")
+                        if strain.startswith(parent + str(c)):
+                            var_to_match = var
         else:
             available_strains.append(var)
+            if strain.startswith(var):
+                var_to_match = var
+                
+    #print("var_to_match", var_to_match)
 
 
-    #print(available_strains)
-    #print(strain)
-    #print(args.strain)
     for strain in available_strains:
         #for pango_strain in strain.replace("*", "").split(','):
-        if args.strain.startswith(strain):
+        if args.strain.startswith(strain): # this will ignore asterisks: "BQ.1.1" returns "BQ" not "BQ.*" as the cladefile_strain
             cladefile_strain = strain
+            #print("cladefile_strain", cladefile_strain)
 
     # if strain in available_strains:
     if cladefile_strain != 'None':
-        # only look at the relevant part of that file
-        clades = clades.loc[clades.pango_lineage == cladefile_strain]
-        clades = clades.replace(np.nan, '', regex=True)
-
+        # find the index of the relevant row
+        var_index = clades.index[clades['pango_lineage'] == var_to_match].tolist()[0]
         # extract status, WHO strain name, etc. from clades file
-        who_variant = clades['variant']
-        who_variant = clades.iloc[0]['variant']
-        variant_type = clades.iloc[0]['variant_type']
-        voi_designation_date = clades.iloc[0]['voi_designation_date']
-        voc_designation_date = clades.iloc[0]['voc_designation_date']
-        vum_designation_date = clades.iloc[0]['vum_designation_date']
-        status = clades.iloc[0]['status']
+        who_variant = clades.loc[var_index, 'variant']
+        variant_type = clades.loc[var_index, 'variant_type']
+        voi_designation_date = clades.loc[var_index, 'voi_designation_date']
+        voc_designation_date = clades.loc[var_index, 'voc_designation_date']
+        vum_designation_date = clades.loc[var_index, 'vum_designation_date']
+        status = clades.loc[var_index, 'status']
 
         # get True/False/n/a designation for clade-defining status
         merged_df = clade_defining_threshold(args.clades_threshold,
@@ -562,7 +592,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     with open(args.gene_positions) as fp:
-        GENE_POSITIONS_DICT = json.load(fp)
+        GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
     annotation_file = args.functional_annotations
     clade_file = args.clades
 
