@@ -513,7 +513,6 @@ def add_functions(gvf, annotation_file, clade_file, strain):
             cladefile_strain = strain
             #print("cladefile_strain", cladefile_strain)
 
-    
     # if strain in available_strains:
     if cladefile_strain != 'None':
         # find the index of the relevant row
@@ -592,7 +591,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     with open(args.gene_positions) as fp:
-        GENE_POSITIONS_DICT = json.load(fp)
+        GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
     annotation_file = args.functional_annotations
     clade_file = args.clades
 
