@@ -170,6 +170,7 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
     # hgvs names
     hgvs = eff_info[3].str.rsplit(pat='c.').apply(pd.Series)
     hgvs_protein = hgvs[0].str[:-1]
+
     hgvs_nucleotide = 'g.' + hgvs[1] # change 'c.' to 'g.' for nucleotide names
 
     new_df['nt_name'] = hgvs_nucleotide
@@ -372,13 +373,10 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
 
 def add_functions(gvf, annotation_file, clade_file, strain):
     attributes = gvf["#attributes"].str.split(pat=';').apply(pd.Series)
+
     # remember this includes nucleotide names where there are no
     # protein names
-    hgvs_protein = attributes[0].str.split(pat='=').apply(pd.Series)[1]
-    hgvs_nucleotide = attributes[1].str.split(pat='=').apply(pd.Series)[
-        1]
-    # drop the prefix
-    gvf["mutation"] = hgvs_protein.str[2:]
+    gvf["mutation"] = attributes[0].str.split(pat='=').apply(pd.Series)[1]
 
     # merge annotated vcf and functional annotation files by
     # 'mutation' column in the gvf
@@ -390,6 +388,7 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         # add functional annotations
     merged_df = pd.merge(df, gvf, on=['mutation'], how='right')
 
+    print(merged_df)
     # collect all mutation groups (including reference mutation) in a
     # column, sorted alphabetically
     # this is more roundabout than it needs to be; streamline with
@@ -474,7 +473,7 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         merged_df[column] = merged_df[column].fillna('')
         merged_df["#attributes"] = merged_df["#attributes"].astype(
             str) + key + '=' + merged_df[column].astype(str) + ';'
-
+    
     # get clade_defining status, and then info from clades file
     # load clade-defining mutations file
     clades = pd.read_csv(clade_file, sep='\t', header=0)
