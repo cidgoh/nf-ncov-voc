@@ -55,13 +55,13 @@ def parse_args():
     return parser.parse_args()
 
 
-def map_pos_to_gene_protein(pos, aa_names, GENE_POSITIONS_DICT):
+def map_pos_to_gene_protein(pos, aa_names, GENE_PROTEIN_POSITIONS_DICT):
     """This function is inspired/lifted from Ivan's code.
     Map a series of nucleotide positions to SARS-CoV-2 genes.
     See https://www.ncbi.nlm.nih.gov/nuccore/MN908947.
     :param pos: Nucleotide position pandas series from VCF
     :param aa_names: aa_names pandas series
-    :param GENE_POSITIONS_DICT: Dictionary of gene positions from cov_lineages
+    :param GENE_PROTEIN_POSITIONS_DICT: Dictionary of gene positions from cov_lineages
     :type pos: int
     :return: series containing SARS-CoV-2 chromosome region names at each
     nucleotide position in ``pos``
@@ -72,10 +72,10 @@ def map_pos_to_gene_protein(pos, aa_names, GENE_POSITIONS_DICT):
 
     # loop through genes dict to get gene names
     df["gene_names"] = df["POS"]
-    for gene in GENE_POSITIONS_DICT["genes"]:
+    for gene in GENE_PROTEIN_POSITIONS_DICT["genes"]:
         # get nucleotide coordinates for this gene
-        start = GENE_POSITIONS_DICT["genes"][gene]["coordinates"]["from"]
-        end = GENE_POSITIONS_DICT["genes"][gene]["coordinates"]["to"]
+        start = GENE_PROTEIN_POSITIONS_DICT["genes"][gene]["coordinates"]["from"]
+        end = GENE_PROTEIN_POSITIONS_DICT["genes"][gene]["coordinates"]["to"]
         # for all the mutations that are found in this region,
         # assign this gene name
         gene_mask = pos.astype(int).between(start, end, inclusive="both")
@@ -88,11 +88,11 @@ def map_pos_to_gene_protein(pos, aa_names, GENE_POSITIONS_DICT):
 
     # loop through proteins dict to get protein names
     df["protein_names"] = df["POS"]
-    for protein in GENE_POSITIONS_DICT["proteins"]:
-        start = GENE_POSITIONS_DICT["proteins"][protein][
+    for protein in GENE_PROTEIN_POSITIONS_DICT["proteins"]:
+        start = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein][
             "g.coordinates"]["from"]
-        end = GENE_POSITIONS_DICT["proteins"][protein]["g.coordinates"]["to"]
-        protein_name = GENE_POSITIONS_DICT["proteins"][protein]["name"]
+        end = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["g.coordinates"]["to"]
+        protein_name = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["name"]
         # get protein names for all mutations that are within range
         protein_mask = pos.astype(int).between(start, end, inclusive="both")
         df["protein_names"][protein_mask] = protein_name
@@ -133,7 +133,7 @@ vcf_colnames = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL',
                 'FILTER', 'INFO', 'FORMAT', 'unknown']
 
 
-def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
+def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split):
     df = pd.read_csv(var_data, sep='\t', names=vcf_colnames)
     # remove pragmas
     df = df[~df['#CHROM'].str.contains("#")]
@@ -202,7 +202,7 @@ def vcftogvf(var_data, strain, GENE_POSITIONS_DICT, names_to_split):
 
     # gene and protein name extraction
     gene_names, protein_names = map_pos_to_gene_protein(
-        df['POS'].astype(int), new_df['aa_name'], GENE_POSITIONS_DICT)
+        df['POS'].astype(int), new_df['aa_name'], GENE_PROTEIN_POSITIONS_DICT)
     new_df['#attributes'] = 'chrom_region=' + gene_names + ';'
     new_df['#attributes'] = new_df['#attributes'] + 'protein=' + \
         protein_names + ';'
@@ -611,7 +611,7 @@ if __name__ == '__main__':
     print("Processing: " + file)
 
     # create gvf from annotated vcf (ignoring pragmas for now)
-    gvf = vcftogvf(file, args.strain, GENE_POSITIONS_DICT,
+    gvf = vcftogvf(file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
                    args.names_to_split)
     # add functional annotations
     if args.names:
