@@ -111,64 +111,44 @@ workflow {
 
       if (params.mode == 'user' && params.userfile){
         input_file = file(params.userfile)
-          if (input_file.getExtension() == "fasta" || input_file.getExtension() == "fa"){
+        if (input_file.getExtension() == "fasta" || input_file.getExtension() == "fa"){
+          Channel.fromPath( "$params.userfile", checkIfExists: true)
+            .set{ ch_seq }
+
+          ch_metadata=Channel.empty()
+          ch_voc=Channel.empty()
+
+          variant_calling(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai)
+          ch_stats=variant_calling.out.ch_stats
+          ch_vcf=variant_calling.out.ch_vcf
+
+          annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
+          ch_gvf_surveillance=annotation.out.ch_gvf_surv
+
+          surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
+
+        }
+
+        if (input_file.getExtension() == "vcf" || input_file.getExtension() == "tsv"){
+          if(input_file.getExtension() == "vcf"){
             Channel.fromPath( "$params.userfile", checkIfExists: true)
-              .set{ ch_seq }
-              if (!params.skip_preprocessing) {
-                ch_metadata=Channel.empty()
-
-                preprocessing(ch_metadata, ch_seq, ch_variant)
-              }
-
-              if (!params.skip_variantcalling) {
-                  ch_metadata=Channel.empty()
-                  ch_voc=Channel.empty()
-
-                  variant_calling(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai)
-
-                  ch_vcf=variant_calling.out.ch_vcf
-                  ch_stats=variant_calling.out.ch_stats
-              }
-              if (!params.skip_annotation) {
-                ch_variant=preprocessing.out.ch_variant
-
-                annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
-
-                ch_gvf_surveillance=annotation.out.ch_gvf_surv
-                ch_variant=annotation.out.ch_variant
-                ch_stats=annotation.out.ch_stats
-
-              }
-              if (!params.skip_surveillance) {
-                ch_metadata=ch_refgff
-                surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
-              }
-
-          }
-
-          if (input_file.getExtension() == "vcf" || input_file.getExtension() == "tsv"){
-            if(input_file.getExtension() == "vcf"){
-              Channel.fromPath( "$params.userfile", checkIfExists: true)
-                .set{ ch_vcf }
+              .set{ ch_vcf }
             }
             //else if (input_file.getExtension() == "tsv"){
               //add module to change tsv to vcf
             //  Channel.fromPath( "$params.userfile", checkIfExists: true)
             //    .set{ ch_vcf }
             //}
-            if (!params.skip_annotation) {
 
-              ch_stats=ch_refgff
-              annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
-              ch_gvf_surveillance=annotation.out.ch_gvf_surv
-              ch_stats=annotation.out.ch_stats
-            }
-            if (!params.skip_surveillance) {
-              ch_metadata=ch_refgff
-              surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
-            }
-          }
+          ch_stats=ch_refgff
+          annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
+          ch_gvf_surveillance=annotation.out.ch_gvf_surv
+          ch_stats=annotation.out.ch_stats       
+          ch_metadata=ch_refgff
+          surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
+            
         }
+      }
 
       if(params.mode == 'reference'){
 
