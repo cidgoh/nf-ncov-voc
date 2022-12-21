@@ -228,16 +228,16 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # add ro, ao, dp
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
 
-    if sample_size == 1:
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + \
+    #if sample_size == 1:
+    #    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
                                 'ro=n/a;ao=n/a;dp=1;'
-    else:
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                                'ro=' + unknown[3].astype(str) + ';'
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                                'ao=' + unknown[5].astype(str) + ';'
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                                'dp=' + info['dp'].astype(str) + ';'
+    #else:
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
+                            'ro=' + unknown[3].astype(str) + ';'
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
+                            'ao=' + unknown[5].astype(str) + ';'
+    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
+                            'dp=' + info['dp'].astype(str) + ';'
 
     # add sample_size attribute
     # print(sample_size)
