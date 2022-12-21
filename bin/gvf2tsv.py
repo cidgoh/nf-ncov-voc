@@ -28,9 +28,9 @@ def parse_args():
                         help='Filepath for finished .tsv')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--specify_variants', type=str, default=None,
-                       nargs='*', help='Name(s) of WHO variant to '
+                       nargs='*', help='Name(s) of WHO variant(s) to '
                                        'make report for. Not '
-                                       'case-sensitive.')
+                                       'case-sensitive.  Space separated.')
     group.add_argument('--all_variants', action="store_true",
                        help='Create reports for all variants, '
                             'using all available reference lineage '
@@ -284,7 +284,7 @@ def streamline_tsv(tsv_df):
                                       final_df['variant_seq_all'])]
 
     # remove 'who_variant'; rename 'multiaa_comb_mutation'
-    final_df = final_df.drop(labels=['who_variant'], axis=1)
+    final_df = final_df.drop(labels=['variant'], axis=1)
     # add variant_pop_size
     final_df['variant_pop_size'] = variant_pop_size
 
@@ -376,7 +376,7 @@ if __name__ == '__main__':
         clade_file = args.clades
         # read in WHO variant/PANGO lineage .tsv
         clades = pd.read_csv(clade_file, sep='\t', header=0, usecols=[
-            'who_variant', 'pango_lineage'])
+            'variant', 'pango_lineage'])
 
         # get lowercase WHO variant names
         who_variants_list = []
@@ -387,15 +387,14 @@ if __name__ == '__main__':
             # column, in case of Variant under monitoring, lineage will
             # be added as the variant name to avoid several lineages
             # being combined as one variant
-            for i in range(0, len(clades['who_variant'])):
-                if clades.loc[i, 'who_variant'] == "Unnamed":
+            for i in range(0, len(clades['variant'])):
+                if clades.loc[i, 'variant'] == "Unnamed":
                     who_variants_list.append(clades.loc[i,
                                                         'pango_lineage'])
 
                 else:
                     who_variants_list.append(clades.loc[i,
-                                                        'who_variant'])
-            #print(who_variants_list)
+                                                        'variant'])
 
         # for each variant, create a surveillance report
         for who_variant in who_variants_list:
@@ -405,15 +404,22 @@ if __name__ == '__main__':
                 "_"):]
             else:
                 who_variant = who_variant.capitalize()
-            #print(who_variant)
+            
             # get list of relevant pango lineages
-            if "." not in who_variant and "_" not in who_variant:
-                pango_lineages = \
-                    clades[clades['who_variant'] == who_variant][
-                        'pango_lineage'].values[0].split(',')
-                print(pango_lineages)
-            else:
-                pango_lineages = [who_variant]
+            pango_lineages = []
+            for var in clades[clades['variant']==who_variant]['pango_lineage'].tolist():
+                if "," in var:
+                    for temp in var.split(","):
+                        if "[" not in var:
+                            pango_lineages.append(temp)
+                        else:
+                            parent = temp[0]
+                            child = temp[2:-3].split("|")
+                            for c in child:
+                                pango_lineages.append(parent + str(c))
+                                pango_lineages.append(parent + str(c) + ".*")
+                else:
+                    pango_lineages.append(var)
 
             #print(pango_lineages)
 
@@ -424,17 +430,17 @@ if __name__ == '__main__':
                 gvf_files_list=gvf_list)
             print(str(len(gvf_files)) + " GVF files found for " +
                   who_variant + " variant.")
-            print(gvf_files)
 
 
             if len(gvf_files) > 0:
                 # convert all gvf files to tsv and concatenate them
+                print("")
                 print("Processing:")
-                #print(gvf_files[0])
+                print(gvf_files[0])
                 gvf_df = gvf2tsv(gvf=gvf_files[0])
                 if len(gvf_files) > 1:
                     for gvf in gvf_files[1:]:
-                        #print(gvf)
+                        print(gvf)
                         new_gvf_df = gvf2tsv(gvf=gvf)
                         gvf_df = pd.concat([gvf_df, new_gvf_df],
                                            ignore_index=True)

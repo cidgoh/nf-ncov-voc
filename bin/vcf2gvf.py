@@ -26,7 +26,7 @@ def parse_args():
     parser.add_argument('--functional_annotations', type=str,
                         default=None, help='TSV file of functional '
                                            'annotations')
-    parser.add_argument('--size_stats', type=str, default=None,
+    parser.add_argument('--size_stats', type=str, default='n/a',
                         help='Statistics file for for size extraction')
     parser.add_argument('--clades', type=str, default=None,
                         help='TSV file of WHO strain names and '
@@ -44,7 +44,7 @@ def parse_args():
                              'split up into individual aa names')
     parser.add_argument('--strain', type=str,
                         default='n/a',
-                        help='lineage')
+                        help='Lineage; user mode is if strain="n/a"')
     parser.add_argument('--outvcf', type=str,
                         help='Filename for the output GVF file')
     parser.add_argument("--names", help="Save mutation names without "
@@ -102,17 +102,10 @@ def map_pos_to_gene_protein(pos, aa_names, GENE_PROTEIN_POSITIONS_DICT):
     return(df["gene_names"], df["protein_names"])
 
 
-def clade_defining_threshold(threshold, df):
+def clade_defining_threshold(threshold, df, sample_size):
     """Specifies the clade_defining attribute as True if AF >
     threshold, False if AF <= threshold, and n/a if the VCF is for a
     single genome """
-    if not args.strain == 'n/a':
-        sample_size = find_sample_size(table=args.size_stats,
-                                       lineage=args.strain)
-    else:
-        sample_size = find_sample_size(table=args.size_stats,
-                                       lineage=args.vcffile.replace(
-                                           "vcf", "fasta"))
 
     if sample_size == 1:
         df["#attributes"] = df["#attributes"].astype(str) + \
@@ -133,7 +126,7 @@ vcf_colnames = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL',
                 'FILTER', 'INFO', 'FORMAT', 'unknown']
 
 
-def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split):
+def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, sample_size):
     df = pd.read_csv(var_data, sep='\t', names=vcf_colnames)
     # remove pragmas
     df = df[~df['#CHROM'].str.contains("#")]
@@ -234,18 +227,6 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split):
 
     # add ro, ao, dp
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
-
-    if not strain == 'n/a' and args.size_stats is not None:
-        sample_size = find_sample_size(table=args.size_stats,
-                                       lineage=args.strain)
-    elif args.size_stats is not None:
-        sample_size = find_sample_size(table=args.size_stats,
-                                       lineage=args.vcffile.replace(
-                                           ".qc.sorted.variants.normalized. \
-                                               filtered.SNPEFF.annotated.vcf",
-                                           ""))
-    else:
-        sample_size = "n/a"
 
     if sample_size == 1:
         new_df['#attributes'] = new_df['#attributes'].astype(str) + \
@@ -527,7 +508,7 @@ def add_functions(gvf, annotation_file, clade_file, strain):
 
         # get True/False/n/a designation for clade-defining status
         merged_df = clade_defining_threshold(args.clades_threshold,
-                                             merged_df)
+                                             merged_df, sample_size)
 
         # add remaining attributes from clades file
         merged_df["#attributes"] = merged_df["#attributes"].astype(
@@ -578,13 +559,31 @@ def add_functions(gvf, annotation_file, clade_file, strain):
 
 
 def find_sample_size(table, lineage):
-    strain_tsv_df = pd.read_csv(table, delim_whitespace=True,
-                                usecols=['file', 'num_seqs'])
-    # print(lineage)
-    num_seqs = strain_tsv_df[strain_tsv_df['file'] ==
-                             lineage + ".qc.fasta"]['num_seqs'].values
 
-    return num_seqs[0]
+    if table != 'n/a':
+        strain_tsv_df = pd.read_csv(table, delim_whitespace=True,
+                                    usecols=['file', 'num_seqs'])
+
+        # not user mode
+        if lineage != 'n/a':
+            num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
+                lineage + ".qc.")]['num_seqs'].values
+            sample_size = num_seqs[0]
+
+        # user-uploaded vcf
+        else:
+            filename_to_match = args.vcffile.split(".sorted")[0] \
+                # looks like "strain.qc"
+            num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
+                filename_to_match)]['num_seqs'].values
+            sample_size = num_seqs[0]
+
+    # user-uploaded fasta
+    elif table == 'n/a' and lineage == 'n/a':
+        sample_size = 'n/a'
+
+    return sample_size
+
 
 
 if __name__ == '__main__':
@@ -607,12 +606,12 @@ if __name__ == '__main__':
                                 '##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])  # pragmas are in column 0
 
     file = args.vcffile
-
+    sample_size = find_sample_size(args.size_stats, args.strain)
     print("Processing: " + file)
 
     # create gvf from annotated vcf (ignoring pragmas for now)
     gvf = vcftogvf(file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
-                   args.names_to_split)
+                   args.names_to_split, sample_size)
     # add functional annotations
     if args.names:
         '''
