@@ -416,10 +416,10 @@ if __name__ == '__main__':
         metadata = args.metadata
         metadata_df = pd.read_csv(metadata, sep="\t", low_memory=False,
                                   parse_dates=[
-                                      'sample collection date'])
+                                      'sample_collection_date'])
 
-        metadata_df['sample collection date'] = pd.to_datetime(
-            metadata_df['sample collection date'], format='%Y-%m-%d',
+        metadata_df['sample_collection_date'] = pd.to_datetime(
+            metadata_df['sample_collection_date'], format='%Y-%m-%d',
             errors='coerce')
         lineages = []
         for lineage in tsv_df['viral_lineages']:
@@ -449,10 +449,8 @@ if __name__ == '__main__':
             % (
                 datetime.today().strftime('%Y-%m-%d'),
                 len(metadata_df.index),
-                pd.to_datetime(metadata_df['sample collection '
-                                           'date'].min()).date(),
-                pd.to_datetime(metadata_df['sample collection '
-                                           'date'].max()).date()))
+                pd.to_datetime(metadata_df['sample_collection_date'].min()).date(),
+                pd.to_datetime(metadata_df['sample_collection_date'].max()).date()))
 
         print(r"\section*{Pango Lineages}")
         print(r"{Pango Lineages in this report }%s "
