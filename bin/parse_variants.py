@@ -67,5 +67,5 @@ if __name__ == '__main__':
                     parsed_lineages.append(lineage)
 
     with open(args.outfile, 'w') as f:
-        for item in sorted(parsed_lineages):
+        for item in sorted(unique(parsed_lineages)):
             f.write("%s\n" % item)
