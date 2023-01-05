@@ -13,6 +13,7 @@ dataset for extracting metadata.
 import argparse
 import pandas as pd
 import csv
+from functions import *
 
 
 def parse_args():
@@ -30,42 +31,26 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    who_lineages = []
     variants = pd.read_csv(args.variants, sep="\t",
                            low_memory=False)
 
-    for var in variants["pango_lineage"]:
-        #print(var)
-        if "," in var:
-            #temp = var.split(",")
-            for temp in var.split(","):
-                if not "[" in var:
-                    who_lineages.append(temp)
-                else:
-                    parent=temp[0]
-                    child=temp[2:-3].split("|")
-                    for c in child:
-                        who_lineages.append(parent + str(c))
-                        who_lineages.append(parent+str(c)+".*")
-        else:
-            who_lineages.append(var)
-
-
+    lineages = parse_variant_file(dataframe = variants)
+    
     Metadata = pd.read_csv(args.metadata, sep="\t", low_memory=False)
-    lineages = Metadata['lineage'].unique()
+    metadata_lineages = Metadata['lineage'].unique()
 
     parsed_lineages=[]
-    for lineage in lineages:
-        for who_lin in who_lineages:
+    for metadata_lineage in metadata_lineages:
+        for who_lin in lineages:
             if "*" in who_lin:
                 who_lin = who_lin[:-1]
-                if isinstance(lineage, str) and lineage.startswith(
-                        who_lin):
-                    parsed_lineages.append(lineage)
+                if isinstance(metadata_lineage, str) and metadata_lineage.startswith(who_lin):
+                    parsed_lineages.append(metadata_lineage)
             else:
-                if lineage == who_lin:
-                    parsed_lineages.append(lineage)
+                if metadata_lineage == who_lin:
+                    parsed_lineages.append(metadata_lineage)
 
     with open(args.outfile, 'w') as f:
         for item in sorted(set(parsed_lineages)):
             f.write("%s\n" % item)
+
