@@ -5,10 +5,10 @@ process PANGOLIN {
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.csv", mode: 'copy'
 
 
-    conda (params.enable_conda ? 'bioconda::pangolin=4.0.5' : null)
+    conda (params.enable_conda ? 'bioconda::pangolin=4.1.3' : null)
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pangolin%3A4.0.5--pyhdfd78af_0' :
-        'quay.io/biocontainers/pangolin:4.0.5--pyhdfd78af_0' }"
+        'https://depot.galaxyproject.org/singularity/pangolin%3A4.1.3--pyhdfd78af_0' :
+        'quay.io/biocontainers/pangolin:4.1.3--pyhdfd78af_0' }"
 
     input:
     path(fasta)
