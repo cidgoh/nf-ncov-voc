@@ -115,7 +115,7 @@
 			"name": "NSP11",
 			"gene": "1ab",
 			"coordinates": {"from":4392, "to":4392},
-			"g.coordinates": {"from":1, "to":180}
+			"g.coordinates": {"from":13442, "to":13442}
 		},
 		"NSP12": {
 			"name": "NSP12",
