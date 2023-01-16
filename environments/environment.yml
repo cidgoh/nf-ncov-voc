@@ -21,4 +21,4 @@ dependencies:
   - pysam=0.16.0
   - seqkit=0.16.0
   - snpeff=5.1
-  - tectonic=0.8.0
+  - tectonic=0.12.0
