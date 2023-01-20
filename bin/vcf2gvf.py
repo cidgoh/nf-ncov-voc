@@ -15,44 +15,9 @@ import argparse
 import pandas as pd
 import numpy as np
 import json
+from functions import parse_INFO, find_sample_size
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description='Converts a annotated VCF file to a GVF '
-                    'file with functional annotation')
-    parser.add_argument('--vcffile', type=str, default=None,
-                        help='Path to a snpEFF-annotated VCF file')
-    parser.add_argument('--functional_annotations', type=str,
-                        default=None, help='TSV file of functional '
-                                           'annotations')
-    parser.add_argument('--size_stats', type=str, default='n/a',
-                        help='Statistics file for for size extraction')
-    parser.add_argument('--clades', type=str, default=None,
-                        help='TSV file of WHO strain names and '
-                             'VOC/VOI status')
-    parser.add_argument('--clades_threshold', type=float,
-                        default=0.75,
-                        help='Alternate frequency cutoff for '
-                             'clade-defining mutations')
-    parser.add_argument('--gene_positions', type=str,
-                        default=None,
-                        help='gene positions in JSON format')
-    parser.add_argument('--names_to_split', type=str,
-                        default=None,
-                        help='.tsv of multi-aa mutation names to '
-                             'split up into individual aa names')
-    parser.add_argument('--strain', type=str,
-                        default='n/a',
-                        help='Lineage; user mode is if strain="n/a"')
-    parser.add_argument('--outvcf', type=str,
-                        help='Filename for the output GVF file')
-    parser.add_argument("--names", help="Save mutation names without "
-                                        "functional annotations to "
-                                        "TSV files for "
-                                        "troubleshooting purposes",
-                        action="store_true")
-    return parser.parse_args()
 
 
 def map_pos_to_gene_protein(pos, aa_names, GENE_PROTEIN_POSITIONS_DICT):
@@ -133,65 +98,42 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # restart index from 0
     df = df.reset_index(drop=True)
 
+    print(df.columns)
     new_df = pd.DataFrame(index=range(0, len(df)), columns=gvf_columns)
 
     # fill in first 7 GVF columns, excluding 'type'
     new_df['#seqid'] = df['#CHROM']
     new_df['#source'] = '.'
     new_df['#start'] = df['POS']
-    # this needs fixing
+    ### this needs fixing.. Checking if not required, we can delete this column. Or secify this doesnt clarify for ins/dels
     new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() -
                       1).astype(str)
     new_df['#score'] = '.'
     new_df['#strand'] = '+'
     new_df['#phase'] = '.'
 
-    # parse INFO column
-    # sort out problematic sites tag formats
-    df['INFO'] = df['INFO'].str.replace('ps_filter;', 'ps_filter=;')
-    df['INFO'] = df['INFO'].str.replace('ps_exc;', 'ps_exc=;')
-    df['INFO'] = df['INFO'].str.replace('=n/a', '')
+    info = parse_INFO(df)
+ 
+    new_df["Names"] = info["Names"]
+    new_df['nt_name'] = info["hgvs_nucleotide"]
+    new_df['aa_name'] = info["hgvs_protein"]
+    new_df['vcf_gene'] = info["vcf_gene"]
+    new_df['mutation_type'] = info['mutation_type']
 
-    # parse EFF entry in INFO
-    # series: extract everything between parentheses as elements of a
-    # list
-    eff_info = df['INFO'].str.findall('\((.*?)\)')
-    # take first element of list
-    eff_info = eff_info.apply(pd.Series)[0]
-    # split at pipe, form dataframe
-    eff_info = eff_info.str.split(pat='|').apply(pd.Series)
-    # hgvs names
-    hgvs = eff_info[3].str.rsplit(pat='c.').apply(pd.Series)
-    hgvs_protein = hgvs[0].str[:-1]
+    # fill in 'type' column
+    new_df['#type'] = info['type']
 
-    hgvs_nucleotide = 'g.' + hgvs[1] # change 'c.' to 'g.' for nucleotide names
+    # add 'INFO' attributes by name
+    ### If the column attribute exists then parse and add. 
+    info_cols_to_add = ['ps_filter', 'ps_exc', 'mat_pep_id',
+                   'mat_pep_desc', 'mat_pep_acc']
+    for column in list(set(info.columns) & set(info_cols_to_add)):
+        # drop nans if they exist
+        info[column] = info[column].fillna('')
+        new_df['#attributes'] = new_df['#attributes'].astype(str) + \
+            column + '=' + info[column].astype(str) + ';'
 
-    new_df['nt_name'] = hgvs_nucleotide
-    new_df['aa_name'] = hgvs_protein
 
-    # change nucleotide names of the form "g.C*4378A" to g.C4378AN;
-    # change vcf_gene to "intergenic" here
-    asterisk_mask = hgvs_nucleotide.str.contains('\*')
-    hgvs_nucleotide[asterisk_mask] = 'g.' + df['REF'] + df['POS'] + \
-                                     df['ALT']
-    eff_info[5][asterisk_mask] = "intergenic"
-
-    # use nucleotide name where protein name doesn't exist (for
-    # 'Name' attribute)
-    Names = hgvs[0].str[:-1]
-    # fill in empty protein name spaces with nucleotide names ("c."...)
-    Names[~Names.str.contains("p.")] = hgvs_nucleotide
-
-    # take "p." off the protein names
-    Names = Names.str.replace("p.", "", regex=True)
-
-    new_df["Names"] = Names
-
-    new_df['vcf_gene'] = eff_info[5]
-    new_df['mutation_type'] = eff_info[1]
-
-    new_df["multi_name"] = ''
-    new_df["multiaa_comb_mutation"] = ''
 
     # gene and protein name extraction
     gene_names, protein_names = map_pos_to_gene_protein(
@@ -200,30 +142,10 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     new_df['#attributes'] = new_df['#attributes'] + 'protein=' + \
         protein_names + ';'
 
-    # make 'INFO' column easier to extract attributes from
-    # split at ;, form dataframe
-    info = df['INFO'].str.split(pat=';').apply(pd.Series)
-    for column in info.columns:
-        split = info[column].str.split(pat='=').apply(pd.Series)
-        title = split[0].drop_duplicates().tolist()[0]
-        if isinstance(title, str):
-            title = title.lower()
-            content = split[1]
-            # ignore "tag=" in column content
-            info[column] = content
-            # make attribute tag as column label
-            info.rename(columns={column: title}, inplace=True)
-
-    # fill in 'type' column
-    new_df['#type'] = info['type']
-
-    # add 'INFO' attributes by name
-    for column in ['ps_filter', 'ps_exc', 'mat_pep_id',
-                   'mat_pep_desc', 'mat_pep_acc']:
-        # drop nans if they exist
-        info[column] = info[column].fillna('')
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-            column + '=' + info[column].astype(str) + ';'
+    # add sample_size attribute
+    # print(sample_size)
+    new_df['#attributes'] = new_df['#attributes'] + "sample_size=" + \
+                            str(sample_size) + ';'
 
     # add ro, ao, dp
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
@@ -238,11 +160,6 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
                             'ao=' + unknown[5].astype(str) + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + \
                             'dp=' + info['dp'].astype(str) + ';'
-
-    # add sample_size attribute
-    # print(sample_size)
-    new_df['#attributes'] = new_df['#attributes'] + "sample_size=" + \
-                            str(sample_size) + ';'
 
     # add alternate frequency (AF) column for clade-defining cutoff (
     # af=ao/dp)
@@ -270,6 +187,8 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
                                 key + '=' + df[column].astype(str) + ';'
 
     # split multi-aa names from the vcf into single-aa names (multi-row)
+    new_df["multi_name"] = ''
+    new_df["multiaa_comb_mutation"] = ''
     # load names_to_split spreadsheet
     multiaanames = pd.read_csv(names_to_split, sep='\t', header=0)
     # multi-aa names that are in the gvf (list form)
@@ -546,6 +465,8 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         leftover_names = pd.DataFrame({'in_tsv_only': np.setdiff1d(
             tsv_names, functional_annotation_names)})
         leftover_names["strain"] = strain
+        
+        # Check this block and if not needed, we can take this out. 
         '''
         clade_names = clades["mutation"].unique()
         leftover_clade_names = pd.DataFrame({'unmatched_clade_names':np.setdiff1d(clade_names, tsv_names)})
@@ -558,41 +479,60 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         return merged_df[gvf_columns]
 
 
-def find_sample_size(table, lineage):
-
-    if table != 'n/a':
-        strain_tsv_df = pd.read_csv(table, delim_whitespace=True,
-                                    usecols=['file', 'num_seqs'])
-
-        # not user mode
-        if lineage != 'n/a':
-            num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
-                lineage + ".qc.")]['num_seqs'].values
-            sample_size = num_seqs[0]
-
-        # user-uploaded vcf
-        else:
-            filename_to_match = args.vcffile.split(".sorted")[0] \
-                # looks like "strain.qc"
-            num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
-                filename_to_match)]['num_seqs'].values
-            sample_size = num_seqs[0]
-
-    # user-uploaded fasta
-    elif table == 'n/a' and lineage == 'n/a':
-        sample_size = 'n/a'
-
-    return sample_size
-
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Converts a annotated VCF file to a GVF '
+                    'file with functional annotation')
+    parser.add_argument('--vcffile', type=str, default=None,
+                        help='Path to a snpEFF-annotated VCF file')
+    parser.add_argument('--functional_annotations', type=str,
+                        default=None, help='TSV file of functional '
+                                           'annotations')
+    parser.add_argument('--size_stats', type=str, default='n/a',
+                        help='Statistics file for for size extraction')
+    parser.add_argument('--clades', type=str, default=None,
+                        help='TSV file of WHO strain names and '
+                             'VOC/VOI status')
+    parser.add_argument('--clades_threshold', type=float,
+                        default=0.75,
+                        help='Alternate frequency cutoff for '
+                             'clade-defining mutations')
+    parser.add_argument('--gene_positions', type=str,
+                        default=None,
+                        help='gene positions in JSON format')
+    # --names_to_split needs updating: 13 January, 2023
+    parser.add_argument('--names_to_split', type=str,
+                        default=None,
+                        help='.tsv of multi-aa mutation names to '
+                             'split up into individual aa names')
+    parser.add_argument('--strain', type=str,
+                        default='n/a',
+                        help='Lineage; user mode is if strain="n/a"')
+    parser.add_argument('--outgvf', type=str,
+                        help='Filename for the output GVF file')
+    parser.add_argument("--names", help="Save mutation names without "
+                                        "functional annotations to "
+                                        "TSV files for "
+                                        "troubleshooting purposes",
+                        action="store_true")
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
 
     args = parse_args()
+    
+    # Reading the gene & proetin coordinates of SARS-CoV-2 genome
     with open(args.gene_positions) as fp:
         GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
+    # Assigning the functional annotation file to a variable
     annotation_file = args.functional_annotations
+    # Assigning the variant file to a variable
     clade_file = args.clades
+    # Assigning the vcf file to a variable
+    vcf_file = args.vcffile
+
+    # print("Processing: " + vcf_file)
 
     # make empty list in which to store mutation names from all
     # strains in the folder together
@@ -605,12 +545,13 @@ if __name__ == '__main__':
                                                   '1.10'], [
                                 '##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])  # pragmas are in column 0
 
-    file = args.vcffile
+    
+
     sample_size = find_sample_size(args.size_stats, args.strain)
-    print("Processing: " + file)
+    
 
     # create gvf from annotated vcf (ignoring pragmas for now)
-    gvf = vcftogvf(file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
+    gvf = vcftogvf(vcf_file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
                    args.names_to_split, sample_size)
     # add functional annotations
     if args.names:
