@@ -106,8 +106,9 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     new_df['#source'] = '.'
     new_df['#start'] = df['POS']
     ### this needs fixing.. Checking if not required, we can delete this column. Or secify this doesnt clarify for ins/dels
-    new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() -
-                      1).astype(str)
+    #new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() -
+    #                  1).astype(str)
+    new_df['#end'] = df['POS']
     new_df['#score'] = '.'
     new_df['#strand'] = '+'
     new_df['#phase'] = '.'
@@ -143,17 +144,13 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
         protein_names + ';'
 
     # add sample_size attribute
-    # print(sample_size)
     new_df['#attributes'] = new_df['#attributes'] + "sample_size=" + \
                             str(sample_size) + ';'
 
     # add ro, ao, dp
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
 
-    #if sample_size == 1:
-    #    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-    #                            'ro=n/a;ao=n/a;dp=1;'
-    #else:
+    
     new_df['#attributes'] = new_df['#attributes'].astype(str) + \
                             'ro=' + unknown[3].astype(str) + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + \
@@ -176,7 +173,7 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
         new_df['AF'] = new_df['added_ao'].astype(int) / info[
             'dp'].astype(int)
 
-    # add columns copied straight from Zohaib's file
+    # add Reference and Alternate alleles from VCF file
     for column in ['REF', 'ALT']:
         key = column.lower()
         if key == 'ref':
@@ -186,6 +183,8 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
         new_df['#attributes'] = new_df['#attributes'].astype(str) + \
                                 key + '=' + df[column].astype(str) + ';'
 
+
+    ### MZA: This needs immediate attention with Paul and his group. Need to update the notion of mutations
     # split multi-aa names from the vcf into single-aa names (multi-row)
     new_df["multi_name"] = ''
     new_df["multiaa_comb_mutation"] = ''
@@ -271,7 +270,7 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
 # and the names_to_split tsv.
 
 
-def add_functions(gvf, annotation_file, clade_file, strain):
+def add_pokay_annotations(gvf, annotation_file, clade_file, strain):
     attributes = gvf["#attributes"].str.split(pat=';').apply(pd.Series)
 
     # remember this includes nucleotide names where there are no
@@ -376,12 +375,14 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     
     # get clade_defining status, and then info from clades file
     # load clade-defining mutations file
+    ### MZA: need to clean up this and add this into separate function "variant_info" 
     clades = pd.read_csv(clade_file, sep='\t', header=0)
-    clades = clades.replace(np.nan, '', regex=True)
+    #clades = clades.replace(np.nan, '', regex=True)
 
     # find the relevant pango_lineage line in the clade file that
     # matches args.strain (call this line "var_to_match")
-
+    ### replace this part with func "parse_variant_file" in functions.py
+    available_strains = parse_variant_file()
     cladefile_strain = 'None'
     available_strains = []
     for var in clades['pango_lineage'].tolist():
@@ -403,6 +404,8 @@ def add_functions(gvf, annotation_file, clade_file, strain):
             available_strains.append(var)
             if strain.startswith(var):
                 var_to_match = var
+
+    
                 
     #print("var_to_match", var_to_match)
 
@@ -441,7 +444,7 @@ def add_functions(gvf, annotation_file, clade_file, strain):
                                    "status=" + status + ';'
     else:
         merged_df["#attributes"] = merged_df["#attributes"].astype(
-            str) + "clade_defining=n/a;" + "who_variant=n/a;" + \
+            str) + "clade_defining=n/a;" + "variant=n/a;" + \
                                    "variant_type=n/a;" + \
                                    "voi_designation_date=n/a;" + \
                                    "voc_designation_date=n/a;" + \
@@ -555,12 +558,6 @@ if __name__ == '__main__':
                    args.names_to_split, sample_size)
     # add functional annotations
     if args.names:
-        '''
-        annotated_gvf, leftover_names, mutations, \
-        leftover_clade_names = add_functions(gvf,
-                                             annotation_file,
-                                             clade_file, args.strain)
-        '''
         annotated_gvf, leftover_names, mutations = add_functions(gvf,
                                                                  annotation_file,
                                                                  clade_file,
