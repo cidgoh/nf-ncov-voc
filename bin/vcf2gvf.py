@@ -15,7 +15,7 @@ import argparse
 import pandas as pd
 import numpy as np
 import json
-from functions import parse_INFO, find_sample_size
+from functions import parse_INFO, find_sample_size, parse_variant_file, add_variant_information
 
 
 
@@ -98,7 +98,6 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # restart index from 0
     df = df.reset_index(drop=True)
 
-    print(df.columns)
     new_df = pd.DataFrame(index=range(0, len(df)), columns=gvf_columns)
 
     # fill in first 7 GVF columns, excluding 'type'
@@ -108,13 +107,13 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     ### this needs fixing.. Checking if not required, we can delete this column. Or secify this doesnt clarify for ins/dels
     #new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() -
     #                  1).astype(str)
-    new_df['#end'] = df['POS']
+    new_df['#end'] = df['POS'] #'end' is not used in creating the COVID-MVP heatmap, but is a required GVF column
     new_df['#score'] = '.'
     new_df['#strand'] = '+'
     new_df['#phase'] = '.'
 
     info = parse_INFO(df)
- 
+
     new_df["Names"] = info["Names"]
     new_df['nt_name'] = info["hgvs_nucleotide"]
     new_df['aa_name'] = info["hgvs_protein"]
@@ -133,8 +132,6 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
         info[column] = info[column].fillna('')
         new_df['#attributes'] = new_df['#attributes'].astype(str) + \
             column + '=' + info[column].astype(str) + ';'
-
-
 
     # gene and protein name extraction
     gene_names, protein_names = map_pos_to_gene_protein(
@@ -182,8 +179,11 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
             key = 'Variant_seq'
         new_df['#attributes'] = new_df['#attributes'].astype(str) + \
                                 key + '=' + df[column].astype(str) + ';'
-
-
+                                
+    # get True/False/n/a designation for clade-defining status
+    clade_threshold_gvf = clade_defining_threshold(args.clades_threshold,
+                                             new_df, sample_size)                            
+                                             
     ### MZA: This needs immediate attention with Paul and his group. Need to update the notion of mutations
     # split multi-aa names from the vcf into single-aa names (multi-row)
     new_df["multi_name"] = ''
@@ -265,12 +265,12 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     return new_df
 
 
-# takes 4 arguments: the output df of vcftogvf.py, the functional
-# annotation file, the clade defining mutations tsv, the strain name,
+# takes 3 arguments: the output df of vcftogvf.py, the functional
+# annotation file, the strain name,
 # and the names_to_split tsv.
 
 
-def add_pokay_annotations(gvf, annotation_file, clade_file, strain):
+def add_pokay_annotations(gvf, annotation_file, strain):
     attributes = gvf["#attributes"].str.split(pat=';').apply(pd.Series)
 
     # remember this includes nucleotide names where there are no
@@ -287,7 +287,6 @@ def add_pokay_annotations(gvf, annotation_file, clade_file, strain):
         # add functional annotations
     merged_df = pd.merge(df, gvf, on=['mutation'], how='right')
 
-    print(merged_df)
     # collect all mutation groups (including reference mutation) in a
     # column, sorted alphabetically
     # this is more roundabout than it needs to be; streamline with
@@ -373,84 +372,6 @@ def add_pokay_annotations(gvf, annotation_file, clade_file, strain):
         merged_df["#attributes"] = merged_df["#attributes"].astype(
             str) + key + '=' + merged_df[column].astype(str) + ';'
     
-    # get clade_defining status, and then info from clades file
-    # load clade-defining mutations file
-    ### MZA: need to clean up this and add this into separate function "variant_info" 
-    clades = pd.read_csv(clade_file, sep='\t', header=0)
-    #clades = clades.replace(np.nan, '', regex=True)
-
-    # find the relevant pango_lineage line in the clade file that
-    # matches args.strain (call this line "var_to_match")
-    ### replace this part with func "parse_variant_file" in functions.py
-    available_strains = parse_variant_file()
-    cladefile_strain = 'None'
-    available_strains = []
-    for var in clades['pango_lineage'].tolist():
-        if "," in var:
-            for temp in var.split(","):
-                if "[" not in var:
-                    available_strains.append(temp)
-                    if strain.startswith(temp):
-                        var_to_match = var
-                else:
-                    parent = temp[0]
-                    child = temp[2:-3].split("|")
-                    for c in child:
-                        available_strains.append(parent + str(c))
-                        available_strains.append(parent + str(c) + ".*")
-                        if strain.startswith(parent + str(c)):
-                            var_to_match = var
-        else:
-            available_strains.append(var)
-            if strain.startswith(var):
-                var_to_match = var
-
-    
-                
-    #print("var_to_match", var_to_match)
-
-
-    for strain in available_strains:
-        #for pango_strain in strain.replace("*", "").split(','):
-        if args.strain.startswith(strain): # this will ignore asterisks: "BQ.1.1" returns "BQ" not "BQ.*" as the cladefile_strain
-            cladefile_strain = strain
-            #print("cladefile_strain", cladefile_strain)
-
-    # if strain in available_strains:
-    if cladefile_strain != 'None':
-        # find the index of the relevant row
-        var_index = clades.index[clades['pango_lineage'] == var_to_match].tolist()[0]
-        # extract status, WHO strain name, etc. from clades file
-        who_variant = clades.loc[var_index, 'variant']
-        variant_type = clades.loc[var_index, 'variant_type']
-        voi_designation_date = clades.loc[var_index, 'voi_designation_date']
-        voc_designation_date = clades.loc[var_index, 'voc_designation_date']
-        vum_designation_date = clades.loc[var_index, 'vum_designation_date']
-        status = clades.loc[var_index, 'status']
-
-        # get True/False/n/a designation for clade-defining status
-        merged_df = clade_defining_threshold(args.clades_threshold,
-                                             merged_df, sample_size)
-
-        # add remaining attributes from clades file
-        merged_df["#attributes"] = merged_df["#attributes"].astype(
-            str) + "variant=" + who_variant + ';' + "variant_type=" + \
-                                   variant_type + ';' + "voi_designation_date=" + \
-                                   voi_designation_date + ';' + \
-                                   "voc_designation_date=" + \
-                                   voc_designation_date + ';' + \
-                                   "vum_designation_date=" + \
-                                   vum_designation_date + ';' + \
-                                   "status=" + status + ';'
-    else:
-        merged_df["#attributes"] = merged_df["#attributes"].astype(
-            str) + "clade_defining=n/a;" + "variant=n/a;" + \
-                                   "variant_type=n/a;" + \
-                                   "voi_designation_date=n/a;" + \
-                                   "voc_designation_date=n/a;" + \
-                                   "vum_designation_date=n/a;" + \
-                                    "status=n/a;"
-
     # add ID to attributes
     merged_df["#attributes"] = 'ID=' + merged_df['id'].astype(
         str) + ';' + merged_df["#attributes"].astype(str)
@@ -542,8 +463,7 @@ if __name__ == '__main__':
     all_strains_mutations = []
     # empty dataframe to hold unmatched names
     leftover_df = pd.DataFrame()
-    # unmatched_clade_names = pd.DataFrame() #empty dataframe to hold
-    # unmatched clade-defining mutation names
+
     pragmas = pd.DataFrame([['##gff-version 3'], ['##gvf-version '
                                                   '1.10'], [
                                 '##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])  # pragmas are in column 0
@@ -558,19 +478,21 @@ if __name__ == '__main__':
                    args.names_to_split, sample_size)
     # add functional annotations
     if args.names:
-        annotated_gvf, leftover_names, mutations = add_functions(gvf,
+        annotated_gvf, leftover_names, mutations = add_pokay_annotations(gvf,
                                                                  annotation_file,
                                                                  clade_file,
                                                                  args.strain)
     else:
-        annotated_gvf = add_functions(gvf, annotation_file,
-                                      clade_file, args.strain)
+        pokay_annotated_gvf = add_pokay_annotations(gvf, annotation_file,
+                                      args.strain)
+        variant_annotated_gvf = add_variant_information(clade_file, pokay_annotated_gvf, sample_size, args.strain)
+
     # add pragmas to df, then save to .gvf
     # columns are now 0, 1, ...
-    annotated_gvf = pd.DataFrame(np.vstack([annotated_gvf.columns,
-                                            annotated_gvf]))
-    final_gvf = pragmas.append(annotated_gvf)
-    filepath = args.outvcf  # outdir + strain + ".annotated.gvf"
+    final_gvf = pd.DataFrame(np.vstack([variant_annotated_gvf.columns,
+                                            variant_annotated_gvf]))
+    final_gvf = pragmas.append(final_gvf)
+    filepath = args.outgvf  # outdir + strain + ".annotated.gvf"
     print("Saved as: ", filepath)
     print("")
     final_gvf.to_csv(filepath, sep='\t', index=False, header=False)

@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def parse_variant_file(dataframe):
     who_lineages = []
@@ -57,10 +58,11 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     df['INFO'] = df['INFO'].str.replace('ps_filter;', 'ps_filter=;')
     df['INFO'] = df['INFO'].str.replace('ps_exc;', 'ps_exc=;')
     df['INFO'] = df['INFO'].str.replace('=n/a', '')
-    
+  
     # make 'INFO' column easier to extract attributes from:
     # split at ;, form dataframe
     info = df['INFO'].str.split(pat=';').apply(pd.Series)
+
     for column in info.columns:
         split = info[column].str.split(pat='=').apply(pd.Series)
         title = split[0].drop_duplicates().tolist()[0]
@@ -103,7 +105,83 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     
     #rename some eff_info columns
     eff_info = eff_info.rename(columns={5: "vcf_gene", 1: "mutation_type"})
+
     #concatenate info and eff_info horizontally to return just one object
-    info = pd.concat([info, eff_info], axis=0)
+    info = pd.concat([info, eff_info], axis=1)
 
     return(info)
+    
+    
+    
+def add_variant_information(clade_file, merged_df, sample_size, strain):    
+    # get clade_defining status, and then info from clades file
+    # load clade-defining mutations file
+    ### MZA: need to clean up this and add this into separate function "variant_info" 
+    clades = pd.read_csv(clade_file, sep='\t', header=0)
+    clades = clades.replace(np.nan, '', regex=True) #this is needed to append empty strings to attributes (otherwise datatype mismatch error)
+
+    # find the relevant pango_lineage line in the clade file that
+    # matches args.strain (call this line "var_to_match")
+    ### replace this part with func "parse_variant_file" in functions.py
+    #available_strains = parse_variant_file(clades)
+    print("here", strain)
+    cladefile_strain = 'None'
+    available_strains = []
+    for var in clades['pango_lineage'].tolist():
+        if "," in var:
+            for temp in var.split(","):
+                if "[" not in var:
+                    available_strains.append(temp)
+                    if strain.startswith(temp):
+                        var_to_match = var
+                else:
+                    parent = temp[0]
+                    child = temp[2:-3].split("|")
+                    for c in child:
+                        available_strains.append(parent + str(c))
+                        available_strains.append(parent + str(c) + ".*")
+                        if strain.startswith(parent + str(c)):
+                            var_to_match = var
+        else:
+            available_strains.append(var)
+            if strain.startswith(var):
+                var_to_match = var
+                
+    print("var_to_match", var_to_match)
+
+    # if strain in available_strains:
+    if var_to_match:
+        # find the index of the relevant row
+        var_index = clades.index[clades['pango_lineage'] == var_to_match].tolist()[0]
+        print("var_index", var_index)
+        print(clades.loc[var_index])
+        # extract status, WHO strain name, etc. from clades file
+        who_variant = clades.loc[var_index, 'variant']
+        variant_type = clades.loc[var_index, 'variant_type']
+        voi_designation_date = clades.loc[var_index, 'voi_designation_date']
+        voc_designation_date = clades.loc[var_index, 'voc_designation_date']
+        vum_designation_date = clades.loc[var_index, 'vum_designation_date']
+        status = clades.loc[var_index, 'status']
+
+        # add attributes from variant info file
+        merged_df["#attributes"] = merged_df["#attributes"].astype(
+            str) + "variant=" + who_variant + ';' + "variant_type=" + \
+                                   variant_type + ';' + "voi_designation_date=" + \
+                                   voi_designation_date + ';' + \
+                                   "voc_designation_date=" + \
+                                   voc_designation_date + ';' + \
+                                   "vum_designation_date=" + \
+                                   vum_designation_date + ';' + \
+                                   "status=" + status + ';'
+    else:
+        merged_df["#attributes"] = merged_df["#attributes"].astype(
+            str) + "clade_defining=n/a;" + "variant=n/a;" + \
+                                   "variant_type=n/a;" + \
+                                   "voi_designation_date=n/a;" + \
+                                   "voc_designation_date=n/a;" + \
+                                   "vum_designation_date=n/a;" + \
+                                    "status=n/a;"
+                                    
+                                    
+    return(merged_df)
+
