@@ -214,7 +214,6 @@ process vcfTogvf {
     """
       vcf2gvf.py --vcffile ${ch_annotated_vcf} \
       --functional_annotations ${func_annot}  \
-      --clades ${variants} \
       --gene_positions ${gene_coord} \
       --names_to_split ${mutation_split} \
       --outvcf ${ch_annotated_vcf.baseName}.gvf
@@ -225,7 +224,6 @@ process vcfTogvf {
     """
       vcf2gvf.py --vcffile ${ch_annotated_vcf} \
       --functional_annotations ${func_annot}  \
-      --clades ${variants} \
       --gene_positions ${gene_coord} \
       --names_to_split ${mutation_split} \
       --size_stats ${stats} \

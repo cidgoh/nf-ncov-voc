@@ -113,7 +113,7 @@ workflow {
         input_file = file(params.userfile)
         ch_metadata=Channel.empty()
         ch_voc=Channel.empty()
-        ch_variant=Channel.empty()
+        
 
         if (input_file.getExtension() == "fasta" || input_file.getExtension() == "fa"){
           Channel.fromPath( "$params.userfile", checkIfExists: true)
@@ -139,8 +139,6 @@ workflow {
             //  Channel.fromPath( "$params.userfile", checkIfExists: true)
             //    .set{ ch_vcf }
             //}
-
-          ch_stats=Channel.empty()
           annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
           ch_gvf_surveillance=annotation.out.ch_gvf_surv
           ch_stats=annotation.out.ch_stats       

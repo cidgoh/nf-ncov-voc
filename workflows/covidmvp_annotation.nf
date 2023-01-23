@@ -27,7 +27,7 @@ workflow annotation {
       SNPEFF(tagProblematicSites.out.filtered_vcf)
       annotate_mat_peptide(SNPEFF.out.peptide_vcf.combine(ch_geneannot))
       ch_annotated_vcf=annotate_mat_peptide.out.annotated_vcf
-      vcfTogvf(ch_annotated_vcf.combine(ch_funcannot).combine(ch_genecoord).combine(ch_mutationsplit).combine([]).combine(ch_stats))
+      vcfTogvf(ch_annotated_vcf.combine(ch_funcannot).combine(ch_genecoord).combine(ch_mutationsplit).combine(ch_variant).combine(ch_stats))
 
       if(params.mode == 'reference'){
         vcfTogvf.out.gvf
