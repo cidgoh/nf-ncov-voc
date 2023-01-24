@@ -20,7 +20,6 @@ process FREEBAYES {
         -p ${params.ploidy} \
         -f ${ref} \
         --haplotype-length 1 \
-        --report-monomorphic \
         -F ${params.var_MinFreqThreshold} \
         -C ${params.var_MinDepth} \
         --pooled-continuous \
