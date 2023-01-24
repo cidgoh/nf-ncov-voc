@@ -457,43 +457,42 @@ def add_functions(gvf, annotation_file, clade_file, strain):
     
     # get clade_defining status, and then info from clades file
     # load clade-defining mutations file
-    if clade_file != 'None':
-        clades = pd.read_csv(clade_file, sep='\t', header=0)
-        clades = clades.replace(np.nan, '', regex=True)
+    clades = pd.read_csv(clade_file, sep='\t', header=0)
+    clades = clades.replace(np.nan, '', regex=True)
 
-        # find the relevant pango_lineage line in the clade file that
-        # matches args.strain (call this line "var_to_match")
+    # find the relevant pango_lineage line in the clade file that
+    # matches args.strain (call this line "var_to_match")
 
-        cladefile_strain = 'None'
-        available_strains = []
-        for var in clades['pango_lineage'].tolist():
-            if "," in var:
-                for temp in var.split(","):
-                    if "[" not in var:
-                        available_strains.append(temp)
-                        if strain.startswith(temp):
+    cladefile_strain = 'None'
+    available_strains = []
+    for var in clades['pango_lineage'].tolist():
+        if "," in var:
+            for temp in var.split(","):
+                if "[" not in var:
+                    available_strains.append(temp)
+                    if strain.startswith(temp):
+                        var_to_match = var
+                else:
+                    parent = temp[0]
+                    child = temp[2:-3].split("|")
+                    for c in child:
+                        available_strains.append(parent + str(c))
+                        available_strains.append(parent + str(c) + ".*")
+                        if strain.startswith(parent + str(c)):
                             var_to_match = var
-                    else:
-                        parent = temp[0]
-                        child = temp[2:-3].split("|")
-                        for c in child:
-                            available_strains.append(parent + str(c))
-                            available_strains.append(parent + str(c) + ".*")
-                            if strain.startswith(parent + str(c)):
-                                var_to_match = var
-            else:
-                available_strains.append(var)
-                if strain.startswith(var):
-                    var_to_match = var
-                    
-        #print("var_to_match", var_to_match)
+        else:
+            available_strains.append(var)
+            if strain.startswith(var):
+                var_to_match = var
+                
+    #print("var_to_match", var_to_match)
 
 
-        for strain in available_strains:
-            #for pango_strain in strain.replace("*", "").split(','):
-            if args.strain.startswith(strain): # this will ignore asterisks: "BQ.1.1" returns "BQ" not "BQ.*" as the cladefile_strain
-                cladefile_strain = strain
-                #print("cladefile_strain", cladefile_strain)
+    for strain in available_strains:
+        #for pango_strain in strain.replace("*", "").split(','):
+        if args.strain.startswith(strain): # this will ignore asterisks: "BQ.1.1" returns "BQ" not "BQ.*" as the cladefile_strain
+            cladefile_strain = strain
+            #print("cladefile_strain", cladefile_strain)
 
     # if strain in available_strains:
     if cladefile_strain != 'None':
