@@ -113,7 +113,7 @@ workflow {
         input_file = file(params.userfile)
         ch_metadata=Channel.empty()
         ch_voc=Channel.empty()
-        ch_variant=Channel.empty()
+        
 
         if (input_file.getExtension() == "fasta" || input_file.getExtension() == "fa"){
           Channel.fromPath( "$params.userfile", checkIfExists: true)
