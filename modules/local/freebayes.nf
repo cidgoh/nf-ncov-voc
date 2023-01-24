@@ -19,10 +19,11 @@ process FREEBAYES {
         freebayes \
         -p ${params.ploidy} \
         -f ${ref} \
+        --haplotype-length 1 \
+        --report-monomorphic \
         -F ${params.var_MinFreqThreshold} \
         -C ${params.var_MinDepth} \
         --pooled-continuous \
-        --min-coverage ${params.var_MinDepth} \
         ${bam} |
         sed s/QR,Number=1,Type=Integer/QR,Number=1,Type=Float/ > ${bam.baseName}.gvcf
 
