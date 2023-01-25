@@ -1,7 +1,7 @@
 name: nf-ncov-voc
 channels:
-  - conda-forge
   - bioconda
+  - conda-forge
   - defaults
 dependencies:
   - python
