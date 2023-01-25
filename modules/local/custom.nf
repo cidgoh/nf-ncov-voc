@@ -207,7 +207,7 @@ process vcfTogvf {
       --names_to_split ${mutation_split} \
       --size_stats ${stats} \
       --strain ${ch_annotated_vcf.baseName.replaceAll(".qc.variants.filtered.SNPEFF.annotated","")}\
-      --outvcf ${ch_annotated_vcf.baseName.replaceAll(".qc","_qc")}.gvf
+      --outgvf ${ch_annotated_vcf.baseName.replaceAll(".qc","_qc")}.gvf
     """
   }
   else if( params.mode == 'user' && input_file.getExtension() == "vcf"){
@@ -216,7 +216,7 @@ process vcfTogvf {
       --functional_annotations ${func_annot}  \
       --gene_positions ${gene_coord} \
       --names_to_split ${mutation_split} \
-      --outvcf ${ch_annotated_vcf.baseName}.gvf
+      --outgvf ${ch_annotated_vcf.baseName}.gvf
     """
   }
 
@@ -227,7 +227,7 @@ process vcfTogvf {
       --gene_positions ${gene_coord} \
       --names_to_split ${mutation_split} \
       --size_stats ${stats} \
-      --outvcf ${ch_annotated_vcf.baseName}.gvf
+      --outgvf ${ch_annotated_vcf.baseName}.gvf
     """
   }
 
