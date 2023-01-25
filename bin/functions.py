@@ -21,7 +21,7 @@ def parse_variant_file(dataframe):
     
     
 
-def find_sample_size(table, lineage):
+def find_sample_size(table, lineage, vcf_file):
 
 
     if table != 'n/a':
@@ -36,7 +36,7 @@ def find_sample_size(table, lineage):
 
         # user-uploaded fasta
         else:
-            filename_to_match = args.vcffile.split(".sorted")[0] \
+            filename_to_match = vcffile.split(".sorted")[0] \
                 # looks like "strain.qc"
             num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
                 filename_to_match)]['num_seqs'].values

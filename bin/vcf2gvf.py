@@ -470,7 +470,7 @@ if __name__ == '__main__':
 
     
 
-    sample_size = find_sample_size(args.size_stats, args.strain)
+    sample_size = find_sample_size(args.size_stats, args.strain, vcf_file)
     
 
     # create gvf from annotated vcf (ignoring pragmas for now)
