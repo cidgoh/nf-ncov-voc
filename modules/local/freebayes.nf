@@ -11,7 +11,7 @@ process FREEBAYES {
     path(bam_index)
 
     output:
-    path("*.gvcf"), emit: vcf
+    path("*.vcf"), emit: vcf
 
     script:
 
