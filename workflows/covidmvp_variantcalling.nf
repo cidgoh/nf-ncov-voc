@@ -71,7 +71,7 @@ workflow variant_calling {
         FREEBAYES(ch_bam.combine(ch_ref).combine(ch_reffai),ch_index)
         //processGVCF(FREEBAYES.out.gvcf)
         //BCFTOOLS(processGVCF.out.vcf.combine(ch_ref))
-        ch_vcf=BCFTOOLS.out.normalized_vcf
+        //ch_vcf=BCFTOOLS.out.normalized_vcf
         ch_vcf=FREEBAYES.out.vcf
       }
 
