@@ -21,7 +21,6 @@ process FREEBAYES {
         -f ${ref} \
         -F ${params.var_MinFreqThreshold} \
         --min-coverage ${params.var_MinDepth} \
-
         --pooled-continuous \
         ${bam} |
         sed s/QR,Number=1,Type=Integer/QR,Number=1,Type=Float/ > ${bam.baseName}.gvcf
