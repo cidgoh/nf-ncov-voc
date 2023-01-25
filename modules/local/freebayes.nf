@@ -2,7 +2,7 @@ process FREEBAYES {
 
     tag {"${bam.baseName}"}
 
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.gvcf", mode: 'copy'
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
 
     label 'dev_env'
 
