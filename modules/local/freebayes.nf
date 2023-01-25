@@ -22,7 +22,7 @@ process FREEBAYES {
         -F ${params.var_MinFreqThreshold} \
         --min-coverage ${params.var_MinDepth} \
         --pooled-continuous \
-        ${bam} -v ${bam.baseName}.vcf
+        ${bam} -v ${bam.baseName}.variants.vcf
 
         """
 
