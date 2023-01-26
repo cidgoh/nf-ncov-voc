@@ -212,8 +212,7 @@ process vcfTogvf {
       --gene_positions ${gene_coord} \
       --names_to_split ${mutation_split} \
       --size_stats ${stats} \
-      --strain ${ch_annotated_vcf.baseName.replaceAll(".qc.sorted.variants.filtered.SNPEFF.annotated","")}\ 
-      --outgvf ${ch_annotated_vcf.baseName.replaceAll(".qc","_qc")}.gvf
+      --strain ${ch_annotated_vcf.baseName.replaceAll(".qc.sorted.variants.filtered.SNPEFF.annotated", "")} --outgvf ${ch_annotated_vcf.baseName.replaceAll(".qc","_qc")}.gvf
     """
   }
   else if( params.mode == 'user' && input_file.getExtension() == "vcf"){
