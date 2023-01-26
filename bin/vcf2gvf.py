@@ -414,7 +414,7 @@ def parse_args():
                                            'annotations')
     parser.add_argument('--size_stats', type=str, default='n/a',
                         help='Statistics file for for size extraction')
-    parser.add_argument('--clades', type=str, default=None,
+    parser.add_argument('--clades', type=str, default="n/a",
                         help='TSV file of WHO strain names and '
                              'VOC/VOI status')
     parser.add_argument('--clades_threshold', type=float,
