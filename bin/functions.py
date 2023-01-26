@@ -48,7 +48,10 @@ def find_sample_size(table, lineage, vcf_file):
     elif table == 'n/a' and lineage == 'n/a':
         sample_size = 'n/a'
 
-    return sample_size.replace(",","")
+    if type(sample_size) == str:
+        sample_size = sample_size.replace(",","")
+        
+    return sample_size
 
 
 
