@@ -123,10 +123,14 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # fill in 'type' column
     new_df['#type'] = info['type']
 
+    # set #attributes column
+    new_df['#attributes'] = ''
+    
     # add 'INFO' attributes by name
     ### If the column attribute exists then parse and add. 
     info_cols_to_add = ['ps_filter', 'ps_exc', 'mat_pep_id',
                    'mat_pep_desc', 'mat_pep_acc']
+
     for column in list(set(info.columns) & set(info_cols_to_add)):
         # drop nans if they exist
         info[column] = info[column].fillna('')
@@ -136,7 +140,7 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # gene and protein name extraction
     gene_names, protein_names = map_pos_to_gene_protein(
         df['POS'].astype(int), new_df['aa_name'], GENE_PROTEIN_POSITIONS_DICT)
-    new_df['#attributes'] = 'chrom_region=' + gene_names + ';'
+    new_df['#attributes'] = new_df['#attributes'] + 'chrom_region=' + gene_names + ';'
     new_df['#attributes'] = new_df['#attributes'] + 'protein=' + \
         protein_names + ';'
 
