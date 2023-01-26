@@ -148,6 +148,9 @@ process tagProblematicSites {
     output:
         path("*.vcf"), emit: filtered_vcf
 
+    when:
+      vcf.size() > 0
+
     script:
       """
       problematic_sites_tag.py \
@@ -169,6 +172,9 @@ process annotate_mat_peptide {
 
     output:
         path("*.vcf"), emit: annotated_vcf
+
+    when:
+      peptide_vcf.size() > 0
 
     script:
       """
