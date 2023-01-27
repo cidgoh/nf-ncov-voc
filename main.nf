@@ -125,6 +125,8 @@ workflow {
       
           annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
           ch_gvf_surveillance=annotation.out.ch_gvf_surv
+          ch_variant=annotation.out.ch_variant
+          ch_stats=annotation.out.ch_stats
           surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
 
         }
@@ -136,9 +138,6 @@ workflow {
             }
           annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
           ch_gvf_surveillance=annotation.out.ch_gvf_surv
-          ch_variant=annotation.out.ch_variant
-          ch_stats=annotation.out.ch_stats
-          ch_metadata=Channel.empty()
           surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
             
         }
