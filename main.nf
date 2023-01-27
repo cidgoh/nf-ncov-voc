@@ -138,6 +138,7 @@ workflow {
           ch_gvf_surveillance=annotation.out.ch_gvf_surv
           ch_variant=annotation.out.ch_variant
           ch_stats=annotation.out.ch_stats
+          ch_metadata=Channel.empty()
           surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
             
         }
