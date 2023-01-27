@@ -299,7 +299,8 @@ process surveillancePDF {
 
   input:
       each tsv
-      tuple(path(surveillanceindicators), path(metadata))
+      path(surveillanceindicators)
+      path(metadata)
 
   output:
       path("*.pdf")
