@@ -38,7 +38,7 @@ def parse_args():
                         help='TSV file containing Pokay '
                              'Functional categories:Indicators '
                              'category mappings')
-    parser.add_argument('--metadata', type=str, default=None,
+    parser.add_argument('--metadata', type=str, default='n/a',
                         help='Metadata file for contextual data')
     parser.add_argument('--frequency_threshold', type=float,
                         default=0.25,
@@ -410,10 +410,10 @@ if __name__ == '__main__':
     args = parse_args()
     functions_template = args.functions_table
     report_tsv = args.tsv
+    metadata = args.metadata
     tsv_df = pd.read_csv(report_tsv, sep='\t', header=0)
 
-    if not args.user:
-        metadata = args.metadata
+    if metadata != 'n/a':
         metadata_df = pd.read_csv(metadata, sep="\t", low_memory=False,
                                   parse_dates=[
                                       'sample_collection_date'])

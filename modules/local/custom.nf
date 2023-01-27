@@ -322,8 +322,9 @@ process surveillancePDF {
     """
     surveillance_report_pdf.py --tsv ${tsv} \
     --functions_table ${surveillanceindicators} \
-    --user True > ${tsv.baseName}.tex
-
+    --metadata ${metadata} \
+    --user True > ${tsv.baseName}.tex 
+    
     tectonic -X compile ${tsv.baseName}.tex --reruns 3 --keep-intermediates --keep-logs
 
     """
