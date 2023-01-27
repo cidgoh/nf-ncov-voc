@@ -46,8 +46,6 @@ def parse_args():
                              'for inclusion in report')
     parser.add_argument('--virusseq', type=bool, default=False,
                         help='VirusSeq dataset')
-    parser.add_argument('--user', type=bool, default=False,
-                        help='If user provided file')
 
     return parser.parse_args()
 
@@ -127,7 +125,7 @@ def summarize_mutations(tsv, functions_dataframe):
     named_mutations = ', '.join(str(e) for e in named_mutations).split(
         ', ')
     named_mutations = set(named_mutations)
-    if not args.user:
+    if metadata != 'n/a':
         tsv_df_cols = ['name', 'function_category',
                        'function_description', 'viral_lineages',
                        'citation', 'ao', 'dp', 'reference_seq',
@@ -151,7 +149,7 @@ def summarize_mutations(tsv, functions_dataframe):
 
     # remove clade-defining values from strains column
     # renaming 'viral_clade_defining' to 'viral_lineages'
-    if not args.user:
+    if metadata != 'n/a':
         df['viral_lineages'] = df[
             'viral_lineages'].str.replace(r"=.*?;", ",", regex=True)
         # remove trailing commas
@@ -203,7 +201,7 @@ def summarize_mutations(tsv, functions_dataframe):
     if not df['Alternate Frequency'].isnull().values.any():
         mask = df['Alternate Frequency'] >= args.frequency_threshold
         df = df[mask]
-    if not args.user:
+    if metadata != 'n/a':
         mutations_df_cols = ['Mutations', 'Sub-category',
                              'Function', 'Lineages', 'Citation',
                              'Sequence Depth', 'Reference Allele',
@@ -393,7 +391,7 @@ def write_func_summary(df):
 def write_mutation_summary(df):
     tf = TableFormatter()
     tf.size = "scriptsize"
-    if not args.user:
+    if metadata != 'n/a':
         tf.table_spec = "{|p{1.2cm}|p{2.5cm}|p{3.3cm}|p{1.8cm}|p{1.5cm}|p{1.0cm}|p{1.6cm}|p{1.3cm}|p{1.3cm}|}"
     else:
         tf.table_spec = "{|p{1.2cm}|p{2.5cm}|p{3.3cm}|p{1.8cm}|p{1.0cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|}"
