@@ -20,6 +20,7 @@ process FREEBAYES {
         -p ${params.ploidy} \
         -f ${ref} \
         -F ${params.var_MinFreqThreshold} \
+        -C 1 \
         --min-coverage ${params.var_MinDepth} \
         --pooled-continuous \
         ${bam} -v ${bam.baseName}.variants.vcf
