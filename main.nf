@@ -122,10 +122,11 @@ workflow {
           variant_calling(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai)
           ch_stats=variant_calling.out.ch_stats
           ch_vcf=variant_calling.out.ch_vcf
-          ch_metadata=variant_calling.out.ch_metadata
+          
       
           annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
           ch_gvf_surveillance=annotation.out.ch_gvf_surv
+          ch_metadata=Channel.of('n/a')
           surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
 
         }
