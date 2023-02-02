@@ -32,11 +32,11 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
     variants = pd.read_csv(args.variants, sep="\t",
-                           low_memory=False, compression='gzip')
+                           low_memory=False)
 
     lineages = parse_variant_file(dataframe = variants)
     
-    Metadata = pd.read_csv(args.metadata, sep="\t", low_memory=False)
+    Metadata = pd.read_csv(args.metadata, compression='gzip', sep="\t", low_memory=False)
     metadata_lineages = Metadata['lineage'].unique()
 
     parsed_lineages=[]
