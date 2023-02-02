@@ -72,7 +72,7 @@ def data_filtering(dataframe):
 if __name__ == '__main__':
     args = parse_args()
 
-    Metadata = pd.read_csv(args.table, sep="\t", low_memory=False,
+    Metadata = pd.read_csv(args.table, sep="\t", low_memory=False, compression='gzip',
                            parse_dates=['sample_collection_date'])
 
     if 'sample_collection_date' in Metadata.columns:

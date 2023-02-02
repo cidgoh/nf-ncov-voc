@@ -412,7 +412,7 @@ if __name__ == '__main__':
     tsv_df = pd.read_csv(report_tsv, sep='\t', header=0)
 
     if metadata != 'n/a':
-        metadata_df = pd.read_csv(metadata, sep="\t", low_memory=False,
+        metadata_df = pd.read_csv(metadata, sep="\t", low_memory=False, compression='gzip',
                                   parse_dates=[
                                       'sample_collection_date'])
 

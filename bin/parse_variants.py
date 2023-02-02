@@ -32,7 +32,7 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
     variants = pd.read_csv(args.variants, sep="\t",
-                           low_memory=False)
+                           low_memory=False, compression='gzip')
 
     lineages = parse_variant_file(dataframe = variants)
     
