@@ -470,7 +470,7 @@ if __name__ == '__main__':
 
     
 
-    sample_size = 30 #find_sample_size(args.size_stats, args.strain, vcf_file)
+    sample_size = find_sample_size(args.size_stats, args.strain, vcf_file)
     
 
     # create gvf from annotated vcf (ignoring pragmas for now)
@@ -486,6 +486,7 @@ if __name__ == '__main__':
         pokay_annotated_gvf = add_pokay_annotations(gvf, annotation_file,
                                       args.strain)
         variant_annotated_gvf = add_variant_information(clade_file, pokay_annotated_gvf, sample_size, args.strain)
+
 
     # add pragmas to df, then save to .gvf
     # columns are now 0, 1, ...
