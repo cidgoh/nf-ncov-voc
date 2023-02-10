@@ -19,7 +19,20 @@ def parse_variant_file(dataframe):
             who_lineages.append(var)
     return who_lineages
     
-    
+
+def unnest(df, col, reset_index=False):
+# from https://stackoverflow.com/questions/21160134/flatten-a-column-with-value-of-type-list-while-duplicating-the-other-columns-va
+    import pandas as pd
+    col_flat = pd.DataFrame([[i, x] 
+                       for i, y in df[col].apply(list).iteritems() 
+                           for x in y], columns=['I', col])
+    col_flat = col_flat.set_index('I')
+    df = df.drop(col, 1)
+    df = df.merge(col_flat, left_index=True, right_index=True)
+    if reset_index:
+        df = df.reset_index(drop=True)
+    return df
+
 
 def find_sample_size(table, lineage, vcf_file):
 
@@ -57,12 +70,14 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     # sort out problematic sites tag formats   
     df['INFO'] = df['INFO'].str.replace('ps_filter;', 'ps_filter=;')
     df['INFO'] = df['INFO'].str.replace('ps_exc;', 'ps_exc=;')
-    df['INFO'] = df['INFO'].str.replace('=n/a', '')
-  
+    df['INFO'] = df['INFO'].str.replace('=n/a', '') #why is this here?
+    df['INFO'] = df['INFO'].str.replace('mat_pep_id;', 'mat_pep_id=;')
+    df['INFO'] = df['INFO'].str.replace('mat_pep_desc;', 'mat_pep_desc=;')
+    df['INFO'] = df['INFO'].str.replace('mat_pep_acc', 'mat_pep_acc=')
+
     # make 'INFO' column easier to extract attributes from:
     # split at ;, form dataframe
     info = df['INFO'].str.split(pat=';').apply(pd.Series)
-
     for column in info.columns:
         split = info[column].str.split(pat='=').apply(pd.Series)
         title = split[0].drop_duplicates().tolist()[0]
@@ -77,39 +92,69 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     # parse EFF entry in INFO
     # series: extract everything between parentheses as elements of a
     # list
-    eff_info = info['eff'].str.findall('\((.*?)\)')
-    # take first element of list
-    eff_info = eff_info.apply(pd.Series)[0]
+    def keep_both_protein_names(eff_string):
+        #print("")
+        #print("")
+        eff_list = eff_string.split(",")
+
+        #print("GIVEN:", eff_list)
+        # if any records in the row contain '|p.', take only those records
+        EFF_records_list = [s for s in eff_list if '|p.' in s]
+        # if no records contain '|p.', take the "intergenic" record
+        if len(EFF_records_list)==0:
+            EFF_records_list = [s for s in eff_list if 'intergenic_region' in s]
+        #print("")
+        #print("RETURN:", EFF_records_list)
+        return EFF_records_list
+        
+    info["eff_result"] = [keep_both_protein_names(x) for x in info['eff']] 
+
+    #concatenate info and df horizontally to return just one object
+    df = pd.concat([df, info], axis=1)
+    df = df.drop(columns="INFO")
+                 
+    #next, duplicate relevant INFO rows
+    df = unnest(df, "eff_result", reset_index=True)
+    
+    # expand the contents of eff_result into separate columns, named as in the 
+    # VCF header
+    eff_info = df['eff_result'].str.findall('\((.*?)\)').str[0]
     # split at pipe, form dataframe
     eff_info = eff_info.str.split(pat='|').apply(pd.Series)
-    # hgvs names
-    hgvs = eff_info[3].str.rsplit(pat='c.').apply(pd.Series)
-    eff_info["hgvs_protein"] = hgvs[0].str[:-1]
-    eff_info["hgvs_nucleotide"] = 'g.' + hgvs[1] # change 'c.' to 'g.' for nucleotide names
+    num_cols = len(eff_info.columns)
+    eff_info_cols = ['Effect_Impact','Functional_Class','Codon_Change','Amino_Acid_Change','Amino_Acid_length','Gene_Name','Transcript_BioType','Gene_Coding','Transcript_ID','Exon_Rank','Genotype ERRORS', 'Genotype WARNINGS'][:num_cols]
+    eff_info.columns = eff_info_cols
 
-    # change nucleotide names of the form "g.C*4378A" to g.C4378AN;
-    # change vcf_gene to "intergenic" here
-    asterisk_mask = eff_info["hgvs_nucleotide"].str.contains('\*')
-    eff_info["hgvs_nucleotide"][asterisk_mask] = 'g.' + df['REF'] + df['POS'] + \
-                                     df['ALT']
-    eff_info[5][asterisk_mask] = "intergenic"
-
-    # use nucleotide name where protein name doesn't exist (for
-    # 'Name' attribute)
-    Names = hgvs[0].str[:-1]
-    # fill in empty protein name spaces with nucleotide names ("c."...)
-    Names[~Names.str.contains("p.")] = eff_info["hgvs_nucleotide"]
-    # take "p." off the protein names
-    Names = Names.str.replace("p.", "", regex=True)
-    eff_info["Names"] = Names
+    df = pd.concat([df, eff_info], axis=1)
+    df = df.drop(columns='eff_result')
     
-    #rename some eff_info columns
-    eff_info = eff_info.rename(columns={5: "vcf_gene", 1: "mutation_type"})
+    # create a "Names" column that holds the amino acid name (minus 'p.')
+    # if there is one, or the nucleotide level name if not
+    df["Names"] = df['Amino_Acid_Change'].str.rsplit(pat='/').apply(
+        pd.Series)[0].str.replace("p.", "", regex=True)
+    
+    # split df['Amino_Acid_Change'] into two columns: one for HGVS amino acid
+    # names, and the righthand column for nucleotide-level names
+    df['Amino_Acid_Change'][~df['Amino_Acid_Change'].str.contains('/')] = '/' + df['Amino_Acid_Change']
+    hgvs = df['Amino_Acid_Change'].str.rsplit(pat='/').apply(pd.Series)
+    hgvs.columns = ["hgvs_protein", "hgvs_nucleotide"]
+    df = pd.concat([df, hgvs], axis=1)
+    
+    # make adjustments to the nucleotide names
+    # 1) change 'c.' to 'g.' for nucleotide names ### double check that we want this
+    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("c.", "g.", regex=True) 
+    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("n.", "g.", regex=True) 
+    # 2) change nucleotide names of the form "g.C*4378A" to g.C4378AN;
+    asterisk_mask = df["hgvs_nucleotide"].str.contains('\*')
+    df["hgvs_nucleotide"][asterisk_mask] = 'g.' + df['REF'] + df['POS'] + \
+                                     df['ALT']
+    # 3) change 'Gene_Name' to "intergenic" where names contain a "*"
+    df['Gene_Name'][asterisk_mask] = "intergenic"
+    
+    #rename some columns
+    df = df.rename(columns={'Gene_Name': "vcf_gene", 'Functional_Class': "mutation_type"})
 
-    #concatenate info and eff_info horizontally to return just one object
-    info = pd.concat([info, eff_info], axis=1)
-
-    return(info)
+    return(df)
     
     
     
@@ -124,7 +169,7 @@ def add_variant_information(clade_file, merged_df, sample_size, strain):
     # matches args.strain (call this line "var_to_match")
     ### replace this part with func "parse_variant_file" in functions.py
     #available_strains = parse_variant_file(clades)
-    print("here", strain)
+    var_to_match = 'None'
     cladefile_strain = 'None'
     available_strains = []
     for var in clades['pango_lineage'].tolist():
@@ -147,10 +192,9 @@ def add_variant_information(clade_file, merged_df, sample_size, strain):
             if strain.startswith(var):
                 var_to_match = var
                 
-    print("var_to_match", var_to_match)
-
     # if strain in available_strains:
-    if var_to_match:
+    if var_to_match !='None':
+        print("var_to_match", var_to_match)
         # find the index of the relevant row
         var_index = clades.index[clades['pango_lineage'] == var_to_match].tolist()[0]
         print("var_index", var_index)

@@ -98,6 +98,8 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # restart index from 0
     df = df.reset_index(drop=True)
 
+    df = parse_INFO(df)
+
     new_df = pd.DataFrame(index=range(0, len(df)), columns=gvf_columns)
 
     # fill in first 7 GVF columns, excluding 'type'
@@ -112,26 +114,24 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     new_df['#strand'] = '+'
     new_df['#phase'] = '.'
 
-    info = parse_INFO(df)
-
-    new_df["Names"] = info["Names"]
-    new_df['nt_name'] = info["hgvs_nucleotide"]
-    new_df['aa_name'] = info["hgvs_protein"]
-    new_df['vcf_gene'] = info["vcf_gene"]
-    new_df['mutation_type'] = info['mutation_type']
+    new_df["Names"] = df["Names"]
+    new_df['nt_name'] = df["hgvs_nucleotide"]
+    new_df['aa_name'] = df["hgvs_protein"]
+    new_df['vcf_gene'] = df["vcf_gene"]
+    new_df['mutation_type'] = df['mutation_type']
 
     # fill in 'type' column
-    new_df['#type'] = info['type']
+    new_df['#type'] = df['type']
 
     # add 'INFO' attributes by name
     ### If the column attribute exists then parse and add. 
     info_cols_to_add = ['ps_filter', 'ps_exc', 'mat_pep_id',
                    'mat_pep_desc', 'mat_pep_acc']
-    for column in list(set(info.columns) & set(info_cols_to_add)):
+    for column in list(set(df.columns) & set(info_cols_to_add)):
         # drop nans if they exist
-        info[column] = info[column].fillna('')
+        df[column] = df[column].fillna('')
         new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-            column + '=' + info[column].astype(str) + ';'
+            column + '=' + df[column].astype(str) + ';'
 
     # gene and protein name extraction
     gene_names, protein_names = map_pos_to_gene_protein(
@@ -153,21 +153,21 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     new_df['#attributes'] = new_df['#attributes'].astype(str) + \
                             'ao=' + unknown[5].astype(str) + ';'
     new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'dp=' + info['dp'].astype(str) + ';'
+                            'dp=' + df['dp'].astype(str) + ';'
 
     # add alternate frequency (AF) column for clade-defining cutoff (
     # af=ao/dp)
     # if there are no commas anywhere in the 'ao' column, calculate
     # AF straight out
     if unknown[5][unknown[5].str.contains(",")].empty:
-        new_df['AF'] = unknown[5].astype(int) / info['dp'].astype(int)
+        new_df['AF'] = unknown[5].astype(int) / df['dp'].astype(int)
     # if there is a comma, add the numbers together to calculate
     # alternate frequency
     else:
         new_df['added_ao'] = unknown[5].apply(lambda x: sum(map(int,
                                                                 x.split(
                                                                     ','))))
-        new_df['AF'] = new_df['added_ao'].astype(int) / info[
+        new_df['AF'] = new_df['added_ao'].astype(int) / df[
             'dp'].astype(int)
 
     # add Reference and Alternate alleles from VCF file
@@ -470,7 +470,7 @@ if __name__ == '__main__':
 
     
 
-    sample_size = find_sample_size(args.size_stats, args.strain, vcf_file)
+    sample_size = 30 #find_sample_size(args.size_stats, args.strain, vcf_file)
     
 
     # create gvf from annotated vcf (ignoring pragmas for now)
