@@ -123,8 +123,10 @@ workflow {
           ch_stats=variant_calling.out.ch_stats
           ch_vcf=variant_calling.out.ch_vcf
           
+      
           annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
           ch_gvf_surveillance=annotation.out.ch_gvf_surv
+          ch_metadata=ch_mutationsplit
           surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
 
         }

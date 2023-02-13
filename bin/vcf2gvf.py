@@ -120,7 +120,6 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     ### check where this should go
     new_df["Names"] = df["Names"]
 
-
     # add attributes from df columns by name if they exist
     
     df_cols_to_add = ['nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
@@ -137,7 +136,9 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
 
     # gene and protein name extraction
     gene_names, protein_names = map_pos_to_gene_protein(
+
         df['POS'].astype(int), df['aa_name'], GENE_PROTEIN_POSITIONS_DICT)
+
     new_df['#attributes'] = new_df['#attributes'] + 'chrom_region=' + gene_names + ';'
     new_df['#attributes'] = new_df['#attributes'] + 'protein=' + \
         protein_names + ';'
