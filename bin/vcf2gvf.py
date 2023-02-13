@@ -98,92 +98,59 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # restart index from 0
     df = df.reset_index(drop=True)
 
+    # expand INFO column into multiple columns
     df = parse_INFO(df)
 
+    # create an empty df to make the new GVF in
     new_df = pd.DataFrame(index=range(0, len(df)), columns=gvf_columns)
 
-    # fill in first 7 GVF columns, excluding 'type'
+    # fill in GVF columns
     new_df['#seqid'] = df['#CHROM']
     new_df['#source'] = '.'
     new_df['#start'] = df['POS']
-    ### this needs fixing.. Checking if not required, we can delete this column. Or secify this doesnt clarify for ins/dels
-    #new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() -
-    #                  1).astype(str)
-    new_df['#end'] = df['POS'] #'end' is not used in creating the COVID-MVP heatmap, but is a required GVF column
+    # 'end' is not used in creating the COVID-MVP heatmap,
+    # but is a required GVF column, so use 'POS' for 'end' as well
+    new_df['#end'] = df['POS'] 
     new_df['#score'] = '.'
     new_df['#strand'] = '+'
     new_df['#phase'] = '.'
-
-    new_df["Names"] = df["Names"]
-    new_df['nt_name'] = df["hgvs_nucleotide"]
-    new_df['aa_name'] = df["hgvs_protein"]
-    new_df['vcf_gene'] = df["vcf_gene"]
-    new_df['mutation_type'] = df['mutation_type']
-
-    # fill in 'type' column
     new_df['#type'] = df['type']
+    new_df['#attributes'] = ''
 
-    # add 'INFO' attributes by name
-    ### If the column attribute exists then parse and add. 
-    info_cols_to_add = ['ps_filter', 'ps_exc', 'mat_pep_id',
-                   'mat_pep_desc', 'mat_pep_acc']
-    for column in list(set(df.columns) & set(info_cols_to_add)):
+    ### check where this should go
+    new_df["Names"] = df["Names"]
+
+
+    # add attributes from df columns by name if they exist
+    
+    df_cols_to_add = ['nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
+                        'ps_filter', 'ps_exc', 'mat_pep_id','mat_pep_desc',
+                        'mat_pep_acc', 'Reference_seq', 'Variant_seq',
+                        "dp", "ro", "ao"]
+    
+    for column in list(set(df.columns) & set(df_cols_to_add)):
         # drop nans if they exist
         df[column] = df[column].fillna('')
         new_df['#attributes'] = new_df['#attributes'].astype(str) + \
             column + '=' + df[column].astype(str) + ';'
 
+
     # gene and protein name extraction
     gene_names, protein_names = map_pos_to_gene_protein(
-        df['POS'].astype(int), new_df['aa_name'], GENE_PROTEIN_POSITIONS_DICT)
-    new_df['#attributes'] = 'chrom_region=' + gene_names + ';'
+        df['POS'].astype(int), df['aa_name'], GENE_PROTEIN_POSITIONS_DICT)
+    new_df['#attributes'] = new_df['#attributes'] + 'chrom_region=' + gene_names + ';'
     new_df['#attributes'] = new_df['#attributes'] + 'protein=' + \
         protein_names + ';'
 
     # add sample_size attribute
     new_df['#attributes'] = new_df['#attributes'] + "sample_size=" + \
                             str(sample_size) + ';'
-
-    # add ro, ao, dp
-    unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
-
-    
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'ro=' + unknown[3].astype(str) + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'ao=' + unknown[5].astype(str) + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'dp=' + df['dp'].astype(str) + ';'
-
-    # add alternate frequency (AF) column for clade-defining cutoff (
-    # af=ao/dp)
-    # if there are no commas anywhere in the 'ao' column, calculate
-    # AF straight out
-    if unknown[5][unknown[5].str.contains(",")].empty:
-        new_df['AF'] = unknown[5].astype(int) / df['dp'].astype(int)
-    # if there is a comma, add the numbers together to calculate
-    # alternate frequency
-    else:
-        new_df['added_ao'] = unknown[5].apply(lambda x: sum(map(int,
-                                                                x.split(
-                                                                    ','))))
-        new_df['AF'] = new_df['added_ao'].astype(int) / df[
-            'dp'].astype(int)
-
-    # add Reference and Alternate alleles from VCF file
-    for column in ['REF', 'ALT']:
-        key = column.lower()
-        if key == 'ref':
-            key = 'Reference_seq'
-        elif key == 'alt':
-            key = 'Variant_seq'
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                                key + '=' + df[column].astype(str) + ';'
-                                
-    # get True/False/n/a designation for clade-defining status
+          
+    # add True/False/n/a designation for clade-defining status
+    new_df["AF"] = df["AF"]
     clade_threshold_gvf = clade_defining_threshold(args.clades_threshold,
                                              new_df, sample_size)                            
-                                             
+                                       
     ### MZA: This needs immediate attention with Paul and his group. Need to update the notion of mutations
     # split multi-aa names from the vcf into single-aa names (multi-row)
     new_df["multi_name"] = ''
@@ -233,17 +200,6 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # add attributes
     new_df['#attributes'] = 'Name=' + new_df["Names"] + ';' + new_df[
         '#attributes'].astype(str)
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'nt_name=' + new_df['nt_name'] + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'aa_name=' + new_df['aa_name'] + ';'
-    # gene names
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'vcf_gene=' + new_df['vcf_gene'] + ';'
-    # mutation type
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'mutation_type=' + new_df[
-                                'mutation_type'] + ';'
 
     # add strain name, multi-aa notes, sample_size
     new_df['#attributes'] = new_df[
@@ -414,7 +370,7 @@ def parse_args():
                                            'annotations')
     parser.add_argument('--size_stats', type=str, default='n/a',
                         help='Statistics file for for size extraction')
-    parser.add_argument('--clades', type=str, default=None,
+    parser.add_argument('--clades', type=str, default='n/a',
                         help='TSV file of WHO strain names and '
                              'VOC/VOI status')
     parser.add_argument('--clades_threshold', type=float,
