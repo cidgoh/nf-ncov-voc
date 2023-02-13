@@ -395,7 +395,7 @@ if __name__ == '__main__':
                                                   '1.10'], [
                                 '##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])  # pragmas are in column 0
 
-    sample_size = 30 #find_sample_size(args.size_stats, args.strain, vcf_file)
+    sample_size = find_sample_size(args.size_stats, args.strain, vcf_file)
     
     # create gvf from annotated vcf (ignoring pragmas for now)
     gvf = vcftogvf(vcf_file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
