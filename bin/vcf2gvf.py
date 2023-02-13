@@ -333,31 +333,7 @@ def add_pokay_annotations(gvf, annotation_file, strain):
     merged_df["#attributes"] = 'ID=' + merged_df['id'].astype(
         str) + ';' + merged_df["#attributes"].astype(str)
 
-    if args.names:
-        # get list of names in tsv but not in functional annotations,
-        # and vice versa, saved as a .tsv
-        tsv_names = gvf["mutation"].unique()
-        functional_annotation_names = df["mutation"].unique()
-        print(str(np.setdiff1d(tsv_names,
-                               functional_annotation_names).shape[0])
-              + "/" + str(tsv_names.shape[0]) + " mutation names were "
-                                                "not found in "
-                                                "functional_annotations")
-        leftover_names = pd.DataFrame({'in_tsv_only': np.setdiff1d(
-            tsv_names, functional_annotation_names)})
-        leftover_names["strain"] = strain
-        
-        # Check this block and if not needed, we can take this out. 
-        '''
-        clade_names = clades["mutation"].unique()
-        leftover_clade_names = pd.DataFrame({'unmatched_clade_names':np.setdiff1d(clade_names, tsv_names)})
-        leftover_clade_names["strain"] = strain
-        '''
-        return merged_df[gvf_columns], leftover_names, gvf[
-            "mutation"].tolist()  # , leftover_clade_names
-
-    else:
-        return merged_df[gvf_columns]
+    return merged_df[gvf_columns]
 
 
 def parse_args():
@@ -415,35 +391,19 @@ if __name__ == '__main__':
 
     # print("Processing: " + vcf_file)
 
-    # make empty list in which to store mutation names from all
-    # strains in the folder together
-    all_strains_mutations = []
-    # empty dataframe to hold unmatched names
-    leftover_df = pd.DataFrame()
-
     pragmas = pd.DataFrame([['##gff-version 3'], ['##gvf-version '
                                                   '1.10'], [
                                 '##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])  # pragmas are in column 0
 
+    sample_size = 30 #find_sample_size(args.size_stats, args.strain, vcf_file)
     
-
-    sample_size = find_sample_size(args.size_stats, args.strain, vcf_file)
-    
-
     # create gvf from annotated vcf (ignoring pragmas for now)
     gvf = vcftogvf(vcf_file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
                    args.names_to_split, sample_size)
+    
     # add functional annotations
-    if args.names:
-        annotated_gvf, leftover_names, mutations = add_pokay_annotations(gvf,
-                                                                 annotation_file,
-                                                                 clade_file,
-                                                                 args.strain)
-    else:
-        pokay_annotated_gvf = add_pokay_annotations(gvf, annotation_file,
-                                      args.strain)
-        variant_annotated_gvf = add_variant_information(clade_file, pokay_annotated_gvf, sample_size, args.strain)
-
+    pokay_annotated_gvf = add_pokay_annotations(gvf, annotation_file, args.strain)
+    variant_annotated_gvf = add_variant_information(clade_file, pokay_annotated_gvf, sample_size, args.strain)
 
     # add pragmas to df, then save to .gvf
     # columns are now 0, 1, ...
@@ -455,32 +415,26 @@ if __name__ == '__main__':
     print("")
     final_gvf.to_csv(filepath, sep='\t', index=False, header=False)
 
-    # get name troubleshooting reports
+    # get name troubleshooting report
     if args.names:
-        all_strains_mutations.append(mutations)
-        leftover_df = leftover_df.append(leftover_names)
-        # unmatched_clade_names = unmatched_clade_names.append(
-        # leftover_clade_names)
-        # save unmatched names (in tsv but not in
-        # functional_annotations) across all strains to a .tsv file
-        leftover_names_filepath = "leftover_names.tsv"
-        leftover_df.to_csv(leftover_names_filepath, sep='\t',
-                           index=False)
-        print("")
-        print("Mutation names not found in functional annotations "
-              "file saved to " + leftover_names_filepath)
-        '''
-        #save unmatched clade-defining mutation names to a .tsv file
-        leftover_clade_names_filepath = "leftover_clade_defining_names.tsv"
-        unmatched_clade_names.to_csv(leftover_clade_names_filepath,sep='\t', index=False)
-        print("Clade-defining mutation names not found in the annotated VCF saved to " + leftover_clade_names_filepath)
-        '''
-        # print number of unique mutations across all strains
-        flattened = [val for sublist in all_strains_mutations for val in
-                     sublist]
-        arr = np.array(flattened)
-        print("# unique mutations in VCF file: ",
-              np.unique(arr).shape[0])
+        # save unmatched names (in vcf/tsv but not in
+        # functional_annotations) to a .tsv file
+        
+        # create mask to find which rows do not have a functional annotation
+        notinPokay_mask = variant_annotated_gvf["#attributes"].str.contains("function_category=;")
+        # extract all mutation names from #attributes column
+        names = pd.Series(variant_annotated_gvf["#attributes"].str.findall('(?<=Name=)(.*?)(?=;)').str[0])
+        # get unique mutation names not in Pokay
+        unmatched_names = pd.Series(names[notinPokay_mask].unique())
+        # save unmatched names to TSV
+        if unmatched_names.shape[0] != 0:
+            leftover_names_filepath = "unmatched_names.tsv"
+            unmatched_names.to_csv(leftover_names_filepath, sep='\t',
+                                   index=False, header=False)
+            print("")
+            print(str(unmatched_names.shape[0]) +
+                  " mutation names not matched with functional annotations "
+                  "file saved to " + leftover_names_filepath)
 
     print("")
     print("Processing complete.")
