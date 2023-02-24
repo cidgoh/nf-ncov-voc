@@ -35,6 +35,10 @@
 			"name": "ORF7a",
 			"coordinates": {"from":27394,"to":27759}
 		},
+		"ORF7b": {
+			"name": "ORF7b",
+			"coordinates": {"from":27756,"to":27887}
+		},
 		"ORF8": {
 			"name": "ORF8",
 			"coordinates": {"from":27894,"to":28259}
@@ -114,8 +118,8 @@
 		"NSP11": {
 			"name": "NSP11",
 			"gene": "1ab",
-			"coordinates": {"from":4392, "to":4392},
-			"g.coordinates": {"from":13442, "to":13442}
+			"coordinates": {"from":4393, "to":4405},
+			"g.coordinates": {"from":13442, "to":13480}
 		},
 		"NSP12": {
 			"name": "NSP12",
@@ -192,6 +196,13 @@
 			"description": "ORF7a protein",
 			"coordinates": {"from":1,"to":121},
 			"g.coordinates": {"from":27394,"to":27759}
+		},
+		"ORF7b": {
+			"name": "ORF7b",
+			"gene": "7b",
+			"description": "ORF7b protein",
+			"coordinates": {"from":1,"to":43},
+			"g.coordinates": {"from":27894,"to":28259}
 		},
 		"ORF8": {
 			"name": "ORF8",

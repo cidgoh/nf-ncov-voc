@@ -303,7 +303,7 @@ process surveillancePDF {
       path(metadata)
 
   output:
-      path("*.pdf")
+      path("*.pdf"), emit: surveillance_pdf
 
   script:
   if( params.mode == 'reference' ){

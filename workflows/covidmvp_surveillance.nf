@@ -19,5 +19,9 @@ workflow surveillance {
     main:
       surveillanceRawTsv(ch_gvf, ch_variant.combine(ch_stats))
       surveillancePDF(surveillanceRawTsv.out.surveillancetsv.flatten(), ch_surveillanceIndicators, ch_metadata)
+      ch_surv=surveillancePDF.out.surveillance_pdf
+    
+    emit:
+      ch_surv
 
 }
