@@ -51,6 +51,11 @@ def select_snpeff_records(eff_string):
     if len(EFF_records_list) == 0:
         EFF_records_list = [s for s in eff_list if 'intergenic_region' in s]
 
+    # filter out annotations that include 'WARNING' or 'GU280_gp01.2'
+    # this keeps 'GU280_gp01' annotations over 'GU280_gp01.2'
+    EFF_records_list = [s for s in EFF_records_list if 'WARNING' not in s
+                        and 'GU280_gp01.2' not in s]
+
     return EFF_records_list
 
 
@@ -126,12 +131,23 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
     unknown.columns = [x.lower for x in ["GT","DP","AD","RO","QR","AO","QA","GL"]]
     df = pd.concat([df, unknown], axis=1)
-    # make ALT, DP, AO into lists
-    for column in ["dp", "ao", "ALT"]:
+    # make ALT, AO into lists
+    for column in ["ao", "ALT"]:
         df[column] = df[column].str.split(",")
-
+        
+    # check for places where there are more annotations than AOs given
+    
+    # make columns for how long lists are
+    #df['eff_result_len'] = df["eff_result"].str.len()
+    #df['ao_len'] = df["ao"].str.len()
+    #df['ALT_len'] = df["ALT"].str.len()
+    
+    #print(df.query('ao_len != ALT_len'))
+    #mismatch = df.query('ao_len != eff_result_len')[['POS', 'eff_result', 'eff_result_len', 'ao', 'unknown']]
+    #mismatch.to_csv("mismatches.csv", sep='\t', header=True, index=True)
+    
     # unnest list columns
-    df = unnest_multi(df, ["eff_result", "dp", "ao", "ALT"], reset_index=True)
+    df = unnest_multi(df, ["eff_result", "ao", "ALT"], reset_index=True)
 
     # calculate Alternate Frequency
     df['AF'] = df['ao'].astype(int) / df['dp'].astype(int)
