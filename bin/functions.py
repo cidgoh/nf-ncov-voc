@@ -135,12 +135,13 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     for column in ["ao", "ALT"]:
         df[column] = df[column].str.split(",")
         
-    # make columns for how long lists are
-    df['eff_result_len'] = df["eff_result"].str.len()
-    df['ao_len'] = df["ao"].str.len()
-    df['ALT_len'] = df["ALT"].str.len()
-    
     # check for places where there are more annotations than AOs given
+    
+    # make columns for how long lists are
+    #df['eff_result_len'] = df["eff_result"].str.len()
+    #df['ao_len'] = df["ao"].str.len()
+    #df['ALT_len'] = df["ALT"].str.len()
+    
     #print(df.query('ao_len != ALT_len'))
     #mismatch = df.query('ao_len != eff_result_len')[['POS', 'eff_result', 'eff_result_len', 'ao', 'unknown']]
     #mismatch.to_csv("mismatches.csv", sep='\t', header=True, index=True)
