@@ -2,7 +2,7 @@ process FREEBAYES {
 
     tag {"${bam.baseName}"}
 
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.gvcf", mode: 'copy'
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
 
     label 'dev_env'
 
@@ -11,7 +11,7 @@ process FREEBAYES {
     path(bam_index)
 
     output:
-    path("*.gvcf"), emit: gvcf
+    path("*.vcf"), emit: vcf
 
     script:
 
@@ -20,11 +20,10 @@ process FREEBAYES {
         -p ${params.ploidy} \
         -f ${ref} \
         -F ${params.var_MinFreqThreshold} \
-        -C ${params.var_MinDepth} \
-        --pooled-continuous \
+        -C 1 \
         --min-coverage ${params.var_MinDepth} \
-        ${bam} |
-        sed s/QR,Number=1,Type=Integer/QR,Number=1,Type=Float/ > ${bam.baseName}.gvcf
+        --pooled-continuous \
+        ${bam} -v ${bam.baseName}.variants.vcf
 
         """
 

@@ -148,6 +148,9 @@ process tagProblematicSites {
     output:
         path("*.vcf"), emit: filtered_vcf
 
+    when:
+      vcf.size() > 0
+
     script:
       """
       problematic_sites_tag.py \
@@ -169,6 +172,9 @@ process annotate_mat_peptide {
 
     output:
         path("*.vcf"), emit: annotated_vcf
+
+    when:
+      peptide_vcf.size() > 0
 
     script:
       """
@@ -206,18 +212,16 @@ process vcfTogvf {
       --gene_positions ${gene_coord} \
       --names_to_split ${mutation_split} \
       --size_stats ${stats} \
-      --strain ${ch_annotated_vcf.baseName.replaceAll(".qc.sorted.variants.normalized.filtered.SNPEFF.annotated","")}\
-      --outvcf ${ch_annotated_vcf.baseName.replaceAll(".qc","_qc")}.gvf
+      --strain ${ch_annotated_vcf.baseName.replaceAll(".qc.sorted.variants.filtered.SNPEFF.annotated", "")} --outgvf ${ch_annotated_vcf.baseName.replaceAll(".qc","_qc")}.gvf
     """
   }
   else if( params.mode == 'user' && input_file.getExtension() == "vcf"){
     """
       vcf2gvf.py --vcffile ${ch_annotated_vcf} \
       --functional_annotations ${func_annot}  \
-      --clades ${variants} \
       --gene_positions ${gene_coord} \
       --names_to_split ${mutation_split} \
-      --outvcf ${ch_annotated_vcf.baseName}.gvf
+      --outgvf ${ch_annotated_vcf.baseName}.gvf
     """
   }
 
@@ -225,11 +229,10 @@ process vcfTogvf {
     """
       vcf2gvf.py --vcffile ${ch_annotated_vcf} \
       --functional_annotations ${func_annot}  \
-      --clades ${variants} \
       --gene_positions ${gene_coord} \
       --names_to_split ${mutation_split} \
       --size_stats ${stats} \
-      --outvcf ${ch_annotated_vcf.baseName}.gvf
+      --outgvf ${ch_annotated_vcf.baseName}.gvf
     """
   }
 
@@ -296,10 +299,11 @@ process surveillancePDF {
 
   input:
       each tsv
-      tuple(path(surveillanceindicators), path(metadata))
+      path(surveillanceindicators)
+      path(metadata)
 
   output:
-      path("*.pdf")
+      path("*.pdf"), emit: surveillance_pdf
 
   script:
   if( params.mode == 'reference' ){
@@ -318,9 +322,8 @@ process surveillancePDF {
   else{
     """
     surveillance_report_pdf.py --tsv ${tsv} \
-    --functions_table ${surveillanceindicators} \
-    --user True > ${tsv.baseName}.tex
-
+    --functions_table ${surveillanceindicators} > ${tsv.baseName}.tex 
+    
     tectonic -X compile ${tsv.baseName}.tex --reruns 3 --keep-intermediates --keep-logs
 
     """

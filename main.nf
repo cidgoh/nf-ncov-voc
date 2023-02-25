@@ -13,6 +13,7 @@ params.gene_coordinates = "$baseDir/assets/ncov_geneCoordinates"
 params.mutation_names = "$baseDir/assets/ncov_multiNames"
 params.surveillance_indicators = "$baseDir/assets/ncov_surveillanceIndicators"
 
+script_files = "$baseDir/bin"
 
 // include modules
 include {printHelp              } from './modules/local/help'
@@ -21,6 +22,7 @@ include {workflowHeader         } from './modules/local/wf_header'
 
 
 // import workflows
+
 include {preprocessing          } from './workflows/covidmvp_preprocessing'
 include {variant_calling        } from './workflows/covidmvp_variantcalling'
 include {annotation             } from './workflows/covidmvp_annotation'
@@ -62,23 +64,21 @@ workflow {
       log.info cidgohHeader()
       log.info workflowHeader()
 
-      if(params.seq){
-        Channel.fromPath( "$params.seq", checkIfExists: true)
-             .set{ ch_seq }
+      if(!params.skip_permissions){
+            allFiles = listOfFiles = file("$script_files/*")
+            for( def file : allFiles ) {
+                  file.setPermissions('rwxr-x--x')
+            }
       }
-
-      if(params.meta){
-        Channel.fromPath( "$params.meta", checkIfExists: true)
-             .set{ ch_metadata }
-      }
-
+      
+      
       Channel.fromPath( "$params.ref_gff/*.gff3", checkIfExists: true)
             .set{ ch_refgff }
 
       Channel.fromPath( "$params.refdb/*.fai", checkIfExists: true)
             .set{ ch_reffai }
 
-      Channel.fromPath( "$params.refdb/MN908947.3.fasta", checkIfExists: true)
+      Channel.fromPath( "$params.refdb/*.fasta", checkIfExists: true)
             .set{ ch_ref }
 
       Channel.fromPath( "$params.prob_sites/*.vcf", checkIfExists: true)
@@ -111,20 +111,22 @@ workflow {
 
       if (params.mode == 'user' && params.userfile){
         input_file = file(params.userfile)
+        ch_metadata=Channel.empty()
+        ch_voc=Channel.empty()
+        
+
         if (input_file.getExtension() == "fasta" || input_file.getExtension() == "fa"){
           Channel.fromPath( "$params.userfile", checkIfExists: true)
             .set{ ch_seq }
 
-          ch_metadata=Channel.empty()
-          ch_voc=Channel.empty()
-
           variant_calling(ch_voc, ch_metadata, ch_seq, ch_ref, ch_refgff, ch_reffai)
           ch_stats=variant_calling.out.ch_stats
           ch_vcf=variant_calling.out.ch_vcf
-
+          
+      
           annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
           ch_gvf_surveillance=annotation.out.ch_gvf_surv
-
+          ch_metadata=ch_mutationsplit
           surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
 
         }
@@ -134,23 +136,35 @@ workflow {
             Channel.fromPath( "$params.userfile", checkIfExists: true)
               .set{ ch_vcf }
             }
-            //else if (input_file.getExtension() == "tsv"){
-              //add module to change tsv to vcf
-            //  Channel.fromPath( "$params.userfile", checkIfExists: true)
-            //    .set{ ch_vcf }
-            //}
-
-          ch_stats=ch_refgff
           annotation(ch_vcf, ch_probvcf, ch_geneannot, ch_funcannot, ch_genecoord, ch_mutationsplit, ch_variant, ch_stats)
           ch_gvf_surveillance=annotation.out.ch_gvf_surv
-          ch_stats=annotation.out.ch_stats       
-          ch_metadata=ch_refgff
           surveillance(ch_gvf_surveillance, ch_variant , ch_stats, ch_surveillanceIndicators, ch_metadata)
             
         }
       }
 
       if(params.mode == 'reference'){
+
+        ch_metadata=Channel.empty()
+        ch_voc=Channel.empty()
+
+        if (params.skip_viralai){
+          if(params.seq){
+            Channel.fromPath( "$params.seq", checkIfExists: true)
+              .set{ ch_seq }
+          }
+
+          if(params.meta){
+            Channel.fromPath( "$params.meta", checkIfExists: true)
+               .set{ ch_metadata }
+          }
+        }
+        else{
+            viralaidata(ch_pangolin_alias)
+            ch_metadata=viralaidata.out.ch_metadata
+            ch_seq=viralaidata.out.ch_seq
+        }
+
 
         preprocessing(ch_metadata, ch_seq, ch_variant)
         ch_voc=preprocessing.out.ch_voc
@@ -169,5 +183,6 @@ workflow {
         surveillance(ch_gvf_surveillance, ch_variant, ch_stats, ch_surveillanceIndicators, ch_metadata )
 
       }
+      
 
 }

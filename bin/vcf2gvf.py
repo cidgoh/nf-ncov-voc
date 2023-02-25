@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 
@@ -15,44 +15,9 @@ import argparse
 import pandas as pd
 import numpy as np
 import json
+from functions import parse_INFO, find_sample_size, parse_variant_file, add_variant_information
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description='Converts a annotated VCF file to a GVF '
-                    'file with functional annotation')
-    parser.add_argument('--vcffile', type=str, default=None,
-                        help='Path to a snpEFF-annotated VCF file')
-    parser.add_argument('--functional_annotations', type=str,
-                        default=None, help='TSV file of functional '
-                                           'annotations')
-    parser.add_argument('--size_stats', type=str, default='n/a',
-                        help='Statistics file for for size extraction')
-    parser.add_argument('--clades', type=str, default=None,
-                        help='TSV file of WHO strain names and '
-                             'VOC/VOI status')
-    parser.add_argument('--clades_threshold', type=float,
-                        default=0.75,
-                        help='Alternate frequency cutoff for '
-                             'clade-defining mutations')
-    parser.add_argument('--gene_positions', type=str,
-                        default=None,
-                        help='gene positions in JSON format')
-    parser.add_argument('--names_to_split', type=str,
-                        default=None,
-                        help='.tsv of multi-aa mutation names to '
-                             'split up into individual aa names')
-    parser.add_argument('--strain', type=str,
-                        default='n/a',
-                        help='Lineage; user mode is if strain="n/a"')
-    parser.add_argument('--outvcf', type=str,
-                        help='Filename for the output GVF file')
-    parser.add_argument("--names", help="Save mutation names without "
-                                        "functional annotations to "
-                                        "TSV files for "
-                                        "troubleshooting purposes",
-                        action="store_true")
-    return parser.parse_args()
 
 
 def map_pos_to_gene_protein(pos, aa_names, GENE_PROTEIN_POSITIONS_DICT):
@@ -133,143 +98,64 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # restart index from 0
     df = df.reset_index(drop=True)
 
+    # expand INFO column into multiple columns
+    df = parse_INFO(df)
+
+    # create an empty df to make the new GVF in
     new_df = pd.DataFrame(index=range(0, len(df)), columns=gvf_columns)
 
-    # fill in first 7 GVF columns, excluding 'type'
+    # fill in GVF columns
     new_df['#seqid'] = df['#CHROM']
     new_df['#source'] = '.'
     new_df['#start'] = df['POS']
-    # this needs fixing
-    new_df['#end'] = (df['POS'].astype(int) + df['ALT'].str.len() -
-                      1).astype(str)
+    # 'end' is not used in creating the COVID-MVP heatmap,
+    # but is a required GVF column, so use 'POS' for 'end' as well
+    new_df['#end'] = df['POS'] 
     new_df['#score'] = '.'
     new_df['#strand'] = '+'
     new_df['#phase'] = '.'
+    new_df['#type'] = df['type']
+    new_df['#attributes'] = ''
 
-    # parse INFO column
-    # sort out problematic sites tag formats
-    df['INFO'] = df['INFO'].str.replace('ps_filter;', 'ps_filter=;')
-    df['INFO'] = df['INFO'].str.replace('ps_exc;', 'ps_exc=;')
-    df['INFO'] = df['INFO'].str.replace('=n/a', '')
+    ### check where this should go
+    new_df["Names"] = df["Names"]
 
-    # parse EFF entry in INFO
-    # series: extract everything between parentheses as elements of a
-    # list
-    eff_info = df['INFO'].str.findall('\((.*?)\)')
-    # take first element of list
-    eff_info = eff_info.apply(pd.Series)[0]
-    # split at pipe, form dataframe
-    eff_info = eff_info.str.split(pat='|').apply(pd.Series)
-    # hgvs names
-    hgvs = eff_info[3].str.rsplit(pat='c.').apply(pd.Series)
-    hgvs_protein = hgvs[0].str[:-1]
+    # add attributes from df columns by name if they exist
+    
+    df_cols_to_add = ['nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
+                        'ps_filter', 'ps_exc', 'mat_pep_id','mat_pep_desc',
+                        'mat_pep_acc', 'Reference_seq', 'Variant_seq',
+                        "dp", "ro", "ao"]
+    
+    for column in list(set(df.columns) & set(df_cols_to_add)):
+        # drop nans if they exist
+        df[column] = df[column].fillna('')
+        new_df['#attributes'] = new_df['#attributes'].astype(str) + \
+            column + '=' + df[column].astype(str) + ';'
 
-    hgvs_nucleotide = 'g.' + hgvs[1] # change 'c.' to 'g.' for nucleotide names
-
-    new_df['nt_name'] = hgvs_nucleotide
-    new_df['aa_name'] = hgvs_protein
-
-    # change nucleotide names of the form "g.C*4378A" to g.C4378AN;
-    # change vcf_gene to "intergenic" here
-    asterisk_mask = hgvs_nucleotide.str.contains('\*')
-    hgvs_nucleotide[asterisk_mask] = 'g.' + df['REF'] + df['POS'] + \
-                                     df['ALT']
-    eff_info[5][asterisk_mask] = "intergenic"
-
-    # use nucleotide name where protein name doesn't exist (for
-    # 'Name' attribute)
-    Names = hgvs[0].str[:-1]
-    # fill in empty protein name spaces with nucleotide names ("c."...)
-    Names[~Names.str.contains("p.")] = hgvs_nucleotide
-
-    # take "p." off the protein names
-    Names = Names.str.replace("p.", "", regex=True)
-
-    new_df["Names"] = Names
-
-    new_df['vcf_gene'] = eff_info[5]
-    new_df['mutation_type'] = eff_info[1]
-
-    new_df["multi_name"] = ''
-    new_df["multiaa_comb_mutation"] = ''
 
     # gene and protein name extraction
     gene_names, protein_names = map_pos_to_gene_protein(
-        df['POS'].astype(int), new_df['aa_name'], GENE_PROTEIN_POSITIONS_DICT)
-    new_df['#attributes'] = 'chrom_region=' + gene_names + ';'
+
+        df['POS'].astype(int), df['aa_name'], GENE_PROTEIN_POSITIONS_DICT)
+
+    new_df['#attributes'] = new_df['#attributes'] + 'chrom_region=' + gene_names + ';'
     new_df['#attributes'] = new_df['#attributes'] + 'protein=' + \
         protein_names + ';'
 
-    # make 'INFO' column easier to extract attributes from
-    # split at ;, form dataframe
-    info = df['INFO'].str.split(pat=';').apply(pd.Series)
-    for column in info.columns:
-        split = info[column].str.split(pat='=').apply(pd.Series)
-        title = split[0].drop_duplicates().tolist()[0]
-        if isinstance(title, str):
-            title = title.lower()
-            content = split[1]
-            # ignore "tag=" in column content
-            info[column] = content
-            # make attribute tag as column label
-            info.rename(columns={column: title}, inplace=True)
-
-    # fill in 'type' column
-    new_df['#type'] = info['type']
-
-    # add 'INFO' attributes by name
-    for column in ['ps_filter', 'ps_exc', 'mat_pep_id',
-                   'mat_pep_desc', 'mat_pep_acc']:
-        # drop nans if they exist
-        info[column] = info[column].fillna('')
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-            column + '=' + info[column].astype(str) + ';'
-
-    # add ro, ao, dp
-    unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
-
-    #if sample_size == 1:
-    #    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-    #                            'ro=n/a;ao=n/a;dp=1;'
-    #else:
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'ro=' + unknown[3].astype(str) + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'ao=' + unknown[5].astype(str) + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'dp=' + info['dp'].astype(str) + ';'
-
     # add sample_size attribute
-    # print(sample_size)
     new_df['#attributes'] = new_df['#attributes'] + "sample_size=" + \
                             str(sample_size) + ';'
-
-    # add alternate frequency (AF) column for clade-defining cutoff (
-    # af=ao/dp)
-    # if there are no commas anywhere in the 'ao' column, calculate
-    # AF straight out
-    if unknown[5][unknown[5].str.contains(",")].empty:
-        new_df['AF'] = unknown[5].astype(int) / info['dp'].astype(int)
-    # if there is a comma, add the numbers together to calculate
-    # alternate frequency
-    else:
-        new_df['added_ao'] = unknown[5].apply(lambda x: sum(map(int,
-                                                                x.split(
-                                                                    ','))))
-        new_df['AF'] = new_df['added_ao'].astype(int) / info[
-            'dp'].astype(int)
-
-    # add columns copied straight from Zohaib's file
-    for column in ['REF', 'ALT']:
-        key = column.lower()
-        if key == 'ref':
-            key = 'Reference_seq'
-        elif key == 'alt':
-            key = 'Variant_seq'
-        new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                                key + '=' + df[column].astype(str) + ';'
-
+          
+    # add True/False/n/a designation for clade-defining status
+    new_df["AF"] = df["AF"]
+    clade_threshold_gvf = clade_defining_threshold(args.clades_threshold,
+                                             new_df, sample_size)                            
+                                       
+    ### MZA: This needs immediate attention with Paul and his group. Need to update the notion of mutations
     # split multi-aa names from the vcf into single-aa names (multi-row)
+    new_df["multi_name"] = ''
+    new_df["multiaa_comb_mutation"] = ''
     # load names_to_split spreadsheet
     multiaanames = pd.read_csv(names_to_split, sep='\t', header=0)
     # multi-aa names that are in the gvf (list form)
@@ -315,17 +201,6 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # add attributes
     new_df['#attributes'] = 'Name=' + new_df["Names"] + ';' + new_df[
         '#attributes'].astype(str)
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'nt_name=' + new_df['nt_name'] + ';'
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'aa_name=' + new_df['aa_name'] + ';'
-    # gene names
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'vcf_gene=' + new_df['vcf_gene'] + ';'
-    # mutation type
-    new_df['#attributes'] = new_df['#attributes'].astype(str) + \
-                            'mutation_type=' + new_df[
-                                'mutation_type'] + ';'
 
     # add strain name, multi-aa notes, sample_size
     new_df['#attributes'] = new_df[
@@ -347,12 +222,12 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     return new_df
 
 
-# takes 4 arguments: the output df of vcftogvf.py, the functional
-# annotation file, the clade defining mutations tsv, the strain name,
+# takes 3 arguments: the output df of vcftogvf.py, the functional
+# annotation file, the strain name,
 # and the names_to_split tsv.
 
 
-def add_functions(gvf, annotation_file, clade_file, strain):
+def add_pokay_annotations(gvf, annotation_file, strain):
     attributes = gvf["#attributes"].str.split(pat=';').apply(pd.Series)
 
     # remember this includes nucleotide names where there are no
@@ -369,7 +244,6 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         # add functional annotations
     merged_df = pd.merge(df, gvf, on=['mutation'], how='right')
 
-    print(merged_df)
     # collect all mutation groups (including reference mutation) in a
     # column, sorted alphabetically
     # this is more roundabout than it needs to be; streamline with
@@ -455,214 +329,112 @@ def add_functions(gvf, annotation_file, clade_file, strain):
         merged_df["#attributes"] = merged_df["#attributes"].astype(
             str) + key + '=' + merged_df[column].astype(str) + ';'
     
-    # get clade_defining status, and then info from clades file
-    # load clade-defining mutations file
-    clades = pd.read_csv(clade_file, sep='\t', header=0)
-    clades = clades.replace(np.nan, '', regex=True)
-
-    # find the relevant pango_lineage line in the clade file that
-    # matches args.strain (call this line "var_to_match")
-
-    cladefile_strain = 'None'
-    available_strains = []
-    for var in clades['pango_lineage'].tolist():
-        if "," in var:
-            for temp in var.split(","):
-                if "[" not in var:
-                    available_strains.append(temp)
-                    if strain.startswith(temp):
-                        var_to_match = var
-                else:
-                    parent = temp[0]
-                    child = temp[2:-3].split("|")
-                    for c in child:
-                        available_strains.append(parent + str(c))
-                        available_strains.append(parent + str(c) + ".*")
-                        if strain.startswith(parent + str(c)):
-                            var_to_match = var
-        else:
-            available_strains.append(var)
-            if strain.startswith(var):
-                var_to_match = var
-                
-    #print("var_to_match", var_to_match)
-
-
-    for strain in available_strains:
-        #for pango_strain in strain.replace("*", "").split(','):
-        if args.strain.startswith(strain): # this will ignore asterisks: "BQ.1.1" returns "BQ" not "BQ.*" as the cladefile_strain
-            cladefile_strain = strain
-            #print("cladefile_strain", cladefile_strain)
-
-    # if strain in available_strains:
-    if cladefile_strain != 'None':
-        # find the index of the relevant row
-        var_index = clades.index[clades['pango_lineage'] == var_to_match].tolist()[0]
-        # extract status, WHO strain name, etc. from clades file
-        who_variant = clades.loc[var_index, 'variant']
-        variant_type = clades.loc[var_index, 'variant_type']
-        voi_designation_date = clades.loc[var_index, 'voi_designation_date']
-        voc_designation_date = clades.loc[var_index, 'voc_designation_date']
-        vum_designation_date = clades.loc[var_index, 'vum_designation_date']
-        status = clades.loc[var_index, 'status']
-
-        # get True/False/n/a designation for clade-defining status
-        merged_df = clade_defining_threshold(args.clades_threshold,
-                                             merged_df, sample_size)
-
-        # add remaining attributes from clades file
-        merged_df["#attributes"] = merged_df["#attributes"].astype(
-            str) + "variant=" + who_variant + ';' + "variant_type=" + \
-                                   variant_type + ';' + "voi_designation_date=" + \
-                                   voi_designation_date + ';' + \
-                                   "voc_designation_date=" + \
-                                   voc_designation_date + ';' + \
-                                   "vum_designation_date=" + \
-                                   vum_designation_date + ';' + \
-                                   "status=" + status + ';'
-    else:
-        merged_df["#attributes"] = merged_df["#attributes"].astype(
-            str) + "clade_defining=n/a;" + "who_variant=n/a;" + \
-                                   "variant_type=n/a;" + \
-                                   "voi_designation_date=n/a;" + \
-                                   "voc_designation_date=n/a;" + \
-                                   "vum_designation_date=n/a;" + \
-                                    "status=n/a;"
-
     # add ID to attributes
     merged_df["#attributes"] = 'ID=' + merged_df['id'].astype(
         str) + ';' + merged_df["#attributes"].astype(str)
 
-    if args.names:
-        # get list of names in tsv but not in functional annotations,
-        # and vice versa, saved as a .tsv
-        tsv_names = gvf["mutation"].unique()
-        functional_annotation_names = df["mutation"].unique()
-        print(str(np.setdiff1d(tsv_names,
-                               functional_annotation_names).shape[0])
-              + "/" + str(tsv_names.shape[0]) + " mutation names were "
-                                                "not found in "
-                                                "functional_annotations")
-        leftover_names = pd.DataFrame({'in_tsv_only': np.setdiff1d(
-            tsv_names, functional_annotation_names)})
-        leftover_names["strain"] = strain
-        '''
-        clade_names = clades["mutation"].unique()
-        leftover_clade_names = pd.DataFrame({'unmatched_clade_names':np.setdiff1d(clade_names, tsv_names)})
-        leftover_clade_names["strain"] = strain
-        '''
-        return merged_df[gvf_columns], leftover_names, gvf[
-            "mutation"].tolist()  # , leftover_clade_names
-
-    else:
-        return merged_df[gvf_columns]
+    return merged_df[gvf_columns]
 
 
-def find_sample_size(table, lineage):
-
-    if table != 'n/a':
-        strain_tsv_df = pd.read_csv(table, delim_whitespace=True,
-                                    usecols=['file', 'num_seqs'])
-
-        # not user mode
-        if lineage != 'n/a':
-            num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
-                lineage + ".qc.")]['num_seqs'].values
-            sample_size = num_seqs[0]
-
-        # user-uploaded vcf
-        else:
-            filename_to_match = args.vcffile.split(".sorted")[0] \
-                # looks like "strain.qc"
-            num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
-                filename_to_match)]['num_seqs'].values
-            sample_size = num_seqs[0]
-
-    # user-uploaded fasta
-    elif table == 'n/a' and lineage == 'n/a':
-        sample_size = 'n/a'
-
-    return sample_size
-
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Converts a annotated VCF file to a GVF '
+                    'file with functional annotation')
+    parser.add_argument('--vcffile', type=str, default=None,
+                        help='Path to a snpEFF-annotated VCF file')
+    parser.add_argument('--functional_annotations', type=str,
+                        default=None, help='TSV file of functional '
+                                           'annotations')
+    parser.add_argument('--size_stats', type=str, default='n/a',
+                        help='Statistics file for for size extraction')
+    parser.add_argument('--clades', type=str, default='n/a',
+                        help='TSV file of WHO strain names and '
+                             'VOC/VOI status')
+    parser.add_argument('--clades_threshold', type=float,
+                        default=0.75,
+                        help='Alternate frequency cutoff for '
+                             'clade-defining mutations')
+    parser.add_argument('--gene_positions', type=str,
+                        default=None,
+                        help='gene positions in JSON format')
+    # --names_to_split needs updating: 13 January, 2023
+    parser.add_argument('--names_to_split', type=str,
+                        default=None,
+                        help='.tsv of multi-aa mutation names to '
+                             'split up into individual aa names')
+    parser.add_argument('--strain', type=str,
+                        default='n/a',
+                        help='Lineage; user mode is if strain="n/a"')
+    parser.add_argument('--outgvf', type=str,
+                        help='Filename for the output GVF file')
+    parser.add_argument("--names", help="Save mutation names without "
+                                        "functional annotations to "
+                                        "TSV files for "
+                                        "troubleshooting purposes",
+                        action="store_true")
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
 
     args = parse_args()
+    
+    # Reading the gene & proetin coordinates of SARS-CoV-2 genome
     with open(args.gene_positions) as fp:
         GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
+    # Assigning the functional annotation file to a variable
     annotation_file = args.functional_annotations
+    # Assigning the variant file to a variable
     clade_file = args.clades
+    # Assigning the vcf file to a variable
+    vcf_file = args.vcffile
 
-    # make empty list in which to store mutation names from all
-    # strains in the folder together
-    all_strains_mutations = []
-    # empty dataframe to hold unmatched names
-    leftover_df = pd.DataFrame()
-    # unmatched_clade_names = pd.DataFrame() #empty dataframe to hold
-    # unmatched clade-defining mutation names
+    # print("Processing: " + vcf_file)
+
     pragmas = pd.DataFrame([['##gff-version 3'], ['##gvf-version '
                                                   '1.10'], [
                                 '##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])  # pragmas are in column 0
 
-    file = args.vcffile
-    sample_size = find_sample_size(args.size_stats, args.strain)
-    print("Processing: " + file)
-
+    sample_size = find_sample_size(args.size_stats, args.strain, vcf_file)
+    
     # create gvf from annotated vcf (ignoring pragmas for now)
-    gvf = vcftogvf(file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
+    gvf = vcftogvf(vcf_file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
                    args.names_to_split, sample_size)
+    
     # add functional annotations
-    if args.names:
-        '''
-        annotated_gvf, leftover_names, mutations, \
-        leftover_clade_names = add_functions(gvf,
-                                             annotation_file,
-                                             clade_file, args.strain)
-        '''
-        annotated_gvf, leftover_names, mutations = add_functions(gvf,
-                                                                 annotation_file,
-                                                                 clade_file,
-                                                                 args.strain)
-    else:
-        annotated_gvf = add_functions(gvf, annotation_file,
-                                      clade_file, args.strain)
+    pokay_annotated_gvf = add_pokay_annotations(gvf, annotation_file, args.strain)
+    variant_annotated_gvf = add_variant_information(clade_file, pokay_annotated_gvf, sample_size, args.strain)
+
     # add pragmas to df, then save to .gvf
     # columns are now 0, 1, ...
-    annotated_gvf = pd.DataFrame(np.vstack([annotated_gvf.columns,
-                                            annotated_gvf]))
-    final_gvf = pragmas.append(annotated_gvf)
-    filepath = args.outvcf  # outdir + strain + ".annotated.gvf"
+    final_gvf = pd.DataFrame(np.vstack([variant_annotated_gvf.columns,
+                                            variant_annotated_gvf]))
+    final_gvf = pragmas.append(final_gvf)
+    filepath = args.outgvf  # outdir + strain + ".annotated.gvf"
     print("Saved as: ", filepath)
     print("")
     final_gvf.to_csv(filepath, sep='\t', index=False, header=False)
 
-    # get name troubleshooting reports
+    # get name troubleshooting report
     if args.names:
-        all_strains_mutations.append(mutations)
-        leftover_df = leftover_df.append(leftover_names)
-        # unmatched_clade_names = unmatched_clade_names.append(
-        # leftover_clade_names)
-        # save unmatched names (in tsv but not in
-        # functional_annotations) across all strains to a .tsv file
-        leftover_names_filepath = "leftover_names.tsv"
-        leftover_df.to_csv(leftover_names_filepath, sep='\t',
-                           index=False)
-        print("")
-        print("Mutation names not found in functional annotations "
-              "file saved to " + leftover_names_filepath)
-        '''
-        #save unmatched clade-defining mutation names to a .tsv file
-        leftover_clade_names_filepath = "leftover_clade_defining_names.tsv"
-        unmatched_clade_names.to_csv(leftover_clade_names_filepath,sep='\t', index=False)
-        print("Clade-defining mutation names not found in the annotated VCF saved to " + leftover_clade_names_filepath)
-        '''
-        # print number of unique mutations across all strains
-        flattened = [val for sublist in all_strains_mutations for val in
-                     sublist]
-        arr = np.array(flattened)
-        print("# unique mutations in VCF file: ",
-              np.unique(arr).shape[0])
+        # save unmatched names (in vcf/tsv but not in
+        # functional_annotations) to a .tsv file
+        
+        # create mask to find which rows do not have a functional annotation
+        notinPokay_mask = variant_annotated_gvf["#attributes"].str.contains("function_category=;")
+        # extract all mutation names from #attributes column
+        names = pd.Series(variant_annotated_gvf["#attributes"].str.findall('(?<=Name=)(.*?)(?=;)').str[0])
+        # get unique mutation names not in Pokay
+        unmatched_names = pd.Series(names[notinPokay_mask].unique())
+        # save unmatched names to TSV
+        if unmatched_names.shape[0] != 0:
+            leftover_names_filepath = "unmatched_names.tsv"
+            unmatched_names.to_csv(leftover_names_filepath, sep='\t',
+                                   index=False, header=False)
+            print("")
+            print(str(unmatched_names.shape[0]) +
+                  " mutation names not matched with functional annotations "
+                  "file saved to " + leftover_names_filepath)
 
     print("")
     print("Processing complete.")

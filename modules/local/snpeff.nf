@@ -14,7 +14,7 @@ process SNPEFF {
 
     script:
       """
-      snpEff MN908947.3 -v \
+      snpEff NC_045512.2 -v \
       -formatEff \
       -hgvs1LetterAa \
       -hgvs \

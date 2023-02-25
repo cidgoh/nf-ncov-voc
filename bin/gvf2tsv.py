@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 Created on Mon Aug  9 10:47:11 2021
@@ -493,7 +493,7 @@ if __name__ == '__main__':
         out_df = streamline_user(tsv_df=gvf_df)
 
             # save report as a .tsv
-        filename = who_variant + '_' + outfile + '.tsv'
+        filename = who_variant + '_' + outfile
         out_df.to_csv(filename, sep='\t', index=False)
         print("Processing complete.")
         print(who_variant + " surveillance report saved as: " +
