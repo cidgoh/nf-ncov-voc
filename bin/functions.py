@@ -40,8 +40,8 @@ def unnest_multi(df, columns, reset_index=False):
     return df
 
 
-def select_snpeff_records(eff_string):
-
+def select_snpeff_records(eff_string, ao_count):
+    
     eff_list = eff_string.split(",")
 
     # if any records in the row contain '|p.', take only those records
@@ -55,7 +55,11 @@ def select_snpeff_records(eff_string):
     # this keeps 'GU280_gp01' annotations over 'GU280_gp01.2'
     EFF_records_list = [s for s in EFF_records_list if 'WARNING' not in s
                         and 'GU280_gp01.2' not in s]
-
+    
+    # of the filtered records, take only the first N, where N is the number
+    # of comma-separated AO values given in the "unknown" column
+    EFF_records_list = EFF_records_list[:ao_count]
+    
     return EFF_records_list
 
 
@@ -118,11 +122,6 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
             # make attribute tag as column label
             info.rename(columns={column: title}, inplace=True)
 
-    # parse EFF entry in INFO
-    # series: extract everything between parentheses as elements of a
-    # list      
-    info["eff_result"] = [select_snpeff_records(x) for x in info['eff']] 
-
     # concatenate info and df horizontally
     df = pd.concat([df, info], axis=1)
     df = df.drop(columns="INFO")
@@ -134,18 +133,17 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     # make ALT, AO into lists
     for column in ["ao", "ALT"]:
         df[column] = df[column].str.split(",")
-        
-    # check for places where there are more annotations than AOs given
+    # get number of AO values given in "unknown" column
+    df['ao_count'] = df["ao"].str.len()
     
-    # make columns for how long lists are
+    # parse EFF entry from INFO
+    df["eff_result"] = [select_snpeff_records(x, y) for x, y in
+                        zip(df['eff'], df["ao_count"])]
+    # check 
     #df['eff_result_len'] = df["eff_result"].str.len()
-    #df['ao_len'] = df["ao"].str.len()
-    #df['ALT_len'] = df["ALT"].str.len()
-    
-    #print(df.query('ao_len != ALT_len'))
-    #mismatch = df.query('ao_len != eff_result_len')[['POS', 'eff_result', 'eff_result_len', 'ao', 'unknown']]
+    #mismatch = df[['POS', 'eff', 'eff_result', 'eff_result_len', 'ao', 'unknown']]
     #mismatch.to_csv("mismatches.csv", sep='\t', header=True, index=True)
-    
+
     # unnest list columns
     df = unnest_multi(df, ["eff_result", "ao", "ALT"], reset_index=True)
 

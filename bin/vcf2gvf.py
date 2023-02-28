@@ -15,7 +15,8 @@ import argparse
 import pandas as pd
 import numpy as np
 import json
-from functions import parse_INFO, find_sample_size, parse_variant_file, add_variant_information
+from functions import parse_INFO, find_sample_size, parse_variant_file, \
+    add_variant_information, unnest_multi
 
 
 
@@ -150,54 +151,36 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # add True/False/n/a designation for clade-defining status
     new_df["AF"] = df["AF"]
     clade_threshold_gvf = clade_defining_threshold(args.clades_threshold,
-                                             new_df, sample_size)                            
-                                       
+                                             new_df, sample_size)
+
+
+    # separate multi-aa names noted in names_to_split into separate rows
     ### MZA: This needs immediate attention with Paul and his group. Need to update the notion of mutations
     # split multi-aa names from the vcf into single-aa names (multi-row)
-    new_df["multi_name"] = ''
-    new_df["multiaa_comb_mutation"] = ''
     # load names_to_split spreadsheet
-    multiaanames = pd.read_csv(names_to_split, sep='\t', header=0)
-    # multi-aa names that are in the gvf (list form)
-    names_to_separate = np.intersect1d(multiaanames, new_df[
-                                                         'Names'].str[
-                                                     2:])
-    # now split the rows apart in-place
-    for multname in names_to_separate:
-        # relevant part of 'split_into' column
-        splits = multiaanames[multiaanames['name'] == multname][
-            'split_into'].copy()
-        # list of names to split into
-        splits_list_1 = splits.str.split(pat=',').tolist()[0]
-        splits_list = [s.replace("'", '') for s in splits_list_1]
-        # new_df index containing multi-aa name
-        split_index = new_df.index.get_loc(new_df.index[new_df[
-                                                            'Names'].str[
-                                                        2:] == multname][
-                                               0])
-        # copy of rows to alter
-        seprows = new_df.loc[[split_index]].copy()
-        # delete original combined mutation rows
-        new_df = new_df.drop(split_index)
-
-        i = 0
-        for sepname in splits_list:
-            # single-aa name
-            seprows['Names'] = "p." + sepname
-            # original multi-aa name
-            seprows["multi_name"] = multname
-            # other single-aa names corresponding to this multi-aa
-            # mutation
-            seprows["multiaa_comb_mutation"] = splits.tolist()[
-                0].replace("'" + sepname + "'", '').replace(",,",
-                                                            ',').replace(
-                "','", "', '").strip(',')
-            new_df = pd.concat([new_df.loc[:split_index + i], seprows,
-                                new_df.loc[
-                                split_index + i:]]).reset_index(
-                drop=True)
-            i += 1
-
+    names_to_split_df = pd.read_csv(names_to_split, sep='\t', header=0)
+    # merge "split_into" column into new_df, matching up by Names
+    names_to_split_df = names_to_split_df.rename(columns={'name': 'Names'})
+    new_df = new_df.merge(names_to_split_df, on='Names', how = 'left')
+    # add "multi_aa_name" column containing the original multi-aa names
+    new_df["multi_aa_name"] = ''
+    new_df.loc[new_df["split_into"].notna(), "multi_aa_name"] = new_df['Names']
+    # where "split_into" is notna, replace "Names" value with "split_into" value
+    new_df.loc[new_df["split_into"].notna(), "Names"] = new_df["split_into"]
+    # make 'Names' into a column of lists
+    new_df['Names'] = new_df['Names'].str.split(",")
+    # unnest these lists (convert to 1d)                      
+    new_df = unnest_multi(new_df, ['Names'], reset_index=True)   
+    # rename "split_into" column left over from merge
+    new_df = new_df.rename(columns={'split_into': 'multiaa_comb_mutation'})
+    # make multiaa_comb_mutation contain everything in split_into
+    # except for the name in Names
+    new_df.multiaa_comb_mutation = new_df.multiaa_comb_mutation.fillna('')
+    new_df["multiaa_comb_mutation"] = new_df.apply(lambda row : row["multiaa_comb_mutation"].replace(row['Names'], ''), axis=1)
+    # strip extra commas
+    new_df["multiaa_comb_mutation"] = new_df["multiaa_comb_mutation"].str.strip(',').str.replace(',,',',')
+         
+  
     # add attributes
     new_df['#attributes'] = 'Name=' + new_df["Names"] + ';' + new_df[
         '#attributes'].astype(str)
@@ -206,7 +189,7 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     new_df['#attributes'] = new_df[
                                 '#attributes'] + 'viral_lineage=' + strain + ';'
     new_df['#attributes'] = new_df['#attributes'] + "multi_aa_name=" + \
-                            new_df["multi_name"] + ';'
+                            new_df["multi_aa_name"] + ';'
 
     new_df['#attributes'] = new_df[
                                 '#attributes'] + "multiaa_comb_mutation=" + \
