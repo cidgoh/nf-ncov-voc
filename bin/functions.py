@@ -140,9 +140,9 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     df["eff_result"] = [select_snpeff_records(x, y) for x, y in
                         zip(df['eff'], df["ao_count"])]
     # check 
-    df['eff_result_len'] = df["eff_result"].str.len()
-    mismatch = df[['POS', 'eff', 'eff_result', 'eff_result_len', 'ao', 'unknown']]
-    mismatch.to_csv("mismatches.csv", sep='\t', header=True, index=True)
+    #df['eff_result_len'] = df["eff_result"].str.len()
+    #mismatch = df[['POS', 'eff', 'eff_result', 'eff_result_len', 'ao', 'unknown']]
+    #mismatch.to_csv("mismatches.csv", sep='\t', header=True, index=True)
 
     # unnest list columns
     df = unnest_multi(df, ["eff_result", "ao", "ALT"], reset_index=True)
