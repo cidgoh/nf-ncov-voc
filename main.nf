@@ -145,26 +145,16 @@ workflow {
 
       if(params.mode == 'reference'){
 
-        ch_metadata=Channel.empty()
-        ch_voc=Channel.empty()
-
-        if (params.skip_viralai){
-          if(params.seq){
+        
+        if(params.seq){
             Channel.fromPath( "$params.seq", checkIfExists: true)
               .set{ ch_seq }
-          }
+            }
 
-          if(params.meta){
+        if(params.meta){
             Channel.fromPath( "$params.meta", checkIfExists: true)
                .set{ ch_metadata }
-          }
-        }
-        else{
-            viralaidata(ch_pangolin_alias)
-            ch_metadata=viralaidata.out.ch_metadata
-            ch_seq=viralaidata.out.ch_seq
-        }
-
+            }
 
         preprocessing(ch_metadata, ch_seq, ch_variant)
         ch_voc=preprocessing.out.ch_voc
