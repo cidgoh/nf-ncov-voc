@@ -51,7 +51,7 @@ def write_ids(dataframe):
 
 def write_metadata(dataframe):
     dataframe.to_csv(args.voc +
-                     "_Metadata.tsv", sep="\t", compression='gzip',
+                     "_Metadata.tsv.gz", sep="\t", compression='gzip',
                      quoting=csv.QUOTE_NONE, index=False, header=True)
 
 
