@@ -72,14 +72,14 @@ process grabIndex {
 process extractMetadata {
     tag { "Extracting Metadata and IDS for VOCs, VOIs, & VUMs" }
 
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv.gz", mode: 'copy'
 
     input:
       path(metadata)
       each x
 
     output:
-      path("*.tsv")
+      path("*.tsv.gz")
       path("*.txt"), emit: ids
 
     script:
