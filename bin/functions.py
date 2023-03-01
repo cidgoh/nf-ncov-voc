@@ -45,7 +45,7 @@ def select_snpeff_records(eff_string, ao_count):
     eff_list = eff_string.split(",")
 
     # if any records in the row contain '|p.', take only those records
-    EFF_records_list = [s for s in eff_list if '|p.' in s]
+    EFF_records_list = [s for s in eff_list if '|p.' or 'LOF' in s]
 
     # if no records contain '|p.', take the "intergenic" record
     if len(EFF_records_list) == 0:
