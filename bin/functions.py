@@ -130,8 +130,8 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
     unknown.columns = [x.lower for x in ["GT","DP","AD","RO","QR","AO","QA","GL"]]
     df = pd.concat([df, unknown], axis=1)
-    # make ALT, AO into lists
-    for column in ["ao", "ALT"]:
+    # make ALT, AO, type into lists
+    for column in ["ao", "ALT", "type"]:
         df[column] = df[column].str.split(",")
     # get number of AO values given in "unknown" column
     df['ao_count'] = df["ao"].str.len()
@@ -139,13 +139,16 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     # parse EFF entry from INFO
     df["eff_result"] = [select_snpeff_records(x, y) for x, y in
                         zip(df['eff'], df["ao_count"])]
-    # check 
+    
+    # check how many "type" entries there are
     #df['eff_result_len'] = df["eff_result"].str.len()
-    #mismatch = df[['POS', 'eff', 'eff_result', 'eff_result_len', 'ao', 'unknown']]
+    #df['type_len'] = df["type"].str.len()
+    #print(df.query('eff_result_len != type_len'))
+    #mismatch = df.query(df.query('eff_result_len != type_len'))[['POS', 'eff_result', 'eff_result_len', 'ao', 'type']]
     #mismatch.to_csv("mismatches.csv", sep='\t', header=True, index=True)
-
+    
     # unnest list columns
-    df = unnest_multi(df, ["eff_result", "ao", "ALT"], reset_index=True)
+    df = unnest_multi(df, ["eff_result", "ao", "ALT", "type"], reset_index=True)
 
     # calculate Alternate Frequency
     df['AF'] = df['ao'].astype(int) / df['dp'].astype(int)
