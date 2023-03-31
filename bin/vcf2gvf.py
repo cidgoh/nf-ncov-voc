@@ -98,7 +98,6 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     df = df[~df['#CHROM'].str.contains("#")]
     # restart index from 0
     df = df.reset_index(drop=True)
-
     # expand INFO column into multiple columns
     df = parse_INFO(df)
 
@@ -115,7 +114,10 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     new_df['#score'] = '.'
     new_df['#strand'] = '+'
     new_df['#phase'] = '.'
-    new_df['#type'] = df['type']
+    if "type" in df.columns: # "type" is not an attribute of INFO for wastewater
+        new_df['#type'] = df['type']
+    else:
+        new_df['#type'] = '.'
     new_df['#attributes'] = ''
 
     ### check where this should go

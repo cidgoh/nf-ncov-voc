@@ -125,14 +125,20 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     # concatenate info and df horizontally
     df = pd.concat([df, info], axis=1)
     df = df.drop(columns="INFO")
-    
+
     # expand "unknown" column into multiple named columns
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
-    unknown.columns = [x.lower for x in ["GT","DP","AD","RO","QR","AO","QA","GL"]]
+    unknown.columns = [x.lower() for x in ["GT","DP","AD","RO","QR","AO","QA","GL"]]
+    #drop columns in df that have the same name as 'unknown' column names
+    cols_to_drop = list(set(df.columns) & set(unknown.columns)) 
+    df = df.drop(columns=cols_to_drop)
+    
     df = pd.concat([df, unknown], axis=1)
     # make ALT, AO, type into lists
-    for column in ["ao", "ALT", "type"]:
+    for column in ["ao", "ALT"]:
         df[column] = df[column].str.split(",")
+    if "type" in df.columns: # "type" is not an attribute of INFO for wastewater
+        df["type"] = df["type"].str.split(",")   
     # get number of AO values given in "unknown" column
     df['ao_count'] = df["ao"].str.len()
     
@@ -148,7 +154,10 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
     #mismatch.to_csv("mismatches.csv", sep='\t', header=True, index=True)
     
     # unnest list columns
-    df = unnest_multi(df, ["eff_result", "ao", "ALT", "type"], reset_index=True)
+    if "type" in df.columns: # "type" is not an attribute of INFO for wastewater
+        df = unnest_multi(df, ["eff_result", "ao", "ALT", "type"], reset_index=True)
+    else:
+        df = unnest_multi(df, ["eff_result", "ao", "ALT"], reset_index=True)
 
     # calculate Alternate Frequency
     df['AF'] = df['ao'].astype(int) / df['dp'].astype(int)
