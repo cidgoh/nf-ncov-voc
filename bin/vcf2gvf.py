@@ -16,7 +16,7 @@ import pandas as pd
 import numpy as np
 import json
 from functions import parse_INFO, find_sample_size, parse_variant_file, \
-    add_variant_information, unnest_multi
+    add_variant_information, unnest_multi, get_unknown_labels
 
 
 
@@ -94,12 +94,14 @@ vcf_colnames = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL',
 
 def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, sample_size):
     df = pd.read_csv(var_data, sep='\t', names=vcf_colnames)
+    # get variant-calling source
+    var_cols = get_unknown_labels(df)
     # remove pragmas
     df = df[~df['#CHROM'].str.contains("#")]
     # restart index from 0
     df = df.reset_index(drop=True)
     # expand INFO column into multiple columns
-    df = parse_INFO(df)
+    df = parse_INFO(df, var_cols)
 
     # create an empty df to make the new GVF in
     new_df = pd.DataFrame(index=range(0, len(df)), columns=gvf_columns)
