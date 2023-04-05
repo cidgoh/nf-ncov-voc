@@ -1,6 +1,21 @@
 import pandas as pd
 import numpy as np
 
+def get_unknown_labels(df):
+# determines variant calling source based on pragmas
+# returns GVF-relevant names for last column of vcf
+    source = df['#CHROM'][df['#CHROM'].str.contains("##source=")].values[0].split("=")[1].split()[0]
+    if source=="freeBayes":
+        columns = [x.lower() for x in ["GT","DP","AD","RO","QR","AO","QA","GL"]]
+    elif source=="iVar":
+        # iVar names are: ["GT","REF_DP","REF_RV","REF_QUAL","ALT_DP","ALT_RV","ALT_QUAL","ALT_FREQ"]
+        # use "RO" instead of "REF_DP" to match GVF standard
+        # use "AO" instead of "ALT_DP" to match GVF standard
+        columns = [x.lower() for x in ["GT","RO","REF_RV","REF_QUAL","AO","ALT_RV","ALT_QUAL","ALT_FREQ"]]
+        
+    return columns
+        
+
 def parse_variant_file(dataframe):
     who_lineages = []
     for var in dataframe["pango_lineage"]:
@@ -97,7 +112,7 @@ def find_sample_size(table, lineage, vcf_file):
 
 
     
-def parse_INFO(df): # return INFO dataframe with named columns, including EFF split apart
+def parse_INFO(df, var_cols): # return INFO dataframe with named columns, including EFF split apart
     # parse INFO column
     
     # sort out problematic sites tag formats   
@@ -128,7 +143,7 @@ def parse_INFO(df): # return INFO dataframe with named columns, including EFF sp
 
     # expand "unknown" column into multiple named columns
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
-    unknown.columns = [x.lower() for x in ["GT","DP","AD","RO","QR","AO","QA","GL"]]
+    unknown.columns = var_cols
     #drop columns in df that have the same name as 'unknown' column names
     cols_to_drop = list(set(df.columns) & set(unknown.columns)) 
     df = df.drop(columns=cols_to_drop)
