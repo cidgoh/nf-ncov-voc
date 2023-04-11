@@ -3,6 +3,7 @@
 > Input/Output parameters
 
 Define where the pipeline should find input data and save output data.<br>
+
 <ul>
 <li><code> --startdate </code> Starting date to extractdataset
 (yyyy-mm-dd). </li>
@@ -14,6 +15,7 @@ Define where the pipeline should find input data and save output data.<br>
 > Quality Control parameters (`BBMap`)
 
 Define where the pipeline should find input data and save output data.<br>
+
 <ul>
 <li><code> --maxns </code> Reads shorter than this after trimming will
 be discarded. </li>
@@ -24,6 +26,7 @@ will be discarded. </li>
 > Mapping parameters (`MiniMap2`/`BWA`)
 
 Define where the pipeline should find input data and save output data.<br>
+
 <ul>
 <li><code> --ref </code> Instead of indexing the reference file in the
 again, the prefix of previously-created reference index files can be
@@ -39,6 +42,7 @@ of the human reads to remove </li>
 > Variant Calling parameters (`Freebayes`/`iVar`)
 
 Define where the pipeline should find input data and save output data.<br>
+
 <ul>
 <li><code> --ploidy </code> Sets the ploidy for the analysis </li>
 <li><code> --var_MinFreqThreshold </code>  Require at least this fraction of observations supporting an alternate allele within a single individual in the in order to evaluate the position. </li>
