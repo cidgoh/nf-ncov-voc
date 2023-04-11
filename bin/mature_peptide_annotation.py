@@ -32,7 +32,7 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
     gene_protein = {
-        "ORF1ab": "cds-YP_009724389.1",
+        "orf1ab": "cds-YP_009724389.1",
         "S": "cds-YP_009724390.1",
         "ORF3a": "cds-YP_009724391.1",
         "E": "cds-YP_009724392.1",
