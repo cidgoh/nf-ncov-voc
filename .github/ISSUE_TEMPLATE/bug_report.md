@@ -1,10 +1,9 @@
 ---
 name: Bug report
 about: Report something that is broken or incorrect
-title: ''
+title: ""
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 <!--
@@ -17,7 +16,8 @@ Thanks for telling us about a bug with the workflow.
 
 ## Check Documentation
 
-Before completing the issue we suggest you to go through documentation for usage and other issues if a similar bug was reported already 
+Before completing the issue we suggest you to go through documentation for usage and other issues if a similar bug was reported already
+
 - [ ] [Usage Documentation](https://github.com/anwarMZ/nf-ncov-voc/blob/master/README.md)
 - [ ] [nf-ncov-voc issues](https://github.com/cidgoh/nf-ncov-voc/issues)
 
