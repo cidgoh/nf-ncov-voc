@@ -1,10 +1,13 @@
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
 ##sequence-region MN908947.3 1 29903
 ##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049
 MN908947.3	Genbank	region	1	29903	.	+	.	ID=MN908947.3:1..29903;Dbxref=taxon:2697049;collection-date=Dec-2019;country=China;gb-acronym=SARS-CoV-2;gbkey=Src;genome=genomic;isolate=Wuhan-Hu-1;mol_type=genomic RNA;nat-host=Homo sapiens;old-name=Wuhan seafood market pneumonia virus
 MN908947.3	Genbank	five_prime_UTR	1	265	.	+	.	ID=id-MN908947.3:1..265;gbkey=5'UTR
 MN908947.3	Genbank	gene	266	21555	.	+	.	ID=gene-orf1ab;Name=orf1ab;gbkey=Gene;gene=orf1ab;gene_biotype=protein_coding
-MN908947.3	Genbank	CDS	266	13468	.	+	0	ID=cds-QHD43415.1;Parent=gene-orf1ab;Dbxref=NCBI_GP:QHD43415.1;Name=QHD43415.1;Note=translated by -1 ribosomal frameshift;exception=ribosomal slippage;gbkey=CDS;gene=orf1ab;part=1;product=orf1ab polyprotein;protein_id=QHD43415.1
-MN908947.3	Genbank	CDS	13468	21555	.	+	0	ID=cds-QHD43415.1;Parent=gene-orf1ab;Dbxref=NCBI_GP:QHD43415.1;Name=QHD43415.1;Note=translated by -1 ribosomal frameshift;exception=ribosomal slippage;gbkey=CDS;gene=orf1ab;part=2;product=orf1ab polyprotein;protein_id=QHD43415.1
+MN908947.3	Genbank	CDS	266	13468	.	+	0	ID=cds-QHD43415.1;Parent=gene-orf1ab;Dbxref=NCBI_GP:QHD43415.1;Name=QHD43415.1;Note=translated by -1 ribosomal frameshift;exception=ribosomal slippage;gbkey=CDS;gene=orf1ab;product=orf1ab polyprotein;protein_id=QHD43415.1
+MN908947.3	Genbank	CDS	13468	21555	.	+	0	ID=cds-QHD43415.1;Parent=gene-orf1ab;Dbxref=NCBI_GP:QHD43415.1;Name=QHD43415.1;Note=translated by -1 ribosomal frameshift;exception=ribosomal slippage;gbkey=CDS;gene=orf1ab;product=orf1ab polyprotein;protein_id=QHD43415.1
 MN908947.3	Genbank	gene	21563	25384	.	+	.	ID=gene-S;Name=S;gbkey=Gene;gene=S;gene_biotype=protein_coding
 MN908947.3	Genbank	CDS	21563	25384	.	+	0	ID=cds-QHD43416.1;Parent=gene-S;Dbxref=NCBI_GP:QHD43416.1;Name=QHD43416.1;Note=structural protein;gbkey=CDS;gene=S;product=surface glycoprotein;protein_id=QHD43416.1
 MN908947.3	Genbank	gene	25393	26220	.	+	.	ID=gene-ORF3a;Name=ORF3a;gbkey=Gene;gene=ORF3a;gene_biotype=protein_coding
