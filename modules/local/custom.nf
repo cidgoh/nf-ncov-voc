@@ -89,24 +89,40 @@ process extractMetadata {
 }
 
 
-process tsvTovcf {
+process IVAR_VARIANTS_TO_VCF {
+    tag "$meta.id"
 
-    tag {"${variants_tsv.baseName}"}
-
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
+    conda "conda-forge::python=3.9.5 conda-forge::matplotlib=3.5.1 conda-forge::pandas=1.3.5 conda-forge::r-sys=3.4 conda-forge::regex=2021.11.10 conda-forge::scipy=1.7.3 conda-forge::biopython=1.79"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/mulled-v2-ff46c3f421ca930fcc54e67ab61c8e1bcbddfe22:1ad3da14f705eb0cdff6b5a44fea4909307524b4-0' :
+        'quay.io/biocontainers/mulled-v2-ff46c3f421ca930fcc54e67ab61c8e1bcbddfe22:1ad3da14f705eb0cdff6b5a44fea4909307524b4-0' }"
 
     input:
-        path(variants_tsv)
+    tuple val(meta), path(tsv)
 
     output:
-        path("*.vcf"), emit: vcf
+    tuple val(meta), path("*.vcf"), emit: vcf
+    tuple val(meta), path("*.log"), emit: log
+    path "versions.yml"           , emit: versions
 
-    script:
-      """
-      ivar_variants_to_vcf.py ${variants_tsv} ${variants_tsv}.vcf
-      """
+    when:
+    task.ext.when == null || task.ext.when
+
+    script:  // This script is bundled with the pipeline, in nf-core/viralrecon/bin/
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    """
+    ivar_variants_to_vcf.py \\
+        $tsv \\
+        ${prefix}.vcf \\
+        $args \\
+        > ${prefix}.variant_counts.log
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        python: \$(python --version | sed 's/Python //g')
+    END_VERSIONS
+    """
 }
-
 
 process processGVCF {
 
@@ -117,6 +133,12 @@ process processGVCF {
   input:
       path(gvcf)
 
+  
+  output:
+    tuple val(meta), path("*.vcf"), emit: vcf
+    tuple val(meta), path("*.log"), emit: log
+    path "versions.yml"           , emit: versions
+    
   output:
       path("*.variants.vcf"), emit: vcf
       path("*.consensus.vcf")
@@ -138,125 +160,146 @@ process processGVCF {
 
 
 process tagProblematicSites {
-    tag {"${vcf.baseName}"}
 
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
+    tag "$meta.id"
 
+    conda "bioconda::cyvcf=0.8.0 bioconda::gffutils=0.10.1"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/cyvcf2:0.8.0--py36_0' :
+        'quay.io/biocontainers/cyvcf2:0.8.0--py36_0' }"
+    
     input:
-        tuple(path(vcf), path(prob_vcf))
+        tuple val(meta), path(vcf)
+        path(prob_vcf)
 
     output:
-        path("*.vcf"), emit: filtered_vcf
+        tuple val(meta), path("*.filtered.vcf"), emit: filtered_vcf
 
     when:
       vcf.size() > 0
 
     script:
+    def args = task.ext.args ?: ''
+    def prefix = task.ext.prefix ?: "${meta.id}"
+
       """
-      problematic_sites_tag.py \
-      --vcffile ${vcf} \
-      --filter_vcf ${prob_vcf} \
-      --output_vcf ${vcf.baseName}.filtered.vcf
+      problematic_sites_tag.py \\
+        --vcffile $vcf \\
+        --filter_vcf $prob_vcf \\
+        --output_vcf ${prefix}.filtered.vcf \\
+        $args
       """
 }
 
 
 process annotate_mat_peptide {
 
-    tag {"${peptide_vcf.baseName}"}
+  tag "$meta.id"
 
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.vcf", mode: 'copy'
+  conda "bioconda::cyvcf=0.8.0 bioconda::gffutils=0.10.1"
+  container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+      'docker://cidgoh/nf-ncov-voc-extra:0.2' : ''}"
 
-    input:
-        tuple(path(peptide_vcf), path(genome_gff))
+  input:
+      tuple val(meta), path(vcf)
+      path  gff
 
-    output:
-        path("*.vcf"), emit: annotated_vcf
+  output:
+      tuple val(meta), path("*annotated.vcf"), emit: vcf
+  
+  when:
+    vcf.size() > 0
 
-    when:
-      peptide_vcf.size() > 0
+  script:
 
-    script:
-      """
-      mature_peptide_annotation.py \
-      --vcf_file ${peptide_vcf}\
-      --annotation_file ${genome_gff}\
-      --output_vcf ${peptide_vcf.baseName}.annotated.vcf
-      """
+  def args = task.ext.args ?: ''
+  def prefix = task.ext.prefix ?: "${meta.id}"
+
+    """
+    mature_peptide_annotation.py \\
+    --vcf_file $vcf \\
+    --annotation_file $gff \\
+    --output_vcf ${prefix}.annotated.vcf \\
+    $args
+    """
 }
 
 
 process vcfTogvf {
 
-  tag {"${ch_annotated_vcf.baseName}"}
+  tag "$meta.id"
 
-  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.gvf", mode: 'copy'
-
+  conda "bioconda::pandas=1.4.3"
+  container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+        'https://depot.galaxyproject.org/singularity/pandas:1.4.3' : '' }"
+  
   input:
-      tuple(path(ch_annotated_vcf), path(func_annot), path(gene_coord), path(mutation_split), path(variants), path(stats))
+      tuple val(meta), path(vcf), path(ch_stats)
+      path func_tsv
+      path json
+      path mutation_tsv
+      path variants_tsv
 
   output:
-      path("*.gvf"), emit: gvf
-
+      tuple val(meta), path("*.gvf"), emit: gvf
 
   script:
+
+  def args = task.ext.args ?: ''
+  def prefix = task.ext.prefix ?: "${meta.id}"
+
   if (params.userfile){
     input_file = file(params.userfile)
   }
 
   if( params.mode == 'reference'){
     """
-      vcf2gvf.py --vcffile ${ch_annotated_vcf} \
-      --functional_annotations ${func_annot}  \
-      --clades ${variants} \
-      --gene_positions ${gene_coord} \
-      --names_to_split ${mutation_split} \
-      --size_stats ${stats} \
+      vcf2gvf.py --vcffile $vcf \\
+      --functional_annotations $func_tsv \\ 
+      --clades $variants_tsv \\
+      --gene_positions $json \\
+      --names_to_split $mutation_tsv \\
+      --size_stats $ch_stats \\
+      $args \\
       --strain ${ch_annotated_vcf.baseName.replaceAll(".qc.sorted.variants.filtered.SNPEFF.annotated", "")} --outgvf ${ch_annotated_vcf.baseName.replaceAll(".qc","_qc")}.gvf
     """
   }
   else if( params.mode == 'user' && input_file.getExtension() == "vcf"){
     """
-      vcf2gvf.py --vcffile ${ch_annotated_vcf} \
-      --functional_annotations ${func_annot}  \
-      --gene_positions ${gene_coord} \
-      --names_to_split ${mutation_split} \
-      --outgvf ${ch_annotated_vcf.baseName}.gvf
+      vcf2gvf.py --vcffile $vcf \\
+      --functional_annotations $func_tsv \\
+      --gene_positions $json \\
+      --names_to_split $mutation_tsv \\
+      $args \\
+      --outgvf ${prefix}.gvf
+    """
+  }
+  else if( params.mode == 'wastewater'){
+    """
+      vcf2gvf.py --vcffile $vcf \\
+      --functional_annotations $func_tsv \\
+      --gene_positions $json \\
+      --names_to_split $mutation_tsv \\
+      --size_stats $ch_stats \\
+      $args \\
+      --outgvf ${prefix}.gvf
     """
   }
 
   else{
     """
-      vcf2gvf.py --vcffile ${ch_annotated_vcf} \
-      --functional_annotations ${func_annot}  \
-      --gene_positions ${gene_coord} \
-      --names_to_split ${mutation_split} \
-      --size_stats ${stats} \
-      --outgvf ${ch_annotated_vcf.baseName}.gvf
+      vcf2gvf.py --vcffile $vcf \\
+      --functional_annotations $func_tsv \\
+      --gene_positions $json \\
+      --names_to_split $mutation_tsv \\
+      --size_stats $ch_stats \\
+      $args \\
+      --outgvf ${prefix}.gvf
     """
   }
 
-
-
 }
 
-process vcfTotsv {
-
-    tag {"vcfTotsv${annotated_vcf.baseName}"}
-
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
-
-    input:
-        path(annotated_vcf)
-
-    output:
-        path("*.tsv")
-
-    script:
-      """
-      vcf2tsv.py ${annotated_vcf} ${annotated_vcf.baseName}.tsv
-      """
-}
 
 process surveillanceRawTsv {
 
