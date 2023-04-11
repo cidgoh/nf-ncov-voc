@@ -16,7 +16,7 @@ include { FREEBAYES            } from '../modules/local/freebayes'
 include { processGVCF          } from '../modules/local/custom'
 include { BCFTOOLS             } from '../modules/local/bcftools'
 include { IVAR                 } from '../modules/local/ivar'
-include { tsvTovcf             } from '../modules/local/custom'
+//include { tsvTovcf             } from '../modules/local/custom'
 
 
 workflow variant_calling {
@@ -63,8 +63,8 @@ workflow variant_calling {
       }
       if(params.ivar){
         IVAR(ch_bam.combine(ch_ref).combine(ch_refgff))
-        tsvTovcf(IVAR.out.variants)
-        ch_vcf=tsvTovcf.out.vcf
+        //tsvTovcf(IVAR.out.variants)
+        //ch_vcf=tsvTovcf.out.vcf
 
       }
       else{

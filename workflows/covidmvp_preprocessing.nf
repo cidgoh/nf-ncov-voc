@@ -3,7 +3,7 @@
 nextflow.enable.dsl = 2
 
 // import modules
-include {PANGOLIN              } from '../modules/nf-core/modules/pangolin/main'
+include {PANGOLIN              } from '../modules/nf-core/pangolin/main'
 include {mergePangolinMetadata } from '../modules/local/custom'
 include {extractVariants       } from '../modules/local/custom'
 include {virusseqMapLineage    } from '../modules/local/custom'
