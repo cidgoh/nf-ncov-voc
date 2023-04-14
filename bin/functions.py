@@ -78,7 +78,7 @@ def select_snpeff_records(eff_string, ao_count):
     return EFF_records_list
 
 
-def find_sample_size(table, lineage, vcf_file):
+def find_sample_size(table, lineage, vcf_file, wastewater):
 
     if table != 'n/a':
         strain_tsv_df = pd.read_csv(table, delim_whitespace=True,
@@ -91,12 +91,11 @@ def find_sample_size(table, lineage, vcf_file):
             sample_size = num_seqs[0]
 
         # wastewater data
-        elif "sample" in vcf_file:
+        elif wastewater==True:
             filename_to_match = vcf_file.split(".annotated")[0].replace("T", "R")
             num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
                 filename_to_match)]['num_seqs'].values
             sample_size = num_seqs[0]
-
             
         # user-uploaded fasta
         else:
