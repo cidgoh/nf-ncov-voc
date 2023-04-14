@@ -90,7 +90,7 @@ def find_sample_size(table, lineage, vcf_file):
                 lineage + ".qc.")]['num_seqs'].values
             sample_size = num_seqs[0]
 
-        # wastewater
+        # wastewater data
         elif "sample" in vcf_file:
             filename_to_match = vcf_file.split(".annotated")[0].replace("T", "R")
             num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
@@ -166,7 +166,7 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     # parse EFF entry from INFO
     df["eff_result"] = [select_snpeff_records(x, y) for x, y in
                         zip(df['eff'], df["ao_count"])]
-    df.to_csv("eff_result_checking.tsv", sep="\t")
+    #df.to_csv("eff_result_checking.tsv", sep="\t")
     # check how many "type" entries there are
     #df['eff_result_len'] = df["eff_result"].str.len()
     #df['type_len'] = df["type"].str.len()
