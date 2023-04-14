@@ -78,7 +78,7 @@ def select_snpeff_records(eff_string, ao_count):
     return EFF_records_list
 
 
-def find_sample_size(table, lineage, vcf_file):
+def find_sample_size(table, lineage, vcf_file, wastewater):
 
     if table != 'n/a':
         strain_tsv_df = pd.read_csv(table, delim_whitespace=True,
@@ -90,12 +90,17 @@ def find_sample_size(table, lineage, vcf_file):
                 lineage + ".qc.")]['num_seqs'].values
             sample_size = num_seqs[0]
 
+        # wastewater data
+        elif wastewater==True:
+            filename_to_match = vcf_file.split(".annotated")[0].replace("T", "R")
+            num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
+                filename_to_match)]['num_seqs'].values
+            sample_size = num_seqs[0]
+            
         # user-uploaded fasta
         else:
             filename_to_match = vcf_file.split(".sorted")[0] \
                 # looks like "strain.qc"
-            print(filename_to_match)
-            print(strain_tsv_df)
             num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
                 filename_to_match)]['num_seqs'].values
             sample_size = num_seqs[0]
@@ -114,7 +119,7 @@ def find_sample_size(table, lineage, vcf_file):
     
 def parse_INFO(df, var_cols): # return INFO dataframe with named columns, including EFF split apart
     # parse INFO column
-    
+
     # sort out problematic sites tag formats   
     df['INFO'] = df['INFO'].str.replace('ps_filter;', 'ps_filter=;')
     df['INFO'] = df['INFO'].str.replace('ps_exc;', 'ps_exc=;')
@@ -147,7 +152,7 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     #drop columns in df that have the same name as 'unknown' column names
     cols_to_drop = list(set(df.columns) & set(unknown.columns)) 
     df = df.drop(columns=cols_to_drop)
-    
+
     df = pd.concat([df, unknown], axis=1)
     # make ALT, AO, type into lists
     for column in ["ao", "ALT"]:
@@ -160,20 +165,18 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     # parse EFF entry from INFO
     df["eff_result"] = [select_snpeff_records(x, y) for x, y in
                         zip(df['eff'], df["ao_count"])]
-    
+    #df.to_csv("eff_result_checking.tsv", sep="\t")
     # check how many "type" entries there are
     #df['eff_result_len'] = df["eff_result"].str.len()
     #df['type_len'] = df["type"].str.len()
     #print(df.query('eff_result_len != type_len'))
     #mismatch = df.query(df.query('eff_result_len != type_len'))[['POS', 'eff_result', 'eff_result_len', 'ao', 'type']]
     #mismatch.to_csv("mismatches.csv", sep='\t', header=True, index=True)
-    
     # unnest list columns
     if "type" in df.columns: # "type" is not an attribute of INFO for wastewater
         df = unnest_multi(df, ["eff_result", "ao", "ALT", "type"], reset_index=True)
     else:
         df = unnest_multi(df, ["eff_result", "ao", "ALT"], reset_index=True)
-
     # calculate Alternate Frequency
     df['AF'] = df['ao'].astype(int) / df['dp'].astype(int)
 
@@ -189,7 +192,7 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     df = pd.concat([df, eff_info], axis=1)
     df = df.drop(columns='eff_result')
     
-    
+
     # split df['Amino_Acid_Change'] into two columns: one for HGVS amino acid
     # names, and the righthand column for nucleotide-level names
     name_mask = df['Amino_Acid_Change'].str.contains('/')

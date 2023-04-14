@@ -100,6 +100,7 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     df = df[~df['#CHROM'].str.contains("#")]
     # restart index from 0
     df = df.reset_index(drop=True)
+
     # expand INFO column into multiple columns
     df = parse_INFO(df, var_cols)
 
@@ -352,6 +353,8 @@ def parse_args():
     parser.add_argument('--strain', type=str,
                         default='n/a',
                         help='Lineage; user mode is if strain="n/a"')
+    parser.add_argument("--wastewater", help="Activate wastewater data mode",
+                        action="store_true")
     parser.add_argument('--outgvf', type=str,
                         help='Filename for the output GVF file')
     parser.add_argument("--names", help="Save mutation names without "
@@ -382,7 +385,7 @@ if __name__ == '__main__':
                                                   '1.10'], [
                                 '##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])  # pragmas are in column 0
 
-    sample_size = find_sample_size(args.size_stats, args.strain, vcf_file)
+    sample_size = find_sample_size(args.size_stats, args.strain, vcf_file, args.wastewater)
     
     # create gvf from annotated vcf (ignoring pragmas for now)
     gvf = vcftogvf(vcf_file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
