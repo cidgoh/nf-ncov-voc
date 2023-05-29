@@ -92,7 +92,9 @@ def find_sample_size(table, lineage, vcf_file, wastewater):
 
         # wastewater data
         elif wastewater==True:
-            filename_to_match = vcf_file.split(".annotated")[0].replace("T", "R")
+            #filename_to_match = vcf_file.split(".annotated")[0].replace("T", "R")
+            filename_to_match = vcf_file.split(".annotated")[0]
+            print(filename_to_match)
             num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
                 filename_to_match)]['num_seqs'].values
             sample_size = num_seqs[0]

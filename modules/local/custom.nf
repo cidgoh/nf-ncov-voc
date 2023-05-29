@@ -281,6 +281,7 @@ process vcfTogvf {
       --gene_positions $json \\
       --names_to_split $mutation_tsv \\
       --size_stats $ch_stats \\
+      --wastewater \\
       $args \\
       --outgvf ${prefix}.gvf
     """
