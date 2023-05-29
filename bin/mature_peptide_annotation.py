@@ -63,20 +63,23 @@ if __name__ == '__main__':
     w = Writer(output_file_name, data_vcf)
 
     for record in data_vcf:
-        gene = db[gene_protein[record.INFO.get('EFF').split("|")[5]]]
-        record.INFO["mat_pep_id"] = "n/a"
-        record.INFO["mat_pep_desc"] = "n/a"
-        record.INFO["mat_pep_acc"] = "n/a"
-        for i in db.children(gene,
-                             featuretype='mature_protein_region_of_CDS',
-                             order_by='start'):
-            if int(i.start) <= int(record.POS) <= int(i.end):
-                record.INFO["mat_pep_id"] = str(" ".join(
-                    i.attributes['product'])).replace(";", ",")
-                record.INFO["mat_pep_desc"] = str(" ".join(
-                    i.attributes['Note'])).replace(";", ",")
-                record.INFO["mat_pep_acc"] = str(" ".join(
-                    i.attributes['protein_id'])).replace(";", ",")
-        w.write_record(record)
+        if record.INFO.get('EFF').split("|")[5] == "ORF1ab":
+            gene = db[gene_protein[record.INFO.get('EFF').split("|")[5]]]
+            record.INFO["mat_pep_id"] = "n/a"
+            record.INFO["mat_pep_desc"] = "n/a"
+            record.INFO["mat_pep_acc"] = "n/a"
+            for i in db.children(gene,
+                                featuretype='mature_protein_region_of_CDS',
+                                order_by='start'):
+                if int(i.start) <= int(record.POS) <= int(i.end):
+                    record.INFO["mat_pep_id"] = str(" ".join(
+                        i.attributes['product'])).replace(";", ",")
+                    record.INFO["mat_pep_desc"] = str(" ".join(
+                        i.attributes['Note'])).replace(";", ",")
+                    record.INFO["mat_pep_acc"] = str(" ".join(
+                        i.attributes['protein_id'])).replace(";", ",")
+            w.write_record(record)
+        else:
+            w.write_record(record)
     w.close()
     data_vcf.close()
