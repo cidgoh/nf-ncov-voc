@@ -151,7 +151,7 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # add sample_size attribute
     new_df['#attributes'] = new_df['#attributes'] + "sample_size=" + \
                             str(sample_size) + ';'
-          
+
     # add True/False/n/a designation for clade-defining status
     new_df["AF"] = df["AF"]
     clade_threshold_gvf = clade_defining_threshold(args.clades_threshold,
@@ -184,7 +184,7 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # strip extra commas
     new_df["multiaa_comb_mutation"] = new_df["multiaa_comb_mutation"].str.strip(',').str.replace(',,',',')
          
-  
+
     # add attributes
     new_df['#attributes'] = 'Name=' + new_df["Names"] + ';' + new_df[
         '#attributes'].astype(str)
