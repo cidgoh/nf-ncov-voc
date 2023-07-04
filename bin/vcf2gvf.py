@@ -154,7 +154,7 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
 
     # add True/False/n/a designation for clade-defining status
     new_df["AF"] = df["AF"]
-    clade_threshold_gvf = clade_defining_threshold(args.clades_threshold,
+    new_df = clade_defining_threshold(args.clades_threshold,
                                              new_df, sample_size)
 
 

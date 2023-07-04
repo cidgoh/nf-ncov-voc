@@ -232,14 +232,13 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     
     
 def add_variant_information(clade_file, merged_df, sample_size, strain):    
-    # get clade_defining status, and then info from clades file
+    # get info from clades file
     # load clade-defining mutations file
     ### MZA: need to clean up this and add this into separate function "variant_info" 
 
     if clade_file=='n/a':
         merged_df["#attributes"] = merged_df["#attributes"].astype(
-            str) + "clade_defining=n/a;" + "variant=n/a;" + \
-                                   "variant_type=n/a;" + \
+            str) + "variant=n/a;" + "variant_type=n/a;" + \
                                    "voi_designation_date=n/a;" + \
                                    "voc_designation_date=n/a;" + \
                                    "vum_designation_date=n/a;" + \
@@ -306,8 +305,7 @@ def add_variant_information(clade_file, merged_df, sample_size, strain):
                                    "status=" + status + ';'
         else:
             merged_df["#attributes"] = merged_df["#attributes"].astype(
-                str) + "clade_defining=n/a;" + "variant=n/a;" + \
-                                   "variant_type=n/a;" + \
+                str) + "variant=n/a;" + "variant_type=n/a;" + \
                                    "voi_designation_date=n/a;" + \
                                    "voc_designation_date=n/a;" + \
                                    "vum_designation_date=n/a;" + \
