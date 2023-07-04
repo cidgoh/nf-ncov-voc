@@ -21,12 +21,11 @@ from functions import parse_INFO, find_sample_size, parse_variant_file, \
 
 
 
-def map_pos_to_gene_protein(pos, aa_names, GENE_PROTEIN_POSITIONS_DICT):
+def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
     """This function is inspired/lifted from Ivan's code.
     Map a series of nucleotide positions to SARS-CoV-2 genes.
     See https://www.ncbi.nlm.nih.gov/nuccore/MN908947.
     :param pos: Nucleotide position pandas series from VCF
-    :param aa_names: aa_names pandas series
     :param GENE_PROTEIN_POSITIONS_DICT: Dictionary of gene positions from cov_lineages
     :type pos: int
     :return: series containing SARS-CoV-2 chromosome region names at each
@@ -143,7 +142,7 @@ def vcftogvf(var_data, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, samp
     # gene and protein name extraction
     gene_names, protein_names = map_pos_to_gene_protein(
 
-        df['POS'].astype(int), df['aa_name'], GENE_PROTEIN_POSITIONS_DICT)
+        df['POS'].astype(int), GENE_PROTEIN_POSITIONS_DICT)
 
     new_df['#attributes'] = new_df['#attributes'] + 'chrom_region=' + gene_names + ';'
     new_df['#attributes'] = new_df['#attributes'] + 'protein=' + \
