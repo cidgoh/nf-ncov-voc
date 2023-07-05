@@ -166,6 +166,8 @@ def gvf2tsv(gvf):
     # expand #attributes column into multiple columns for each attribute,
     # keeping the original #attributes column
     df = separate_attributes(df)
+    # change all labels to lowercase
+    df.columns = [x.lower() for x in df.columns]
     # drop original #attributes column, and also #source
     df = df.drop(labels=['#source', '#attributes'], axis=1)
     
