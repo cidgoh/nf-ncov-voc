@@ -14,7 +14,7 @@ The attributes completed by this script are:
 import argparse
 import pandas as pd
 import numpy as np
-from functions import separate_attributes, rejoin_attributes, find_sample_size
+from functions import separate_attributes, rejoin_attributes
 
 
 
@@ -39,7 +39,7 @@ def parse_args():
 
 
 
-def add_variant_information(clade_file, gvf, sample_size, strain):    
+def add_variant_information(clade_file, gvf, strain):    
     # get info from clades file
     # load clade-defining mutations file
     ### MZA: need to clean up this and add this into separate function "variant_info" 
@@ -145,8 +145,6 @@ if __name__ == '__main__':
         vum_designation_date=;status=;'
     empty_attributes = empty_attributes.replace(" ", "")                                              
 
-    sample_size = find_sample_size(args.size_stats, args.strain, args.ingvf, args.wastewater)
-
     # read in gvf file
     gvf = pd.read_csv(args.ingvf, sep='\t', names=gvf_columns, index_col=False)
 
@@ -158,7 +156,7 @@ if __name__ == '__main__':
         
     # add variant info
     variant_annotated_gvf = add_variant_information(
-        args.clades, gvf, sample_size, args.strain)
+        args.clades, gvf, args.strain)
     
     # add pragmas to df, then save to .gvf
     # columns are now 0, 1, ...
