@@ -187,7 +187,8 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, sample_si
                                              new_gvf, sample_size)
     
     # split up composite mutation names into separate rows
-    new_gvf = split_names(names_to_split, new_gvf)
+    if names_to_split != 'n/a':
+        new_gvf = split_names(names_to_split, new_gvf)
     
     # merge attributes back into a single column
     new_gvf = rejoin_attributes(new_gvf, empty_attributes)
@@ -213,7 +214,7 @@ def parse_args():
                         help='gene positions in JSON format')
     # --names_to_split needs updating: 13 January, 2023
     parser.add_argument('--names_to_split', type=str,
-                        default=None,
+                        default='n/a',
                         help='.tsv of multi-aa mutation names to '
                              'split up into individual aa names')
     parser.add_argument('--strain', type=str,
