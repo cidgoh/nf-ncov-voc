@@ -7,6 +7,10 @@ Created on Wed Jul  5 08:25:48 2023
 
 This script annotates GVF files with the functional annotation.
 
+The attributes completed by this script are: 
+["function_category", "function_description", "source",
+ "citation", "comb_mutation", "heterozygosity"]
+
 """
 import argparse
 import pandas as pd

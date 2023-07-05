@@ -16,8 +16,7 @@ import pandas as pd
 import numpy as np
 import json
 from functions import parse_INFO, find_sample_size, parse_variant_file, \
-    add_variant_information, unnest_multi, get_unknown_labels, \
-    separate_attributes, rejoin_attributes
+    unnest_multi, get_unknown_labels, separate_attributes, rejoin_attributes
 
 
 def split_names(names_to_split, new_gvf):
@@ -196,12 +195,6 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, sample_si
     return new_gvf
 
 
-# takes 3 arguments: the output df of vcftogvf.py, the functional
-# annotation file, the strain name,
-# and the names_to_split tsv.
-
-
-
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -211,9 +204,6 @@ def parse_args():
                         help='Path to a snpEFF-annotated VCF file')
     parser.add_argument('--size_stats', type=str, default='n/a',
                         help='Statistics file for for size extraction')
-    parser.add_argument('--clades', type=str, default='n/a',
-                        help='TSV file of WHO strain names and '
-                             'VOC/VOI status')
     parser.add_argument('--clades_threshold', type=float,
                         default=0.75,
                         help='Alternate frequency cutoff for '
