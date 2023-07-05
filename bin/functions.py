@@ -1,6 +1,47 @@
 import pandas as pd
 import numpy as np
 
+def separate_attributes(df):
+    # expand #attributes column into multiple columns for each attribute,
+    # keeping the original #attributes column
+    
+    # split #attributes column into separate columns for each tag
+    # split at ;, form dataframe
+    attributes = df['#attributes'].str.split(pat=';').apply(pd.Series)
+    # last column is a copy of the index so drop it
+    attributes = attributes.drop(labels=len(attributes.columns) - 1,
+                                 axis=1)
+
+    for column in attributes.columns:
+        split = attributes[column].str.split(pat='=').apply(pd.Series)
+        title = split[0].drop_duplicates().tolist()[0] #.lower()
+
+        content = split[1]
+
+        # ignore "tag=" in column content
+        attributes[column] = content
+        # make attribute tag as column label
+        attributes.rename(columns={column: title}, inplace=True)
+
+    # replace attributes column in the original df with the new
+    # separated out attributes
+    df = pd.concat((df, attributes), axis=1)
+
+    return(df)
+
+
+def rejoin_attributes(df, empty_attributes_str):
+    # get column names as list
+    columns_to_join = empty_attributes_str.split('=;')[:-1] #last one will be empty
+    for col in columns_to_join:
+        df[col] = col + "=" + df[col].astype(str) + ';'
+    # replace #attributes column with filled attributes
+    df['#attributes'] = df[columns_to_join].apply(lambda row: ''.join(row.values.astype(str)), axis=1)
+    df = df.drop(columns=columns_to_join)
+    
+    return(df)
+    
+
 def get_unknown_labels(df):
 # determines variant calling source based on pragmas
 # returns GVF-relevant names for last column of vcf
