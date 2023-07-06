@@ -143,8 +143,6 @@ def add_pokay_annotations(gvf, annotation_file, strain):
         key = column.lower()
         # replace NaNs with empty string
         merged_df[column] = merged_df[column].fillna('')
-        merged_df["#attributes"] = merged_df["#attributes"].astype(
-            str) + key + '=' + merged_df[column].astype(str) + ';'
     
     # add ID to attributes
     merged_df["ID"] = merged_df['id'].astype(str)
