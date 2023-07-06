@@ -28,9 +28,6 @@ def parse_args():
     parser.add_argument('--functional_annotations', type=str,
                         default=None, help='TSV file of functional '
                                            'annotations')
-    parser.add_argument('--strain', type=str,
-                        default='n/a',
-                        help='Lineage; user mode is if strain="n/a"')
     parser.add_argument("--names", help="Save mutation names without "
                                         "functional annotations to "
                                         "TSV files for "
