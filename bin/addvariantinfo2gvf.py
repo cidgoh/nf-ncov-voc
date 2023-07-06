@@ -15,7 +15,7 @@ import argparse
 import pandas as pd
 import numpy as np
 from functions import separate_attributes, rejoin_attributes
-
+from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
 
 def parse_args():
@@ -122,24 +122,7 @@ def add_variant_information(clade_file, gvf, strain):
  
 if __name__ == '__main__':
 
-    args = parse_args()
-    
-    gvf_columns = ['#seqid', '#source', '#type', '#start', '#end',
-                   '#score', '#strand', '#phase', '#attributes']
-    
-    pragmas = pd.DataFrame([['##gff-version 3'], ['##gvf-version '
-                                                 '1.10'], [
-                                '##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])  # pragmas are in column 0
-
-    empty_attributes = 'ID=;Name=;chrom_region=;protein=;ps_filter=;ps_exc=; \
-        mat_pep_id=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
-        Reference_seq=;Variant_seq=;nt_name=;aa_name=;vcf_gene=; \
-        mutation_type=; viral_lineage=;multi_aa_name=;multiaa_comb_mutation=; \
-        alternate_frequency=;function_category=;source=; citation=; \
-        comb_mutation=;function_description=;heterozygosity=;clade_defining=; \
-        variant=;variant_type=;voi_designation_date=;voc_designation_date=; \
-        vum_designation_date=;status=;'
-    empty_attributes = empty_attributes.replace(" ", "")                                              
+    args = parse_args()                                          
 
     # read in gvf file
     gvf = pd.read_csv(args.ingvf, sep='\t', names=gvf_columns, index_col=False)

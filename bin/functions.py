@@ -1,6 +1,30 @@
 import pandas as pd
 import numpy as np
 
+
+# standard variables used by all scripts
+
+empty_attributes = 'ID=;Name=;chrom_region=;protein=;ps_filter=;ps_exc=; \
+    mat_pep_id=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
+    Reference_seq=;Variant_seq=;nt_name=;aa_name=;vcf_gene=; \
+    mutation_type=; viral_lineage=;multi_aa_name=;multiaa_comb_mutation=; \
+    alternate_frequency=;function_category=;source=; citation=; \
+    comb_mutation=;function_description=;heterozygosity=;clade_defining=; \
+    variant=;variant_type=;voi_designation_date=;voc_designation_date=; \
+    vum_designation_date=;status=;'
+empty_attributes = empty_attributes.replace(" ", "")
+
+gvf_columns = ['#seqid', '#source', '#type', '#start', '#end',
+               '#score', '#strand', '#phase', '#attributes']
+
+vcf_columns = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL',
+                'FILTER', 'INFO', 'FORMAT', 'unknown']
+
+pragmas = pd.DataFrame([['##gff-version 3'], ['##gvf-version '
+                                             '1.10'], [
+                            '##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])  # pragmas are in column 0
+
+
 def separate_attributes(df):
     # expand #attributes column into multiple columns for each attribute,
     # keeping the original #attributes column
@@ -60,6 +84,25 @@ def get_unknown_labels(df):
 def parse_variant_file(dataframe):
     who_lineages = []
     for var in dataframe["pango_lineage"]:
+        if "," in var:
+            for temp in var.split(","):
+                if not "[" in var:
+                    who_lineages.append(temp)
+                    who_lineages.append(temp+".*")
+                else:
+                    parent=temp[0]
+                    child=temp[2:-1].split("|")
+                    for c in child:
+                        who_lineages.append(parent + str(c))
+                        who_lineages.append(parent+str(c)+".*")
+        else:
+            who_lineages.append(var)
+    return who_lineages
+
+
+def get_variant_attributes(strain, clade_file):
+    who_lineages = []
+    for var in clade_file["pango_lineage"]:
         if "," in var:
             for temp in var.split(","):
                 if not "[" in var:
