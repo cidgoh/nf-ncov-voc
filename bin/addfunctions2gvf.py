@@ -36,7 +36,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def add_pokay_annotations(gvf, annotation_file, strain):
+def add_pokay_annotations(gvf, annotation_file):
     
     # expand #attributes into columns to fill in separately
     gvf = separate_attributes(gvf)
@@ -185,7 +185,7 @@ if __name__ == '__main__':
     #pragmas = gvf[gvf['#seqid'].str.contains("##")]
         
     # add functional annotations
-    pokay_annotated_gvf = add_pokay_annotations(gvf, args.functional_annotations, args.strain)
+    pokay_annotated_gvf = add_pokay_annotations(gvf, args.functional_annotations)
 
     # add pragmas to df, then save to .gvf
     # columns are now 0, 1, ...
