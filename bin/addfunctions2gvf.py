@@ -48,105 +48,80 @@ def add_pokay_annotations(gvf, annotation_file):
                              "heterozygosity"]
     gvf = gvf.drop(columns=functional_attributes)
 
-    # remember this includes nucleotide names where there are no
-    # protein names
-    gvf["mutation"] = gvf["Name"]
-
     # merge annotated vcf and functional annotation files by
     # 'mutation' column in the gvf
     # load functional annotations spreadsheet
     df = pd.read_csv(annotation_file, sep='\t', header=0)
-
     for column in df.columns:
         df[column] = df[column].str.lstrip()
-        # add functional annotations
-    merged_df = pd.merge(df, gvf, on=['mutation'], how='right')
-
-    # collect all mutation groups (including reference mutation) in a
-    # column, sorted alphabetically
-    # this is more roundabout than it needs to be; streamline with
-    # grouby() later
-    merged_df["mutation_group"] = merged_df["comb_mutation"].astype(
-        str) + ", '" + merged_df["mutation"].astype(str) + "', " + \
-                                  merged_df[
-                                      'multiaa_comb_mutation'].astype(
-                                      str)
+        
+    # add functional annotations
+    df = df.rename(columns={"mutation": "Name"})
+    merged_df = pd.merge(df, gvf, on=['Name'], how='right')
+    
+    # data cleaning
+    merged_df['comb_mutation'] = merged_df['comb_mutation'].str.replace(
+        "B.1.617.2\\tT19R", "T19R", regex=False)
+    
+    # update ID attribute based on mutation groups
+    
+    # collect all mutation groups (including reference mutation) in
+    # merged_df["mutation_group"], sorted alphabetically
+    
+    # join columns with commas in between
+    merged_df["mutation_group"] = \
+        merged_df["comb_mutation"].astype(str) + "," + \
+        merged_df["Name"].astype(str) + "," + \
+        merged_df['multiaa_comb_mutation'].astype(str)
+    # cleaning: remove nans, quotations marks, spaces
+    for x in [' ', 'nan', "'", '"']:
+        merged_df["mutation_group"] = merged_df[
+            "mutation_group"].str.replace(x, '')
+    # cleaning: remove extra commas
     merged_df["mutation_group"] = merged_df[
-        "mutation_group"].str.replace("nan, ", "")
+        "mutation_group"].str.replace(',,', ',')
     merged_df["mutation_group"] = merged_df[
-        "mutation_group"].str.rstrip(' ').str.rstrip(',')
+        "mutation_group"].str.strip(',')
+    # sort each row alphabetically
+    # extract column into a list (each row is an element)
+    unsorted_group_list = merged_df["mutation_group"].tolist()
+    # convert each element of the list to a list, making a nested list
+    nested_list = [x.split(",") for x in unsorted_group_list]
+    # sort sublists alphabetically
+    nested_list = [sorted(x) for x in nested_list]
+    # return sublists to strings
+    sorted_group_list = [",".join(x) for x in nested_list]
+    # add sorted lists back to the df
+    merged_df["mutation_group"] = pd.Series(sorted_group_list)
 
-    # separate the mutation_group column into its own df with one
-    # mutation per column
-    mutation_groups = merged_df["mutation_group"].str.split(
-        pat=',').apply(pd.Series)
-    mutation_groups = mutation_groups.apply(
-        lambda s: s.str.replace("'", ""))
-    mutation_groups = mutation_groups.apply(
-        lambda s: s.str.replace(" ", ""))
-    # now each mutation has a column instead
-    mutation_groups = mutation_groups.transpose()
-    # sort each column alphabetically
-    sorted_df = mutation_groups
+    # make another column to check if all members of the group are
+    # represented individually in 'Name' (True/False)
+    unique_Name_entries = set(merged_df['Name'].tolist())
+    group_fully_represented = [set(x).issubset(unique_Name_entries)
+                               for x in nested_list]
+    merged_df['group_fully_represented'] = group_fully_represented
+    # drop rows with mutation group members not found in 'Name',
+    # leaving the index unchanged
+    merged_df = merged_df[merged_df['group_fully_represented']==True]
 
-    for column in mutation_groups.columns:
-        sorted_df[column] = mutation_groups.sort_values(by=column,
-                                                        ignore_index=True)[
-            column]
-    sorted_df = sorted_df.transpose()
-
-    # since they're sorted, put everything back into a single cell,
-    # don't care about dropna
-    df3 = sorted_df.apply(lambda x: ','.join(x.astype(str)), axis=1)
-    unique_groups = df3.drop_duplicates()
-    unique_groups_multicol = sorted_df.drop_duplicates()
-    # for sanity checking
-    merged_df["mutation_group_labeller"] = df3
-
-    # make a unique id for mutation groups that have all members
-    # represented in the vcf
-    # for groups with missing members, delete those functional
-    # annotations
-    merged_df["id"] = 'NaN'
-    id_num = 0
-    for row in range(unique_groups.shape[0]):
-        group_mutation_set = set(unique_groups_multicol.iloc[row])
-        # remove nan and 'nan' from set
-        group_mutation_set = {x for x in group_mutation_set if (x == x
-                                                                and x != 'nan')}
-        gvf_all_mutations = set(gvf['mutation'].unique())
-        indices = merged_df[merged_df.mutation_group_labeller ==
-                            unique_groups.iloc[row]].index.tolist()
-        # if all mutations in the group are in the vcf file, include
-        # those rows and give them an id
-        if group_mutation_set.issubset(gvf_all_mutations):
-            merged_df.loc[merged_df.mutation_group_labeller ==
-                          unique_groups.iloc[row], "id"] = "ID_" + \
-                                                           str(id_num)
-            id_num += 1
-        else:
-            # if not, drop group rows, leaving the remaining indices
-            # unchanged
-            merged_df = merged_df.drop(indices)
-
-            # change semicolons in function descriptions to colons
+    # update 'ID' attribute: now, rows with the same entry
+    # in 'mutation_group' get the same ID
+    merged_df['ID'] = 'ID_' + merged_df.groupby(
+        'mutation_group', sort=False).ngroup().astype(str)
+    
+    # change semicolons in function descriptions to colons
     merged_df['function_description'] = merged_df[
         'function_description'].str.replace(';', ':')
-    # change heteozygosity column to True/False
+    
+    # change heterozygosity column to True/False
     merged_df['heterozygosity'] = merged_df['heterozygosity'] == \
                                   'heterozygous'
-    # remove trailing spaces from citation
-    merged_df['citation'] = merged_df['citation'].str.strip()
-    # add key-value pairs to attributes column
-    for column in ['function_category', 'source', 'citation',
-                   'comb_mutation', 'function_description',
-                   'heterozygosity']:
-        key = column.lower()
-        # replace NaNs with empty string
-        merged_df[column] = merged_df[column].fillna('')
+        
+    # replace NaNs in df with empty string
+    merged_df = merged_df.fillna('')
     
-    # add ID to attributes
-    merged_df["ID"] = merged_df['id'].astype(str)
+    # remove trailing spaces from 'citation'
+    merged_df['citation'] = merged_df['citation'].str.strip()
     
     # merge attributes back into a single column
     merged_df = rejoin_attributes(merged_df, empty_attributes)
@@ -164,9 +139,6 @@ if __name__ == '__main__':
     # remove pragmas and original header row
     gvf = gvf[~gvf['#seqid'].astype(str).str.contains("#")]
 
-    # separate pragmas
-    #pragmas = gvf[gvf['#seqid'].str.contains("##")]
-        
     # add functional annotations
     pokay_annotated_gvf = add_pokay_annotations(gvf, args.functional_annotations)
 
