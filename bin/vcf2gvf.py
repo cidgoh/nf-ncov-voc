@@ -15,7 +15,7 @@ import argparse
 import pandas as pd
 import numpy as np
 import json
-from functions import parse_INFO, find_sample_size, parse_variant_file, \
+from functions import parse_INFO, find_sample_size, \
     unnest_multi, get_unknown_labels, separate_attributes, rejoin_attributes
 from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
@@ -174,6 +174,10 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, sample_si
     # split up composite mutation names into separate rows
     if names_to_split != 'n/a':
         new_gvf = split_names(names_to_split, new_gvf)
+        
+    # add 'ID' attribute: here, rows with the same entry in 'Name'
+    # get the same ID (should all be different)
+    new_gvf['ID'] = 'ID_' + new_gvf.groupby('Name', sort=False).ngroup().astype(str)
     
     # merge attributes back into a single column
     new_gvf = rejoin_attributes(new_gvf, empty_attributes)
