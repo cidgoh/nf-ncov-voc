@@ -91,7 +91,7 @@ def parse_pango_lineages(strain, dataframe):
     the input strain (if found).
     '''
     # initialize variables
-    all_pango_lineages = []
+    who_lineages = []
     var_to_match = 'None'
     
     # for each who_variant, expand the lineage names in
@@ -120,7 +120,7 @@ def parse_pango_lineages(strain, dataframe):
         
         # append the list for each variant to the larger
         # list for all variants
-        all_pango_lineages.append(var_pango_lineages)
+        who_lineages.append(var_pango_lineages)
         
         # get the row index for information on the input strain
         if var_to_match != 'None':
@@ -129,7 +129,7 @@ def parse_pango_lineages(strain, dataframe):
         else:
             strain_index = 'n/a'
         
-    return all_pango_lineages, strain_index
+    return who_lineages, strain_index
 
 
 class get_variant_info:
@@ -137,7 +137,7 @@ class get_variant_info:
     def __init__(self, strain, clades):
 
         # retrieve row number that matches the input strain
-        all_pango_lineages, var_index = parse_pango_lineages(strain, clades)
+        who_lineages, var_index = parse_pango_lineages(strain, clades)
 
         # save status, WHO strain name, etc. from clades file
         if var_index != 'n/a':
