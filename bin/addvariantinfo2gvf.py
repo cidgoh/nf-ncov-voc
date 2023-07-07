@@ -14,7 +14,7 @@ The attributes completed by this script are:
 import argparse
 import pandas as pd
 import numpy as np
-from functions import separate_attributes, rejoin_attributes
+from functions import separate_attributes, rejoin_attributes, get_variant_info
 from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
 
@@ -53,59 +53,19 @@ def add_variant_information(clade_file, gvf, strain):
     elif clade_file != 'n/a':
         clades = pd.read_csv(clade_file, sep='\t', header=0)
         clades = clades.replace(np.nan, '', regex=True) #this is needed to append empty strings to attributes (otherwise datatype mismatch error)
-
-        # find the relevant pango_lineage line in the clade file that
-        # matches args.strain (call this line "var_to_match")
-        ### replace this part with func "parse_variant_file" in functions.py
-        #available_strains = parse_variant_file(clades)
-
-        var_to_match = 'None'
-        cladefile_strain = 'None'
-        available_strains = []
-        for var in clades['pango_lineage'].tolist():
-            if "," in var:
-                for temp in var.split(","):
-                    if "[" not in var:
-                        available_strains.append(temp)
-                        if strain.startswith(temp):
-                            var_to_match = var
-                    else:
-                        parent = temp[0]
-                        child = temp[2:-3].split("|")
-                        for c in child:
-                            available_strains.append(parent + str(c))
-                            available_strains.append(parent + str(c) + ".*")
-                            if strain.startswith(parent + str(c)):
-                                var_to_match = var
-            else:
-                available_strains.append(var)
-                if strain.startswith(var):
-                    var_to_match = var            
-
-        # if strain in available_strains:
-        if var_to_match !='None':
-
-            print("var_to_match", var_to_match)
-            # find the index of the relevant row
-            var_index = clades.index[clades['pango_lineage'] == var_to_match].tolist()[0]
-            print("var_index", var_index)
-            print(clades.loc[var_index])
-            # extract status, WHO strain name, etc. from clades file
-            who_variant = clades.loc[var_index, 'variant']
-            variant_type = clades.loc[var_index, 'variant_type']
-            voi_designation_date = clades.loc[var_index, 'voi_designation_date']
-            voc_designation_date = clades.loc[var_index, 'voc_designation_date']
-            vum_designation_date = clades.loc[var_index, 'vum_designation_date']
-            status = clades.loc[var_index, 'status']
-
-            # add attributes from variant info file
-            gvf["variant"] = who_variant
-            gvf["variant_type"] = variant_type
-            gvf["voi_designation_date"] = voi_designation_date
-            gvf["voc_designation_date"] = voc_designation_date
-            gvf["vum_designation_date"] = vum_designation_date
-            gvf["status"] = status
-
+        
+        # retrieve relevant variant information from clades file
+        x = get_variant_info(strain, clades)
+        
+        # if the strain is listed in the file,
+        # add variant attributes to the GVF
+        if x.strain_in_cladefile==True:
+            gvf["variant"] = x.who_variant
+            gvf["variant_type"] = x.variant_type
+            gvf["voi_designation_date"] = x.voi_designation_date
+            gvf["voc_designation_date"] = x.voc_designation_date
+            gvf["vum_designation_date"] = x.vum_designation_date
+            gvf["status"] = x.status
         else:
             gvf[[variant_attributes]] = "n/a"
             

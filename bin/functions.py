@@ -67,8 +67,8 @@ def rejoin_attributes(df, empty_attributes_str):
     
 
 def get_unknown_labels(df):
-# determines variant calling source based on pragmas
-# returns GVF-relevant names for last column of vcf
+# determines variant calling source (eg. iVar) based on pragmas
+# returns GVF-relevant names for last column ("unknown") of vcf
     source = df['#CHROM'][df['#CHROM'].str.contains("##source=")].values[0].split("=")[1].split()[0]
     if source=="freeBayes":
         columns = [x.lower() for x in ["GT","DP","AD","RO","QR","AO","QA","GL"]]
@@ -81,43 +81,76 @@ def get_unknown_labels(df):
     return columns
         
 
-def parse_variant_file(dataframe):
-    who_lineages = []
-    for var in dataframe["pango_lineage"]:
-        if "," in var:
-            for temp in var.split(","):
-                if not "[" in var:
-                    who_lineages.append(temp)
-                    who_lineages.append(temp+".*")
-                else:
-                    parent=temp[0]
-                    child=temp[2:-1].split("|")
-                    for c in child:
-                        who_lineages.append(parent + str(c))
-                        who_lineages.append(parent+str(c)+".*")
-        else:
-            who_lineages.append(var)
-    return who_lineages
-
-
-def get_variant_attributes(strain, clade_file):
-    who_lineages = []
-    for var in clade_file["pango_lineage"]:
-        if "," in var:
-            for temp in var.split(","):
-                if not "[" in var:
-                    who_lineages.append(temp)
-                    who_lineages.append(temp+".*")
-                else:
-                    parent=temp[0]
-                    child=temp[2:-1].split("|")
-                    for c in child:
-                        who_lineages.append(parent + str(c))
-                        who_lineages.append(parent+str(c)+".*")
-        else:
-            who_lineages.append(var)
-    return who_lineages
+def parse_pango_lineages(strain, dataframe):
+    '''
+    Expands the pango_lineage column in the clades file into
+    a nested list called who_lineages, where each inside
+    list is one expanded row of pango_lineages.
     
+    Returns the nested list, as well as the row index for
+    the input strain (if found).
+    '''
+    # initialize variables
+    all_pango_lineages = []
+    var_to_match = 'None'
+    
+    # for each who_variant, expand the lineage names in
+    # pango_lineages and save these to a list
+    for var in dataframe["pango_lineage"]:
+        var_pango_lineages = []
+        if "," in var:
+            for temp in var.split(","):
+                if not "[" in var:
+                    var_pango_lineages.append(temp)
+                    var_pango_lineages.append(temp + ".*")
+                    if strain.startswith(temp):
+                        var_to_match = var
+                else:
+                    parent=temp[0]
+                    child=temp[2:-1].split("|")
+                    for c in child:
+                        var_pango_lineages.append(parent + str(c))
+                        var_pango_lineages.append(parent+str(c)+".*")
+                        if strain.startswith(parent + str(c)):
+                            var_to_match = var
+        else:
+            var_pango_lineages.append(var)
+            if strain.startswith(var):
+                var_to_match = var    
+        
+        # append the list for each variant to the larger
+        # list for all variants
+        all_pango_lineages.append(var_pango_lineages)
+        
+        # get the row index for information on the input strain
+        if var_to_match != 'None':
+            strain_index = dataframe.index[dataframe['pango_lineage'] == \
+                                 var_to_match].tolist()[0]
+        else:
+            strain_index = 'n/a'
+        
+    return all_pango_lineages, strain_index
+
+
+class get_variant_info:
+
+    def __init__(self, strain, clades):
+
+        # retrieve row number that matches the input strain
+        all_pango_lineages, var_index = parse_pango_lineages(strain, clades)
+
+        # save status, WHO strain name, etc. from clades file
+        if var_index != 'n/a':
+            self.who_variant = clades.loc[var_index, 'variant']
+            self.variant_type = clades.loc[var_index, 'variant_type']
+            self.voi_designation_date = clades.loc[var_index, 'voi_designation_date']
+            self.voc_designation_date = clades.loc[var_index, 'voc_designation_date']
+            self.vum_designation_date = clades.loc[var_index, 'vum_designation_date']
+            self.status = clades.loc[var_index, 'status']
+            self.strain_in_cladefile = True # flag
+        else:
+            self.strain_in_cladefile = False
+        
 
 def unnest_multi(df, columns, reset_index=False):
 # expands out columns of lists into 1d, as well as
