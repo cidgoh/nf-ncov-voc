@@ -51,8 +51,8 @@ def add_pokay_annotations(gvf, annotation_file):
     
     # join columns with commas in between
     merged_df["mutation_group"] = \
-        merged_df["comb_mutation"].astype(str) + "," + \
         merged_df["Name"].astype(str) + "," + \
+        merged_df["comb_mutation"].astype(str) + "," + \
         merged_df['multiaa_comb_mutation'].astype(str)
     # cleaning: remove nans, quotations marks, spaces
     for x in [' ', 'nan', "'", '"']:
