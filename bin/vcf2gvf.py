@@ -7,8 +7,13 @@
 This script converts VCF files that have been annotated into GVF
 files, including the functional annotation. Required user
 input is a VCF file.
-
-
+    
+The attributes completed by this script are: 
+['ID', 'Name', 'chrom_region', 'protein', 'ps_filter', 'ps_exc', 'mat_pep_id',
+'mat_pep_desc','mat_pep_acc', 'ro', 'ao', 'dp', 'sample_size', 'Reference_seq',
+'Variant_seq', 'nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
+'viral_lineage', 'multi_aa_name', 'multiaa_comb_mutation',
+'alternate_frequency']
 """
 
 import argparse
@@ -71,7 +76,7 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, sample_si
     new_gvf['Name'] = vcf_df["Names"]
     new_gvf['viral_lineage'] = strain
     new_gvf['alternate_frequency'] = vcf_df["AF"]
-
+    
     # add chrom_region and protein attributes
     gene_names, protein_names = map_pos_to_gene_protein(
         vcf_df['POS'].astype(int), GENE_PROTEIN_POSITIONS_DICT)

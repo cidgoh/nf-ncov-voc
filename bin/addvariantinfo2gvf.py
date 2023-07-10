@@ -32,7 +32,7 @@ def add_variant_information(clade_file, gvf, strain):
         gvf[[variant_attributes]] = "n/a"
     
     elif clade_file != 'n/a':
-        # load clade-defining mutations file
+        # load variant info file
         clades = pd.read_csv(clade_file, sep='\t', header=0)
         clades = clades.fillna('')
         
