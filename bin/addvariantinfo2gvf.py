@@ -51,8 +51,8 @@ def add_variant_information(clade_file, gvf, strain):
         else:
             gvf[[variant_attributes]] = "n/a"
     
-        # merge attributes back into a single column
-        gvf = rejoin_attributes(gvf, empty_attributes)
+    # merge attributes back into a single column
+    gvf = rejoin_attributes(gvf, empty_attributes)
 
                                     
                                     
