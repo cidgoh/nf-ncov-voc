@@ -347,6 +347,95 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
 
     return(df)
     
-    
+
+def split_names(names_to_split, new_gvf):
+    # separate multi-aa names noted in names_to_split into separate rows
+    ### MZA: This needs immediate attention with Paul and his group. Need to update the notion of mutations
+    # split multi-aa names from the vcf into single-aa names (multi-row)
+    # load names_to_split spreadsheet
+    names_to_split_df = pd.read_csv(names_to_split, sep='\t', header=0)
+    # merge "split_into" column into new_gvf, matching up by Names
+    names_to_split_df = names_to_split_df.rename(columns={'name': 'Name'})
+    new_gvf = new_gvf.merge(names_to_split_df, on='Name', how = 'left')
+    # add "multi_aa_name" column containing the original multi-aa names
+    new_gvf["multi_aa_name"] = ''
+    new_gvf.loc[new_gvf["split_into"].notna(), "multi_aa_name"] = new_gvf['Name']
+    # where "split_into" is notna, replace "Names" value with "split_into" value
+    new_gvf.loc[new_gvf["split_into"].notna(), "Name"] = new_gvf["split_into"]
+    # make 'Names' into a column of lists
+    new_gvf['Name'] = new_gvf['Name'].str.split(",")
+    # unnest these lists (convert to 1d)                      
+    new_gvf = unnest_multi(new_gvf, ['Name'], reset_index=True)   
+    # 'multiaa_comb_mutation' attribute is "split_into" column left over from merge
+    new_gvf['multiaa_comb_mutation'] = new_gvf['split_into']
+    new_gvf = new_gvf.drop(columns=['split_into'])
+    # make multiaa_comb_mutation contain everything in split_into
+    # except for the name in Names
+    new_gvf.multiaa_comb_mutation = new_gvf.multiaa_comb_mutation.fillna('')
+    new_gvf["multiaa_comb_mutation"] = new_gvf.apply(lambda row : row["multiaa_comb_mutation"].replace(row['Name'], ''), axis=1)
+    # strip extra commas
+    new_gvf["multiaa_comb_mutation"] = new_gvf["multiaa_comb_mutation"].str.strip(',').str.replace(',,',',')
+
+    return(new_gvf)
+
+
+def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
+    """This function is inspired/lifted from Ivan's code.
+    Map a series of nucleotide positions to SARS-CoV-2 genes.
+    See https://www.ncbi.nlm.nih.gov/nuccore/MN908947.
+    :param pos: Nucleotide position pandas series from VCF
+    :param GENE_PROTEIN_POSITIONS_DICT: Dictionary of gene positions from cov_lineages
+    :type pos: int
+    :return: series containing SARS-CoV-2 chromosome region names at each
+    nucleotide position in ``pos``
+    """
+    # make a dataframe of the same length as
+    # pos to put gene names in (+ other things)
+    df = pos.astype(str).to_frame()
+
+    # loop through genes dict to get gene names
+    df["gene_names"] = df["POS"]
+    for gene in GENE_PROTEIN_POSITIONS_DICT["genes"]:
+        # get nucleotide coordinates for this gene
+        start = GENE_PROTEIN_POSITIONS_DICT["genes"][gene]["coordinates"]["from"]
+        end = GENE_PROTEIN_POSITIONS_DICT["genes"][gene]["coordinates"]["to"]
+        # for all the mutations that are found in this region,
+        # assign this gene name
+        gene_mask = pos.astype(int).between(start, end, inclusive="both")
+        if gene == "Stem-loop":  # no stem_loop entry in SARS-CoV-2.json
+            df["gene_names"][gene_mask] = gene + ",3\' UTR"
+        else:
+            df["gene_names"][gene_mask] = gene
+    # label all mutations that didn't belong to any gene as "intergenic"
+    df["gene_names"][df["gene_names"].str.isnumeric()] = "intergenic"
+
+    # loop through proteins dict to get protein names
+    df["protein_names"] = df["POS"]
+    for protein in GENE_PROTEIN_POSITIONS_DICT["proteins"]:
+        start = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein][
+            "g.coordinates"]["from"]
+        end = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["g.coordinates"]["to"]
+        protein_name = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["name"]
+        # get protein names for all mutations that are within range
+        protein_mask = pos.astype(int).between(start, end, inclusive="both")
+        df["protein_names"][protein_mask] = protein_name
+    # label all mutations that didn't belong to any protein as "n/a"
+    df["protein_names"][df["protein_names"].str.isnumeric()] = "n/a"
+
+    return(df["gene_names"], df["protein_names"])
+
+
+def clade_defining_threshold(threshold, df, sample_size):
+    """Specifies the clade_defining attribute as True if AF >
+    threshold, False if AF <= threshold, and n/a if the VCF is for a
+    single genome """
+
+    if sample_size == 1:
+        df["clade_defining"] = "n/a"
+    else:
+        df.loc[df.alternate_frequency > threshold, "clade_defining"] = "True"
+        df.loc[df.alternate_frequency <= threshold, "clade_defining"] = "False"
+        
+    return df
     
 

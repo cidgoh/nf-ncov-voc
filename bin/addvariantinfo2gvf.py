@@ -18,27 +18,8 @@ from functions import separate_attributes, rejoin_attributes, get_variant_info
 from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description='Adds variant information to a GVF file')
-    parser.add_argument('--ingvf', type=str, default=None,
-                        help='Path to a GVF file')
-    parser.add_argument('--outgvf', type=str,
-                        help='Filename for the output GVF file')
-    parser.add_argument('--strain', type=str,
-                        default='n/a',
-                        help='Lineage; user mode is if strain="n/a"')
-    parser.add_argument('--clades', type=str, default='n/a',
-                        help='TSV file of WHO strain names and '
-                             'VOC/VOI status')
-    return parser.parse_args()
-
-
-
 def add_variant_information(clade_file, gvf, strain):    
-    # get info from clades file
-    # load clade-defining mutations file
-    ### MZA: need to clean up this and add this into separate function "variant_info" 
+    # get variant info from clades file
 
     # expand #attributes into columns to fill in separately
     gvf = separate_attributes(gvf)
@@ -49,10 +30,11 @@ def add_variant_information(clade_file, gvf, strain):
     
     if clade_file=='n/a':
         gvf[[variant_attributes]] = "n/a"
-
+    
     elif clade_file != 'n/a':
+        # load clade-defining mutations file
         clades = pd.read_csv(clade_file, sep='\t', header=0)
-        clades = clades.replace(np.nan, '', regex=True) #this is needed to append empty strings to attributes (otherwise datatype mismatch error)
+        clades = clades.fillna('')
         
         # retrieve relevant variant information from clades file
         x = get_variant_info(strain, clades)
@@ -68,8 +50,7 @@ def add_variant_information(clade_file, gvf, strain):
             gvf["status"] = x.status
         else:
             gvf[[variant_attributes]] = "n/a"
-            
-            
+    
         # merge attributes back into a single column
         gvf = rejoin_attributes(gvf, empty_attributes)
 
@@ -78,6 +59,20 @@ def add_variant_information(clade_file, gvf, strain):
     return(gvf)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Adds variant information to a GVF file')
+    parser.add_argument('--ingvf', type=str, default=None,
+                        help='Path to a GVF file')
+    parser.add_argument('--outgvf', type=str,
+                        help='Filename for the output GVF file')
+    parser.add_argument('--strain', type=str,
+                        default='n/a',
+                        help='Lineage; user mode is if strain="n/a"')
+    parser.add_argument('--clades', type=str, default='n/a',
+                        help='TSV file of WHO strain names and '
+                             'VOC/VOI status')
+    return parser.parse_args()
 
  
 if __name__ == '__main__':
@@ -89,9 +84,6 @@ if __name__ == '__main__':
 
     # remove pragmas and original header row
     gvf = gvf[~gvf['#seqid'].astype(str).str.contains("#")]
-
-    # separate pragmas
-    #pragmas = gvf[gvf['#seqid'].str.contains("##")]
         
     # add variant info
     variant_annotated_gvf = add_variant_information(

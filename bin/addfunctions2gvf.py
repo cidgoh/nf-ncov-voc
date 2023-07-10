@@ -19,24 +19,6 @@ from functions import separate_attributes, rejoin_attributes
 from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description='Adds functional annotation to a GVF file')
-    parser.add_argument('--ingvf', type=str, default=None,
-                        help='Path to a GVF file')
-    parser.add_argument('--outgvf', type=str,
-                        help='Filename for the output GVF file')
-    parser.add_argument('--functional_annotations', type=str,
-                        default=None, help='TSV file of functional '
-                                           'annotations')
-    parser.add_argument("--names", help="Save mutation names without "
-                                        "functional annotations to "
-                                        "TSV files for "
-                                        "troubleshooting purposes",
-                        action="store_true")
-    return parser.parse_args()
-
-
 def add_pokay_annotations(gvf, annotation_file):
     
     # expand #attributes into columns to fill in separately
@@ -48,14 +30,13 @@ def add_pokay_annotations(gvf, annotation_file):
                              "heterozygosity"]
     gvf = gvf.drop(columns=functional_attributes)
 
-    # merge annotated vcf and functional annotation files by
-    # 'mutation' column in the gvf
     # load functional annotations spreadsheet
     df = pd.read_csv(annotation_file, sep='\t', header=0)
+    # remove any leading/trailing spaces
     for column in df.columns:
-        df[column] = df[column].str.lstrip()
+        df[column] = df[column].str.strip()
         
-    # add functional annotations
+    # merge annotated vcf and functional annotation files by 'Name'
     df = df.rename(columns={"mutation": "Name"})
     merged_df = pd.merge(df, gvf, on=['Name'], how='right')
     
@@ -120,13 +101,28 @@ def add_pokay_annotations(gvf, annotation_file):
     # replace NaNs in df with empty string
     merged_df = merged_df.fillna('')
     
-    # remove trailing spaces from 'citation'
-    merged_df['citation'] = merged_df['citation'].str.strip()
-    
     # merge attributes back into a single column
     merged_df = rejoin_attributes(merged_df, empty_attributes)
 
     return merged_df[gvf_columns]
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Adds functional annotation to a GVF file')
+    parser.add_argument('--ingvf', type=str, default=None,
+                        help='Path to a GVF file')
+    parser.add_argument('--outgvf', type=str,
+                        help='Filename for the output GVF file')
+    parser.add_argument('--functional_annotations', type=str,
+                        default=None, help='TSV file of functional '
+                                           'annotations')
+    parser.add_argument("--names", help="Save mutation names without "
+                                        "functional annotations to "
+                                        "TSV files for "
+                                        "troubleshooting purposes",
+                        action="store_true")
+    return parser.parse_args()
 
 
 if __name__ == '__main__':
