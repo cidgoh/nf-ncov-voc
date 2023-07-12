@@ -15,7 +15,7 @@ import argparse
 import pandas as pd
 import numpy as np
 from functions import separate_attributes, rejoin_attributes, get_variant_info
-from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
+from functions import empty_attributes, gvf_columns, vcf_columns
 
 
 def add_variant_information(clade_file, gvf, strain):    
@@ -83,6 +83,9 @@ if __name__ == '__main__':
     gvf = pd.read_csv(args.ingvf, sep='\t', names=gvf_columns, index_col=False)
 
     # remove pragmas and original header row
+    pragmas = gvf[gvf['#seqid'].astype(str).str.contains("##")]
+    pragmas.columns = range(9)
+    pragmas = pragmas.fillna('')
     gvf = gvf[~gvf['#seqid'].astype(str).str.contains("#")]
         
     # add variant info
@@ -94,6 +97,7 @@ if __name__ == '__main__':
     final_gvf = pd.DataFrame(np.vstack([variant_annotated_gvf.columns,
                                             variant_annotated_gvf]))
     final_gvf = pragmas.append(final_gvf)
+    print(final_gvf)
     filepath = args.outgvf  # outdir + strain + ".annotated.gvf"
     print("Saved as: ", filepath)
     print("")

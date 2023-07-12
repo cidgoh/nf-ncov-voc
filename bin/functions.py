@@ -23,7 +23,7 @@ vcf_columns = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL',
 # pragmas are in column 0
 pragmas = pd.DataFrame([['##gff-version 3'],
                         ['##gvf-version 1.10'],
-                        ['##species NCBI_Taxonomy_URI=http://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=2697049']])
+                        ['##species']])
 
 
 def separate_attributes(df):

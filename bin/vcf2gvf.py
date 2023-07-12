@@ -140,6 +140,7 @@ if __name__ == '__main__':
     # Reading the gene & proetin coordinates of SARS-CoV-2 genome
     with open(args.gene_positions) as fp:
         GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
+    
     # Assigning the vcf file to a variable
     vcf_file = args.vcffile
 
@@ -151,10 +152,15 @@ if __name__ == '__main__':
     gvf = vcftogvf(vcf_file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
                    args.names_to_split, sample_size)
     
-    # add pragmas to df, then save to .gvf
-    # columns are now 0, 1, ...
+    # add species to pragmas
+    species = GENE_PROTEIN_POSITIONS_DICT['species']
+    pragmas[0] = pragmas[0].str.replace("##species", "##species " + str(species))
+
+    # combine pragmas, header, GVF contents
     final_gvf = pd.DataFrame(np.vstack([gvf.columns, gvf]))
     final_gvf = pragmas.append(final_gvf)
+    
+    # save GVF
     filepath = args.outgvf  # outdir + strain + ".annotated.gvf"
     print("Saved as: ", filepath)
     print("")

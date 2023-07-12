@@ -133,6 +133,9 @@ if __name__ == '__main__':
     gvf = pd.read_csv(args.ingvf, sep='\t', names=gvf_columns, index_col=False)
 
     # remove pragmas and original header row
+    pragmas = gvf[gvf['#seqid'].astype(str).str.contains("##")]
+    pragmas.columns = range(9)
+    pragmas = pragmas.fillna('')
     gvf = gvf[~gvf['#seqid'].astype(str).str.contains("#")]
 
     # add functional annotations
