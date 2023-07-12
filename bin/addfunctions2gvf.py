@@ -16,7 +16,7 @@ import argparse
 import pandas as pd
 import numpy as np
 from functions import separate_attributes, rejoin_attributes
-from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
+from functions import empty_attributes, gvf_columns, vcf_columns
 
 
 def add_pokay_annotations(gvf, annotation_file):
