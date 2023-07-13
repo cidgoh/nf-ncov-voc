@@ -348,31 +348,35 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     return(df)
     
 
-def split_names(names_to_split, new_gvf):
+def split_names(names_to_split, new_gvf, col_to_split):
     # separate multi-aa names noted in names_to_split into separate rows
     ### MZA: This needs immediate attention with Paul and his group. Need to update the notion of mutations
     # split multi-aa names from the vcf into single-aa names (multi-row)
     # load names_to_split spreadsheet
     names_to_split_df = pd.read_csv(names_to_split, sep='\t', header=0)
+    # remove spaces and quotation marks from 'split_into' column
+    for x in [' ', "'"]:
+        names_to_split_df['split_into'] = names_to_split_df[
+            'split_into'].str.replace(x, "")
     # merge "split_into" column into new_gvf, matching up by Names
-    names_to_split_df = names_to_split_df.rename(columns={'name': 'Name'})
-    new_gvf = new_gvf.merge(names_to_split_df, on='Name', how = 'left')
+    names_to_split_df = names_to_split_df.rename(columns={'name': col_to_split})
+    new_gvf = new_gvf.merge(names_to_split_df, on=col_to_split, how = 'left')
     # add "multi_aa_name" column containing the original multi-aa names
     new_gvf["multi_aa_name"] = ''
-    new_gvf.loc[new_gvf["split_into"].notna(), "multi_aa_name"] = new_gvf['Name']
+    new_gvf.loc[new_gvf["split_into"].notna(), "multi_aa_name"] = new_gvf[col_to_split]
     # where "split_into" is notna, replace "Names" value with "split_into" value
-    new_gvf.loc[new_gvf["split_into"].notna(), "Name"] = new_gvf["split_into"]
+    new_gvf.loc[new_gvf["split_into"].notna(), col_to_split] = new_gvf["split_into"]
     # make 'Names' into a column of lists
-    new_gvf['Name'] = new_gvf['Name'].str.split(",")
-    # unnest these lists (convert to 1d)                      
-    new_gvf = unnest_multi(new_gvf, ['Name'], reset_index=True)   
+    new_gvf[col_to_split] = new_gvf[col_to_split].str.split(",")
+    # unnest these lists (convert to 1d)                  
+    new_gvf = unnest_multi(new_gvf, columns=[col_to_split], reset_index=True)   
     # 'multiaa_comb_mutation' attribute is "split_into" column left over from merge
     new_gvf['multiaa_comb_mutation'] = new_gvf['split_into']
     new_gvf = new_gvf.drop(columns=['split_into'])
     # make multiaa_comb_mutation contain everything in split_into
     # except for the name in Names
     new_gvf.multiaa_comb_mutation = new_gvf.multiaa_comb_mutation.fillna('')
-    new_gvf["multiaa_comb_mutation"] = new_gvf.apply(lambda row : row["multiaa_comb_mutation"].replace(row['Name'], ''), axis=1)
+    new_gvf["multiaa_comb_mutation"] = new_gvf.apply(lambda row : row["multiaa_comb_mutation"].replace(row[col_to_split], ''), axis=1)
     # strip extra commas
     new_gvf["multiaa_comb_mutation"] = new_gvf["multiaa_comb_mutation"].str.strip(',').str.replace(',,',',')
 

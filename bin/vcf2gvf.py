@@ -5,15 +5,13 @@
 @author: madeline
 
 This script converts VCF files that have been annotated into GVF
-files, including the functional annotation. Required user
-input is a VCF file.
+files. Required user input is a VCF file.
     
 The attributes completed by this script are: 
 ['ID', 'Name', 'chrom_region', 'protein', 'ps_filter', 'ps_exc', 'mat_pep_id',
 'mat_pep_desc','mat_pep_acc', 'ro', 'ao', 'dp', 'sample_size', 'Reference_seq',
 'Variant_seq', 'nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
-'viral_lineage', 'multi_aa_name', 'multiaa_comb_mutation',
-'alternate_frequency']
+'viral_lineage', 'alternate_frequency']
 """
 
 import argparse
@@ -22,11 +20,11 @@ import numpy as np
 import json
 from functions import parse_INFO, find_sample_size, \
     unnest_multi, get_unknown_labels, separate_attributes, rejoin_attributes, \
-        clade_defining_threshold, split_names, map_pos_to_gene_protein
+        clade_defining_threshold, map_pos_to_gene_protein
 from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
 
-def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, sample_size):
+def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     vcf_df = pd.read_csv(vcf, sep='\t', names=vcf_columns)
     # get variant-calling source
     var_cols = get_unknown_labels(vcf_df)
@@ -86,10 +84,6 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, names_to_split, sample_si
     # add clade_defining attribute
     new_gvf = clade_defining_threshold(args.clades_threshold,
                                              new_gvf, sample_size)
-    
-    # split up composite mutation names into separate rows
-    if names_to_split != 'n/a':
-        new_gvf = split_names(names_to_split, new_gvf)
         
     # add 'ID' attribute: here, rows with the same entry in 'Name'
     # get the same ID (should all be different)
@@ -117,11 +111,6 @@ def parse_args():
     parser.add_argument('--gene_positions', type=str,
                         default=None,
                         help='gene positions in JSON format')
-    # --names_to_split needs updating: 13 January, 2023
-    parser.add_argument('--names_to_split', type=str,
-                        default='n/a',
-                        help='.tsv of multi-aa mutation names to '
-                             'split up into individual aa names')
     parser.add_argument('--strain', type=str,
                         default='n/a',
                         help='Lineage; user mode is if strain="n/a"')
@@ -150,7 +139,7 @@ if __name__ == '__main__':
     
     # create gvf from annotated vcf (ignoring pragmas for now)
     gvf = vcftogvf(vcf_file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
-                   args.names_to_split, sample_size)
+                   sample_size)
     
     # add species to pragmas
     species = GENE_PROTEIN_POSITIONS_DICT['species']

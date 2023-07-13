@@ -97,7 +97,6 @@ if __name__ == '__main__':
     final_gvf = pd.DataFrame(np.vstack([variant_annotated_gvf.columns,
                                             variant_annotated_gvf]))
     final_gvf = pragmas.append(final_gvf)
-    print(final_gvf)
     filepath = args.outgvf  # outdir + strain + ".annotated.gvf"
     print("Saved as: ", filepath)
     print("")
