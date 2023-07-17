@@ -1,9 +1,75 @@
 import pandas as pd
 import numpy as np
 
+
+# standard variables used by all scripts
+
+empty_attributes = 'ID=;Name=;chrom_region=;protein=;ps_filter=;ps_exc=; \
+    mat_pep_id=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
+    Reference_seq=;Variant_seq=;nt_name=;aa_name=;vcf_gene=; \
+    mutation_type=; viral_lineage=;multi_aa_name=;multiaa_comb_mutation=; \
+    alternate_frequency=;function_category=;source=; citation=; \
+    comb_mutation=;function_description=;heterozygosity=;clade_defining=; \
+    variant=;variant_type=;voi_designation_date=;voc_designation_date=; \
+    vum_designation_date=;status=;'
+empty_attributes = empty_attributes.replace(" ", "")
+
+gvf_columns = ['#seqid', '#source', '#type', '#start', '#end',
+               '#score', '#strand', '#phase', '#attributes']
+
+vcf_columns = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL',
+                'FILTER', 'INFO', 'FORMAT', 'unknown']
+
+# pragmas are in column 0
+pragmas = pd.DataFrame([['##gff-version 3'],
+                        ['##gvf-version 1.10'],
+                        ['##species']])
+
+
+def separate_attributes(df):
+    # expand #attributes column into multiple columns for each attribute,
+    # keeping the original #attributes column
+    
+    # split #attributes column into separate columns for each tag
+    # split at ;, form dataframe
+    attributes = df['#attributes'].str.split(pat=';').apply(pd.Series)
+    # last column is a copy of the index so drop it
+    attributes = attributes.drop(labels=len(attributes.columns) - 1,
+                                 axis=1)
+
+    for column in attributes.columns:
+        split = attributes[column].str.split(pat='=').apply(pd.Series)
+        title = split[0].drop_duplicates().tolist()[0] #.lower()
+
+        content = split[1]
+
+        # ignore "tag=" in column content
+        attributes[column] = content
+        # make attribute tag as column label
+        attributes.rename(columns={column: title}, inplace=True)
+
+    # replace attributes column in the original df with the new
+    # separated out attributes
+    df = pd.concat((df, attributes), axis=1)
+
+    return(df)
+
+
+def rejoin_attributes(df, empty_attributes_str):
+    # get column names as list
+    columns_to_join = empty_attributes_str.split('=;')[:-1] #last one will be empty
+    for col in columns_to_join:
+        df[col] = col + "=" + df[col].astype(str) + ';'
+    # replace #attributes column with filled attributes
+    df['#attributes'] = df[columns_to_join].apply(lambda row: ''.join(row.values.astype(str)), axis=1)
+    df = df.drop(columns=columns_to_join)
+    
+    return(df)
+    
+
 def get_unknown_labels(df):
-# determines variant calling source based on pragmas
-# returns GVF-relevant names for last column of vcf
+# determines variant calling source (eg. iVar) based on pragmas
+# returns GVF-relevant names for last column ("unknown") of vcf
     source = df['#CHROM'][df['#CHROM'].str.contains("##source=")].values[0].split("=")[1].split()[0]
     if source=="freeBayes":
         columns = [x.lower() for x in ["GT","DP","AD","RO","QR","AO","QA","GL"]]
@@ -16,24 +82,76 @@ def get_unknown_labels(df):
     return columns
         
 
-def parse_variant_file(dataframe):
+def parse_pango_lineages(strain, dataframe):
+    '''
+    Expands the pango_lineage column in the clades file into
+    a nested list called who_lineages, where each inside
+    list is one expanded row of pango_lineages.
+    
+    Returns the nested list, as well as the row index for
+    the input strain (if found).
+    '''
+    # initialize variables
     who_lineages = []
+    var_to_match = 'None'
+    
+    # for each who_variant, expand the lineage names in
+    # pango_lineages and save these to a list
     for var in dataframe["pango_lineage"]:
+        var_pango_lineages = []
         if "," in var:
             for temp in var.split(","):
                 if not "[" in var:
-                    who_lineages.append(temp)
-                    who_lineages.append(temp+".*")
+                    var_pango_lineages.append(temp)
+                    var_pango_lineages.append(temp + ".*")
+                    if strain.startswith(temp):
+                        var_to_match = var
                 else:
                     parent=temp[0]
                     child=temp[2:-1].split("|")
                     for c in child:
-                        who_lineages.append(parent + str(c))
-                        who_lineages.append(parent+str(c)+".*")
+                        var_pango_lineages.append(parent + str(c))
+                        var_pango_lineages.append(parent+str(c)+".*")
+                        if strain.startswith(parent + str(c)):
+                            var_to_match = var
         else:
-            who_lineages.append(var)
-    return who_lineages
-    
+            var_pango_lineages.append(var)
+            if strain.startswith(var):
+                var_to_match = var    
+        
+        # append the list for each variant to the larger
+        # list for all variants
+        who_lineages.append(var_pango_lineages)
+        
+        # get the row index for information on the input strain
+        if var_to_match != 'None':
+            strain_index = dataframe.index[dataframe['pango_lineage'] == \
+                                 var_to_match].tolist()[0]
+        else:
+            strain_index = 'n/a'
+        
+    return who_lineages, strain_index
+
+
+class get_variant_info:
+
+    def __init__(self, strain, clades):
+
+        # retrieve row number that matches the input strain
+        who_lineages, var_index = parse_pango_lineages(strain, clades)
+
+        # save status, WHO strain name, etc. from clades file
+        if var_index != 'n/a':
+            self.who_variant = clades.loc[var_index, 'variant']
+            self.variant_type = clades.loc[var_index, 'variant_type']
+            self.voi_designation_date = clades.loc[var_index, 'voi_designation_date']
+            self.voc_designation_date = clades.loc[var_index, 'voc_designation_date']
+            self.vum_designation_date = clades.loc[var_index, 'vum_designation_date']
+            self.status = clades.loc[var_index, 'status']
+            self.strain_in_cladefile = True # flag
+        else:
+            self.strain_in_cladefile = False
+        
 
 def unnest_multi(df, columns, reset_index=False):
 # expands out columns of lists into 1d, as well as
@@ -229,90 +347,99 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
 
     return(df)
     
-    
-    
-def add_variant_information(clade_file, merged_df, sample_size, strain):    
-    # get clade_defining status, and then info from clades file
-    # load clade-defining mutations file
-    ### MZA: need to clean up this and add this into separate function "variant_info" 
 
-    if clade_file=='n/a':
-        merged_df["#attributes"] = merged_df["#attributes"].astype(
-            str) + "clade_defining=n/a;" + "variant=n/a;" + \
-                                   "variant_type=n/a;" + \
-                                   "voi_designation_date=n/a;" + \
-                                   "voc_designation_date=n/a;" + \
-                                   "vum_designation_date=n/a;" + \
-                                    "status=n/a;"
+def split_names(names_to_split, new_gvf, col_to_split):
+    # separate multi-aa names noted in names_to_split into separate rows
+    ### MZA: This needs immediate attention with Paul and his group. Need to update the notion of mutations
+    # split multi-aa names from the vcf into single-aa names (multi-row)
+    # load names_to_split spreadsheet
+    names_to_split_df = pd.read_csv(names_to_split, sep='\t', header=0)
+    # remove spaces and quotation marks from 'split_into' column
+    for x in [' ', "'"]:
+        names_to_split_df['split_into'] = names_to_split_df[
+            'split_into'].str.replace(x, "")
+    # merge "split_into" column into new_gvf, matching up by Names
+    names_to_split_df = names_to_split_df.rename(columns={'name': col_to_split})
+    new_gvf = new_gvf.merge(names_to_split_df, on=col_to_split, how = 'left')
+    # add "multi_aa_name" column containing the original multi-aa names
+    new_gvf["multi_aa_name"] = ''
+    new_gvf.loc[new_gvf["split_into"].notna(), "multi_aa_name"] = new_gvf[col_to_split]
+    # where "split_into" is notna, replace "Names" value with "split_into" value
+    new_gvf.loc[new_gvf["split_into"].notna(), col_to_split] = new_gvf["split_into"]
+    # make 'Names' into a column of lists
+    new_gvf[col_to_split] = new_gvf[col_to_split].str.split(",")
+    # unnest these lists (convert to 1d)                  
+    new_gvf = unnest_multi(new_gvf, columns=[col_to_split], reset_index=True)   
+    # 'multiaa_comb_mutation' attribute is "split_into" column left over from merge
+    new_gvf['multiaa_comb_mutation'] = new_gvf['split_into']
+    new_gvf = new_gvf.drop(columns=['split_into'])
+    # make multiaa_comb_mutation contain everything in split_into
+    # except for the name in Names
+    new_gvf.multiaa_comb_mutation = new_gvf.multiaa_comb_mutation.fillna('')
+    new_gvf["multiaa_comb_mutation"] = new_gvf.apply(lambda row : row["multiaa_comb_mutation"].replace(row[col_to_split], ''), axis=1)
+    # strip extra commas
+    new_gvf["multiaa_comb_mutation"] = new_gvf["multiaa_comb_mutation"].str.strip(',').str.replace(',,',',')
+
+    return(new_gvf)
 
 
-    elif clade_file != 'n/a':
-        clades = pd.read_csv(clade_file, sep='\t', header=0)
-        clades = clades.replace(np.nan, '', regex=True) #this is needed to append empty strings to attributes (otherwise datatype mismatch error)
+def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
+    """This function is inspired/lifted from Ivan's code.
+    Map a series of nucleotide positions to SARS-CoV-2 genes.
+    See https://www.ncbi.nlm.nih.gov/nuccore/MN908947.
+    :param pos: Nucleotide position pandas series from VCF
+    :param GENE_PROTEIN_POSITIONS_DICT: Dictionary of gene positions from cov_lineages
+    :type pos: int
+    :return: series containing SARS-CoV-2 chromosome region names at each
+    nucleotide position in ``pos``
+    """
+    # make a dataframe of the same length as
+    # pos to put gene names in (+ other things)
+    df = pos.astype(str).to_frame()
 
-        # find the relevant pango_lineage line in the clade file that
-        # matches args.strain (call this line "var_to_match")
-        ### replace this part with func "parse_variant_file" in functions.py
-        #available_strains = parse_variant_file(clades)
-
-        var_to_match = 'None'
-        cladefile_strain = 'None'
-        available_strains = []
-        for var in clades['pango_lineage'].tolist():
-            if "," in var:
-                for temp in var.split(","):
-                    if "[" not in var:
-                        available_strains.append(temp)
-                        if strain.startswith(temp):
-                            var_to_match = var
-                    else:
-                        parent = temp[0]
-                        child = temp[2:-3].split("|")
-                        for c in child:
-                            available_strains.append(parent + str(c))
-                            available_strains.append(parent + str(c) + ".*")
-                            if strain.startswith(parent + str(c)):
-                                var_to_match = var
-            else:
-                available_strains.append(var)
-                if strain.startswith(var):
-                    var_to_match = var            
-
-        # if strain in available_strains:
-        if var_to_match!='None':
-
-            print("var_to_match", var_to_match)
-            # find the index of the relevant row
-            var_index = clades.index[clades['pango_lineage'] == var_to_match].tolist()[0]
-            print("var_index", var_index)
-            print(clades.loc[var_index])
-            # extract status, WHO strain name, etc. from clades file
-            who_variant = clades.loc[var_index, 'variant']
-            variant_type = clades.loc[var_index, 'variant_type']
-            voi_designation_date = clades.loc[var_index, 'voi_designation_date']
-            voc_designation_date = clades.loc[var_index, 'voc_designation_date']
-            vum_designation_date = clades.loc[var_index, 'vum_designation_date']
-            status = clades.loc[var_index, 'status']
-
-            # add attributes from variant info file
-            merged_df["#attributes"] = merged_df["#attributes"].astype(
-                str) + "variant=" + who_variant + ';' + "variant_type=" + \
-                                   variant_type + ';' + "voi_designation_date=" + \
-                                   voi_designation_date + ';' + \
-                                   "voc_designation_date=" + \
-                                   voc_designation_date + ';' + \
-                                   "vum_designation_date=" + \
-                                   vum_designation_date + ';' + \
-                                   "status=" + status + ';'
+    # loop through genes dict to get gene names
+    df["gene_names"] = df["POS"]
+    for gene in GENE_PROTEIN_POSITIONS_DICT["genes"]:
+        # get nucleotide coordinates for this gene
+        start = GENE_PROTEIN_POSITIONS_DICT["genes"][gene]["coordinates"]["from"]
+        end = GENE_PROTEIN_POSITIONS_DICT["genes"][gene]["coordinates"]["to"]
+        # for all the mutations that are found in this region,
+        # assign this gene name
+        gene_mask = pos.astype(int).between(start, end, inclusive="both")
+        if gene == "Stem-loop":  # no stem_loop entry in SARS-CoV-2.json
+            df["gene_names"][gene_mask] = gene + ",3\' UTR"
         else:
-            merged_df["#attributes"] = merged_df["#attributes"].astype(
-                str) + "clade_defining=n/a;" + "variant=n/a;" + \
-                                   "variant_type=n/a;" + \
-                                   "voi_designation_date=n/a;" + \
-                                   "voc_designation_date=n/a;" + \
-                                   "vum_designation_date=n/a;" + \
-                                    "status=n/a;"
-                                    
-                                    
-    return(merged_df)
+            df["gene_names"][gene_mask] = gene
+    # label all mutations that didn't belong to any gene as "intergenic"
+    df["gene_names"][df["gene_names"].str.isnumeric()] = "intergenic"
+
+    # loop through proteins dict to get protein names
+    df["protein_names"] = df["POS"]
+    for protein in GENE_PROTEIN_POSITIONS_DICT["proteins"]:
+        start = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein][
+            "g.coordinates"]["from"]
+        end = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["g.coordinates"]["to"]
+        protein_name = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["name"]
+        # get protein names for all mutations that are within range
+        protein_mask = pos.astype(int).between(start, end, inclusive="both")
+        df["protein_names"][protein_mask] = protein_name
+    # label all mutations that didn't belong to any protein as "n/a"
+    df["protein_names"][df["protein_names"].str.isnumeric()] = "n/a"
+
+    return(df["gene_names"], df["protein_names"])
+
+
+def clade_defining_threshold(threshold, df, sample_size):
+    """Specifies the clade_defining attribute as True if AF >
+    threshold, False if AF <= threshold, and n/a if the VCF is for a
+    single genome """
+
+    if sample_size == 1:
+        df["clade_defining"] = "n/a"
+    else:
+        df.loc[df.alternate_frequency > threshold, "clade_defining"] = "True"
+        df.loc[df.alternate_frequency <= threshold, "clade_defining"] = "False"
+        
+    return df
+    
 

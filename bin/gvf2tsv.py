@@ -13,6 +13,7 @@ import argparse
 import pandas as pd
 import os
 import re
+from functions import separate_attributes
 
 
 def parse_args():
@@ -162,29 +163,14 @@ def gvf2tsv(gvf):
     # restart index from 0
     df = df.reset_index(drop=True)
 
-    # split #attributes column into separate columns for each tag
-    # split at ;, form dataframe
-    attributes = df['#attributes'].str.split(pat=';').apply(pd.Series)
-    # last column is a copy of the index so drop it
-    attributes = attributes.drop(labels=len(attributes.columns) - 1,
-                                 axis=1)
-
-    for column in attributes.columns:
-        split = attributes[column].str.split(pat='=').apply(pd.Series)
-        title = split[0].drop_duplicates().tolist()[0].lower()
-
-        content = split[1]
-
-        # ignore "tag=" in column content
-        attributes[column] = content
-        # make attribute tag as column label
-        attributes.rename(columns={column: title}, inplace=True)
-
-    # replace attributes column in the original df with the new
-    # separated out attributes
-    df = pd.concat((df, attributes), axis=1)
+    # expand #attributes column into multiple columns for each attribute,
+    # keeping the original #attributes column
+    df = separate_attributes(df)
+    # change all labels to lowercase
+    df.columns = [x.lower() for x in df.columns]
+    # drop original #attributes column, and also #source
     df = df.drop(labels=['#source', '#attributes'], axis=1)
-
+    
     # remove '#' from column names
     df.columns = df.columns.str.replace("#", "")
 
