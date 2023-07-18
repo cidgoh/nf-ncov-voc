@@ -102,7 +102,7 @@ def parse_args():
                     'file with functional annotation')
     parser.add_argument('--vcffile', type=str, default=None,
                         help='Path to a snpEFF-annotated VCF file')
-    parser.add_argument('--size_stats', type=str, default='n/a',
+    parser.add_argument('--size_stats', type=str, default=None,
                         help='Statistics file for for size extraction')
     parser.add_argument('--clades_threshold', type=float,
                         default=0.75,
@@ -112,7 +112,7 @@ def parse_args():
                         default=None,
                         help='gene positions in JSON format')
     parser.add_argument('--strain', type=str,
-                        default='n/a',
+                        default=None,
                         help='Lineage; user mode is if strain="n/a"')
     parser.add_argument("--wastewater", help="Activate wastewater data mode",
                         action="store_true")
@@ -133,12 +133,22 @@ if __name__ == '__main__':
     # Assigning the vcf file to a variable
     vcf_file = args.vcffile
 
+    # If the strain and/or stats file are None, set them as 'n/a'
+    size_stats = args.size_stats
+    strain = args.strain
+    
+    if size_stats == None:
+            size_stats='n/a'
+    if strain == None:
+            strain='n/a'
+    
+
     # print("Processing: " + vcf_file)
 
-    sample_size = find_sample_size(args.size_stats, args.strain, vcf_file, args.wastewater)
+    sample_size = find_sample_size(size_stats, strain, vcf_file, args.wastewater)
     
     # create gvf from annotated vcf (ignoring pragmas for now)
-    gvf = vcftogvf(vcf_file, args.strain, GENE_PROTEIN_POSITIONS_DICT,
+    gvf = vcftogvf(vcf_file, strain, GENE_PROTEIN_POSITIONS_DICT,
                    sample_size)
     
     # add species to pragmas

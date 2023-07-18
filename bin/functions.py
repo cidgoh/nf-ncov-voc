@@ -197,7 +197,7 @@ def select_snpeff_records(eff_string, ao_count):
 
 
 def find_sample_size(table, lineage, vcf_file, wastewater):
-
+    sample_size='n/a'
     if table != 'n/a':
         strain_tsv_df = pd.read_csv(table, delim_whitespace=True,
                                     usecols=['file', 'num_seqs'])
@@ -205,7 +205,7 @@ def find_sample_size(table, lineage, vcf_file, wastewater):
         # Reference mode
         if lineage != 'n/a':
             num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
-                lineage + ".qc.")]['num_seqs'].values
+                lineage)]['num_seqs'].values
             sample_size = num_seqs[0]
 
         # wastewater data
