@@ -415,14 +415,15 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
 
     # loop through proteins dict to get protein names
     df["protein_names"] = df["POS"]
-    for protein in GENE_PROTEIN_POSITIONS_DICT["proteins"]:
-        start = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein][
-            "g.coordinates"]["from"]
-        end = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["g.coordinates"]["to"]
-        protein_name = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["name"]
-        # get protein names for all mutations that are within range
-        protein_mask = pos.astype(int).between(start, end, inclusive="both")
-        df["protein_names"][protein_mask] = protein_name
+    if "proteins" in GENE_PROTEIN_POSITIONS_DICT.keys():
+        for protein in GENE_PROTEIN_POSITIONS_DICT["proteins"]:
+            start = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein][
+                "g.coordinates"]["from"]
+            end = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["g.coordinates"]["to"]
+            protein_name = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["name"]
+            # get protein names for all mutations that are within range
+            protein_mask = pos.astype(int).between(start, end, inclusive="both")
+            df["protein_names"][protein_mask] = protein_name
     # label all mutations that didn't belong to any protein as "n/a"
     df["protein_names"][df["protein_names"].str.isnumeric()] = "n/a"
 
