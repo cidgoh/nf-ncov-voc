@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+import logging
 
 # standard variables used by all scripts
 
@@ -210,12 +210,14 @@ def find_sample_size(table, lineage, vcf_file, wastewater):
 
         # wastewater data
         elif wastewater==True:
-            #filename_to_match = vcf_file.split(".annotated")[0].replace("T", "R")
-            filename_to_match = vcf_file.split(".annotated")[0]
-            print(filename_to_match)
-            num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
-                filename_to_match)]['num_seqs'].values
-            sample_size = num_seqs[0]
+            # num_seqs values should be identical, so take the
+            # first value in num_seqs to be sample_size
+            sample_size = strain_tsv_df['num_seqs'].values[0]
+            # if forward and backward reads have different
+            # num_seqs values, log an error
+            if strain_tsv_df.num_seqs.nunique()!=1:
+                err = "Different values in 'num_seqs' in " + table
+                logging.info(err)
             
         # user-uploaded fasta
         else:
