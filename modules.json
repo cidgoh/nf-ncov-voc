@@ -46,25 +46,20 @@
               "modules"
             ]
           },
-          "freyja/boot": {
-            "branch": "master",
-            "git_sha": "240937a2a9c30298110753292be041188891f2cb",
-            "installed_by": ["bam_variant_demix_boot_freyja"]
-          },
           "freyja/demix": {
             "branch": "master",
             "git_sha": "4bb5cb441e89811385d18a90809ecf36c9daafd8",
-            "installed_by": ["modules", "bam_variant_demix_boot_freyja"]
+            "installed_by": ["modules"]
           },
           "freyja/update": {
             "branch": "master",
             "git_sha": "4bb5cb441e89811385d18a90809ecf36c9daafd8",
-            "installed_by": ["modules", "bam_variant_demix_boot_freyja"]
+            "installed_by": ["modules"]
           },
           "freyja/variants": {
             "branch": "master",
             "git_sha": "4bb5cb441e89811385d18a90809ecf36c9daafd8",
-            "installed_by": ["modules", "bam_variant_demix_boot_freyja"]
+            "installed_by": ["modules"]
           },
           "gunzip": {
             "branch": "master",
@@ -166,11 +161,6 @@
             "installed_by": ["bam_sort_stats_samtools"]
           },
           "bam_variant_calling_sort_freebayes_bcftools": {
-            "branch": "master",
-            "git_sha": "a9784afdd5dcda23b84e64db75dc591065d64653",
-            "installed_by": ["subworkflows"]
-          },
-          "bam_variant_demix_boot_freyja": {
             "branch": "master",
             "git_sha": "a9784afdd5dcda23b84e64db75dc591065d64653",
             "installed_by": ["subworkflows"]

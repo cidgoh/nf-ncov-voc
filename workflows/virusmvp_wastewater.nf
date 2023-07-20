@@ -29,7 +29,7 @@ include { FREYJA_BOOT                                           } from '../modul
 include { IVAR_VARIANTS_TO_VCF  as WW_IVAR_VARIANTS_TO_VCF          } from '../modules/local/custom'
 
 include {INPUT_CHECK            } from '../subworkflows/local/input_check'
-include { BAM_VARIANT_DEMIX_BOOT_FREYJA } from '../subworkflows/nf-core/bam_variant_demix_boot_freyja/main'
+//include { BAM_VARIANT_DEMIX_BOOT_FREYJA } from '../subworkflows/nf-core/bam_variant_demix_boot_freyja/main'
 
 
 workflow WASTEWATER {
