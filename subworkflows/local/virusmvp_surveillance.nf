@@ -4,8 +4,8 @@ nextflow.enable.dsl = 2
 
 // import modules
 
-include { surveillanceRawTsv         } from '../modules/local/custom'
-include { surveillancePDF            } from '../modules/local/custom'
+include { surveillanceRawTsv         } from '../../modules/local/custom'
+include { surveillancePDF            } from '../../modules/local/custom'
 
 
 workflow surveillance {

@@ -3,23 +3,31 @@
 nextflow.enable.dsl = 2
 
 // import modules
-include {PANGOLIN              } from '../modules/nf-core/pangolin/main'
-include {mergePangolinMetadata } from '../modules/local/custom'
-include {extractVariants       } from '../modules/local/custom'
-include {virusseqMapLineage    } from '../modules/local/custom'
 
+include { extractMetadata       } from '../../modules/local/extractMetadata'
+include { SEQKIT_GREP           } from '../../modules/nf-core/seqkit/grep/main'
 
-workflow preprocessing {
+workflow PREPROCESSING {
     take:
-
-      ch_metadata
-      ch_seq
-      ch_variant
+        metadata
+        sequences
+        voc
 
 
     main:
 
-      if (params.mode == 'reference' && !params.skip_pangolin){
+        extractMetadata(metadata, voc)
+        ids=extractMetadata.out.txt
+        //seq = file(params.seq, checkIfExists: true)
+        SEQKIT_GREP(sequences, ids)
+        
+        
+        
+
+        
+
+        /*
+        if (params.mode == 'reference' && !params.skip_pangolin){
         PANGOLIN( ch_seq )
         mergePangolinMetadata(ch_metadata.combine(PANGOLIN.out.report))
         mergePangolinMetadata.out.lineage_assigned
@@ -29,6 +37,11 @@ workflow preprocessing {
               .splitText()
               .set{ ch_voc }
         }
+        
+        extractVariants(ch_variant.combine(mergePangolinMetadata.out.lineage_assigned))
+            extractVariants.out.lineages
+                .splitText()
+                .set{ ch_voc }
 
 
       else if (!params.skip_mapping && params.virusseq_meta && params.mode =='reference') {
@@ -56,10 +69,13 @@ workflow preprocessing {
         PANGOLIN( ch_seq )
         ch_voc=Channel.empty()
       }
+      */
 
-      emit:
-      ch_metadata
-      ch_voc
-      ch_variant
+
+
+    emit:
+      metadata = extractMetadata.out.tsv
+      sequences = SEQKIT_GREP.out.filter
+      //ch_variant
 
 }
