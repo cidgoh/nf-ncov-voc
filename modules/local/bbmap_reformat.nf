@@ -1,25 +1,30 @@
 process BBMAP {
+    tag "$meta.id"
 
-  tag { "${sequence.baseName}.fasta" }
+    conda "bioconda::bbmap=30.01"
+    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
+    'https://depot.galaxyproject.org/singularity/bbmap:39.01--h5c4e2a8_0' : ''}"
+    
 
-  publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
+    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
 
-  label 'dev_env'
+    label 'dev_env'
 
-  input:
-      path(sequence)
+    input:
+        tuple val(meta), path(sequence)
 
-  output:
-      path("*.fasta"), emit: qcfasta
+    output:
+        tuple val(meta), path("*.fasta"), emit: fasta
 
-  when:
-      sequence.size() > 0
+    when:
+        sequence.size() > 0
 
-  script:
+    script:
+    def args = task.ext.args ?: ''
     """
-    reformat.sh \
-    in=${sequence} \
-    out=${sequence.baseName}.qc.fasta \
-    maxns=${params.maxns} minlength=${params.minlength} addunderscore tossjunk
+    reformat.sh \\
+    in=${sequence} \\
+    out=${sequence.baseName}.qc.fasta \\
+    
     """
 }

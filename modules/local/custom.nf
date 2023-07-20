@@ -1,31 +1,14 @@
-process mergePangolinMetadata{
 
-    tag {"Merge Pangolin report into Metadata"}
 
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
-
-    input:
-      tuple (path(metadata), path(pangolin_report))
-
-    output:
-      path("Metadata_lineage.tsv"), emit: lineage_assigned
-
-    script:
-      """
-      merge_pangolin_metadata.py --metadata ${metadata} --pangolin ${pangolin_report} --output Metadata_lineage.tsv
-
-      """
-}
-
-process virusseqMapLineage{
+/*process virusseqMapLineage{
 
     tag {"Mapping VirusSeq dataset to GISAID for lineages"}
-
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv", mode: 'copy'
 
     input:
-      tuple (path(metadata), path(gisaid_metadata))
-
+        tuple val(meta), path(metadata)
+        tuple val(meta), path(gisaid_metadata)
+    
     output:
       path("VirusSeq_Mapped.tsv"), emit: mapped
 
@@ -34,24 +17,11 @@ process virusseqMapLineage{
       map_virusseq_GISAID.py --virusseq ${metadata} --gisaid ${gisaid_metadata} --output VirusSeq_Mapped.tsv
 
       """
-}
+}*/
 
-process extractVariants {
-  tag {"Extracting VOCs, VOIs and VUMs"}
-  input:
-      tuple (path(variants), path(metadata))
-  output:
-      path("*.txt"), emit: lineages
 
-  script:
 
-    """
-    parse_variants.py \
-    --variants ${variants} \
-    --metadata ${metadata} \
-    --outfile metada_lineages.txt
-    """
-}
+
 
 process grabIndex {
 
@@ -69,24 +39,7 @@ process grabIndex {
       """
 }
 
-process extractMetadata {
-    tag { "Extracting Metadata and IDS for VOCs, VOIs, & VUMs" }
 
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.tsv.gz", mode: 'copy'
-
-    input:
-      path(metadata)
-      each x
-
-    output:
-      path("*.tsv.gz")
-      path("*.txt"), emit: ids
-
-    script:
-      """
-      extract_metadata.py --startdate ${params.startdate} --enddate ${params.enddate} --table ${metadata} --voc ${x}
-      """
-}
 
 
 process IVAR_VARIANTS_TO_VCF {
@@ -156,149 +109,6 @@ process processGVCF {
       -v ${gvcf.baseName}.variants.vcf \
       -c ${gvcf.baseName}.consensus.vcf ${gvcf}
       """
-}
-
-
-process tagProblematicSites {
-
-    tag "$meta.id"
-
-    conda "bioconda::cyvcf=0.8.0 bioconda::gffutils=0.10.1"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/cyvcf2:0.8.0--py36_0' :
-        'quay.io/biocontainers/cyvcf2:0.8.0--py36_0' }"
-    
-    input:
-        tuple val(meta), path(vcf)
-        path(prob_vcf)
-
-    output:
-        tuple val(meta), path("*.filtered.vcf"), emit: filtered_vcf
-
-    when:
-      vcf.size() > 0
-
-    script:
-    def args = task.ext.args ?: ''
-    def prefix = task.ext.prefix ?: "${meta.id}"
-
-      """
-      problematic_sites_tag.py \\
-        --vcffile $vcf \\
-        --filter_vcf $prob_vcf \\
-        --output_vcf ${prefix}.filtered.vcf \\
-        $args
-      """
-}
-
-
-process annotate_mat_peptide {
-
-  tag "$meta.id"
-
-  conda "bioconda::cyvcf=0.8.0 bioconda::gffutils=0.10.1"
-  container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-      'docker://cidgoh/nf-ncov-voc-extra:0.2' : ''}"
-
-  input:
-      tuple val(meta), path(vcf)
-      path  gff
-
-  output:
-      tuple val(meta), path("*annotated.vcf"), emit: vcf
-  
-  when:
-    vcf.size() > 0
-
-  script:
-
-  def args = task.ext.args ?: ''
-  def prefix = task.ext.prefix ?: "${meta.id}"
-
-    """
-    mature_peptide_annotation.py \\
-    --vcf_file $vcf \\
-    --annotation_file $gff \\
-    --output_vcf ${prefix}.annotated.vcf \\
-    $args
-    """
-}
-
-
-process vcfTogvf {
-
-  tag "$meta.id"
-
-  conda "bioconda::pandas=1.4.3"
-  container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pandas:1.4.3' : '' }"
-  
-  input:
-      tuple val(meta), path(vcf), path(ch_stats)
-      path func_tsv
-      path json
-      path mutation_tsv
-      path variants_tsv
-
-  output:
-      tuple val(meta), path("*.gvf"), emit: gvf
-
-  script:
-
-  def args = task.ext.args ?: ''
-  def prefix = task.ext.prefix ?: "${meta.id}"
-
-  if (params.userfile){
-    input_file = file(params.userfile)
-  }
-
-  if( params.mode == 'reference'){
-    """
-      vcf2gvf.py --vcffile $vcf \\
-      --functional_annotations $func_tsv \\ 
-      --clades $variants_tsv \\
-      --gene_positions $json \\
-      --names_to_split $mutation_tsv \\
-      --size_stats $ch_stats \\
-      $args \\
-      --strain ${ch_annotated_vcf.baseName.replaceAll(".qc.sorted.variants.filtered.SNPEFF.annotated", "")} --outgvf ${ch_annotated_vcf.baseName.replaceAll(".qc","_qc")}.gvf
-    """
-  }
-  else if( params.mode == 'user' && input_file.getExtension() == "vcf"){
-    """
-      vcf2gvf.py --vcffile $vcf \\
-      --functional_annotations $func_tsv \\
-      --gene_positions $json \\
-      --names_to_split $mutation_tsv \\
-      $args \\
-      --outgvf ${prefix}.gvf
-    """
-  }
-  else if( params.mode == 'wastewater'){
-    """
-      vcf2gvf.py --vcffile $vcf \\
-      --functional_annotations $func_tsv \\
-      --gene_positions $json \\
-      --names_to_split $mutation_tsv \\
-      --size_stats $ch_stats \\
-      --wastewater \\
-      $args \\
-      --outgvf ${prefix}.gvf
-    """
-  }
-
-  else{
-    """
-      vcf2gvf.py --vcffile $vcf \\
-      --functional_annotations $func_tsv \\
-      --gene_positions $json \\
-      --names_to_split $mutation_tsv \\
-      --size_stats $ch_stats \\
-      $args \\
-      --outgvf ${prefix}.gvf
-    """
-  }
-
 }
 
 
