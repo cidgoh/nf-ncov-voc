@@ -14,3 +14,7 @@ bin/__*
 *.sh
 latest*
 data/*
+*.fasta
+*.fa.xz
+*.tsv
+*.gz
