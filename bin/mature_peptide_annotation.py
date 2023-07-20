@@ -63,7 +63,7 @@ if __name__ == '__main__':
     w = Writer(output_file_name, data_vcf)
 
     for record in data_vcf:
-        if record.INFO.get('EFF').split("|")[5] == "ORF1ab":
+        if record.INFO.get('EFF').split("|")[5] == "orf1ab":
             gene = db[gene_protein[record.INFO.get('EFF').split("|")[5]]]
             record.INFO["mat_pep_id"] = "n/a"
             record.INFO["mat_pep_desc"] = "n/a"

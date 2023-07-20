@@ -22,67 +22,26 @@ from functions import empty_attributes, gvf_columns
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Splits composite mutation names in specified files')
-    parser.add_argument('--ingvf', type=str, default=None,
-                        help='Path to the GVF file output of vcf2gvf.py')
+    
     parser.add_argument('--functional_annotations', type=str,
                         default=None, help='TSV file of functional '
                                            'annotations')
-    parser.add_argument('--outgvf', type=str,
-                        help='Filename for the output gvf file')
     parser.add_argument('--out_functions', type=str,
-                        help='Filename for the output functional \
-                        annotations file')
+                        help='Filename for the output tsv file')
+    
     parser.add_argument('--names_to_split', type=str,
                         default=None,
                         help='.tsv of multi-aa mutation names to '
                              'split up into individual aa names')
     return parser.parse_args()
 
+    
+
 
 if __name__ == '__main__':
 
     args = parse_args()
     
-    # split names in gvf file
-    
-    # read in gvf file
-    gvf = pd.read_csv(args.ingvf, sep='\t', names=gvf_columns, index_col=False)
-
-    # remove pragmas and original header row
-    pragmas = gvf[gvf['#seqid'].astype(str).str.contains("##")]
-    pragmas.columns = range(9)
-    pragmas = pragmas.fillna('')
-    gvf = gvf[~gvf['#seqid'].astype(str).str.contains("#")]
-
-    # expand #attributes into columns to edit separately
-    gvf = separate_attributes(gvf)
-
-    # split names in "Names" attribute into separate rows
-    gvf = split_names(args.names_to_split, gvf, col_to_split='Name')
-    
-    # rename IDs: rows with the same entry in 'Name'
-    # get the same ID
-    gvf['ID'] = 'ID_' + gvf.groupby('Name', sort=False).ngroup().astype(str)
-    
-    # merge attributes back into a single column
-    gvf = rejoin_attributes(gvf, empty_attributes)
-
-    # discard temporary columns
-    gvf = gvf[gvf_columns]
-    
-    # add pragmas to gvf
-    # columns are now 0, 1, ...
-    final_gvf = pd.DataFrame(np.vstack([gvf.columns, gvf]))
-    final_gvf = pragmas.append(final_gvf)
-    
-    # save modified file to .gvf
-    filepath = args.outgvf
-    print("Saved as: ", filepath)
-    print("")
-    final_gvf.to_csv(filepath, sep='\t', index=False, header=False)
-
-
-
     # split names in functional annotations file
     
     # read in functional annotations file

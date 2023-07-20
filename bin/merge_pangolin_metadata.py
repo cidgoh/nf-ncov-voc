@@ -30,24 +30,24 @@ def parse_args():
 
 
 def write_metadata(dataframe):
-    dataframe.to_csv(args.output,
-                     sep="\t",
-                     quoting=csv.QUOTE_NONE,
-                     index=False, header=True)
+    dataframe.to_csv(args.output, sep="\t", compression='gzip',
+                     quoting=csv.QUOTE_NONE, index=False, header=True)
+    
 
 
 if __name__ == '__main__':
     args = parse_args()
 
-    metadata_df = pd.read_csv(args.metadata, sep="\t")
+    metadata_df = pd.read_csv(args.metadata, sep="\t", compression='gzip')
     pangolin_df = pd.read_csv(args.pangolin)
 
-    metadata_df['fasta header name'] = metadata_df['fasta header name'].str.strip()
+    metadata_df['fasta_header_name'] = metadata_df['fasta_header_name'].str.strip()
     pangolin_df['taxon'] = pangolin_df['taxon'].str.strip()
 
-    merged_df = pd.merge(metadata_df, pangolin_df, left_on='fasta header name',
+    merged_df = pd.merge(metadata_df, pangolin_df, left_on='fasta_header_name',
                          right_on='taxon')
     merged_df = merged_df.rename(columns={"lineage": "pango_lineage",
-                                          "fasta header name": "strain"})
+                                          "fasta_header_name": "strain"})
 
+    
     write_metadata(dataframe=merged_df)

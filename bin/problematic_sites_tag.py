@@ -57,6 +57,7 @@ if __name__ == '__main__':
     # Make a dataframe from VCF object for indexed searching
     row = 0
     prob_vcf = VCF(args.filter_vcf)
+    print(prob_vcf)
     for v in prob_vcf:
         prob_vcf_df.iloc[row, [0]] = "MN908947.3"
         prob_vcf_df.iloc[row, [1]] = v.POS
