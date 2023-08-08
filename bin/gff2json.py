@@ -78,18 +78,20 @@ if __name__ == '__main__':
     
     # get genes info: name and coordinates (gene name is from "Name" attribute)
     genes = gff[['Name', '#start', '#end']]
-    genes = gff.reset_index(drop=True)
-    genes = genes.drop_duplicates('Name', keep="first")
     
     # rename columns
     genes = genes.rename(columns={"#start":"start", "#end":"end", "Name":"name"})
     
     # add second gene name column
     genes['gene'] = genes['name']
+    genes['start_pos'] = genes['start']
     
     # add gene colors, repeating in order
     genes = genes.join(pd.DataFrame(gene_colors * int(len(genes)/len(gene_colors)+1),
         columns=['color']))
+    
+    # make sure repeat regions have the same color
+    genes['color'] = genes.groupby('gene')['color'].transform('first')
     
     '''
     # add intergenic gene region-specific colors
@@ -103,17 +105,21 @@ if __name__ == '__main__':
     genes = pd.concat([genes, specific_colors_df], axis = 0)
     '''
     
-    # convert gene info from gff to dictionary
-    
-    gene_info = (genes.groupby(['gene', 'name', 'color'], sort=False) 
+    # group gff columns into new columns of dictionaries
+    gene_info = (genes.groupby(['gene', 'name', 'color', 'start_pos'], sort=False) 
           .apply(lambda x: x[['start','end']].to_dict('records')[0]) 
           .reset_index() 
           .rename(columns={0:'coordinates'})
-          .groupby(['gene', 'color'], sort=False) 
+          .groupby(['gene', 'color', 'start_pos'], sort=False) 
           .apply(lambda x: x[['name','color','coordinates']].to_dict('records')[0]) 
           .reset_index() 
           .rename(columns={0:'information'})) 
-            
+    
+    # add '_repeat' suffix to 'gene' (otherwise duplicate keys will be overwritten in the dict)
+    s = gene_info.groupby(['gene']).cumcount()
+    gene_info['gene'] = (gene_info.gene + "_repeat_" + s[s>0].astype(str)).fillna(gene_info.gene)
+
+    # convert gene_info to dict
     gene_info_dict = dict(zip(gene_info.gene, gene_info.information))
     
     # add gene_info_dict to start_dict
