@@ -19,6 +19,24 @@ from functions import separate_attributes, rejoin_attributes
 from functions import empty_attributes, gvf_columns, vcf_columns
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='Adds functional annotation to a GVF file')
+    parser.add_argument('--ingvf', type=str, default=None,
+                        help='Path to a GVF file')
+    parser.add_argument('--outgvf', type=str,
+                        help='Filename for the output GVF file')
+    parser.add_argument('--functional_annotations', type=str,
+                        default=None, help='TSV file of functional '
+                                           'annotations')
+    parser.add_argument("--names", type=str, default='n/a',
+    			help="Save mutation names without "
+                              "functional annotations to "
+                              "this .txt filename for "
+                              "troubleshooting purposes")
+    return parser.parse_args()
+    
+
 def add_pokay_annotations(gvf, annotation_file):
     
     # expand #attributes into columns to fill in separately
@@ -107,24 +125,6 @@ def add_pokay_annotations(gvf, annotation_file):
     return merged_df[gvf_columns]
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description='Adds functional annotation to a GVF file')
-    parser.add_argument('--ingvf', type=str, default=None,
-                        help='Path to a GVF file')
-    parser.add_argument('--outgvf', type=str,
-                        help='Filename for the output GVF file')
-    parser.add_argument('--functional_annotations', type=str,
-                        default=None, help='TSV file of functional '
-                                           'annotations')
-    parser.add_argument("--names", help="Save mutation names without "
-                                        "functional annotations to "
-                                        "TSV files for "
-                                        "troubleshooting purposes",
-                        action="store_true")
-    return parser.parse_args()
-
-
 if __name__ == '__main__':
 
     args = parse_args()
@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
 
     # get name troubleshooting report
-    if args.names:
+    if args.names!='n/a':
         # save unmatched names (in vcf/tsv but not in
         # functional_annotations) to a .tsv file
         
@@ -163,10 +163,9 @@ if __name__ == '__main__':
         names = pd.Series(pokay_annotated_gvf["#attributes"].str.findall('(?<=Name=)(.*?)(?=;)').str[0])
         # get unique mutation names not in Pokay
         unmatched_names = pd.Series(names[notinPokay_mask].unique())
-        # save unmatched names to TSV
+        # save unmatched names to file
         if unmatched_names.shape[0] != 0:
-            leftover_names_filepath = "unmatched_names.tsv"
-            unmatched_names.to_csv(leftover_names_filepath, sep='\t',
+            unmatched_names.to_csv(args.names, sep='\t',
                                    index=False, header=False)
             print("")
             print(str(unmatched_names.shape[0]) +
