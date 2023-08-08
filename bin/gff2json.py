@@ -33,7 +33,7 @@ def parse_args():
     parser.add_argument('--gff_file', type=str, default=None,
                         help='Path to the GFF with genome annotation')
     parser.add_argument('--start_dict', type=str, default=None,
-                        help='Path to the GFF with genome annotation')
+                        help='Path to the JSON file to add gene info to (see header comment)')
     parser.add_argument('--savefile', type=str,
                         default=None, help='JSON filename to save results to')
     return parser.parse_args()
@@ -42,8 +42,8 @@ def parse_args():
 if __name__ == '__main__':
     
     args = parse_args()
-    gff_file = args.gff_file #"NC_063383.1.gff"
-    out_json = args.savefile #"gene_positions_mpox.json"
+    gff_file = args.gff_file
+    out_json = args.savefile
     
     gene_colors = [
     "rgb(217, 173, 61)",
