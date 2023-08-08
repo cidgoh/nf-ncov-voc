@@ -28,8 +28,8 @@ import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description='Converts a annotated VCF file to a GVF '
-                    'file with functional annotation')
+        description='Converts GFF to a dictionary of gene names and positions, \
+        and adds these to a JSON file')
     parser.add_argument('--gff_file', type=str, default=None,
                         help='Path to the GFF with genome annotation')
     parser.add_argument('--start_dict', type=str, default=None,
