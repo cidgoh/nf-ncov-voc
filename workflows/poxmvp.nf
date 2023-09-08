@@ -26,10 +26,10 @@ include {QUALITYCONTROL         } from '../subworkflows/local/virusmvp_qc'
 // include modules
 include { SNPEFF_BUILD          } from '../modules/local/snpeff_build'
 include { PANGOLIN              } from '../modules/nf-core/pangolin/main'
-include { EXTRACTVARIANTS       } from '../modules/local/extractVariants'
 include { MERGE_PANGOLIN_METADATA } from '../modules/local/merge_pangolin_report'
 include { SAMTOOLS_FAIDX       } from '../modules/nf-core/samtools/faidx/main'
-
+//include { SEQKIT_REPLACE        } from '../modules/nf-core/seqkit/replace/main'
+include { GUNZIP } from '../modules/nf-core/gunzip/main'
 
 
 
@@ -51,50 +51,33 @@ workflow POXMVP {
         SAMTOOLS_FAIDX([[id: params.viral_genome_id], params.viral_genome], [[],[]])
         ch_viral_fai=SAMTOOLS_FAIDX.out.fai
 
-
-        if(params.meta){
-                Channel.fromPath( "$params.meta", checkIfExists: true)
-                .set{ ch_metadata }
-                }
-
-        if(params.seq){
-                Channel.fromPath( "$params.seq", checkIfExists: true)
-                .set{ ch_seq }
-                }
-
+        meta = file(params.meta, checkIfExists: true)
+        id = meta.getSimpleName()
+        metadata = [ [ id:id ],  meta  ]
+        
         seq = file(params.seq, checkIfExists: true)
         id = seq.getSimpleName()
         sequences = [ [ id:id ], [ seq ] ]
 
-        meta = file(params.meta, checkIfExists: true)
-        metadata = [ [ id:'Metadata' ], [ meta ] ]
 
+        if (params.meta){
         // Pangolin and extraction of metadata for COVID
-        if (!params.skip_pangolin){
-            PANGOLIN( sequences )
-            MERGE_PANGOLIN_METADATA(metadata, PANGOLIN.out.report)
-            metadata = MERGE_PANGOLIN_METADATA.out.tsv
-        }
-        
-        if(params.mode == 'reference'){
-            variant = file(params.variant, checkIfExists: true)
-            variants = [ [ id:'SARS-CoV-2' ], [ variant ] ]
-            EXTRACTVARIANTS(variants, metadata)
-            EXTRACTVARIANTS.out.txt
-                .splitText()
-                .set{ ch_voc }
+            if (!params.skip_pangolin){
+                PANGOLIN( sequences )
+                MERGE_PANGOLIN_METADATA(metadata, PANGOLIN.out.report)
+                metadata = MERGE_PANGOLIN_METADATA.out.tsv
             }
-            
-
-        if(params.mode == 'reference'){      
-            PREPROCESSING(metadata, sequences, ch_voc)
+        
+            PREPROCESSING(metadata, sequences)
             metadata =PREPROCESSING.out.metadata 
             sequences=PREPROCESSING.out.sequences
-        }
 
+        }       
+                    
+        
         sequences
             .map { key, fasta_files ->
-              tuple( [[id:fasta_files.getBaseName(2)], [fasta_files]] )
+              tuple( [[id:fasta_files.getBaseName(2)], fasta_files] )
             }
             .set{sequences_grouped}
 
@@ -103,7 +86,7 @@ workflow POXMVP {
             sequences
                 .map { [it[1]] }
                 .collect()
-                .map { sequences -> [ [id:"qc"], sequences ] }
+                .map { sequences -> [ [id:"seqkit_stats"], sequences ] }
                 .set { ch_collected_sequences} 
 
             QUALITYCONTROL(sequences_grouped, ch_collected_sequences)
@@ -115,9 +98,11 @@ workflow POXMVP {
         annotation_vcf=VARIANT_CALLING.out.vcf
         
         ANNOTATION(annotation_vcf, ch_snpeff_db, ch_snpeff_config, params.viral_genome, ch_stats)
-        annotation_gvf=ANNOTATION.out.gvf
+        gvf_file=ANNOTATION.out.gvf
 
-        GVF_PROCESSING_ANNOTATION(annotation_gvf)
+        GVF_PROCESSING_ANNOTATION(gvf_file)
+
+        
 
 
         
@@ -170,18 +155,5 @@ workflow POXMVP {
                 }
         }
 
-       
-
-        if (params.mode == 'wastewater' ) {
-                //
-                // SUBWORKFLOW: Read in samplesheet, validate and stage input files
-                //
-                
-                ch_versions = ch_versions.mix(INPUT_CHECK.out.versions)
-                wastewater(INPUT_CHECK.out.reads, params.host_genome, params.viral_genome)
-                ch_stats=wastewater.out.stats
-                annotation(wastewater.out.vcf, ch_stats, ch_snpeff_db, ch_snpeff_config)
-
-        }*/
-
+*/
 }
