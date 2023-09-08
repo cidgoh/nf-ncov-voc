@@ -31,25 +31,32 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    variants = pd.read_csv(args.variants, sep="\t",
-                           low_memory=False)
-
-    lineages = parse_variant_file(dataframe = variants)
+    
+    
     
     Metadata = pd.read_csv(args.metadata, compression='gzip', sep="\t", low_memory=False)
     metadata_lineages = Metadata['lineage'].unique()
-
+    
     parsed_lineages=[]
-    for metadata_lineage in metadata_lineages:
-        for who_lin in lineages:
-            if "*" in who_lin:
-                who_lin = who_lin[:-1]
-                if isinstance(metadata_lineage, str) and metadata_lineage.startswith(who_lin):
-                    parsed_lineages.append(metadata_lineage)
-            else:
-                if metadata_lineage == who_lin:
-                    parsed_lineages.append(metadata_lineage)
+    if not args.variants == None:
+        variants = pd.read_csv(args.variants, sep="\t",
+                               low_memory=False)
+        lineages = parse_variant_file(dataframe = variants)
 
+        for metadata_lineage in metadata_lineages:
+            for who_lin in lineages:
+                if "*" in who_lin:
+                    who_lin = who_lin[:-1]
+                    if isinstance(metadata_lineage, str) and metadata_lineage.startswith(who_lin):
+                        parsed_lineages.append(metadata_lineage)
+                else:
+                    if metadata_lineage == who_lin:
+                        parsed_lineages.append(metadata_lineage)
+
+    else:
+        parsed_lineages=metadata_lineages
+        parsed_lineages = [x for x in parsed_lineages if str(x) != 'nan']
+           
     with open(args.outfile, 'w') as f:
         for item in sorted(set(parsed_lineages)):
             f.write("%s\n" % item)
