@@ -9,17 +9,23 @@ process EXTRACTVARIANTS {
 
       input:
             tuple val(meta), path(variants)
-            tuple val(meta), path(metadata)
+            tuple val(meta2), path(metadata)
+            val file
         
       output:
-            tuple val(meta), path("*.txt"), emit: txt
+            tuple val(meta2), path("*.txt"), emit: txt
 
       script:
 
+      def args = task.ext.args ?: ''
+      def prefix = task.ext.prefix ?: "${meta2.id}"
+      def variant_file = file ? "--variants $variants" : ''
+     
+
       """
-      parse_variants.py \
-      --variants ${variants} \
-      --metadata ${metadata} \
-      --outfile Metadata_variants.txt
+      parse_variants.py \\
+      $variant_file \\
+      --metadata ${metadata} \\
+      --outfile ${prefix}_variants.txt
       """
 }

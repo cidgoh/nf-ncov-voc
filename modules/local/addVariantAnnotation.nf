@@ -23,7 +23,7 @@ process VARIANTANNOTATION {
   """
     addvariantinfo2gvf.py \\
       --ingvf $gvf \\
-      --outgvf ${prefix}.gvf \\
+      --outgvf ${prefix}_annotated.gvf \\
       --clades $tsv \\
       $strain \\
 
