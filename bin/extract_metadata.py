@@ -38,6 +38,13 @@ def parse_args():
     parser.add_argument('--window', type=int, default=7,
                         help='Number of days between start and end date '
                              'Default=7')
+    parser.add_argument('--location', type=str, default=None,
+                        help='Location')
+    parser.add_argument('--outtable', type=str, default=None,
+                        help='Metadata file (.tsv) format')
+    parser.add_argument('--outids', type=str, default=None,
+                        help='ids file (.txt) format')
+                                                                           
                                                        
     return parser.parse_args()
 
@@ -51,27 +58,21 @@ def sub_sampling(dataframe, subsampling):
 
 def write_ids(dataframe, start_date, end_date):
     ids = dataframe['isolate'].tolist()
+    #with open(args.outids, 'w') as filehandle:
+    #         filehandle.writelines("%s\n" % id for id in ids)
     if args.criteria == "lineage":
-        with open(args.voc + ".txt", 'w') as filehandle:
+        with open(args.outids, 'w') as filehandle:
             filehandle.writelines("%s\n" % id for id in ids)
     else:
         with open( str(start_date)+ "_" + str(end_date) + ".txt", 'w') as filehandle:
             filehandle.writelines("%s\n" % id for id in ids)
-    
-
-def write_metadata(dataframe, start_date, end_date):
-    if args.criteria == "lineage":
-        dataframe.to_csv(args.voc +
-                     "_Metadata.tsv.gz", sep="\t", compression='gzip',
-                     quoting=csv.QUOTE_NONE, index=False, header=True)
-    else:
-        dataframe.to_csv( str(start_date)+ "_" + str(end_date) + 
-                     "_Metadata.tsv.gz", sep="\t", compression='gzip',
-                     quoting=csv.QUOTE_NONE, index=False, header=True)
-
 
 def data_filtering(dataframe):
-    dataframe = dataframe[dataframe['host_scientific_name'].str.lower() ==
+    if 'geo_loc_name_state_province_territory' in dataframe.columns and not location == None:
+        dataframe = dataframe[dataframe['geo_loc_name_state_province_territory'].str.lower() ==
+                                location.lower()]
+    if 'host_scientific_name' in dataframe.columns:
+        dataframe = dataframe[dataframe['host_scientific_name'].str.lower() ==
                           'Homo sapiens'.lower()]
     if 'length' in dataframe.columns:
         dataframe = dataframe[dataframe['length'] >= 29000]
@@ -85,11 +86,27 @@ def data_filtering(dataframe):
 
 
 def filter_metadata(dataframe):
-    dataframe = dataframe[dataframe['host_scientific_name'].str.lower() ==
-                          'Homo sapiens'.lower()]
+    if 'host_scientific_name' in dataframe.columns:
+        dataframe = dataframe[dataframe['host_scientific_name'].str.lower() ==
+                              'Homo sapiens'.lower()]
     if 'length' in dataframe.columns:
         dataframe = dataframe[dataframe['length'] >= 29000]        
     return dataframe
+
+    
+
+def write_metadata(dataframe, start_date, end_date):
+    # dataframe.to_csv(args.outtable, sep="\t", compression='gzip',
+    #                   quoting=csv.QUOTE_NONE, index=False, header=True)
+    if args.criteria == "lineage":
+        dataframe.to_csv(args.outtable, sep="\t", compression='gzip',
+                     quoting=csv.QUOTE_NONE, index=False, header=True)
+    else:
+        dataframe.to_csv( str(start_date)+ "_" + str(end_date) + 
+                     "_Metadata.tsv.gz", sep="\t", compression='gzip',
+                     quoting=csv.QUOTE_NONE, index=False, header=True)
+
+
 
 
 
@@ -107,14 +124,17 @@ if __name__ == '__main__':
 
         sdate = pd.to_datetime(args.startdate, format='%Y-%m-%d')
         edate = pd.to_datetime(args.enddate, format='%Y-%m-%d')
+        location=args.location
         window=args.window
 
 
     """ Filtering for human associated and consensus sequence of
-        at least 29Kb """
+        at least 29Kb """ 
     
     if args.criteria == "lineage":
-        Metadata = Metadata[Metadata['lineage'] == args.voc]
+        if not args.voc == None:
+            Metadata = Metadata[Metadata['lineage'] == args.voc]
+        
         Metadata = data_filtering(dataframe=Metadata)
         Metadata = sub_sampling(dataframe=Metadata, subsampling=args.samplingsize)
         write_ids(dataframe=Metadata, start_date=sdate, end_date=edate)
@@ -122,7 +142,7 @@ if __name__ == '__main__':
     else:
         Metadata = filter_metadata(dataframe=Metadata)
         while sdate <= edate:
-            query_date = sdate + pd.DateOffset(days=6)
+            query_date = sdate + pd.DateOffset(days=window - 1)
             #print(sdate, query_date)
             sub_meta = Metadata.query('sample_collection_date >= @sdate and sample_collection_date <= @query_date')
             #print(len(sub_meta))

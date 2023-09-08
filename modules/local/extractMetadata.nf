@@ -9,25 +9,28 @@ process extractMetadata {
 
     input:
         tuple val(meta), path(metadata)
-        tuple val(meta), val(x)
+        tuple val(meta2), val(x)
+        val time
     
     output:
     
-        tuple val(meta), path("*.tsv.gz"), emit: tsv
-        path("*.txt"), emit: txt
-    
-    when:
-        x.size() > 0
+        tuple val(meta2), path("*.tsv.gz"), emit: tsv
+        tuple val(meta2), path("*.txt"), emit: txt
 
     script:
-        def voc = x ? "--voc $x" : ''
+        def voc = x ? "--voc $x --outtable ${meta2.id}_metadata.tsv.gz --outids ${meta2.id}.txt" : ''
+        //def prefix = voc ? "${meta2.id}" : "${params.enddate}"
+        //def prefix = task.ext.prefix ?: "${meta2.id}"
+        def time = time ? "--startdate ${params.startdate} --enddate ${params.enddate}" : ''
+
+
         """
         extract_metadata.py \\
-        --startdate ${params.startdate} \\
-        --enddate ${params.enddate} \\
+        ${time} \\
         --table ${metadata} \\
         --criteria ${params.grouping_criteria} \\
-        ${voc}
+        ${voc} 
+
         
         """
 }
