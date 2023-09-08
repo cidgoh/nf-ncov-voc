@@ -81,6 +81,16 @@
             "git_sha": "603ecbd9f45300c9788f197d2a15a005685b4220",
             "installed_by": ["modules"]
           },
+          "nextclade/datasetget": {
+            "branch": "master",
+            "git_sha": "911696ea0b62df80e900ef244d7867d177971f73",
+            "installed_by": ["modules"]
+          },
+          "nextclade/run": {
+            "branch": "master",
+            "git_sha": "911696ea0b62df80e900ef244d7867d177971f73",
+            "installed_by": ["modules"]
+          },
           "pangolin": {
             "branch": "master",
             "git_sha": "b6d4d476aee074311c89d82a69c1921bd70c8180",
@@ -134,6 +144,11 @@
           "seqkit/grep": {
             "branch": "master",
             "git_sha": "fd08c25c759d5d1f30422e73c9be153dbf657724",
+            "installed_by": ["modules"]
+          },
+          "seqkit/replace": {
+            "branch": "master",
+            "git_sha": "911696ea0b62df80e900ef244d7867d177971f73",
             "installed_by": ["modules"]
           },
           "seqkit/stats": {
