@@ -142,6 +142,9 @@ workflow COVIDMVP {
 
         GVF_PROCESSING_ANNOTATION(annotation_gvf)
         
+        //if(!params.skip_postprocessing){
+        //    POSTPROCESSING()
+        //}
 
         //surveillance(ch_gvf_surveillance, ch_variant, ch_stats, ch_surveillanceIndicators, ch_metadata )
     
