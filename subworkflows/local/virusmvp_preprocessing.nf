@@ -18,11 +18,14 @@ workflow PREPROCESSING {
     main:
         variant = file(params.variant, checkIfExists: true)
         variants = [ [ id:params.viral_genome_id ], variant ]
-        if(!params.skip_variantparsing){
+        if(params.virusseq_update){
+                     
+            EXTRACTVARIANTS(variants, metadata, [], true)
+        }
+        else if(!params.skip_variantparsing){
                      
             EXTRACTVARIANTS(variants, metadata, true)
         }
-        
         else{
             EXTRACTVARIANTS(variants, metadata, [])
         }

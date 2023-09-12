@@ -11,6 +11,7 @@ process EXTRACTVARIANTS {
             tuple val(meta), path(variants)
             tuple val(meta2), path(metadata)
             val file
+            val virusseq
         
       output:
             tuple val(meta2), path("*.txt"), emit: txt
@@ -20,11 +21,13 @@ process EXTRACTVARIANTS {
       def args = task.ext.args ?: ''
       def prefix = task.ext.prefix ?: "${meta2.id}"
       def variant_file = file ? "--variants $variants" : ''
+      def virusseq_update = virusseq ? "--virusseq" : ''
      
 
       """
       parse_variants.py \\
       $variant_file \\
+      $virusseq_update \\
       --metadata ${metadata} \\
       --outfile ${prefix}_variants.txt
       """
