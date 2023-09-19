@@ -4,7 +4,7 @@ import logging
 
 # standard variables used by all scripts
 
-empty_attributes = 'ID=;Name=;chrom_region=;protein=;ps_filter=;ps_exc=; \
+empty_attributes = 'ID=;Name=;alias=;chrom_region=;protein=;ps_filter=;ps_exc=; \
     mat_pep_id=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;vcf_gene=; \
     mutation_type=; viral_lineage=;multi_aa_name=;multiaa_comb_mutation=; \
@@ -444,5 +444,39 @@ def clade_defining_threshold(threshold, df, sample_size):
         df.loc[df.alternate_frequency <= threshold, "clade_defining"] = "False"
         
     return df
+
+
+def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
+    '''Creates alias names for Orf1ab mutations, reindexing the amino acid numbers.'''
+    df['alias'] = ''
+
+    # get list of all NSP proteins:
+    alias_mask = df['protein'].str.contains('NSP') & df['chrom_region'].str.contains("ORF1")
+    nsps_list = sorted(list(set(df[alias_mask]['protein'].tolist())))
     
+    ## note: chrom_region and protein are based on our gene positions JSON
+    
+    # split up all names in alias_mask into letter-number-letter columns
+    # hacky workaround to fix later: in rows that begin with a number, add "PLACEHOLDER" to the front before splitting them up, to stop NaNs
+    df['Name'][df['Name'].str[0].str.isdigit()] = "PLACEHOLDER" + df['Name'].astype(str)
+    df[['firstcol', 'secondcol', 'thirdcol']] = df['Name'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand = True)
+    df['secondcol'] = df['secondcol'].fillna(0)
+    df['fourthcol'] = 0
+    
+    # for each nsp in nsps_list, operate on the number column ('secondcol') based on the nsp start coordinates
+    for nsp in nsps_list:
+        nsp_start_aa = int(GENE_PROTEIN_POSITIONS_DICT["proteins"][nsp]["coordinates"]["from"])
+        nsp_mask = df['protein']==nsp
+        df.loc[nsp_mask, 'fourthcol'] = df['secondcol'].astype(int) - nsp_start_aa + 1
+        # put the three columns back together into a column called 'alias'
+        df.loc[nsp_mask, 'alias'] = df['firstcol'] + df['fourthcol'].astype(str) + df['thirdcol']
+    
+    # remove the placeholder
+    df['Name'] = df['Name'].str.replace("PLACEHOLDER","")
+    df['alias'] = df['alias'].str.replace("PLACEHOLDER","")
+    
+    df = df.drop(columns=['firstcol', 'secondcol', 'thirdcol', 'fourthcol'])
+    
+    return df
+        
 
