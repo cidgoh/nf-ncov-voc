@@ -20,9 +20,9 @@ workflow ANNOTATION {
 
     main:
         
-        if (!params.skip_tag_problematics_sites){
+        if (!params.skip_tag_problematics_sites && !params.mpox){
             problematics_sites = file(params.probvcf, checkIfExists: true)
-            vcf = [ [ id:'SARS-CoV-2' ], [ problematics_sites ] ]
+            vcf = [ [ id:params.viral_genome_id ], [ problematics_sites ] ]
             TAGPROBLEMATICSITES_NCOV(annotation_vcf, vcf)
             annotation_vcf=TAGPROBLEMATICSITES_NCOV.out.vcf
         }        
@@ -38,7 +38,7 @@ workflow ANNOTATION {
         }
         
 
-        if (!params.skip_mat_peptide_annottaion){
+        if (!params.skip_mat_peptide_annottaion && !params.mpox){
           
             ANNOTATEMATPEPTIDES_NCOV(
               annotation_vcf,
@@ -61,6 +61,7 @@ workflow ANNOTATION {
             true
             )
         gvf = VCFTOGVF.out.gvf
+
         
     emit:
         gvf

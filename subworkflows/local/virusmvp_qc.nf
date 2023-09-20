@@ -15,7 +15,7 @@ workflow QUALITYCONTROL {
         sequences_grouped
         ch_collected_sequences
 
-    main:   
+    main:
         BBMAP(sequences_grouped)
         SEQKIT_STATS(ch_collected_sequences)
         

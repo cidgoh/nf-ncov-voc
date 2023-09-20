@@ -25,7 +25,7 @@ include { SAMTOOLS_MPILEUP      as WW_SAMTOOLS_MPILEUP              } from '../m
 include { FREYJA_UPDATE                                             } from '../modules/nf-core/freyja/update/main'
 include { FREYJA_DEMIX                                              } from '../modules/nf-core/freyja/demix/main'
 include { FREYJA_VARIANTS                                           } from '../modules/nf-core/freyja/variants/main'
-include { FREYJA_BOOT                                           } from '../modules/nf-core/freyja/boot/main'
+//include { FREYJA_BOOT                                           } from '../modules/nf-core/freyja/boot/main'
 include { IVAR_VARIANTS_TO_VCF  as WW_IVAR_VARIANTS_TO_VCF          } from '../modules/local/custom'
 
 include {INPUT_CHECK            } from '../subworkflows/local/input_check'

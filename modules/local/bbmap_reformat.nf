@@ -25,6 +25,7 @@ process BBMAP {
     reformat.sh \\
     in=${sequence} \\
     out=${sequence.baseName}.qc.fasta \\
+    $args
     
     """
 }

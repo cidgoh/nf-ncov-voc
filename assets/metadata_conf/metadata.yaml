@@ -1,0 +1,103 @@
+# This file contains a high-level summary of metadata columns across different sources. 
+# general format of csv file is to be tab-demilimited, NO spaces in column headers: underscore (_) is used as best practice.
+# gz compressed file
+
+# Required metadata columns
+Format:
+  sep: 'tab' # options tab
+  suffix: '.gz'
+
+Required:
+  isolate: True
+  lineage: True
+  collection_date: True
+  country: True
+  state_province_territory: True
+  
+# Option metadata columns
+Optional:
+  gene_name: False
+  organism: True
+  host_scientific_name: True
+  host_gender: False
+  host_age_bin: False
+  submission_date: False
+  gisaid_accession: True
+  length: False
+  purpose_of_sampling: False
+  purpose_of_sequencing: False
+  alias: True
+  Type: False
+  Subtype: False
+  SubLineageGroup: False
+  Clade: False
+
+# ViralAi virusseq metadata columns
+ViralAi_EpiCoV:
+  isolate: 'isolate'
+  lineage: 'raw_lineage'
+  organism: 'organism'
+  gisaid_accession: 'gisaid_accession'
+  host_scientific_name: 'host_scientific_name'
+  collection_date: 'sample_collection_date'
+  country: 'geo_loc_name_country'
+  state_province_territory: 'geo_loc_name_state_province_territory'
+  alias: 'lineage'
+  purpose_of_sampling: 'purpose_of_sampling_details'
+  purpose_of_sequencing: 'purpose_of_sequencing_details'
+
+# Gisaid_EpiCoV metadata columns
+Gisaid_EpiCoV:
+  isolate: 'isolate'
+  lineage: 'raw_lineage'
+  organism: 'organism'
+  gisaid_accession: 'gisaid_accession'
+  host_scientific_name: 'host_scientific_name'
+  collection_date: 'sample_collection_date'
+  country: 'geo_loc_name_country'
+  state_province_territory: 'geo_loc_name_state_province_territory'
+  alias: 'lineage'
+  purpose_of_sampling: 'purpose_of_sampling_details'
+  purpose_of_sequencing: 'purpose_of_sequencing_details'
+
+# Gisaid_EpiPox metadata columns
+Gisaid_EpiPox:
+  isolate: 'isolate'
+  lineage: 'raw_lineage'
+  organism: 'organism'
+  gisaid_accession: 'gisaid_accession'
+  host_scientific_name: 'host_scientific_name'
+  collection_date: 'sample_collection_date'
+  country: 'geo_loc_name_country'
+  state_province_territory: 'geo_loc_name_state_province_territory'
+  alias: 'lineage'
+  purpose_of_sampling: 'purpose_of_sampling_details'
+  purpose_of_sequencing: 'purpose_of_sequencing_details'
+
+# NCBIVirus_EpiPox metadata columns
+NCBIVirus_EpiPox:
+  isolate: 'isolate'
+  lineage: 'raw_lineage'
+  organism: 'organism'
+  gisaid_accession: 'gisaid_accession'
+  host_scientific_name: 'host_scientific_name'
+  collection_date: 'sample_collection_date'
+  country: 'geo_loc_name_country'
+  state_province_territory: 'geo_loc_name_state_province_territory'
+  alias: 'lineage'
+  purpose_of_sampling: 'purpose_of_sampling_details'
+  purpose_of_sequencing: 'purpose_of_sequencing_details'
+
+# Gisaid_EpiCoV metadata columns
+Gisaid_EpiFlu:
+  isolate: 'isolate'
+  lineage: 'raw_lineage'
+  organism: 'organism'
+  gisaid_accession: 'gisaid_accession'
+  host_scientific_name: 'host_scientific_name'
+  collection_date: 'sample_collection_date'
+  country: 'geo_loc_name_country'
+  state_province_territory: 'geo_loc_name_state_province_territory'
+  alias: 'lineage'
+  purpose_of_sampling: 'purpose_of_sampling_details'
+  purpose_of_sequencing: 'purpose_of_sequencing_details'

@@ -63,14 +63,19 @@ workflow {
             WASTEWATER()
       }
       else{
-            if (params.infection="covid"){
-                  println("Executing COVID-MVP")
-                  COVIDMVP()                    
+            if (params.mpox){
+                  println("Executing POX-MVP")
+                  POXMVP()                    
             }
             
-            else (params.infection="mpox"){
-                  println("Executing POX-MVP")
-                  POXMVP()                      
+            else if (params.flu){
+                  println("Executing FLU-MVP")
+                  //FLUMVP()                    
+            }
+            
+            else {
+                  println("Executing COVID-MVP")
+                  COVIDMVP()                      
             }
       }
       

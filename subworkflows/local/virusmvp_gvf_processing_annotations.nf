@@ -17,7 +17,7 @@ workflow GVF_PROCESSING_ANNOTATION {
     main:
 
         
-        if(params.infection="covid"){
+        if(!params.mpox){
             functional_annotation = file(params.funcannot, checkIfExists: true)
             func = [ [ id:params.viral_genome_id ],  functional_annotation  ]
             
@@ -41,24 +41,22 @@ workflow GVF_PROCESSING_ANNOTATION {
                 NCOVSPLITMUTATIONSGVF.out.gvf,
                 NCOVSPLITMUTATIONSPOKAY.out.tsv
             )
-            annotated_gvf=FUNCTIONALANNOTATION.out.gvf
-
-
-            variant_annotation = file(params.variant, checkIfExists: true)
-            variant_tsv = [ [ id:params.viral_genome_id ],  variant_annotation  ]
-        
-            VARIANTANNOTATION(
-                annotated_gvf,
-                variant_tsv,
-                true
-            )
-            annotated_gvf=VARIANTANNOTATION.out.gvf
+            annotation_gvf=FUNCTIONALANNOTATION.out.gvf
             
 
         }
+        variant_annotation = file(params.variant, checkIfExists: true)
+        variant_tsv = [ [ id:params.viral_genome_id ],  variant_annotation  ]
+    
+        VARIANTANNOTATION(
+            annotation_gvf,
+            variant_tsv,
+            true
+        )
+        annotation_gvf=VARIANTANNOTATION.out.gvf
         
 
     emit:
-        annotated_gvf
+        annotation_gvf
         
 }
