@@ -20,7 +20,7 @@ import numpy as np
 import json
 from functions import parse_INFO, find_sample_size, \
     unnest_multi, get_unknown_labels, separate_attributes, rejoin_attributes, \
-        clade_defining_threshold, map_pos_to_gene_protein
+        clade_defining_threshold, map_pos_to_gene_protein, add_alias_names
 from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
 
@@ -80,6 +80,9 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
         vcf_df['POS'].astype(int), GENE_PROTEIN_POSITIONS_DICT)
     new_gvf['chrom_region'] = gene_names
     new_gvf['protein'] = protein_names
+    
+    # add 'alias' column for ORF1a/b mutations
+    new_gvf = add_alias_names(new_gvf, GENE_PROTEIN_POSITIONS_DICT)
     
     # add clade_defining attribute
     new_gvf = clade_defining_threshold(args.clades_threshold,
