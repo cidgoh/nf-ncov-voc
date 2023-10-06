@@ -53,10 +53,12 @@ def add_pokay_annotations(gvf, annotation_file):
     # remove any leading/trailing spaces
     for column in df.columns:
         df[column] = df[column].str.strip()
-        
-    # merge annotated vcf and functional annotation files by 'Name'
+
+    # merge annotated vcf and functional annotation files by 'Name' and 'alias'
     df = df.rename(columns={"mutation": "Name"})
-    merged_df = pd.merge(df, gvf, on=['Name'], how='right')
+    df['alias'] = df['alias'].astype(str)
+    gvf['alias'] = gvf['alias'].astype(str)
+    merged_df = pd.merge(df, gvf, on=['Name', 'alias'], how='right')
     
     # data cleaning
     merged_df['comb_mutation'] = merged_df['comb_mutation'].str.replace(
