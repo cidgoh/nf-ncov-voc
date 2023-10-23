@@ -155,7 +155,7 @@ if __name__ == '__main__':
                    sample_size)
     
     # add species to pragmas
-    species = GENE_PROTEIN_POSITIONS_DICT['species']
+    species = GENE_PROTEIN_POSITIONS_DICT['Src']['species']
     pragmas[0] = pragmas[0].str.replace("##species", "##species " + str(species))
 
     # combine pragmas, header, GVF contents
