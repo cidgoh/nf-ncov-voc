@@ -448,10 +448,10 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     df['alias'] = ''
 
     # get list of all NSP proteins:
-    alias_mask = df['protein'].str.contains('NSP') & df['chrom_region'].str.contains("ORF1")
+    alias_mask = df['protein_name'].str.contains('nsp') & df['gene'].str.contains("ORF1")
     nsps_list = sorted(list(set(df[alias_mask]['protein'].tolist())))
     
-    ## note: chrom_region and protein are based on our gene positions JSON
+    ## note: gene and protein_name are based on our gene positions JSON
     
     # split up all names in alias_mask into letter-number-letter columns
     # hacky workaround to fix later: in rows that begin with a number, add "PLACEHOLDER" to the front before splitting them up, to stop NaNs
@@ -470,7 +470,7 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     
     # for each nsp in nsps_list, operate on the number column based on the nsp start coordinates
     for nsp in nsps_list:
-        nsp_start_aa = int(GENE_PROTEIN_POSITIONS_DICT["proteins"][nsp]["coordinates"]["from"])
+        nsp_start_aa = int(GENE_PROTEIN_POSITIONS_DICT[nsp]["aa_start"])
         nsp_mask = df['protein']==nsp
         # for each half of the mutation name...
         # update the numeric part
