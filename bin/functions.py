@@ -3,8 +3,8 @@ import numpy as np
 import logging
 
 # standard variables used by all scripts
-
-empty_attributes = 'ID=;Name=;alias=;chrom_region=;protein=;ps_filter=;ps_exc=; \
+empty_attributes = 'ID=;Name=;alias=;gene=;protein_name=;protein_symbol=;\
+    protein_id=;ps_filter=;ps_exc=; \
     mat_pep_id=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;vcf_gene=; \
     mutation_type=; viral_lineage=;multi_aa_name=;multiaa_comb_mutation=; \
@@ -395,41 +395,38 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
     :return: series containing SARS-CoV-2 chromosome region names at each
     nucleotide position in ``pos``
     """
-    # make a dataframe of the same length as
-    # pos to put gene names in (+ other things)
-    df = pos.astype(str).to_frame()
+    # make an empty dataframe of the same length as pos and with four columns
+    cols_to_add = ["gene", "protein_name", "protein_symbol", "protein_id"]
+    df = pd.DataFrame(np.nan, index=range(0,pos.shape[0]), columns=cols_to_add)
+    # add positions to this df
+    df["POS"] = pos
 
-    # loop through genes dict to get gene names
-    df["gene_names"] = df["POS"]
-    for gene in GENE_PROTEIN_POSITIONS_DICT["genes"]:
-        # get nucleotide coordinates for this gene
-        start = GENE_PROTEIN_POSITIONS_DICT["genes"][gene]["coordinates"]["from"]
-        end = GENE_PROTEIN_POSITIONS_DICT["genes"][gene]["coordinates"]["to"]
-        # for all the mutations that are found in this region,
-        # assign this gene name
-        gene_mask = pos.astype(int).between(start, end, inclusive="both")
-        if gene == "Stem-loop":  # no stem_loop entry in SARS-CoV-2.json
-            df["gene_names"][gene_mask] = gene + ",3\' UTR"
-        else:
-            df["gene_names"][gene_mask] = gene
+    # loop through all CDS regions in dict to get attributes
+    for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
+        if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS":
+            # extract values from JSON entry
+            start = GENE_PROTEIN_POSITIONS_DICT[entry]["start"]
+            end = GENE_PROTEIN_POSITIONS_DICT[entry]["end"]
+            #aa_start = GENE_PROTEIN_POSITIONS_DICT[entry]["aa_start"]
+            #aa_end = GENE_PROTEIN_POSITIONS_DICT[entry]["aa_end"]
+            gene = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
+            protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["product"]
+            protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]
+            protein_id = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_id"]
+
+            # fill in attributes for mutations in this CDS region
+            cds_mask = df["POS"].astype(int).between(start, end, inclusive="both")
+            df["gene"][cds_mask] = gene
+            df["protein_name"][cds_mask] = protein_name
+            df["protein_symbol"][cds_mask] = protein_symbol
+            df["protein_id"][cds_mask] = protein_id
+
     # label all mutations that didn't belong to any gene as "intergenic"
-    df["gene_names"][df["gene_names"].str.isnumeric()] = "intergenic"
-
-    # loop through proteins dict to get protein names
-    df["protein_names"] = df["POS"]
-    if "proteins" in GENE_PROTEIN_POSITIONS_DICT.keys():
-        for protein in GENE_PROTEIN_POSITIONS_DICT["proteins"]:
-            start = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein][
-                "g.coordinates"]["from"]
-            end = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["g.coordinates"]["to"]
-            protein_name = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["name"]
-            # get protein names for all mutations that are within range
-            protein_mask = pos.astype(int).between(start, end, inclusive="both")
-            df["protein_names"][protein_mask] = protein_name
+    df["gene"][df["gene"].isna()] = "intergenic"
     # label all mutations that didn't belong to any protein as "n/a"
-    df["protein_names"][df["protein_names"].str.isnumeric()] = "n/a"
+    df["protein_name"][df["protein_name"].isna()] = "n/a"
 
-    return(df["gene_names"], df["protein_names"])
+    return(df)
 
 
 def clade_defining_threshold(threshold, df, sample_size):
