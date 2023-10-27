@@ -403,7 +403,7 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
 
     # loop through all CDS regions in dict to get attributes
     for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
-        if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS":
+        if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and ("protein_alias" in GENE_PROTEIN_POSITIONS_DICT[entry].keys()):
             # extract values from JSON entry
             start = GENE_PROTEIN_POSITIONS_DICT[entry]["start"]
             end = GENE_PROTEIN_POSITIONS_DICT[entry]["end"]
@@ -416,15 +416,15 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
 
             # fill in attributes for mutations in this CDS region
             cds_mask = df["POS"].astype(int).between(start, end, inclusive="both")
-            df["gene"][cds_mask] = gene
-            df["protein_name"][cds_mask] = protein_name
-            df["protein_symbol"][cds_mask] = protein_symbol
-            df["protein_id"][cds_mask] = protein_id
+            df.loc[cds_mask, "gene"] = gene
+            df.loc[cds_mask, "protein_name"] = protein_name
+            df.loc[cds_mask, "protein_symbol"] = protein_symbol
+            df.loc[cds_mask, "protein_id"] = protein_id
 
     # label all mutations that didn't belong to any gene as "intergenic"
-    df["gene"][df["gene"].isna()] = "intergenic"
+    df.loc[df["gene"].isna(), "gene"] = "intergenic"
     # label all mutations that didn't belong to any protein as "n/a"
-    df["protein_name"][df["protein_name"].isna()] = "n/a"
+    df = df.fillna("n/a")
 
     return(df)
 
@@ -447,52 +447,54 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     '''Creates alias names for Orf1ab mutations, reindexing the amino acid numbers.'''
     df['alias'] = ''
 
-    # get list of all NSP proteins:
-    alias_mask = df['protein_name'].str.contains('nsp') & df['gene'].str.contains("ORF1")
-    nsps_list = sorted(list(set(df[alias_mask]['protein'].tolist())))
+    # get list of all NSP proteins in the file:
+    alias_mask = df['protein_symbol'].str.contains('nsp') & df['gene'].str.contains("ORF1")
+    nsps_list = sorted(list(set(df[alias_mask]['protein_symbol'].tolist())))
     
-    ## note: gene and protein_name are based on our gene positions JSON
-    
-    # split up all names in alias_mask into letter-number-letter columns
-    # hacky workaround to fix later: in rows that begin with a number, add "PLACEHOLDER" to the front before splitting them up, to stop NaNs
-    df['Name'][df['Name'].str[0].str.isdigit()] = "PLACEHOLDER" + df['Name'].astype(str)
+    if len(nsps_list) > 0:
+        
+        ## note: gene and protein_name are based on our gene positions JSON
+        
+        # split up all names in alias_mask into letter-number-letter columns
+        # hacky workaround to fix later: in rows that begin with a number, add "PLACEHOLDER" to the front before splitting them up, to stop NaNs
+        df.loc[df['Name'].str[0].str.isdigit(), 'Name'] = "PLACEHOLDER" + df['Name'].astype(str)
 
-    # split at underscores
-    df[['mutation_1', 'mutation_2']] = df['Name'].str.split('_', expand=True)
-    
-    df[['1_start', '1_num', '1_end']] = df['mutation_1'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
-    df['1_num'] = df['1_num'].fillna(0)
-    df['1_newnum'] = 0
-    
-    df[['2_start', '2_num', '2_end']] = df['mutation_2'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
-    df['2_num'] = df['2_num'].fillna(0)
-    df['2_newnum'] = 0
-    
-    # for each nsp in nsps_list, operate on the number column based on the nsp start coordinates
-    for nsp in nsps_list:
-        nsp_start_aa = int(GENE_PROTEIN_POSITIONS_DICT[nsp]["aa_start"])
-        nsp_mask = df['protein']==nsp
-        # for each half of the mutation name...
-        # update the numeric part
-        df.loc[nsp_mask, '1_newnum'] = df['1_num'].astype(int) - nsp_start_aa + 1
-        df.loc[nsp_mask, '2_newnum'] = df['2_num'].astype(int) - nsp_start_aa + 1
-        # put the three columns back together into a column called '1_alias' or '2_alias'
-        df.loc[nsp_mask, '1_alias'] = df['1_start'] + df['1_newnum'].astype(str) + df['1_end']
-        df.loc[nsp_mask, '2_alias'] = df['2_start'] + df['2_newnum'].astype(str) + df['2_end']
-    
-    # put both halves of the alias back together with a new underscore in the middle
-    df['alias'] = df['1_alias'].astype(str) + '_' + df['2_alias'].astype(str)
+        # split at underscores
+        df[['mutation_1', 'mutation_2']] = df['Name'].str.split('_', expand=True)
+        
+        df[['1_start', '1_num', '1_end']] = df['mutation_1'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
+        df['1_num'] = df['1_num'].fillna(0)
+        df['1_newnum'] = 0
+        
+        df[['2_start', '2_num', '2_end']] = df['mutation_2'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
+        df['2_num'] = df['2_num'].fillna(0)
+        df['2_newnum'] = 0
+        
+        # for each nsp in nsps_list, operate on the number column based on the nsp start coordinates
+        for nsp in nsps_list:
+            nsp_start_aa = int(GENE_PROTEIN_POSITIONS_DICT[nsp]["aa_start"])
+            nsp_mask = df['protein_symbol']==nsp
+            # for each half of the mutation name...
+            # update the numeric part
+            df.loc[nsp_mask, '1_newnum'] = df['1_num'].astype(int) - nsp_start_aa + 1
+            df.loc[nsp_mask, '2_newnum'] = df['2_num'].astype(int) - nsp_start_aa + 1
+            # put the three columns back together into a column called '1_alias' or '2_alias'
+            df.loc[nsp_mask, '1_alias'] = df['1_start'] + df['1_newnum'].astype(str) + df['1_end']
+            df.loc[nsp_mask, '2_alias'] = df['2_start'] + df['2_newnum'].astype(str) + df['2_end']
+        
+        # put both halves of the alias back together with a new underscore in the middle
+        df['alias'] = df['1_alias'].astype(str) + '_' + df['2_alias'].astype(str)
 
-    # remove the placeholder
-    df['Name'] = df['Name'].str.replace("PLACEHOLDER","")
-    df['alias'] = df['alias'].str.replace("PLACEHOLDER","")
-    
-    # remove nans
-    df['alias'] = df['alias'].str.replace("nan_nan", "")
-    df['alias'] = df['alias'].str.replace("_nan", "")
-    
-    cols_to_drop = [col for col in df.columns if (("1" in col) or ("2" in col))]
-    df = df.drop(columns=cols_to_drop)
+        # remove the placeholder
+        df['Name'] = df['Name'].str.replace("PLACEHOLDER","")
+        df['alias'] = df['alias'].str.replace("PLACEHOLDER","")
+        
+        # remove nans
+        df['alias'] = df['alias'].str.replace("nan_nan", "")
+        df['alias'] = df['alias'].str.replace("_nan", "")
+        
+        cols_to_drop = [col for col in df.columns if (("1" in col) or ("2" in col))]
+        df = df.drop(columns=cols_to_drop)
     
     return df
         
