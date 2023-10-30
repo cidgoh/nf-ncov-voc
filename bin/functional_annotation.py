@@ -142,7 +142,7 @@ def extract_metadata(inp_file, chunk, df):
         df_func = extract_source_citation(dframe=df_func)
 
         df = pd.concat([df, df_func], ignore_index=True)
-        df = df.drop('url', 1)
+        df = df.drop(labels='url', axis=1)
     return df
 
 
