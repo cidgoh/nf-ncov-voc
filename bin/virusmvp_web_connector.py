@@ -7,8 +7,6 @@ import os
 
 
 
-
-
 def create_wordpress_post(config_file, title, content):
 
     config = configparser.ConfigParser()
@@ -25,7 +23,7 @@ def create_wordpress_post(config_file, title, content):
     credentials = username + ":" + password
     token = base64.b64encode(credentials.encode()).decode('utf-8')
     header = {'Authorization': 'Basic ' + token}
-
+    
     # data
     data = {
         'title': title,
@@ -51,6 +49,10 @@ if __name__ == "__main__":
         config_file = args.config
     else: 
         config_file = "config.ini"
+    
+    with open(args.content, 'r') as file:
+        content = file.read()
 
-    create_wordpress_post(config_file, args.title, args.content)
+    print(content)
+    #create_wordpress_post(config_file, args.title, content )
 
