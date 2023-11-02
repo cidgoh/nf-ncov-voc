@@ -57,7 +57,7 @@ def add_pokay_annotations(gvf, annotation_file):
     # merge annotated vcf and functional annotation files by 'Name' and 'alias'
     df = df.rename(columns={"mutation": "Name", "gene": "protein_symbol", "alias":"Pokay_alias"})
     merged_df = pd.merge(df, gvf, on=['Name', 'protein_symbol'], how='right') #, 'alias'
-    
+
     # data cleaning
     merged_df['comb_mutation'] = merged_df['comb_mutation'].str.replace(
         "B.1.617.2\\tT19R", "T19R", regex=False)
@@ -67,7 +67,7 @@ def add_pokay_annotations(gvf, annotation_file):
     # collect all mutation groups (including reference mutation) in
     # merged_df["mutation_group"], sorted alphabetically
     
-    # join columns with commas in between/home/madeline/Downloads/B.1.351.annotated.vcf
+    # join columns with commas in between
     merged_df["mutation_group"] = \
         merged_df["Name"].astype(str) + "," + \
         merged_df["comb_mutation"].astype(str) + "," + \
