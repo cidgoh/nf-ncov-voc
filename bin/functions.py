@@ -240,19 +240,11 @@ def find_sample_size(table, lineage, vcf_file, wastewater):
 
     
 def parse_INFO(df, var_cols): # return INFO dataframe with named columns, including EFF split apart
-    # parse INFO column
-
-    # sort out problematic sites tag formats   
-    df['INFO'] = df['INFO'].str.replace('ps_filter;', 'ps_filter=;')
-    df['INFO'] = df['INFO'].str.replace('ps_exc;', 'ps_exc=;')
-    df['INFO'] = df['INFO'].str.replace('=n/a', '') #why is this here?
-    df['INFO'] = df['INFO'].str.replace('mat_pep_id;', 'mat_pep_id=;')
-    df['INFO'] = df['INFO'].str.replace('mat_pep_desc;', 'mat_pep_desc=;')
-    df['INFO'] = df['INFO'].str.replace('mat_pep_acc', 'mat_pep_acc=')
 
     # make 'INFO' column easier to extract attributes from:
     # split at ;, form dataframe
     info = df['INFO'].str.split(pat=';').apply(pd.Series)
+
     for column in info.columns:
         split = info[column].str.split(pat='=').apply(pd.Series)
         title = split[0].drop_duplicates().tolist()[0]
