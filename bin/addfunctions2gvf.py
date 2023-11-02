@@ -55,11 +55,9 @@ def add_pokay_annotations(gvf, annotation_file):
         df[column] = df[column].str.strip()
 
     # merge annotated vcf and functional annotation files by 'Name' and 'alias'
-    df = df.rename(columns={"mutation": "Name", "gene": "protein_symbol"})
-    df['alias'] = df['alias'].astype(str)
-    gvf['alias'] = gvf['alias'].astype(str)
-    merged_df = pd.merge(df, gvf, on=['Name', 'alias', 'protein_symbol'], how='right')
-    
+    df = df.rename(columns={"mutation": "Name", "gene": "protein_symbol", "alias":"Pokay_alias"})
+    merged_df = pd.merge(df, gvf, on=['Name', 'protein_symbol'], how='right') #, 'alias'
+
     # data cleaning
     merged_df['comb_mutation'] = merged_df['comb_mutation'].str.replace(
         "B.1.617.2\\tT19R", "T19R", regex=False)

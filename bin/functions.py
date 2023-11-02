@@ -240,19 +240,11 @@ def find_sample_size(table, lineage, vcf_file, wastewater):
 
     
 def parse_INFO(df, var_cols): # return INFO dataframe with named columns, including EFF split apart
-    # parse INFO column
-
-    # sort out problematic sites tag formats   
-    df['INFO'] = df['INFO'].str.replace('ps_filter;', 'ps_filter=;')
-    df['INFO'] = df['INFO'].str.replace('ps_exc;', 'ps_exc=;')
-    df['INFO'] = df['INFO'].str.replace('=n/a', '') #why is this here?
-    df['INFO'] = df['INFO'].str.replace('mat_pep_id;', 'mat_pep_id=;')
-    df['INFO'] = df['INFO'].str.replace('mat_pep_desc;', 'mat_pep_desc=;')
-    df['INFO'] = df['INFO'].str.replace('mat_pep_acc', 'mat_pep_acc=')
 
     # make 'INFO' column easier to extract attributes from:
     # split at ;, form dataframe
     info = df['INFO'].str.split(pat=';').apply(pd.Series)
+
     for column in info.columns:
         split = info[column].str.split(pat='=').apply(pd.Series)
         title = split[0].drop_duplicates().tolist()[0]
@@ -445,7 +437,7 @@ def clade_defining_threshold(threshold, df, sample_size):
 
 def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     '''Creates alias names for Orf1ab mutations, reindexing the amino acid numbers.'''
-    df['alias'] = ''
+    df.loc[:, 'alias'] = 'n/a'
 
     # get list of all NSP proteins in the file:
     alias_mask = df['protein_symbol'].str.contains('nsp') & df['gene'].str.contains("ORF1")
@@ -482,8 +474,8 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
             df.loc[nsp_mask, '1_alias'] = df['1_start'] + df['1_newnum'].astype(str) + df['1_end']
             df.loc[nsp_mask, '2_alias'] = df['2_start'] + df['2_newnum'].astype(str) + df['2_end']
         
-        # put both halves of the alias back together with a new underscore in the middle
-        df['alias'] = df['1_alias'].astype(str) + '_' + df['2_alias'].astype(str)
+        # put both halves of the alias back together with a new underscore in the middle, for all ORF1ab rows
+        df.loc[alias_mask, 'alias'] = df['1_alias'].astype(str) + '_' + df['2_alias'].astype(str)
 
         # remove the placeholder
         df['Name'] = df['Name'].str.replace("PLACEHOLDER","")
