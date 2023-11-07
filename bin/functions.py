@@ -446,7 +446,7 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     if len(nsps_list) > 0:
         
         ## note: gene and protein_name are based on our gene positions JSON
-        df['Name'] = df['Name'].str.split('_', expand=True)[0]
+
         # split up all names in alias_mask into letter-number-letter columns
         # hacky workaround to fix later: in rows that begin with a number, add "PLACEHOLDER" to the front before splitting them up, to stop NaNs
         df.loc[df['Name'].str[0].str.isdigit(), 'Name'] = "PLACEHOLDER" + df['Name'].astype(str)
