@@ -8,7 +8,7 @@ This script converts VCF files that have been annotated into GVF
 files. Required user input is a VCF file.
     
 The attributes completed by this script are: 
-['ID', 'Name', 'gene', 'protein_name', 'protein_symbol', 'protein_id', 'ps_filter', 'ps_exc', 'mat_pep_id',
+['ID', 'Name', 'gene', 'protein_name', 'protein_symbol', 'protein_id', 'ps_filter', 'ps_exc', 'mat_pep',
 'mat_pep_desc','mat_pep_acc', 'ro', 'ao', 'dp', 'sample_size', 'Reference_seq',
 'Variant_seq', 'nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
 'viral_lineage', 'alternate_frequency']
@@ -61,7 +61,7 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
 
     # fill in attributes from vcf_df columns by name if they exist
     vcf_df_cols_to_add = ['nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
-                        'ps_filter', 'ps_exc', 'mat_pep_id','mat_pep_desc',
+                        'ps_filter', 'ps_exc', 'mat_pep','mat_pep_desc',
                         'mat_pep_acc', 'Reference_seq', 'Variant_seq',
                         "dp", "ro", "ao"]
     for column in list(set(vcf_df.columns) & set(vcf_df_cols_to_add)):

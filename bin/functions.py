@@ -5,7 +5,7 @@ import logging
 # standard variables used by all scripts
 empty_attributes = 'ID=;Name=;alias=;gene=;protein_name=;protein_symbol=;\
     protein_id=;ps_filter=;ps_exc=; \
-    mat_pep_id=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
+    mat_pep=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;vcf_gene=; \
     mutation_type=; viral_lineage=;multi_aa_name=;multiaa_comb_mutation=; \
     alternate_frequency=;function_category=;source=; citation=; \
@@ -440,9 +440,9 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     df.loc[:, 'alias'] = 'n/a'
 
     # get list of all NSP proteins in the file:
-    alias_mask = df['protein_symbol'].str.contains('nsp') & df['gene'].str.contains("ORF1")
-    nsps_list = sorted(list(set(df[alias_mask]['protein_symbol'].tolist())))
-    
+    alias_mask = df['mat_pep'].str.contains('nsp') & df['gene'].str.contains("ORF1")
+    nsps_list = sorted(list(set(df[alias_mask]['mat_pep'].tolist())))
+
     if len(nsps_list) > 0:
         
         ## note: gene and protein_name are based on our gene positions JSON
@@ -465,7 +465,7 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
         # for each nsp in nsps_list, operate on the number column based on the nsp start coordinates
         for nsp in nsps_list:
             nsp_start_aa = int(GENE_PROTEIN_POSITIONS_DICT[nsp]["aa_start"])
-            nsp_mask = df['protein_symbol']==nsp
+            nsp_mask = df['mat_pep']==nsp
             # for each half of the mutation name...
             # update the numeric part
             df.loc[nsp_mask, '1_newnum'] = df['1_num'].astype(int) - nsp_start_aa + 1
