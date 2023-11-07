@@ -5,7 +5,7 @@ import logging
 # standard variables used by all scripts
 empty_attributes = 'ID=;Name=;alias=;gene=;protein_name=;protein_symbol=;\
     protein_id=;ps_filter=;ps_exc=; \
-    mat_pep_id=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
+    mat_pep=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;vcf_gene=; \
     mutation_type=; viral_lineage=;multi_aa_name=;multiaa_comb_mutation=; \
     alternate_frequency=;function_category=;source=; citation=; \
