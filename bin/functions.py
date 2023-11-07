@@ -452,7 +452,11 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
         df.loc[df['Name'].str[0].str.isdigit(), 'Name'] = "PLACEHOLDER" + df['Name'].astype(str)
 
         # split at underscores
-        df[['mutation_1', 'mutation_2']] = df['Name'].str.split('_', expand=True)
+        if df['Name'].str.contains("_").any():
+            df[['mutation_1', 'mutation_2']] = df['Name'].str.split('_', expand=True)
+        else:
+            df['mutation_1'] = df['Name']
+            df['mutation_2'] = ''
         
         df[['1_start', '1_num', '1_end']] = df['mutation_1'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
         df['1_num'] = df['1_num'].fillna(0)
