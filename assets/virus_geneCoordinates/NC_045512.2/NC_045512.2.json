@@ -302,24 +302,6 @@
         "color": "rgb(128,0,128)",
         "protein_alias": "nsp16"
     },
-    "ORF1a polyprotein": {
-        "type": "CDS",
-        "start": 266,
-        "end": 13483,
-        "ID": "cds-YP_009725295.1",
-        "Parent": "gene-GU280_gp01",
-        "Dbxref": "GenBank:YP_009725295.1,GeneID:43740578",
-        "Name": "YP_009725295.1",
-        "Note": "pp1a",
-        "gbkey": "CDS",
-        "gene": "ORF1ab",
-        "locus_tag": "GU280_gp01",
-        "product": "ORF1a polyprotein",
-        "protein_id": "YP_009725295.1",
-        "aa_start": 1,
-        "aa_end": 4405,
-        "color": "rgb(230, 112, 48)"
-    },
     "nsp11": {
         "type": "mature_protein_region_of_CDS",
         "start": 13442,
@@ -659,8 +641,8 @@
         "gbkey": "3'UTR",
         "color": "rgb(0, 0, 0)"
     },
-    "intergenic": {
-        "type": "intergenic",
+    "INTERGENIC": {
+        "type": "INTERGENIC",
         "color": "rgb(128,128,128)"
     }
 }
