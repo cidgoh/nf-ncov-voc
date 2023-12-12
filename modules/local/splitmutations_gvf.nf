@@ -8,7 +8,7 @@ process NCOVSPLITMUTATIONSGVF {
   
   input:
       tuple val(meta), path(gvf)
-      tuple val(meta2), path(tsv)
+      path(tsv)
 
   output:
       tuple val(meta), path("*.gvf"), emit: gvf
