@@ -37,5 +37,4 @@ if __name__ == '__main__':
                                                             .map(alias_dic) + "." + df['raw_lineage'].str.split(".",1).str[1]).fillna(df['raw_lineage'])
 
     # Sort by sample_collection_date and write it to csv
-    df.to_csv(args.outfile, encoding='utf-8', index=False, sep='\t',
-              compression='gzip')
+    df.to_csv(args.outfile, encoding='utf-8', index=False, sep='\t', compression='gzip')

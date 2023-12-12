@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import os
 import json
 import argparse
@@ -67,7 +70,7 @@ def gff_to_json(gff_file_path, json_file_path, colors_list, alias_dic):
         features = {}
         id_list = []
         intergenic_dic = {}
-        intergenic_dic["type"] = "intergenic"
+        intergenic_dic["type"] = "INTERGENIC"
         intergenic_dic["color"] = "rgb(128,128,128)"
         
         # Iterate over each line in the GFF file
@@ -123,7 +126,10 @@ def gff_to_json(gff_file_path, json_file_path, colors_list, alias_dic):
                 if "protein_alias" in feature_dict:
                     features[feature_dict["protein_alias"]] = feature_dict
                 else:
-                    features[feature_dict["product"]] = feature_dict
+                    if feature_dict["product"] == "ORF1a polyprotein":
+                        continue
+                    else:
+                        features[feature_dict["product"]] = feature_dict
             elif feature_dict["type"] == "mature_protein_region_of_CDS":
                 if "protein_alias" in feature_dict and not feature_dict["protein_alias"] in features: 
                     features[feature_dict["protein_alias"]] = feature_dict

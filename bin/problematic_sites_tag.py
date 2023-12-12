@@ -33,11 +33,18 @@ def parse_args():
 if __name__ == '__main__':
 
     args = parse_args()
+    
+    vcf_file = args.vcffile
+    output_vcf = args.output_vcf
+    prob_vcf_file = args.filter_vcf
+
+    data_vcf = VCF(vcf_file)
+    prob_vcf = VCF(prob_vcf_file)
 
     # Reading the VCF file and adding 2 more attributes into INFO header
-    data_vcf = VCF(args.vcffile)
+    
     data_vcf.add_info_to_header(
-        {'ID': 'ps_filter', 'Description': 'Mask/Caution',
+        {'ID': 'ps_filter', 'Description': 'mask/caution',
          'Type': 'String', 'Number': '1'})
     data_vcf.add_info_to_header(
         {'ID': 'ps_exc',
@@ -45,54 +52,24 @@ if __name__ == '__main__':
          'Type': 'String', 'Number': '1'})
 
     # create a new vcf Writer using the input vcf as a template.
-    fname = args.output_vcf
 
-    w = Writer(fname, data_vcf)
-    prob_vcf_columns = ['CHROM', 'POS', 'ID', 'REF',
-                        'ALT', 'QUAL', 'FILTER',
-                        'INFO']
-    prob_vcf_df = pd.DataFrame(index=range(0, 478),
-                               columns=prob_vcf_columns)
-
-    # Make a dataframe from VCF object for indexed searching
-    row = 0
-    prob_vcf = VCF(args.filter_vcf)
-    print(prob_vcf)
-    for v in prob_vcf:
-        prob_vcf_df.iloc[row, [0]] = "MN908947.3"
-        prob_vcf_df.iloc[row, [1]] = v.POS
-        if not v.ALT:
-            prob_vcf_df.iloc[row, [2]] = "."
-        else:
-            prob_vcf_df.iloc[row, [2]] = v.ID
-        prob_vcf_df.iloc[row, [3]] = v.REF
-        if not v.ALT:
-            prob_vcf_df.iloc[row, [4]] = "."
-        else:
-            prob_vcf_df.iloc[row, [4]] = ",".join(v.ALT)
-        if not v.QUAL:
-            prob_vcf_df.iloc[row, [5]] = "."
-        else:
-            prob_vcf_df.iloc[row, [5]] = v.QUAL
-        prob_vcf_df.iloc[row, [6]] = v.FILTER
-        prob_vcf_df.iloc[row, [7]] = v.INFO.get('EXC')
-        row = row + 1
-
-    # Searching records and adding TAGs into INFO column
+    w = Writer(output_vcf, data_vcf)
+    filtered_positions = {}
+    for prob_record in prob_vcf:
+        #if prob_record.FILTER == "mask" or prob_record.FILTER == "caution":
+        filtered_positions[prob_record.POS] = [prob_record.ALT, prob_record.FILTER, prob_record.INFO.get("EXC")]
+        
+    print(filtered_positions)
+    
+    # Iterate over the records in the input vcf.
     for record in data_vcf:
-        record.INFO["ps_filter"] = ""
-        record.INFO["ps_exc"] = ""
-        if (record.POS in prob_vcf_df["POS"].values) & \
-                (record.REF in prob_vcf_df["REF"].values) & \
-                (record.ALT in prob_vcf_df["ALT"].values):
-            record.INFO["ps_filter"] = prob_vcf_df.loc[
-                prob_vcf_df['POS']
-                == record.POS, 'FILTER'].item()
-            record.INFO["ps_exc"] = prob_vcf_df.loc[prob_vcf_df[
-                                                        'POS'] ==
-                                                    record.POS,
-                                                    'INFO'].item()
+        record.INFO["ps_filter"] = "n/a"
+        record.INFO["ps_exc"] = "n/a"
+        if record.POS in filtered_positions and record.ALT in filtered_positions[record.POS][0]:
+            record.INFO["ps_filter"] = filtered_positions[record.POS][1]
+            record.INFO["ps_exc"] = filtered_positions[record.POS][2]
         w.write_record(record)
 
     w.close()
     data_vcf.close()
+    prob_vcf.close()
