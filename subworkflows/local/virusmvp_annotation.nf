@@ -17,12 +17,13 @@ workflow ANNOTATION {
         ch_snpeff_config
         viral_genome
         ch_stats
+        ch_json
 
     main:
         
-        if (!params.skip_tag_problematics_sites && !params.mpox){
+        if (!params.skip_tag_problematics_sites && params.virus_accession_id == "NC_045512.2"){
             problematics_sites = file(params.probvcf, checkIfExists: true)
-            vcf = [ [ id:params.viral_genome_id ], [ problematics_sites ] ]
+            vcf = [ [ id:params.virus_accession_id ], [ problematics_sites ] ]
             TAGPROBLEMATICSITES_NCOV(annotation_vcf, vcf)
             annotation_vcf=TAGPROBLEMATICSITES_NCOV.out.vcf
         }        
@@ -38,19 +39,24 @@ workflow ANNOTATION {
         }
         
 
-        if (!params.skip_mat_peptide_annottaion && !params.mpox){
+        if (!params.skip_mat_peptide_annottaion && params.virus_accession_id == "NC_045512.2"){
           
             ANNOTATEMATPEPTIDES_NCOV(
               annotation_vcf,
-              params.viral_gff
+              ch_json
             )
             annotation_vcf=ANNOTATEMATPEPTIDES_NCOV.out.vcf
         }
         
         //VCF to GVF transformation
         
-        json_file = file(params.genecoord, checkIfExists: true)
-        json = [ [ id:params.viral_genome_id ], [ json_file ] ]
+        if (ch_json == []){
+            json_file = file(params.genecoord, checkIfExists: true)
+            json = [ [ id:params.virus_accession_id ], [ json_file ] ]
+        }
+        else{
+            json = ch_json
+        }
         threshold=0.75
         
         VCFTOGVF(

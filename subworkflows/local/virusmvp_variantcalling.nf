@@ -25,10 +25,10 @@ workflow VARIANT_CALLING {
 
     main:
         
-        fasta = Channel.value([[params.viral_genome_id], file(viral_genome, checkIfExists: true)])  
+        fasta = Channel.value([[params.virus_accession_id], file(viral_genome, checkIfExists: true)])  
         
         if (params.aligner == "bwa"){
-            BWA_INDEX([[id: params.viral_genome_id], viral_genome])
+            BWA_INDEX([[id: params.virus_accession_id], viral_genome])
             BWA_MEM(sequences_grouped, BWA_INDEX.out.index, false )
             bam=BWA_MEM.out.bam
         }
@@ -50,7 +50,7 @@ workflow VARIANT_CALLING {
         }
         else{
             
-            genome =Channel.value([[params.viral_genome_id], file(viral_genome, checkIfExists: true), file(viral_genome_fai, checkIfExists: true)])
+            genome =Channel.value([[params.virus_accession_id], file(viral_genome, checkIfExists: true), file(viral_genome_fai, checkIfExists: true)])
             BAM_VARIANT_CALLING_SORT_FREEBAYES_BCFTOOLS(bam_bai , genome , [], [], [] )
             GUNZIP(BAM_VARIANT_CALLING_SORT_FREEBAYES_BCFTOOLS.out.vcf)
         }
