@@ -8,7 +8,7 @@ process ANNOTATEMATPEPTIDES_NCOV {
 
   input:
       tuple val(meta), path(vcf)
-      path  gff
+      tuple val(meta2), path(json)
 
   output:
       tuple val(meta), path("*annotated.vcf"), emit: vcf
@@ -24,7 +24,7 @@ process ANNOTATEMATPEPTIDES_NCOV {
     """
     mature_peptide_annotation.py \\
     --vcf_file $vcf \\
-    --annotation_file $gff \\
+    --json $json \\
     --output_vcf ${prefix}.annotated.vcf \\
     $args
     """

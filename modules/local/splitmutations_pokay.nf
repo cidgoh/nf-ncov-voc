@@ -8,7 +8,7 @@ process NCOVSPLITMUTATIONSPOKAY {
   
   input:
       tuple val(meta), path(annotations)
-      tuple val(meta2), path(tsv)
+      path(tsv)
 
   output:
       tuple val(meta), path("*.tsv"), emit: tsv

@@ -17,3 +17,7 @@ data/*
 *.fasta
 *.fa.xz
 *.gz
+hMPXV_*
+bin/web.log
+assets/config.ini
+*-params.yaml

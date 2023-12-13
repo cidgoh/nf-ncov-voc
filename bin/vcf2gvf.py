@@ -8,7 +8,7 @@ This script converts VCF files that have been annotated into GVF
 files. Required user input is a VCF file.
     
 The attributes completed by this script are: 
-['ID', 'Name', 'chrom_region', 'protein', 'ps_filter', 'ps_exc', 'mat_pep_id',
+['ID', 'Name', 'gene', 'protein_name', 'protein_symbol', 'protein_id', 'ps_filter', 'ps_exc', 'mat_pep',
 'mat_pep_desc','mat_pep_acc', 'ro', 'ao', 'dp', 'sample_size', 'Reference_seq',
 'Variant_seq', 'nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
 'viral_lineage', 'alternate_frequency']
@@ -20,7 +20,7 @@ import numpy as np
 import json
 from functions import parse_INFO, find_sample_size, \
     unnest_multi, get_unknown_labels, separate_attributes, rejoin_attributes, \
-        clade_defining_threshold, map_pos_to_gene_protein
+        clade_defining_threshold, map_pos_to_gene_protein, add_alias_names
 from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
 
@@ -61,7 +61,7 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
 
     # fill in attributes from vcf_df columns by name if they exist
     vcf_df_cols_to_add = ['nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
-                        'ps_filter', 'ps_exc', 'mat_pep_id','mat_pep_desc',
+                        'ps_filter', 'ps_exc', 'mat_pep','mat_pep_desc',
                         'mat_pep_acc', 'Reference_seq', 'Variant_seq',
                         "dp", "ro", "ao"]
     for column in list(set(vcf_df.columns) & set(vcf_df_cols_to_add)):
@@ -75,12 +75,16 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     new_gvf['viral_lineage'] = strain
     new_gvf['alternate_frequency'] = vcf_df["AF"]
     
-    # add chrom_region and protein attributes
-    gene_names, protein_names = map_pos_to_gene_protein(
+    # add gene and protein attributes from JSON
+    json_df = map_pos_to_gene_protein(
         vcf_df['POS'].astype(int), GENE_PROTEIN_POSITIONS_DICT)
-    new_gvf['chrom_region'] = gene_names
-    new_gvf['protein'] = protein_names
+    new_gvf["gene"] = json_df["gene"]
+    new_gvf["protein_name"] = json_df["protein_name"]
+    new_gvf["protein_symbol"] = json_df["protein_symbol"]
+    new_gvf["protein_id"] = json_df["protein_id"]
     
+    # add 'alias' column for ORF1a/b mutations
+    new_gvf = add_alias_names(new_gvf, GENE_PROTEIN_POSITIONS_DICT)
     # add clade_defining attribute
     new_gvf = clade_defining_threshold(args.clades_threshold,
                                              new_gvf, sample_size)
@@ -152,7 +156,7 @@ if __name__ == '__main__':
                    sample_size)
     
     # add species to pragmas
-    species = GENE_PROTEIN_POSITIONS_DICT['species']
+    species = GENE_PROTEIN_POSITIONS_DICT['Src']['species']
     pragmas[0] = pragmas[0].str.replace("##species", "##species " + str(species))
 
     # combine pragmas, header, GVF contents

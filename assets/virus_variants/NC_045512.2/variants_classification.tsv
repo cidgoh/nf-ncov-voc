@@ -1,0 +1,14 @@
+variant	pango_lineage	variant_type	voi_designation_date	voc_designation_date	vum_designation_date	status
+Alpha	Q,AP	VOC	n/a	18-Dec-2020	n/a	de_escalated
+Beta	B.1.351	VOC	n/a	18-Dec-2020	n/a	de_escalated
+Gamma	P.1	VOC	n/a	11-Jan-2021	n/a	de_escalated
+Delta	AY	VOC	04-Apr-2021	11-May-2021	n/a	de_escalated
+Epsilon	B.1.427,B.1.429	VOI	05-Mar-2021	n/a	n/a	de_escalated
+Zeta	P.2	VOI	17-Mar-2021	n/a	n/a	de_escalated
+Eta	B.1.525	VOI	17-Mar-2021	n/a	n/a	de_escalated
+Theta	P.3	VOI	24-Mar-2021	n/a	n/a	de_escalated
+Iota	B.1.526	VOI	24-Mar-2021	n/a	n/a	de_escalated
+Kappa	B.1.617.1	VOI	04-Apr-2021	n/a	n/a	de_escalated
+Lambda	C.37	VOI	14-Jun-2021	n/a	n/a	de_escalated
+Mu	B.1.621,BB.2	VOI	30-Aug-2021	n/a	n/a	de_escalated
+Omicron	B[A|B|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z],C[A|B|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z],D[A|B|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z],E[A|B|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z],F[A|B|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z],G[A|B|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z],H[A|B|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z],J[A|B|C|D|E|F|G|H|J|K|L|M|N|P|Q|R|S|T|U|V|W|Y|Z],K[A|B|C|D|E|F],X[E|G|H|J|K|L|M|N|P|Q|R|T|U|V|W|Y|Z|AC|AD|AE|AF|AG|AH|AJ|AK|AL|AM|AN|AP|AQ|AS|AT|AU|AV|AZ|BB|BD|BE|BF|BG|BH|BJ|BK|BL|BM|BN|BP|BQ|BR|BS|BT|BU|BV|BW|BY|BZ|CA|CB|CC|CD|CE|CF|CG|CH|CJ|CK|CL|CM|CN|CP|CQ|CR|CS|CT|CU|CV|CW|CY|CZ|DA|DB|DC|DD|DE|DF|DG|DH]	VOC	n/a	26-Nov-2021	24-Nov-2021	actively_circulating

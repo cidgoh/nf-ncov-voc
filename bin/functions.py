@@ -3,29 +3,9 @@ import numpy as np
 import logging
 
 # standard variables used by all scripts
-
-
-def parse_variant_file(dataframe):
-    who_lineages = []
-    for var in dataframe["pango_lineage"]:
-        if "," in var:
-            for temp in var.split(","):
-                if not "[" in var:
-                    who_lineages.append(temp)
-                    who_lineages.append(temp+".*")
-                else:
-                    parent=temp[0]
-                    child=temp[2:-1].split("|")
-                    for c in child:
-                        who_lineages.append(parent + str(c))
-                        who_lineages.append(parent+str(c)+".*")
-        else:
-            who_lineages.append(var)
-    return who_lineages
-
-
-empty_attributes = 'ID=;Name=;chrom_region=;protein=;ps_filter=;ps_exc=; \
-    mat_pep_id=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
+empty_attributes = 'ID=;Name=;alias=;gene=;protein_name=;protein_symbol=;\
+    protein_id=;ps_filter=;ps_exc=; \
+    mat_pep=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;vcf_gene=; \
     mutation_type=; viral_lineage=;multi_aa_name=;multiaa_comb_mutation=; \
     alternate_frequency=;function_category=;source=; citation=; \
@@ -260,19 +240,11 @@ def find_sample_size(table, lineage, vcf_file, wastewater):
 
     
 def parse_INFO(df, var_cols): # return INFO dataframe with named columns, including EFF split apart
-    # parse INFO column
-
-    # sort out problematic sites tag formats   
-    df['INFO'] = df['INFO'].str.replace('ps_filter;', 'ps_filter=;')
-    df['INFO'] = df['INFO'].str.replace('ps_exc;', 'ps_exc=;')
-    df['INFO'] = df['INFO'].str.replace('=n/a', '') #why is this here?
-    df['INFO'] = df['INFO'].str.replace('mat_pep_id;', 'mat_pep_id=;')
-    df['INFO'] = df['INFO'].str.replace('mat_pep_desc;', 'mat_pep_desc=;')
-    df['INFO'] = df['INFO'].str.replace('mat_pep_acc', 'mat_pep_acc=')
 
     # make 'INFO' column easier to extract attributes from:
     # split at ;, form dataframe
     info = df['INFO'].str.split(pat=';').apply(pd.Series)
+
     for column in info.columns:
         split = info[column].str.split(pat='=').apply(pd.Series)
         title = split[0].drop_duplicates().tolist()[0]
@@ -415,41 +387,38 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
     :return: series containing SARS-CoV-2 chromosome region names at each
     nucleotide position in ``pos``
     """
-    # make a dataframe of the same length as
-    # pos to put gene names in (+ other things)
-    df = pos.astype(str).to_frame()
+    # make an empty dataframe of the same length as pos and with four columns
+    cols_to_add = ["gene", "protein_name", "protein_symbol", "protein_id"]
+    df = pd.DataFrame(np.nan, index=range(0,pos.shape[0]), columns=cols_to_add)
+    # add positions to this df
+    df["POS"] = pos
 
-    # loop through genes dict to get gene names
-    df["gene_names"] = df["POS"]
-    for gene in GENE_PROTEIN_POSITIONS_DICT["genes"]:
-        # get nucleotide coordinates for this gene
-        start = GENE_PROTEIN_POSITIONS_DICT["genes"][gene]["coordinates"]["from"]
-        end = GENE_PROTEIN_POSITIONS_DICT["genes"][gene]["coordinates"]["to"]
-        # for all the mutations that are found in this region,
-        # assign this gene name
-        gene_mask = pos.astype(int).between(start, end, inclusive="both")
-        if gene == "Stem-loop":  # no stem_loop entry in SARS-CoV-2.json
-            df["gene_names"][gene_mask] = gene + ",3\' UTR"
-        else:
-            df["gene_names"][gene_mask] = gene
+    # loop through all CDS regions in dict to get attributes
+    for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
+        if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and ("protein_alias" in GENE_PROTEIN_POSITIONS_DICT[entry].keys()):
+            # extract values from JSON entry
+            start = GENE_PROTEIN_POSITIONS_DICT[entry]["start"]
+            end = GENE_PROTEIN_POSITIONS_DICT[entry]["end"]
+            #aa_start = GENE_PROTEIN_POSITIONS_DICT[entry]["aa_start"]
+            #aa_end = GENE_PROTEIN_POSITIONS_DICT[entry]["aa_end"]
+            gene = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
+            protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["product"]
+            protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]
+            protein_id = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_id"]
+
+            # fill in attributes for mutations in this CDS region
+            cds_mask = df["POS"].astype(int).between(start, end, inclusive="both")
+            df.loc[cds_mask, "gene"] = gene
+            df.loc[cds_mask, "protein_name"] = protein_name
+            df.loc[cds_mask, "protein_symbol"] = protein_symbol
+            df.loc[cds_mask, "protein_id"] = protein_id
+
     # label all mutations that didn't belong to any gene as "intergenic"
-    df["gene_names"][df["gene_names"].str.isnumeric()] = "intergenic"
-
-    # loop through proteins dict to get protein names
-    df["protein_names"] = df["POS"]
-    if "proteins" in GENE_PROTEIN_POSITIONS_DICT.keys():
-        for protein in GENE_PROTEIN_POSITIONS_DICT["proteins"]:
-            start = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein][
-                "g.coordinates"]["from"]
-            end = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["g.coordinates"]["to"]
-            protein_name = GENE_PROTEIN_POSITIONS_DICT["proteins"][protein]["name"]
-            # get protein names for all mutations that are within range
-            protein_mask = pos.astype(int).between(start, end, inclusive="both")
-            df["protein_names"][protein_mask] = protein_name
+    df.loc[df["gene"].isna(), "gene"] = "intergenic"
     # label all mutations that didn't belong to any protein as "n/a"
-    df["protein_names"][df["protein_names"].str.isnumeric()] = "n/a"
+    df = df.fillna("n/a")
 
-    return(df["gene_names"], df["protein_names"])
+    return(df)
 
 
 def clade_defining_threshold(threshold, df, sample_size):
@@ -464,5 +433,65 @@ def clade_defining_threshold(threshold, df, sample_size):
         df.loc[df.alternate_frequency <= threshold, "clade_defining"] = "False"
         
     return df
+
+
+def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
+    '''Creates alias names for Orf1ab mutations, reindexing the amino acid numbers.'''
+    df.loc[:, 'alias'] = 'n/a'
+
+    # get list of all NSP proteins in the file:
+    alias_mask = df['mat_pep'].str.contains('nsp') & df['gene'].str.contains("ORF1")
+    nsps_list = sorted(list(set(df[alias_mask]['mat_pep'].tolist())))
+
+    if len(nsps_list) > 0:
+        
+        ## note: gene and protein_name are based on our gene positions JSON
+        
+        # split up all names in alias_mask into letter-number-letter columns
+        # hacky workaround to fix later: in rows that begin with a number, add "PLACEHOLDER" to the front before splitting them up, to stop NaNs
+        df.loc[df['Name'].str[0].str.isdigit(), 'Name'] = "PLACEHOLDER" + df['Name'].astype(str)
+
+        # split at underscores
+        if df['Name'].str.contains("_").any():
+            df[['mutation_1', 'mutation_2']] = df['Name'].str.split('_', expand=True)
+        else:
+            df['mutation_1'] = df['Name']
+            df['mutation_2'] = None
+        
+        df[['1_start', '1_num', '1_end']] = df['mutation_1'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
+        df['1_num'] = df['1_num'].fillna(0)
+        df['1_newnum'] = 0
+        
+        df[['2_start', '2_num', '2_end']] = df['mutation_2'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
+        df['2_num'] = df['2_num'].fillna(0)
+        df['2_newnum'] = 0
+        
+        # for each nsp in nsps_list, operate on the number column based on the nsp start coordinates
+        for nsp in nsps_list:
+            nsp_start_aa = int(GENE_PROTEIN_POSITIONS_DICT[nsp]["aa_start"])
+            nsp_mask = df['mat_pep']==nsp
+            # for each half of the mutation name...
+            # update the numeric part
+            df.loc[nsp_mask, '1_newnum'] = df['1_num'].astype(int) - nsp_start_aa + 1
+            df.loc[nsp_mask, '2_newnum'] = df['2_num'].astype(int) - nsp_start_aa + 1
+            # put the three columns back together into a column called '1_alias' or '2_alias'
+            df.loc[nsp_mask, '1_alias'] = df['1_start'] + df['1_newnum'].astype(str) + df['1_end']
+            df.loc[nsp_mask, '2_alias'] = df['2_start'] + df['2_newnum'].astype(str) + df['2_end']
+        
+        # put both halves of the alias back together with a new underscore in the middle, for all ORF1ab rows
+        df.loc[alias_mask, 'alias'] = df['1_alias'].astype(str) + '_' + df['2_alias'].astype(str)
+
+        # remove the placeholder
+        df['Name'] = df['Name'].str.replace("PLACEHOLDER","")
+        df['alias'] = df['alias'].str.replace("PLACEHOLDER","")
+        
+        # remove nans
+        df['alias'] = df['alias'].str.replace("nan_nan", "")
+        df['alias'] = df['alias'].str.replace("_nan", "")
+        
+        cols_to_drop = [col for col in df.columns if (("1" in col) or ("2" in col))]
+        df = df.drop(columns=cols_to_drop)
     
+    return df
+        
 

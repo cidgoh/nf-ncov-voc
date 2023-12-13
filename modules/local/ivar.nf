@@ -1,5 +1,4 @@
 process IVAR {
-
     tag { "${bam.baseName}" }
 
     publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.variants.tsv", mode: 'copy'
