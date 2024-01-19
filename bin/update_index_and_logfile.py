@@ -1,6 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+'''
+Given a new batch of GVFs and a new partial logfile, adds the new mutation and lineage info to the mutation index and produces a new logfile.
+If no mutation index is provided, a new one is created from scratch using the GVFs.
+
+--partial_logfile is the path to a text file of the form:
+
+Total sequences:	508910
+New sequences:	171
+New lineages:	['HH.1.1', 'FT.3.1.1']
+
+'''
+
 import pandas as pd
 import numpy as np
 import argparse
