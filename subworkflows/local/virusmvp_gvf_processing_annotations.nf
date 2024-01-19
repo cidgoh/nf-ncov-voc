@@ -19,21 +19,21 @@ workflow GVF_PROCESSING_ANNOTATION {
         
         if(!params.mpox){
             functional_annotation = file(params.funcannot, checkIfExists: true)
-            func = [ [ id:params.viral_genome_id ],  functional_annotation  ]
+            func = [ [ id:"pokay" ],  functional_annotation  ]
             
             split_names = file(params.mutationsplit, checkIfExists: true)
-            split_tsv = [ [ id:params.viral_genome_id ],  split_names  ]
+            //split_tsv = [ [ id:params.virus_accession_id ],  split_names  ]
             
             if(!params.skip_splitting_mutations){
                 
                 NCOVSPLITMUTATIONSPOKAY(
                     func,
-                    split_tsv
+                    split_names
                 )
 
                 NCOVSPLITMUTATIONSGVF(
                     annotation_gvf,
-                    split_tsv
+                    split_names
                 )
             }
             
@@ -43,10 +43,10 @@ workflow GVF_PROCESSING_ANNOTATION {
             )
             annotation_gvf=FUNCTIONALANNOTATION.out.gvf
             
-
         }
+        
         variant_annotation = file(params.variant, checkIfExists: true)
-        variant_tsv = [ [ id:params.viral_genome_id ],  variant_annotation  ]
+        variant_tsv = [ [ id:params.virus_accession_id ],  variant_annotation  ]
     
         VARIANTANNOTATION(
             annotation_gvf,

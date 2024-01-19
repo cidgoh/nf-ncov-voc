@@ -18,19 +18,16 @@ process extractMetadata {
         tuple val(meta2), path("*.txt"), emit: txt
 
     script:
-        def voc = x ? "--voc $x --outtable ${meta2.id}_metadata.tsv.gz --outids ${meta2.id}.txt" : ''
-        //def prefix = voc ? "${meta2.id}" : "${params.enddate}"
-        //def prefix = task.ext.prefix ?: "${meta2.id}"
-        def time = time ? "--startdate ${params.startdate} --enddate ${params.enddate}" : ''
-
+        def prefix = task.ext.prefix ?: "${meta2.id}"
+        def time = time ? "--start_date ${params.start_date} --end_date ${params.end_date}" : ''
 
         """
-        extract_metadata.py \\
-        ${time} \\
-        --table ${metadata} \\
-        --criteria ${params.grouping_criteria} \\
-        ${voc} 
 
-        
+        extract_metadata.py \\
+        $time \\
+        --group ${x} \\
+        --table ${metadata} \\
+        --outtable ${prefix}_metadata.tsv.gz \\
+        --outids ${prefix}.txt
         """
 }

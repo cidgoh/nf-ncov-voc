@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import pandas as pd
 import numpy as np
 import argparse
@@ -103,6 +106,9 @@ if __name__ == '__main__':
         # for ORF1ab mutations, add the alias
         orf1ab_mask = lineage_chunk['protein'].astype(str).str.contains("NSP")
         lineage_chunk.loc[orf1ab_mask, 'new_mutations'] = lineage_chunk['new_mutations'] + " / " + lineage_chunk["protein"] + ":" + lineage_chunk["alias"]
+        # for intergenic mutations, replace nan with "intergenic"
+        intergenic_mask = lineage_chunk['protein'].astype(str).str.contains("nan")
+        lineage_chunk.loc[intergenic_mask, 'new_mutations'] =  lineage_chunk.loc[intergenic_mask, 'new_mutations'].str.replace("nan", "intergenic", regex=True)
         # drop duplicates (there shouldn't be any)
         lineage_chunk = lineage_chunk[['pos', 'alias', 'new_mutations', 'lineage']].drop_duplicates()
         # drop NaN rows
@@ -112,23 +118,23 @@ if __name__ == '__main__':
         logfile_df['pos'] = logfile_df['pos'].astype(int)
             
 
-# save updated mutation index
-mutation_index.to_csv(index_savefile, sep='\t', header=True, index=False)
+    # save updated mutation index
+    mutation_index.to_csv(index_savefile, sep='\t', header=True, index=False)
 
-# clean up logfile_df: restrict df to rows with new mutations, added to the index from the GVFs added above
-gvf_lineage_set = lineages
-# get list of lists for "lineages" column
-lineages_col = logfile_df["lineage"].str.split(",").tolist()
-# keep only rows that have only lineages from the new GVFs
-new_mutation_check = [set(subl).issubset(gvf_lineage_set) for subl in lineages_col]
-logfile_df["new_mutation_check"] = new_mutation_check
-logfile_df = logfile_df[logfile_df['new_mutation_check']==True]
-logfile_df = logfile_df[['new_mutations', 'lineage']]
+    # clean up logfile_df: restrict df to rows with new mutations, added to the index from the GVFs added above
+    gvf_lineage_set = lineages
+    # get list of lists for "lineages" column
+    lineages_col = logfile_df["lineage"].str.split(",").tolist()
+    # keep only rows that have only lineages from the new GVFs
+    new_mutation_check = [set(subl).issubset(gvf_lineage_set) for subl in lineages_col]
+    logfile_df["new_mutation_check"] = new_mutation_check
+    logfile_df = logfile_df[logfile_df['new_mutation_check']==True]
+    logfile_df = logfile_df[['new_mutations', 'lineage']]
 
-# read in partial logfile, append the mutations list, and save to the new name
-partial_logfile_df = pd.read_csv(partial_logfile, sep='\t', names=["new_mutations","lineage"])
-partial_logfile_df.loc[len(partial_logfile_df)] = ["New mutations:", ""]
-logfile_df = pd.concat([partial_logfile_df, logfile_df])
+    # read in partial logfile, append the mutations list, and save to the new name
+    partial_logfile_df = pd.read_csv(partial_logfile, sep='\t', names=["new_mutations","lineage"])
+    partial_logfile_df.loc[len(partial_logfile_df)] = ["New mutations:", ""]
+    logfile_df = pd.concat([partial_logfile_df, logfile_df])
 
-# save logfile
-logfile_df.to_csv(log_savefile, sep='\t', header=False, index=False)
+    # save logfile
+    logfile_df.to_csv(log_savefile, sep='\t', header=False, index=False)

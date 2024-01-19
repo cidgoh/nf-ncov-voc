@@ -1,4 +1,4 @@
-process MERGE_PANGOLIN_METADATA{
+process MERGE_CLASSIFFICATION_METADATA{
     tag "$meta.id"
 
     conda "bioconda::pandas=1.4.3"
@@ -9,14 +9,14 @@ process MERGE_PANGOLIN_METADATA{
 
     input:
         tuple val(meta), path(metadata)
-        tuple val(meta), path(pangolin_report)
+        tuple val(meta), path(classifier_report)
 
     output:
         tuple val(meta), path("Metadata_lineage.tsv"), emit: tsv
 
     script:
         """
-        merge_pangolin_metadata.py --metadata ${metadata} --pangolin ${pangolin_report} --output Metadata_lineage.tsv
+        merge_classification_metadata.py --metadata ${metadata} --classifier ${pangolin_report} --output Metadata_lineage.tsv
 
         """
 }

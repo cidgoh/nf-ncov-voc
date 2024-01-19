@@ -27,10 +27,8 @@ process SNPEFF_ANN {
     def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
-    def avail_mem = 4
-    if (!task.memory) {
-        log.info '[snpEff] Available memory not known - defaulting to 4GB. Specify process memory requirements to change this.'
-    } else {
+    def avail_mem = 6
+    if (task.memory) {
         avail_mem = task.memory.giga
     }
     """

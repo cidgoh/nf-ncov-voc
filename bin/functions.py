@@ -457,7 +457,7 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
         else:
             df['mutation_1'] = df['Name']
             df['mutation_2'] = None
-        print(df['mutation_2'].astype(str))
+        
         df[['1_start', '1_num', '1_end']] = df['mutation_1'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
         df['1_num'] = df['1_num'].fillna(0)
         df['1_newnum'] = 0

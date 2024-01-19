@@ -10,7 +10,7 @@ process VCFTOGVF {
       tuple val(meta), path(vcf)
       path stats
       val threshold
-      tuple val(meta3), path(json)
+      tuple val(meta2), path(json)
       val lineage
           
   output:

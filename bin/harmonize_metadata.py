@@ -13,8 +13,6 @@ import pandas as pd
 import csv
 import yaml
 
-
-
 def parse_args():
     parser = argparse.ArgumentParser(
         description='convert metadata files from different sources to general format')
@@ -52,10 +50,10 @@ if __name__ == '__main__':
     else:
         compression=None
     
+    print(delim, compression)
     Metadata = pd.read_csv(args.metadata, compression=compression, sep=delim, low_memory=False)
     Metadata.columns = map(str.lower, Metadata.columns)
     
-
     required = ([k for k,v in content["Required"].items() if v == True])
     optional = ([k for k,v in content["Optional"].items() if v == True])
     columns_config = required + optional

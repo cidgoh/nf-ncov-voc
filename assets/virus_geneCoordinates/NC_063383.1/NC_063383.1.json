@@ -5522,8 +5522,8 @@
         "aa_end": 246,
         "color": "rgb(196, 185, 69)"
     },
-    "intergenic": {
-        "type": "intergenic",
+    "INTERGENIC": {
+        "type": "INTERGENIC",
         "color": "rgb(128,128,128)"
     }
 }
