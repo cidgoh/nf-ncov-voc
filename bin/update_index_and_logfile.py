@@ -48,9 +48,8 @@ def gvf2df(gvf):
     gvf = gvf[~gvf['#seqid'].str.contains("#")]
 
     # create new dataframe in the format of the index, but just for this one gvf
-    index_cols=['pos', 'mutation', 'alias', 'chrom_region', 'protein',
-       'Pokay_annotation', 'alias_Pokay_annotation', 'lineage']
-    df = pd.DataFrame(np.empty((gvf.shape[0], 8)), columns=index_cols)
+    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'alias', 'chrom_region', 'protein', 'Pokay_annotation', 'lineage']
+    df = pd.DataFrame(np.empty((gvf.shape[0], 9)), columns=index_cols)
     df['pos'] = gvf['#start'].tolist()
     df['mutation'] = gvf["#attributes"].str.findall('(?<=Name=)(.*?)(?=;)').str[0].tolist()
     df['mutation'] = df['mutation'].str.replace("p.", "")
@@ -60,7 +59,6 @@ def gvf2df(gvf):
     df['chrom_region'] = gvf["#attributes"].str.findall('(?<=chrom_region=)(.*?)(?=;)').str[0].tolist()
     df['protein'] = gvf["#attributes"].str.findall('(?<=protein=)(.*?)(?=;)').str[0].tolist()
     df['Pokay_annotation'] = (~gvf["#attributes"].str.contains("function_description=;")).tolist()
-    df['alias_Pokay_annotation'] = np.nan
     df['lineage'] = gvf["#attributes"].str.findall('(?<=lineage=)(.*?)(?=;)').str[0].tolist()
     lineage = df['lineage'][0]
     df = df.astype(str)
@@ -86,7 +84,7 @@ if __name__ == '__main__':
         mutation_index = pd.read_csv(mutation_index_path, sep='\t', dtype='str')
     # if no path was given, create a new mutation index from scratch
     else:
-        mutation_index = pd.DataFrame(np.empty((0, 10)), columns=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'alias', 'chrom_region', 'protein', 'Pokay_annotation', 'alias_Pokay_annotation', 'lineage'])
+        mutation_index = pd.DataFrame(np.empty((0, 9)), columns=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'alias', 'chrom_region', 'protein', 'Pokay_annotation', 'lineage'])
     mutation_index['pos'] = mutation_index['pos'].astype(int)
 
 
@@ -108,15 +106,10 @@ if __name__ == '__main__':
         mutation_index = pd.concat([mutation_index, df])
         mutation_index['alias'] = mutation_index['alias'].astype(str)
         # groupby group_cols, adding new lineages to "lineage" in a list, and the same with the Pokay annotation columns
-        group_cols = ["pos", "mutation", 'hgvs_aa_mutation', 'hgvs_nt_mutation', "alias", "chrom_region", "protein"]
+        group_cols = ["pos", "mutation", 'hgvs_aa_mutation', 'hgvs_nt_mutation', "alias", "chrom_region", "protein", "Pokay_annotation"]
         mutation_index = mutation_index.groupby(group_cols, as_index=False).agg(list)
-        # convert columns from lists back to strings
-        for colname in ["Pokay_annotation", "alias_Pokay_annotation", "lineage"]:
-            mutation_index[colname] = [','.join(map(str, l)) for l in mutation_index[colname]]
-        # for annotation columns, where a column contains "True", make it "True": this will be unneeded once all GVFs have aliases added and are reannotated with Pokay
-        for colname in ["Pokay_annotation"]:
-            mutation_index.loc[mutation_index[colname].str.contains("True"), colname] = True
-            #mutation_index.loc[mutation_index[colname].str.contains(","), colname] = False
+        # convert lineage column from lists back to strings
+        mutation_index["lineage"] = [','.join(map(str, l)) for l in mutation_index["lineage"]]
 
         # extract novel mutations to a new dataframe to save to the logfile
         # novel mutations are found in the rows where "lineage"==gvf_lineage 
