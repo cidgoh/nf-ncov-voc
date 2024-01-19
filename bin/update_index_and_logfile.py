@@ -79,8 +79,12 @@ if __name__ == '__main__':
     lineages = []
     logfile_df = pd.DataFrame(np.empty((0, 4)), columns=['pos', 'alias', 'new_mutations', 'lineage'])
 
-    # open the mutation index
-    mutation_index = pd.read_csv(mutation_index_path, sep='\t', dtype='str')
+    # open the mutation index if the path was provided
+    if mutation_index_path!=None:
+        mutation_index = pd.read_csv(mutation_index_path, sep='\t', dtype='str')
+    # if no path was given, create a new mutation index from scratch
+    else:
+        mutation_index = pd.DataFrame(np.empty((0, 8)), columns=['pos', 'mutation', 'alias', 'chrom_region', 'protein', 'Pokay_annotation', 'alias_Pokay_annotation', 'lineage'])
     mutation_index['pos'] = mutation_index['pos'].astype(int)
 
     '''
