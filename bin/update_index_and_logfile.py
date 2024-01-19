@@ -105,7 +105,7 @@ if __name__ == '__main__':
         # append the new gvf df to the index and use groupby() to add the lineage where 
         mutation_index = pd.concat([mutation_index, df])
         mutation_index['alias'] = mutation_index['alias'].astype(str)
-        # groupby group_cols, adding new lineages to "lineage" in a list, and the same with the Pokay annotation columns
+        # groupby group_cols, adding new lineages to "lineage" in a list
         group_cols = ["pos", "mutation", 'hgvs_aa_mutation', 'hgvs_nt_mutation', "alias", "chrom_region", "protein", "Pokay_annotation"]
         mutation_index = mutation_index.groupby(group_cols, as_index=False).agg(list)
         # convert lineage column from lists back to strings
