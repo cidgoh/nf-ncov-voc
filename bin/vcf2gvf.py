@@ -57,7 +57,7 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
         new_gvf['#type'] = '.'
     # fill '#attributes' column with empty key-value pairs to fill in later
     new_gvf['#attributes'] = empty_attributes
-            
+
     # expand #attributes into columns to fill in separately
     new_gvf = separate_attributes(new_gvf)
 

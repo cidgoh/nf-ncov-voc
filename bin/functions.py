@@ -6,7 +6,7 @@ import logging
 empty_attributes = 'ID=;Name=;alias=;gene=;protein_name=;protein_symbol=;\
     protein_id=;ps_filter=;ps_exc=; \
     mat_pep=;mat_pep_desc=;mat_pep_acc=;ro=;ao=;dp=;sample_size=; \
-    Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt;hgvs_aa;hgvs_alias; \
+    Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=; \
     vcf_gene=;mutation_type=;viral_lineage=;multi_aa_name=; \
     multiaa_comb_mutation=;alternate_frequency=;function_category=;source=; \
     citation=;comb_mutation=;function_description=;heterozygosity=; \
@@ -54,7 +54,7 @@ def rewrite_nt_snps_as_hgvs(original_nt_name):
 def remove_nts_from_nt_name(original_nt_name):
     # sufficient for nt names containing "del" or "dup"
     # will not work for "ins" or "delins"
-    hgvs_name = "g." + "".join([ch for ch in original_nt_name if not ch.isupper()])
+    hgvs_name = "".join([ch for ch in original_nt_name if not ch.isupper()])
 
     return(hgvs_name)
 
@@ -67,25 +67,25 @@ def add_hgvs_names(new_gvf):
     
     # fill in 'hgvs_nt'
     # add hgvs nt snps for rows where type==snp
-    new_gvf[new_gvf['nt_name'].str.startswith("g.") and new_gvf['#type']=='snp', 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name'].apply(rewrite_nt_snps_as_hgvs)
+    new_gvf.loc[(new_gvf['nt_name'].str.startswith("g.")) & (new_gvf['#type']=='snp'), 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name'].apply(rewrite_nt_snps_as_hgvs)
     # add hgvs nt dels and dups
-    new_gvf[new_gvf['nt_name'].str.startswith("g.") and new_gvf['nt_name'].str.contains("dup|del") and ~new_gvf['nt_name'].str.contains("delins"), 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name'].apply(remove_nts_from_nt_name)
+    new_gvf.loc[(new_gvf['nt_name'].str.startswith("g.")) & (new_gvf['nt_name'].str.contains("dup|del")) & ~(new_gvf['nt_name'].str.contains("delins")), 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name'].apply(remove_nts_from_nt_name)
     # NOTE: nt delins and ins mutations not covered yet, but likely 'nt_name' is 
     # already correct; holding off until I find examples in our data
     
-    mutation_type_codes = ["del", "delins", "ins", "dup", "fs", "ext"]
-    
-    # fill in 'hgvs_aa'
+    mutation_type_codes = "|".join(["del", "delins", "ins", "dup", "fs", "ext"])
+
+    # fill in 'hgvs_aa'  
     # add hgvs aa snps to rows with protein_id!=n/a and type=snp
-    new_gvf.loc[new_gvf['protein_id']!='n/a' and new_gvf['#type']=='snp', 'hgvs_aa'] = new_gvf["protein_id"] + ":" + new_gvf['aa_name'].apply(convert_amino_acid_codes)
+    new_gvf.loc[(new_gvf['protein_id']!='n/a') & (new_gvf['#type']=='snp'), 'hgvs_aa'] = new_gvf["protein_id"] + ":" + new_gvf['aa_name'].apply(convert_amino_acid_codes)
     # add hgvs aa names for non-snps that contain any of the mutation_type_codes
-    new_gvf.loc[new_gvf['protein_id']!='n/a' and new_gvf['#type']!='snp' and new_gvf['aa_name'].isin(mutation_type_codes), 'hgvs_aa'] = new_gvf["protein_id"] + ":" + new_gvf['aa_name'].apply(convert_amino_acid_codes)
+    new_gvf.loc[(new_gvf['protein_id']!='n/a') & (new_gvf['#type']!='snp') & (new_gvf['aa_name'].str.contains(mutation_type_codes)), 'hgvs_aa'] = new_gvf["protein_id"] + ":" + new_gvf['aa_name'].apply(convert_amino_acid_codes)
 
     # fill in 'hgvs_alias'
     # add hgvs alias names for snps
-    new_gvf.loc[new_gvf['alias']!='n/a' and new_gvf['protein_id']!='n/a' and new_gvf['#type']=='snp', 'hgvs_alias'] = new_gvf["protein_id"] + ":p." + new_gvf['alias'].apply(convert_amino_acid_codes)
+    new_gvf.loc[(new_gvf['alias']!='n/a') & (new_gvf['protein_id']!='n/a') & (new_gvf['#type']=='snp'), 'hgvs_alias'] = new_gvf["protein_id"] + ":p." + new_gvf['alias'].apply(convert_amino_acid_codes)
     # add hgvs alias names for non-snps that contain any of the mutation_type_codes
-    new_gvf.loc[new_gvf['alias']!='n/a' and new_gvf['protein_id']!='n/a' and new_gvf['#type']!='snp' and new_gvf['aa_name'].isin(mutation_type_codes), 'hgvs_alias'] = new_gvf["protein_id"] + ":p." + new_gvf['alias'].apply(convert_amino_acid_codes)
+    new_gvf.loc[(new_gvf['alias']!='n/a') & (new_gvf['protein_id']!='n/a') & (new_gvf['#type']!='snp') & (new_gvf['aa_name'].str.contains(mutation_type_codes)), 'hgvs_alias'] = new_gvf["protein_id"] + ":p." + new_gvf['alias'].apply(convert_amino_acid_codes)
 
     return(new_gvf)
 
