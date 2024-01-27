@@ -10,7 +10,7 @@ files. Required user input is a VCF file.
 The attributes completed by this script are: 
 ['ID', 'Name', 'gene', 'protein_name', 'protein_symbol', 'protein_id', 'ps_filter', 'ps_exc', 'mat_pep',
 'mat_pep_desc','mat_pep_acc', 'ro', 'ao', 'dp', 'sample_size', 'Reference_seq',
-'Variant_seq', 'nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
+'Variant_seq', 'nt_name', 'aa_name', 'hgvs_nt', 'hgvs_aa', 'hgvs_alias', 'vcf_gene', 'mutation_type',
 'viral_lineage', 'alternate_frequency']
 """
 
@@ -20,7 +20,9 @@ import numpy as np
 import json
 from functions import parse_INFO, find_sample_size, \
     unnest_multi, get_unknown_labels, separate_attributes, rejoin_attributes, \
-        clade_defining_threshold, map_pos_to_gene_protein, add_alias_names
+    clade_defining_threshold, map_pos_to_gene_protein, add_alias_names, \
+    convert_amino_acid_codes, rewrite_nt_snps_as_hgvs, remove_nts_from_nt_name, \
+    add_hgvs_names
 from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
 
@@ -88,7 +90,10 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     # add clade_defining attribute
     new_gvf = clade_defining_threshold(args.clades_threshold,
                                              new_gvf, sample_size)
-        
+    
+    # add HGVS names columns: 'hgvs_nt', 'hgvs_aa', 'hgvs_alias'
+    new_gvf = add_hgvs_names(new_gvf)
+    
     # add 'ID' attribute: here, rows with the same entry in 'Name'
     # get the same ID (should all be different)
     new_gvf['ID'] = 'ID_' + new_gvf.groupby('Name', sort=False).ngroup().astype(str)
