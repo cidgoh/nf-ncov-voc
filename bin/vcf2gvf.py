@@ -87,6 +87,7 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     
     # add 'alias' column for ORF1a/b mutations
     new_gvf = add_alias_names(new_gvf, GENE_PROTEIN_POSITIONS_DICT)
+
     # add clade_defining attribute
     new_gvf = clade_defining_threshold(args.clades_threshold,
                                              new_gvf, sample_size)

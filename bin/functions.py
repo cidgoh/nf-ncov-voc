@@ -58,6 +58,14 @@ def remove_nts_from_nt_name(original_nt_name):
 
     return(hgvs_name)
 
+'''
+def convert_nt_delins_to_hgvs():
+    delins_regex = "[a-z]\.[A-Z]+[0-9]+_[0-9]+[A-Z]+"
+    # eg. input: "g.TATT430_433ACTTCTA"
+    # eg. output: "g.430_433delinsACTTCTA"
+
+    return(hgvs_name)
+'''
 
 def add_hgvs_names(new_gvf):
     
@@ -70,7 +78,9 @@ def add_hgvs_names(new_gvf):
     new_gvf.loc[(new_gvf['nt_name'].str.startswith("g.")) & (new_gvf['#type']=='snp'), 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name'].apply(rewrite_nt_snps_as_hgvs)
     # add hgvs nt dels and dups
     new_gvf.loc[(new_gvf['nt_name'].str.startswith("g.")) & (new_gvf['nt_name'].str.contains("dup|del")) & ~(new_gvf['nt_name'].str.contains("delins")), 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name'].apply(remove_nts_from_nt_name)
-    # NOTE: nt delins and ins mutations not covered yet, but likely 'nt_name' is 
+    # add hgvs nt ins
+    new_gvf.loc[(new_gvf['nt_name'].str.startswith("g.")) & (new_gvf['nt_name'].str.contains("ins")) & ~(new_gvf['nt_name'].str.contains("delins")), 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name']  
+    # NOTE: nt delins mutations not covered yet, but likely 'nt_name' is 
     # already correct; holding off until I find examples in our data
     
     mutation_type_codes = "|".join(["del", "delins", "ins", "dup", "fs", "ext"])
@@ -381,10 +391,10 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     
     # make adjustments to the nucleotide names
     # 1) change 'c.' to 'g.'convert_amino_acid_codes for nucleotide names ### double check that we want this
-    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("c.", "g.", regex=True) 
-    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("n.", "g.", regex=True) 
+    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("c.", "g.", regex=False) 
+    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("n.", "g.", regex=False) 
     # 2) change nucleotide names of the form "g.C*4378A" to g.C4378AN;
-    asterisk_mask = df["hgvs_nucleotide"].str.contains('\*')
+    asterisk_mask = df["hgvs_nucleotide"].str.contains('*', regex=False)
     df.loc[asterisk_mask, "hgvs_nucleotide"] = 'g.' + df['REF'] + df['POS'] + \
         df['ALT']
     # 3) change 'Gene_Name' to "intergenic" where names contain a "*"
@@ -395,7 +405,7 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     df["Names"] = df["hgvs_nucleotide"]
     protein_mask = df["hgvs_protein"].str.contains("p.")
     df.loc[protein_mask, "Names"] = df["hgvs_protein"].str.replace(
-        "p.", "", regex=True)
+        "p.", "", regex=False)
 
     # rename some columns
     df = df.rename(columns={'Gene_Name': "vcf_gene", 'Functional_Class':
