@@ -5,13 +5,13 @@ import logging
 # standard variables used by all scripts
 empty_attributes = 'ID=;Name=;alias=;gene=;protein_name=;protein_symbol=;\
     protein_id=;ps_filter=;ps_exc=; \
-    mat_pep=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
-    Reference_seq=;Variant_seq=;nt_name=;aa_name=;vcf_gene=; \
-    mutation_type=; viral_lineage=;multi_aa_name=;multiaa_comb_mutation=; \
-    alternate_frequency=;function_category=;source=; citation=; \
-    comb_mutation=;function_description=;heterozygosity=;clade_defining=; \
-    variant=;variant_type=;voi_designation_date=;voc_designation_date=; \
-    vum_designation_date=;status=;'
+    mat_pep=;mat_pep_desc=;mat_pep_acc=;ro=;ao=;dp=;sample_size=; \
+    Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=; \
+    vcf_gene=;mutation_type=;viral_lineage=;multi_aa_name=; \
+    multiaa_comb_mutation=;alternate_frequency=;function_category=;source=; \
+    citation=;comb_mutation=;function_description=;heterozygosity=; \
+    clade_defining=;variant=;variant_type=;voi_designation_date=; \
+    voc_designation_date=;vum_designation_date=;status=;'
 empty_attributes = empty_attributes.replace(" ", "")
 
 gvf_columns = ['#seqid', '#source', '#type', '#start', '#end',
@@ -24,6 +24,80 @@ vcf_columns = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL',
 pragmas = pd.DataFrame([['##gff-version 3'],
                         ['##gvf-version 1.10'],
                         ['##species']])
+
+# source: https://hgvs-nomenclature.org/stable/background/standards/#amino-acid-descriptions
+amino_acid_codes_dict = {'*': 'Ter', 'A': 'Ala', 'B': 'Asx', 'C': 'Cys',
+                         'D': 'Asp', 'E': 'Glu', 'F': 'Phe', 'G': 'Gly',
+                         'H': 'His', 'I': 'Ile', 'K': 'Lys', 'L': 'Leu',
+                         'M': 'Met', 'N': 'Asn', 'P': 'Pro', 'Q': 'Gln',
+                         'R': 'Arg', 'S': 'Ser', 'T': 'Thr', 'U': 'Sec',
+                         'V': 'Val', 'W': 'Trp', 'X': 'Xaa', 'Y': 'Tyr',
+                         'Z': 'Glx'}
+
+def convert_amino_acid_codes(one_letter_mutation_name):
+    three_letter_code_result = "".join([
+        amino_acid_codes_dict[ch]
+        if (ch.isupper() and ch in amino_acid_codes_dict.keys()) 
+        else ch for ch in one_letter_mutation_name])
+
+    return(three_letter_code_result)
+
+def rewrite_nt_snps_as_hgvs(original_nt_name):
+    ## NOTE: this function doesn't add the ref sequence; this must be done separately
+    original_nt_name = original_nt_name[2:] # remove "g."
+    pos = "".join([i for i in original_nt_name if i.isdigit()])
+    nts_list = [ch for ch in original_nt_name if ch.isupper()]
+    hgvs_name = "g." + pos + nts_list[0] + ">" + nts_list[1]
+
+    return(hgvs_name)
+
+def remove_nts_from_nt_name(original_nt_name):
+    # sufficient for nt names containing "del" or "dup"
+    # will not work for "ins" or "delins"
+    hgvs_name = "".join([ch for ch in original_nt_name if not ch.isupper()])
+
+    return(hgvs_name)
+
+'''
+def convert_nt_delins_to_hgvs():
+    delins_regex = "[a-z]\.[A-Z]+[0-9]+_[0-9]+[A-Z]+"
+    # eg. input: "g.TATT430_433ACTTCTA"
+    # eg. output: "g.430_433delinsACTTCTA"
+
+    return(hgvs_name)
+'''
+
+def add_hgvs_names(new_gvf):
+    
+    new_gvf['hgvs_nt'] = 'n/a'
+    new_gvf['hgvs_aa'] = 'n/a'
+    new_gvf['hgvs_alias'] = 'n/a'
+    
+    # fill in 'hgvs_nt'
+    # add hgvs nt snps for rows where type==snp
+    new_gvf.loc[(new_gvf['nt_name'].str.startswith("g.")) & (new_gvf['#type']=='snp'), 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name'].apply(rewrite_nt_snps_as_hgvs)
+    # add hgvs nt dels and dups
+    new_gvf.loc[(new_gvf['nt_name'].str.startswith("g.")) & (new_gvf['nt_name'].str.contains("dup|del")) & ~(new_gvf['nt_name'].str.contains("delins")), 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name'].apply(remove_nts_from_nt_name)
+    # add hgvs nt ins
+    new_gvf.loc[(new_gvf['nt_name'].str.startswith("g.")) & (new_gvf['nt_name'].str.contains("ins")) & ~(new_gvf['nt_name'].str.contains("delins")), 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name']  
+    # NOTE: nt delins mutations not covered yet, but likely 'nt_name' is 
+    # already correct; holding off until I find examples in our data
+    
+    mutation_type_codes = "|".join(["del", "delins", "ins", "dup", "fs", "ext"])
+
+    # fill in 'hgvs_aa'  
+    # add hgvs aa snps to rows with protein_id!=n/a and type=snp
+    new_gvf.loc[(new_gvf['protein_id']!='n/a') & (new_gvf['#type']=='snp'), 'hgvs_aa'] = new_gvf["protein_id"] + ":" + new_gvf['aa_name'].apply(convert_amino_acid_codes)
+    # add hgvs aa names for non-snps that contain any of the mutation_type_codes
+    new_gvf.loc[(new_gvf['protein_id']!='n/a') & (new_gvf['#type']!='snp') & (new_gvf['aa_name'].str.contains(mutation_type_codes)), 'hgvs_aa'] = new_gvf["protein_id"] + ":" + new_gvf['aa_name'].apply(convert_amino_acid_codes)
+
+    # fill in 'hgvs_alias'
+    # add hgvs alias names for snps
+    new_gvf.loc[(new_gvf['alias']!='n/a') & (new_gvf['protein_id']!='n/a') & (new_gvf['#type']=='snp'), 'hgvs_alias'] = new_gvf["protein_id"] + ":p." + new_gvf['alias'].apply(convert_amino_acid_codes)
+    # add hgvs alias names for non-snps that contain any of the mutation_type_codes
+    new_gvf.loc[(new_gvf['alias']!='n/a') & (new_gvf['protein_id']!='n/a') & (new_gvf['#type']!='snp') & (new_gvf['aa_name'].str.contains(mutation_type_codes)), 'hgvs_alias'] = new_gvf["protein_id"] + ":p." + new_gvf['alias'].apply(convert_amino_acid_codes)
+
+    return(new_gvf)
 
 
 def separate_attributes(df):
@@ -316,11 +390,11 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     df = pd.concat([df, hgvs], axis=1)
     
     # make adjustments to the nucleotide names
-    # 1) change 'c.' to 'g.' for nucleotide names ### double check that we want this
-    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("c.", "g.", regex=True) 
-    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("n.", "g.", regex=True) 
+    # 1) change 'c.' to 'g.'convert_amino_acid_codes for nucleotide names ### double check that we want this
+    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("c.", "g.", regex=False) 
+    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("n.", "g.", regex=False) 
     # 2) change nucleotide names of the form "g.C*4378A" to g.C4378AN;
-    asterisk_mask = df["hgvs_nucleotide"].str.contains('\*')
+    asterisk_mask = df["hgvs_nucleotide"].str.contains('*', regex=False)
     df.loc[asterisk_mask, "hgvs_nucleotide"] = 'g.' + df['REF'] + df['POS'] + \
         df['ALT']
     # 3) change 'Gene_Name' to "intergenic" where names contain a "*"
@@ -331,7 +405,7 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     df["Names"] = df["hgvs_nucleotide"]
     protein_mask = df["hgvs_protein"].str.contains("p.")
     df.loc[protein_mask, "Names"] = df["hgvs_protein"].str.replace(
-        "p.", "", regex=True)
+        "p.", "", regex=False)
 
     # rename some columns
     df = df.rename(columns={'Gene_Name': "vcf_gene", 'Functional_Class':
@@ -446,7 +520,7 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     if len(nsps_list) > 0:
         
         ## note: gene and protein_name are based on our gene positions JSON
-        
+
         # split up all names in alias_mask into letter-number-letter columns
         # hacky workaround to fix later: in rows that begin with a number, add "PLACEHOLDER" to the front before splitting them up, to stop NaNs
         df.loc[df['Name'].str[0].str.isdigit(), 'Name'] = "PLACEHOLDER" + df['Name'].astype(str)
