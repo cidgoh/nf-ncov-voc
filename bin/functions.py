@@ -82,49 +82,51 @@ def add_hgvs_names(new_gvf):
     nt_del_dup_regex = "[a-z]\.[0-9\-_]+(del|dup)[A-Z]+"
     # for ins
     nt_ins_regex = "[a-z]\.[0-9\-_]+ins[A-Z]+"
+    # for delins, eg. g.GCC10182_10184ACA
+    nt_delins_regex = "[a-z]\.[A-Z]{2,}[0-9\-_][A-Z]{2,}"
     
+    #df.loc[mask, 'val'] = df.loc[mask, 'val'].apply(f)
     # add hgvs nt snp names
-    new_gvf.loc[new_gvf['nt_name'].str.contains(nt_snp_regex, regex=True), 
-                'hgvs_nt'] = new_gvf['#seqid'] + ":" + \
-                new_gvf['nt_name'].apply(rewrite_nt_snps_as_hgvs)
+    nt_snp_mask = new_gvf['nt_name'].str.contains(nt_snp_regex, regex=True)
+    new_gvf.loc[nt_snp_mask, 'hgvs_nt'] = new_gvf['#seqid'] + ":" + \
+                 new_gvf.loc[nt_snp_mask, 'nt_name'].apply(rewrite_nt_snps_as_hgvs)
     # add hgvs nt dels and dups
-    new_gvf.loc[new_gvf['nt_name'].str.contains(nt_del_dup_regex, regex=True),
-                'hgvs_nt'] = new_gvf['#seqid'] + ":" + \
-                new_gvf['nt_name'].apply(remove_nts_from_nt_name)
+    nt_del_dup_mask = new_gvf['nt_name'].str.contains(nt_del_dup_regex, regex=True)
+    new_gvf.loc[nt_del_dup_mask,'hgvs_nt'] = new_gvf['#seqid'] + ":" + \
+                new_gvf.loc[nt_del_dup_mask, 'nt_name'].apply(remove_nts_from_nt_name)
     # add hgvs nt ins
-    new_gvf.loc[new_gvf['nt_name'].str.contains(nt_ins_regex, regex=True), 
-                'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name']  
-    # NOTE: nt delins mutations not covered yet, but likely 'nt_name' is 
-    # already correct; holding off until I find examples in our data
-     
+    nt_ins_mask = new_gvf['nt_name'].str.contains(nt_ins_regex, regex=True)
+    new_gvf.loc[nt_ins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name']  
+    # add hgvs nt delins: change to eg. g.123_129delinsAC
+    nt_delins_mask = new_gvf['nt_name'].str.contains(nt_delins_regex, regex=True)
+    new_gvf.loc[nt_delins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + ":" + "TBA!" #new_gvf['nt_name']  
+
     # define aa regex patterns
     aa_snp_regex = "[A-Z*][0-9\-]+[A-Z*]"
     aa_other_regex = "[A-Z*]+[0-9\-]+(del|delins|ins|dup|fs|ext)[A-Z*]*"
     
     # fill in 'hgvs_aa' 
     # add hgvs aa snps to rows with protein_id!=n/a
-    new_gvf.loc[(new_gvf['aa_name'].str.contains(aa_snp_regex, regex=True)) &
-                (new_gvf['protein_id']!='n/a'), 'hgvs_aa'] = \
-                new_gvf["protein_id"] + ":" + new_gvf['aa_name'].apply(
-                    convert_amino_acid_codes)
+    aa_snp_mask = (new_gvf['aa_name'].str.contains(aa_snp_regex, regex=True)) & (new_gvf['protein_id']!='n/a')
+    new_gvf.loc[aa_snp_mask, 'hgvs_aa'] = \
+                new_gvf["protein_id"] + ":" + \
+                new_gvf.loc[aa_snp_mask, 'aa_name'].apply(convert_amino_acid_codes)
     # add hgvs aa names for non-snps
-    new_gvf.loc[(new_gvf['aa_name'].str.contains(aa_other_regex, regex=True)) &
-                (new_gvf['protein_id']!='n/a'), 'hgvs_aa'] = \
-                new_gvf["protein_id"] + ":" + new_gvf['aa_name'].apply(
+    aa_non_snp_mask = (new_gvf['aa_name'].str.contains(aa_other_regex, regex=True)) & (new_gvf['protein_id']!='n/a')
+    new_gvf.loc[aa_non_snp_mask, 'hgvs_aa'] = \
+                new_gvf["protein_id"] + ":" + new_gvf.loc[aa_non_snp_mask, 'aa_name'].apply(
                     convert_amino_acid_codes)
 
     # fill in 'hgvs_alias'
     # add hgvs alias snps to rows with protein_id!=n/a
-    new_gvf.loc[(new_gvf['alias'].str.contains(aa_snp_regex, regex=True)) &
-                (new_gvf['protein_id']!='n/a') & 
-                (new_gvf['alias']!='n/a'), 'hgvs_alias'] = \
-                new_gvf["protein_id"] + ":" + new_gvf['aa_name'].apply(
+    alias_snp_mask = (new_gvf['alias'].str.contains(aa_snp_regex, regex=True)) & (new_gvf['protein_id']!='n/a') & (new_gvf['alias']!='n/a')
+    new_gvf.loc[alias_snp_mask, 'hgvs_alias'] = \
+                new_gvf["protein_id"] + ":" + new_gvf.loc[alias_snp_mask, 'aa_name'].apply(
                     convert_amino_acid_codes)
     # add hgvs alias names for non-snps
-    new_gvf.loc[(new_gvf['alias'].str.contains(aa_other_regex, regex=True)) &
-                (new_gvf['protein_id']!='n/a') &
-                (new_gvf['alias']!='n/a'), 'hgvs_alias'] = \
-                new_gvf["protein_id"] + ":" + new_gvf['aa_name'].apply(
+    alias_non_snp_mask = (new_gvf['alias'].str.contains(aa_other_regex, regex=True)) & (new_gvf['protein_id']!='n/a') & (new_gvf['alias']!='n/a')
+    new_gvf.loc[alias_non_snp_mask, 'hgvs_alias'] = \
+                new_gvf["protein_id"] + ":" + new_gvf.loc[alias_non_snp_mask, 'aa_name'].apply(
                     convert_amino_acid_codes)
                 
     return(new_gvf)
