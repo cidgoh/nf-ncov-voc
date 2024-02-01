@@ -62,7 +62,7 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     new_gvf = separate_attributes(new_gvf)
 
     # fill in attributes from vcf_df columns by name if they exist
-    vcf_df_cols_to_add = ['nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
+    vcf_df_cols_to_add = ['vcf_gene', 'mutation_type',
                         'ps_filter', 'ps_exc', 'mat_pep','mat_pep_desc',
                         'mat_pep_acc', 'Reference_seq', 'Variant_seq',
                         "dp", "ro", "ao"]
@@ -70,6 +70,10 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
         # drop nans if they exist
         vcf_df[column] = vcf_df[column].fillna('')
         new_gvf[column] = vcf_df[column]
+    
+    for column in ['nt_name', 'aa_name']:
+        vcf_df[column] = vcf_df[column].fillna('n/a')
+        new_gvf[column] = vcf_df[column]   
 
     # add other attributes
     new_gvf['sample_size'] = sample_size
@@ -94,6 +98,9 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     
     # add HGVS names columns: 'hgvs_nt', 'hgvs_aa', 'hgvs_alias'
     new_gvf = add_hgvs_names(new_gvf)
+    
+    # save HGVS names for troubleshooting
+    #new_gvf[['nt_name', 'hgvs_nt', 'aa_name', 'hgvs_aa', 'alias', 'hgvs_alias']].to_csv('hgvs_troubleshooting.tsv', sep='\t')
     
     # add 'ID' attribute: here, rows with the same entry in 'Name'
     # get the same ID (should all be different)
