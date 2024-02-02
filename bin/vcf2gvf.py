@@ -88,8 +88,9 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     new_gvf["protein_name"] = json_df["protein_name"]
     new_gvf["protein_symbol"] = json_df["protein_symbol"]
     new_gvf["protein_id"] = json_df["protein_id"]
+    new_gvf["alias_protein_id"] = 'n/a'
     
-    # add 'alias' column for ORF1a/b mutations
+    # add 'alias' column for ORF1a/b mutations, and fill in "alias_protein_id" for these as well
     new_gvf = add_alias_names(new_gvf, GENE_PROTEIN_POSITIONS_DICT)
 
     # add clade_defining attribute
@@ -98,7 +99,10 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     
     # add HGVS names columns: 'hgvs_nt', 'hgvs_aa', 'hgvs_alias'
     new_gvf = add_hgvs_names(new_gvf)
-    
+
+    # drop "alias_protein_id" column
+    new_gvf = new_gvf.drop(["alias_protein_id"], axis=1)
+
     # save HGVS names for troubleshooting
     #new_gvf[['nt_name', 'hgvs_nt', 'aa_name', 'hgvs_aa', 'alias', 'hgvs_alias']].to_csv('hgvs_troubleshooting.tsv', sep='\t')
     
