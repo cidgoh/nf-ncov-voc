@@ -18,7 +18,7 @@ import argparse
 import glob
 import os
 import csv
-
+from functions import separate_attributes
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -46,19 +46,22 @@ def gvf2df(gvf):
     # remove pragmas and original header
     gvf = gvf[~gvf['#seqid'].str.contains("#")]
 
+    gvf = separate_attributes(gvf)
+
     # create new dataframe in the format of the index, but just for this one gvf
-    df = pd.DataFrame(np.empty((gvf.shape[0], 9)), columns=index_cols)
-    df['pos'] = gvf['#start'].tolist()
-    df['mutation'] = gvf["#attributes"].str.findall('(?<=Name=)(.*?)(?=;)').str[0].tolist()
-    df['mutation'] = df['mutation'].str.replace("p.", "", regex=False)
-    df['hgvs_aa_mutation'] = gvf["#attributes"].str.findall('(?<=hgvs_aa=)(.*?)(?=;)').str[0].tolist()
-    df['hgvs_nt_mutation'] = gvf["#attributes"].str.findall('(?<=hgvs_nt=)(.*?)(?=;)').str[0].tolist()
-    #df['alias'] = gvf["#attributes"].str.findall('(?<=alias=)(.*?)(?=;)').str[0].tolist()
-    df['hgvs_alias'] = gvf["#attributes"].str.findall('(?<=hgvs_alias=)(.*?)(?=;)').str[0].tolist()
-    df['gene'] = gvf["#attributes"].str.findall('(?<=gene=)(.*?)(?=;)').str[0].tolist()
-    df['protein_name'] = gvf["#attributes"].str.findall('(?<=protein_name=)(.*?)(?=;)').str[0].tolist()
-    df['Pokay_annotation'] = (~gvf["#attributes"].str.contains("function_description=;")).tolist()
-    df['lineages'] = gvf["#attributes"].str.findall('(?<=lineage=)(.*?)(?=;)').str[0].tolist()
+    df = pd.DataFrame(np.empty((gvf.shape[0], 11)), columns=index_cols)
+    df['pos'] = gvf['#start']
+    df['mutation'] = gvf['Name'].str.replace("p.", "", regex=False)
+    df['hgvs_aa_mutation'] = gvf['hgvs_aa']
+    df['hgvs_nt_mutation'] = gvf['hgvs_nt']
+    df['alias'] = gvf['alias']
+    df['hgvs_alias'] = gvf['hgvs_alias']
+    df['alias_protein'] = 'n/a'
+    df.loc[df['alias']!='n/a', 'alias_protein'] = gvf['mat_pep']
+    df['gene'] = gvf['gene']
+    df['protein_name'] = gvf['protein_name']
+    df['Pokay_annotation'] = gvf["function_description"].notna()
+    df['lineages'] = gvf['viral_lineage']
     lineage = df['lineages'][0]
     df = df.astype(str)
     df = df.drop_duplicates()
@@ -79,14 +82,14 @@ if __name__ == '__main__':
     logfile_df = pd.DataFrame(np.empty((0, 4)), columns=['pos', 'alias', 'new_mutations', 'lineages'])
 
     # set mutation index columns
-    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'hgvs_alias', 'gene', 'protein_name', 'Pokay_annotation', 'lineages']
+    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene', 'protein_name', 'alias', 'hgvs_alias', 'alias_protein', 'Pokay_annotation', 'lineages']
 
     # open the mutation index if the path was provided
     if mutation_index_path!=None:
         mutation_index = pd.read_csv(mutation_index_path, sep='\t', dtype='str')
     # if no path was given, create a new mutation index from scratch
     else:
-        mutation_index = pd.DataFrame(np.empty((0, 9)), columns=index_cols)
+        mutation_index = pd.DataFrame(np.empty((0, 11)), columns=index_cols)
     mutation_index['pos'] = mutation_index['pos'].astype(int)
 
 
@@ -102,32 +105,27 @@ if __name__ == '__main__':
 
         # open gvf and reformat to match the mutation index
         df, lineage = gvf2df(file)
-        df['pos'] = df['pos'].astype(int)
         lineages.append(lineage)
         # append the new gvf df to the index and use groupby() to add the lineage where 
         mutation_index = pd.concat([mutation_index, df])
-        mutation_index['hgvs_alias'] = mutation_index['hgvs_alias'].astype(str)
-        # groupby group_cols, adding new lineages to "lineages" in a list
-        group_cols = ['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'hgvs_alias', 'gene', 'protein_name', 'Pokay_annotation']
-
-        mutation_index = mutation_index.groupby(by=group_cols, as_index=False).agg(list)
-        # convert lineage column from lists back to strings
-        mutation_index["lineages"] = [','.join(map(str, l)) for l in mutation_index["lineages"]]
+        mutation_index['alias'] = mutation_index['alias'].astype(str)
+        # groupby group_cols, adding new lineages to "lineages" in a coma-separated string
+        group_cols = [x for x in index_cols if x != 'lineages']
+        mutation_index = mutation_index.groupby(by=group_cols, as_index=False)['lineages'].apply(','.join)
 
         # if a starting index was provided, extract novel mutations to a new dataframe to save to the logfile
         if mutation_index_path!=None:
-            # novel mutations are found in the rows where "lineage"==gvf_lineage 
-            lineage_mask = ((mutation_index['lineages']==lineage) | mutation_index['lineages'].str.contains("," + lineage))
+            # make a copy of the rows with novel mutations, ie. rows where "lineage"==gvf_lineage 
+            lineage_mask = mutation_index['lineages'].str.contains(lineage)
             lineage_chunk = mutation_index.loc[lineage_mask,:].copy()
+            # fill in 'new_mutations' column like: "gene:mutation / nsp:alias"
             lineage_chunk['new_mutations'] = lineage_chunk["gene"] + ":" + lineage_chunk["mutation"]
-            # for ORF1ab mutations, add the alias
             orf1ab_mask = lineage_chunk['gene'].astype(str).str.contains("ORF1ab")
-            lineage_chunk.loc[orf1ab_mask, 'new_mutations'] = lineage_chunk['new_mutations'] + " / " + lineage_chunk["protein_name"] + ":" + lineage_chunk["hgvs_alias"]
-            # for intergenic mutations, replace nan with "intergenic"
+            lineage_chunk.loc[orf1ab_mask, 'new_mutations'] = lineage_chunk['new_mutations'] + " / " + lineage_chunk["alias_protein"] + ":" + lineage_chunk["alias"]
             intergenic_mask = lineage_chunk['protein_name'].astype(str).str.contains("nan")
             lineage_chunk.loc[intergenic_mask, 'new_mutations'] =  lineage_chunk.loc[intergenic_mask, 'new_mutations'].str.replace("nan", "intergenic", regex=True)
             # drop duplicates (there shouldn't be any)
-            lineage_chunk = lineage_chunk[['pos', 'hgvs_alias', 'new_mutations', 'lineages']].drop_duplicates()
+            lineage_chunk = lineage_chunk[['pos', 'new_mutations', 'lineages']].drop_duplicates()
             # drop NaN rows
             lineage_chunk = lineage_chunk[lineage_chunk['pos'].notna()]
             # append to logfile_df
@@ -135,6 +133,10 @@ if __name__ == '__main__':
             logfile_df['pos'] = logfile_df['pos'].astype(int)
             
 
+    # sort mutation index by pos
+    mutation_index = mutation_index[mutation_index['pos']!='nan']
+    mutation_index['pos'] = mutation_index['pos'].astype(int)
+    mutation_index = mutation_index.sort_values(by=['pos'])
     # save new mutation index
     mutation_index.to_csv(index_savefile, sep='\t', header=True, index=False)
 
@@ -154,6 +156,10 @@ if __name__ == '__main__':
         partial_logfile_df = pd.read_csv(partial_logfile, sep='\t', names=["new_mutations","lineages"])
         partial_logfile_df.loc[len(partial_logfile_df)] = ["New mutations:", ""]
         logfile_df = pd.concat([partial_logfile_df, logfile_df])
+
+        # count number of lineages in the "lineages" column of the logfile
+        # print how many rows have >5 new lineages in them
+
 
         # save logfile
         logfile_df.to_csv(log_savefile, sep='\t', header=False, index=False)
