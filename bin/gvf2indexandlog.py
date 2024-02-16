@@ -8,9 +8,6 @@ Given one GVF, creates a mutation index TSV and a logfile TSV.
 import pandas as pd
 import numpy as np
 import argparse
-import glob
-import os
-import csv
 from functions import separate_attributes
 
 
@@ -49,7 +46,7 @@ if __name__ == '__main__':
     # create index from GVF
     # make empty index df
     index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene', 'protein_name', 'alias', 'hgvs_alias', 'alias_protein', 'Pokay_annotation', 'lineages']
-    index = pd.DataFrame(np.empty((gvf.shape[0], 11)), columns=index_cols)
+    index = pd.DataFrame(np.empty((gvf.shape[0], len(index_cols))), columns=index_cols)
     # populate index df with gvf info
     index['pos'] = gvf['#start']
     index['mutation'] = gvf['Name'].str.replace("p.", "", regex=False)
@@ -65,6 +62,7 @@ if __name__ == '__main__':
     index['lineages'] = gvf['viral_lineage']
     # tidying
     index = index.drop_duplicates()
+    index = index.dropna(axis=0)
     # save index
     index.to_csv(index_savefile, sep='\t', header=True, index=False)
 
