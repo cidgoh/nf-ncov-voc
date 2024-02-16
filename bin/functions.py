@@ -44,7 +44,7 @@ def convert_amino_acid_codes(one_letter_mutation_name):
 
 def rewrite_nt_snps_as_hgvs(original_nt_name):
     ## NOTE: this function doesn't add the ref sequence; this must be done separately
-    print(original_nt_name)
+
     pos = "".join([i for i in original_nt_name if i.isdigit()])
     nts_list = [ch for ch in original_nt_name if ch.isupper()]
     hgvs_name = "g." + pos + nts_list[0] + ">" + nts_list[1] ##may change "g." in future
@@ -545,8 +545,8 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     '''Creates alias names for Orf1ab mutations, reindexing the amino acid numbers.'''
     df.loc[:, 'alias'] = 'n/a'
 
-    # get list of all NSP proteins in the file:
-    alias_mask = df['mat_pep'].str.contains('nsp') & df['gene'].str.contains("ORF1")
+    # get list of all NSP, 3CL, and PlPro proteins in the file:
+    alias_mask = (df['gene'].str.contains("ORF1ab")) & (df['mat_pep']!='n/a')
     nsps_list = sorted(list(set(df[alias_mask]['mat_pep'].tolist())))
 
     if len(nsps_list) > 0:
