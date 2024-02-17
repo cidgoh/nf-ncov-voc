@@ -47,16 +47,17 @@ if __name__ == '__main__':
     ddf = dd.read_csv(indices_to_merge, sep='\t') 
     # fillna to make groupby() work
     ddf = ddf.fillna('n/a')
-    # groupby all columns except 'lineages'...
+    # specify which columns to group by
     group_cols = [x for x in ddf.columns if x!='lineages']
-    # ...and merge 'lineages' column into a comma-separated list
+    # specify agg() method: make 'lineages' column into a comma-separated list
     d = {**dict.fromkeys(ddf.columns, 'first'), 'lineages': 'list'}
     '''
     # specify meta df: this throws an error, but the inferred meta works fine
     schema = {**dict.fromkeys(ddf.columns, 'str'), 'pos':'int'}
     meta_df = pd.DataFrame(columns=schema.keys()).astype(schema)
+    ddf = ddf.groupby(by=group_cols)['lineages'].apply(','.join, meta=meta_df).reset_index()
     '''
-    # do groupby
+    # do groupby operation
     ddf = ddf.groupby(by=group_cols)['lineages'].apply(','.join).reset_index()
     # sort by 'pos'
     ddf = ddf.sort_values("pos")
