@@ -48,18 +48,18 @@ if __name__ == '__main__':
     # fillna to make groupby() work
     ddf = ddf.fillna('n/a')
     # groupby all columns except 'lineages'...
-    group_cols = [x for x in ddf.columns if x!='lineages'] #['pos', 'mutation']
+    group_cols = [x for x in ddf.columns if x!='lineages']
     # ...and merge 'lineages' column into a comma-separated list
     d = {**dict.fromkeys(ddf.columns, 'first'), 'lineages': 'list'}
-    #meta=pd.Series(dtype='str', name='lineages')
-    meta = ddf._meta
-    #meta = {**dict.fromkeys(ddf.columns, 'str'), 'pos':'int'}
-    ddf = ddf.groupby(by=group_cols)['lineages'].apply(','.join, meta=meta) #.sort_values('pos')
-    print(type(ddf))
-    #print(ddf['pos'].compute())
+    '''
+    # specify meta df: this throws an error, but the inferred meta works fine
+    schema = {**dict.fromkeys(ddf.columns, 'str'), 'pos':'int'}
+    meta_df = pd.DataFrame(columns=schema.keys()).astype(schema)
+    '''
+    # do groupby
+    ddf = ddf.groupby(by=group_cols)['lineages'].apply(','.join).reset_index()
     # sort by 'pos'
-    #ddf = ddf[ddf['pos']!='n/a']
-    #ddf['pos'] = ddf['pos'].astype(int)
-    #ddf2 = ddf.sort_values('pos')
-    # save df as a single TSV
-    ddf.to_csv(index_savefile, single_file=True, sep='\t')
+    ddf = ddf.sort_values("pos")
+
+    # save ddf as a single TSV
+    ddf.to_csv(index_savefile, single_file=True, sep='\t', index=False)
