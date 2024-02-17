@@ -49,8 +49,6 @@ if __name__ == '__main__':
     ddf = ddf.fillna('n/a')
     # specify which columns to group by
     group_cols = [x for x in ddf.columns if x!='lineages']
-    # specify agg() method: make 'lineages' column into a comma-separated list
-    d = {**dict.fromkeys(ddf.columns, 'first'), 'lineages': 'list'}
     '''
     # specify meta df: this throws an error, but the inferred meta works fine
     schema = {**dict.fromkeys(ddf.columns, 'str'), 'pos':'int'}
