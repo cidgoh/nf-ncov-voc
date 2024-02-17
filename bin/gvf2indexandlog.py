@@ -71,8 +71,7 @@ if __name__ == '__main__':
     # fill in 'new_mutations' column like: "gene:mutation"
     log['new_mutations'] = log["gene"] + ":" + log["mutation"]
     # for orf1ab mutations, fill in 'new_mutations' column like: "gene:mutation / nsp:alias"
-    orf1ab_mask = log['gene'].astype(str).str.contains("ORF1ab")
-    log.loc[orf1ab_mask, 'new_mutations'] = log['new_mutations'] + " / " + log["alias_protein"] + ":" + log["alias"]
+    log.loc[log['alias']!='n/a', 'new_mutations'] = log['new_mutations'] + " / " + log["alias_protein"] + ":" + log["alias"]
     # drop duplicates (there shouldn't be any)
     log = log[['pos', 'new_mutations', 'lineages']].drop_duplicates()
     # drop any NaN rows
