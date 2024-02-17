@@ -8,8 +8,11 @@ Created on Fri Feb 16 12:00:04 2024
 This script merges multiple mutation logs into one.
 If an existing mutation log is provided, the new logs are added to it.
 
-logs = ['../test_data/test_logs/test_log_1.tsv', '../test_data/test_logs/test_log_2.tsv']
+--log_header is the path to a text file of the form:
 
+Total sequences:	508910
+New sequences:	171
+New lineages:	['HH.1.1', 'FT.3.1.1']
 """
 
 import dask.dataframe as dd
@@ -52,8 +55,8 @@ if __name__ == '__main__':
     # sort by 'pos'
     ddf = ddf.sort_values("pos")
 
-    # if an original index is provided, remove any mutations already
-    # mentioned in it from the merged log file
+    # if a mutation index is provided, remove
+    # previously-identified mutations from the logfile
     if original_index!=None:
 
         # convert original_index to match the logfile columns
@@ -71,7 +74,7 @@ if __name__ == '__main__':
         og_index['pos'] = og_index['pos'].astype(int)
         # rename 'lineages' column entries
         og_index['lineages'] = 'OG_index'
-        print(og_index)
+
         # concatenate original index to logfiles, with the og index first
         ddf = dd.concat([og_index, ddf], axis=0)
 
@@ -84,9 +87,14 @@ if __name__ == '__main__':
         ddf = ddf.sort_values("pos")
         ddf = ddf[['pos', 'new_mutations', 'lineages']]
         ddf['pos'] = ddf['pos'].astype(int)
+        
+    # print number of new mutations in >=5 lineages
+    num_lineages = ddf['lineages'].compute()
+    num_lineages = num_lineages.str.split(',').str.len()
+    print("New mutations in >=5 lineages: ", (num_lineages>=5).sum())
     
     # add log header
-    log_header_df = pd.read_csv(log_header, sep='\t', names=["pos", "new_mutations","lineages"])
+    log_header_df = pd.read_csv(log_header, sep='\t', names=["pos", "new_mutations", "lineages"])
     log_header_df.loc[len(log_header_df)] = ["New mutations:", "", ""]
     ddf = dd.concat([log_header_df, ddf])
 
