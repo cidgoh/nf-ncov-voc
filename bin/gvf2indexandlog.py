@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 '''
+Created on Fri Feb 16 12:00:04 2024
+
+@author: madeline
+
 Given one GVF, creates a mutation index TSV and a logfile TSV.
 '''
 
