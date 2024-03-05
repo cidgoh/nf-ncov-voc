@@ -60,7 +60,7 @@ def remove_nts_from_nt_name(original_nt_name):
 
 '''
 def convert_nt_delins_to_hgvs():
-    delins_regex = "[a-z]\.[A-Z]+[0-9]+_[0-9]+[A-Z]+"
+    delins_regex = "[a-z]\\.[A-Z]+[0-9]+_[0-9]+[A-Z]+"
     # eg. input: "g.TATT430_433ACTTCTA"
     # eg. output: "g.430_433delinsACTTCTA"
 
@@ -77,13 +77,13 @@ def add_hgvs_names(new_gvf):
     
     # define nt regex patterns
     # for SNPs, eg. g.C45T, g.C-45T
-    nt_snp_regex = "[a-z]\.[A-Z][0-9\-]+[A-Z]"
+    nt_snp_regex = "[a-z]\\.[A-Z][0-9\\-]+[A-Z]"
     # for dels and dups, eg. g.254_259delTGGTTG, g.361delA
-    nt_del_dup_regex = "[a-z]\.[0-9\-_]+(del|dup)[A-Z]+"
+    nt_del_dup_regex = "[a-z]\\.[0-9\\-_]+(del|dup)[A-Z]+"
     # for ins
-    nt_ins_regex = "[a-z]\.[0-9\-_]+ins[A-Z]+"
+    nt_ins_regex = "[a-z]\\.[0-9\\-_]+ins[A-Z]+"
     # for delins, eg. g.GCC10182_10184ACA
-    nt_delins_regex = "[a-z]\.[A-Z]{2,}[0-9\-_][A-Z]+" ##not quite right!
+    nt_delins_regex = "[a-z]\\.[A-Z]{2,}[0-9\\-_][A-Z]+" ##not quite right!
     
     #df.loc[mask, 'val'] = df.loc[mask, 'val'].apply(f)
     # add hgvs nt snp names
@@ -102,8 +102,8 @@ def add_hgvs_names(new_gvf):
     #new_gvf.loc[nt_delins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + ":" + "TBA!" #new_gvf['nt_name']  
 
     # define aa regex patterns
-    aa_snp_regex = "[A-Z*][0-9\-]+[A-Z*]"
-    aa_other_regex = "[A-Z*]+[0-9\-]+(del|delins|ins|dup|fs|ext)[A-Z*]*"
+    aa_snp_regex = "[A-Z*][0-9\\-]+[A-Z*]"
+    aa_other_regex = "[A-Z*]+[0-9\\-]+(del|delins|ins|dup|fs|ext)[A-Z*]*"
     
     # fill in 'hgvs_aa' 
     # add hgvs aa snps to rows with protein_id!=n/a
@@ -402,7 +402,7 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
 
     # expand the contents of eff_result into separate columns, named as in the 
     # VCF header
-    eff_info = df['eff_result'].str.findall('\((.*?)\)').str[0]
+    eff_info = df['eff_result'].str.findall('\\((.*?)\\)').str[0]
     # split at pipe, form dataframe
     eff_info = eff_info.str.split(pat='|').apply(pd.Series)
     num_cols = len(eff_info.columns)
@@ -564,11 +564,11 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
             df['mutation_1'] = df['Name']
             df['mutation_2'] = None
         
-        df[['1_start', '1_num', '1_end']] = df['mutation_1'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
+        df[['1_start', '1_num', '1_end']] = df['mutation_1'].str.extract('([A-Za-z]+)(\\d+\\.?\\d*)([A-Za-z]*)', expand=True)
         df['1_num'] = df['1_num'].fillna(0)
         df['1_newnum'] = 0
         
-        df[['2_start', '2_num', '2_end']] = df['mutation_2'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
+        df[['2_start', '2_num', '2_end']] = df['mutation_2'].str.extract('([A-Za-z]+)(\\d+\\.?\\d*)([A-Za-z]*)', expand=True)
         df['2_num'] = df['2_num'].fillna(0)
         df['2_newnum'] = 0
         
