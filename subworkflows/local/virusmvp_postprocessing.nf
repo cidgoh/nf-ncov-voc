@@ -20,7 +20,9 @@ workflow POSTPROCESSING {
         }
 
         UPDATE_INDEX_LOG(ch_collected_gvfs, logfile, ch_indexfile)
-        POST_LOG(UPDATE_INDEX_LOG.out.log,  config=file(params.config, checkIfExists: true))
+        if(!params.skip_posting){
+            POST_LOG(UPDATE_INDEX_LOG.out.log,  config=file(params.config, checkIfExists: true))
+        }
         
-              
+        
 }
