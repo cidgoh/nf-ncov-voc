@@ -12,13 +12,14 @@ The attributes completed by this script are:
  "citation", "comb_mutation", "heterozygosity"]
 
 """
+
 import argparse
 import pandas as pd
 import numpy as np
 from functions import separate_attributes, rejoin_attributes
 from functions import empty_attributes, gvf_columns, vcf_columns
 
-
+# Function to parse command line arguments
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Adds functional annotation to a GVF file')
@@ -35,8 +36,8 @@ def parse_args():
                               "this .txt filename for "
                               "troubleshooting purposes")
     return parser.parse_args()
-    
 
+# Function to add Pokay annotations to GVF file
 def add_pokay_annotations(gvf, annotation_file):
     
     # expand #attributes into columns to fill in separately
@@ -124,7 +125,6 @@ def add_pokay_annotations(gvf, annotation_file):
 
     return merged_df[gvf_columns]
 
-
 if __name__ == '__main__':
 
     args = parse_args()
@@ -150,7 +150,6 @@ if __name__ == '__main__':
     print("Saved as: ", filepath)
     print("")
     final_gvf.to_csv(filepath, sep='\t', index=False, header=False)
-
 
     # get name troubleshooting report
     if args.names!='n/a':
