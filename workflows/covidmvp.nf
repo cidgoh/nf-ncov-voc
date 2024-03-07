@@ -29,13 +29,7 @@ workflow COVIDMVP {
         if(params.viralai){
             VIRALAI()
             metadata=VIRALAI.out.meta
-            seq=VIRALAI.out.seq
-
-            seq
-                .map { fasta ->
-                tuple( [[id:"viralai_seq"], fasta] )
-                }
-                .set{sequences}      
+            sequences=VIRALAI.out.seq
         }
         else{
             seq = file(params.seq, checkIfExists: true)
