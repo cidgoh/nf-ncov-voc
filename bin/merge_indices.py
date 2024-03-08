@@ -42,7 +42,7 @@ if __name__ == '__main__':
     # if an original index is not provided, make an entirely new index
     else:
         indices_to_merge = gvf_indices_list
-    print(indices_to_merge)
+
     # read all indices into dask df
     ddf = dd.read_csv(indices_to_merge, sep='\t') 
     # fillna to make groupby() work
