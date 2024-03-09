@@ -33,7 +33,7 @@ workflow VARIANT_CALLING {
             bam=BWA_MEM.out.bam
         }
         else{
-            MINIMAP2_ALIGN(sequences_grouped, viral_genome, true, false, false)
+            MINIMAP2_ALIGN(sequences_grouped, [[id: params.virus_accession_id], viral_genome], true, false, false)
             bam=MINIMAP2_ALIGN.out.bam
         }
         
