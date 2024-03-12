@@ -63,7 +63,7 @@ if __name__ == '__main__':
 
         # convert original_index to match the logfile columns
         # read index into pandas df
-        og_index = dd.read_csv(original_index, sep='\t').fillna('n/a')
+        og_index = pd.read_csv(original_index, sep='\t').fillna('n/a')
         # fill in 'new_mutations' column like: "gene:mutation"
         og_index['new_mutations'] = og_index["gene"] + ":" + og_index["mutation"]
         # for orf1ab mutations, fill in 'new_mutations' column like: "gene:mutation / nsp:alias"
@@ -76,7 +76,6 @@ if __name__ == '__main__':
         og_index['pos'] = og_index['pos'].astype(int)
         # rename 'lineages' column entries
         og_index['lineages'] = 'OG_index'
-
         # concatenate original index to logfiles, with the og index first
         ddf = dd.concat([og_index, ddf], axis=0)
 
@@ -98,9 +97,7 @@ if __name__ == '__main__':
     # add log header
     log_header_df = pd.read_csv(log_header, sep='\t', names=["pos", "new_mutations", "lineages"])
     log_header_df.loc[len(log_header_df)] = ["New mutations:", "", ""]
-
     ddf = dd.concat([log_header_df, ddf])
-
     # save ddf as a single TSV
     ddf.to_csv(log_savefile, single_file=True, sep='\t', index=False, header=False)
     
