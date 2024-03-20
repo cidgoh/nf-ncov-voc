@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 
-@author: anoosha
+@author: anoosha & madeline
 
 This script converts Pokay .txt files into a functional annotation
 key (tsv) files that can be used by nf-ncov-voc workflow for
@@ -25,6 +25,10 @@ def parse_args():
                     '/data for annotating SARS-COV-2 mutations')
     parser.add_argument('--inputdir', type=str, default=None,
                         help='directory path for input files')
+    parser.add_argument('--accession', type=str, default=None,
+                        help='versioned reference accession from RefSeq')
+    parser.add_argument('--mutation_index', type=str, default=None,
+                        help='index of all mutations (.TSV)')
     parser.add_argument('--outputfile', type=str, default=None,
                         help='output file (.TSV) format')
     return parser.parse_args()
@@ -39,15 +43,17 @@ def combination_mutation(c_mutations, c_mutation):
 
 
 def data_cleanup(dframe):
-    dframe['function_description'] = dframe[
-        'function_description'].apply(
+    dframe['mutation functional effect description'] = dframe[
+        'mutation functional effect description'].apply(
         lambda x: ','.join(map(str, x)))
 
-    dframe['function_description'] = dframe[
-        'function_description'].str.replace(',#', '')
-    dframe['function_description'] = dframe[
-        'function_description'].str.replace('#', '')
-
+    dframe['mutation functional effect description'] = dframe[
+        'mutation functional effect description'].str.replace(',#', '')
+    dframe['mutation functional effect description'] = dframe[
+        'mutation functional effect description'].str.replace('#', '')
+    dframe['mutation functional effect description'] = dframe[
+        'mutation functional effect description'].str.strip()
+    
     dframe['comb_mutation'] = dframe['comb_mutation'].apply(
         lambda x: x[1:-1])
 
@@ -55,10 +61,13 @@ def data_cleanup(dframe):
 
 
 def extract_source_citation(dframe):
+    '''
+    Fill in 'publication year', 'author', 'peer review status', 'DOI', and 'URL' columns
+    '''
     if '|' in dframe['url']:
         dframe['citation'] = dframe.url.str.split(
             "|").str[0] + '|' + dframe.source.str.split('|')[1]
-        dframe['source'] = dframe.url.str.split(
+        dframe['URL'] = dframe.url.str.split(
             "|").str[1]
 
     else:
@@ -66,8 +75,15 @@ def extract_source_citation(dframe):
             "http").str[0]
         dframe['citation'] = dframe['citation'].str.replace('#',
                                                             '')
-        dframe['source'] = dframe.url.str.split(
+        dframe['URL'] = dframe.url.str.split(
             ")").str[1]
+        
+    dframe['publication year'] = dframe['citation'].str.extract('.*\((.*)\).*')
+    dframe['author'] = dframe['citation'].str.extract('^(.*?)et al') #.str.strip()
+    dframe['peer review status'] = dframe['URL'].str.extract('(?<=\[)(.*)')
+    dframe['URL'] = dframe['URL'].str.extract('^(.*?)\[') #.str.strip()
+    dframe['DOI'] = dframe['URL'].str.extract('(?<=doi.org/)(.*)') #.str.strip()
+
     return dframe
 
 
@@ -122,21 +138,21 @@ def extract_metadata(inp_file, chunk, df):
                     del function[chunk[url[index_url - 1]]]
 
         df_func = pd.DataFrame(function.items(), columns=['url',
-                                                          'function_description'])
+                                                          'mutation functional effect description'])
 
         df_list = [x, gene_name,
-                   function_category, comb_mutation, heterozygosity]
+                   function_category, comb_mutation] #, heterozygosity]
         # print(df_list)
         df1 = pd.DataFrame(
-            columns=['mutation', 'gene', 'function_category',
-                     'comb_mutation', 'heterozygosity'])
+            columns=['original mutation description', 'protein symbol', 'mutation functional effect category',
+                     'comb_mutation']) #, 'heterozygosity'])
         df1.loc[len(df1)] = df_list
 
-        df_func['mutation'] = df1['mutation'].iloc[0]
-        df_func['gene'] = df1['gene'].iloc[0]
-        df_func['function_category'] = df1['function_category'].iloc[0]
+        df_func['original mutation description'] = df1['original mutation description'].iloc[0]
+        df_func['protein symbol'] = df1['protein symbol'].iloc[0]
+        df_func['mutation functional effect category'] = df1['mutation functional effect category'].iloc[0]
         df_func['comb_mutation'] = str(df1['comb_mutation'].iloc[0])
-        df_func['heterozygosity'] = str(df1['heterozygosity'].iloc[0])
+        #df_func['heterozygosity'] = str(df1['heterozygosity'].iloc[0])
 
         df_func = data_cleanup(dframe=df_func)
         df_func = extract_source_citation(dframe=df_func)
@@ -161,14 +177,19 @@ if __name__ == '__main__':
     # Change the directory
     # os.chdir(path)
 
-    dataFrame = pd.DataFrame(
-        columns=['mutation', 'gene', 'function_category',
-                 'url', 'function_description'])
+
+    dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
+'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
+'gene name', 'gene symbol', 'protein name', 'protein symbol', 'assay', 'mutation functional effect category',
+'mutation functional effect description', 'author', 'publication year', 'URL', 'DOI', 'PMID',
+'peer review status', 'curator', 'mutation functional annotation resource']
+    
+    dataFrame = pd.DataFrame(columns=dataFrame_cols)
 
     for file in os.listdir(path):
-        if file.endswith(".txt") and "_" in file:
+        if file.endswith("binding.txt") and "_" in file:
             file_path = os.path.join(path, file)
-            # print(file)
+            print(file)
             f = open(file_path, 'r')
             lines = f.readlines()
             mutations = []
@@ -190,8 +211,38 @@ if __name__ == '__main__':
                     dataFrame = extract_metadata(inp_file=file,
                                                  chunk=func_chunk,
                                                  df=dataFrame)
-    dataFrame_cols = ['mutation', 'gene', 'function_category',
-                      'comb_mutation', 'heterozygosity', 'citation',
-                      'source', 'function_description']
-    dataFrame = dataFrame[dataFrame_cols]
-    write_tsv(dframe=dataFrame)
+
+    # fill in first three columns
+    reference_accession = args.accession
+    dataFrame['reference accession'] = reference_accession
+    dataFrame['reference database name'] = 'RefSeq'
+    if reference_accession=='NC_045512.2':
+        dataFrame['organism'] = 'Severe acute respiratory syndrome coronavirus 2'
+    elif reference_accession=='NC_063383.1':
+        dataFrame['organism'] = 'Monkeypox virus'
+    else:
+        dataFrame['organism'] = 'unknown'
+
+    dataFrame['mutation functional annotation resource'] = 'Pokay'
+
+    # add HGVS mutations names and nucleotide positions from mutation index
+    mutation_index = pd.read_csv(args.mutation_index, sep='\t')
+    # merge on "mutation" and "gene" in index ("original mutation description" and "gene symbol" in functional annotation file)
+    mutation_index = mutation_index.rename(columns={"mutation": "original mutation description", 'pos':'nucleotide position',
+                                                    'hgvs_aa_mutation':'amino acid mutation','hgvs_nt_mutation':'nucleotide mutation',
+                                                    'gene':'protein symbol','hgvs_alias':'amino acid mutation alias'})
+    # remove doubled columns from dataFrame
+    index_cols_to_use = ['nucleotide position','nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
+    dataFrame = dataFrame.drop(columns=index_cols_to_use)
+    merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'protein symbol'], how='left') #, 'alias'
+    merged_dataFrame = merged_dataFrame[dataFrame_cols]
+
+    # tidying
+    merged_dataFrame = merged_dataFrame[merged_dataFrame["nucleotide position"].notna()] # names that aren't matched in the index are dropped here
+    merged_dataFrame["nucleotide position"] = merged_dataFrame["nucleotide position"].astype(int)
+    merged_dataFrame["author"] = merged_dataFrame["author"].str.strip()
+    merged_dataFrame["DOI"] = merged_dataFrame["DOI"].str.strip()
+    merged_dataFrame["URL"] = merged_dataFrame["URL"].str.strip()
+    merged_dataFrame["peer review status"] = ~merged_dataFrame["peer review status"].str.contains("Preprint")
+
+    write_tsv(dframe=merged_dataFrame)
