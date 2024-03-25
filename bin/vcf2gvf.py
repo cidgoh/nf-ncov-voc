@@ -117,8 +117,13 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Converts a annotated VCF file to a GVF '
                     'file with functional annotation')
-    parser.add_argument('--vcffile', type=str, default=None,
+    parser.add_argument('--vcffile', type=str, default=None, required=True,
                         help='Path to a snpEFF-annotated VCF file')
+    parser.add_argument('--grouping_criteria', type=str, default=None, required=True,
+                        choices=['time', 'wastewater', 'lineage']
+                        help="The sample group type")
+    parser.add_argument('--sample_group', type=str, default=None, required=True,
+                        help='sample group name, ie. lineage, date range')
     parser.add_argument('--size_stats', type=str, default=None,
                         help='Statistics file for for size extraction')
     parser.add_argument('--clades_threshold', type=float,
@@ -133,7 +138,7 @@ def parse_args():
                         help='Lineage; user mode is if strain="n/a"')
     parser.add_argument("--wastewater", help="Activate wastewater data mode",
                         action="store_true")
-    parser.add_argument('--outgvf', type=str,
+    parser.add_argument('--outgvf', type=str, required=True,
                         help='Filename for the output GVF file')
 
     return parser.parse_args()
@@ -147,8 +152,10 @@ if __name__ == '__main__':
     with open(args.gene_positions) as fp:
         GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
     
-    # Assigning the vcf file to a variable
+    # Assigning variables
     vcf_file = args.vcffile
+    grouping_criteria = args.grouping_criteria
+    sample_group = args.sample_group
 
     # If the strain and/or stats file are None, set them as 'n/a'
     size_stats = args.size_stats
@@ -171,6 +178,8 @@ if __name__ == '__main__':
     # add species to pragmas
     species = GENE_PROTEIN_POSITIONS_DICT['Src']['species']
     pragmas[0] = pragmas[0].str.replace("##species", "##species " + str(species))
+    # temporary pragma, subject to change
+    pragmas[0] = pragmas[0].str.replace("##sample-description", "##sample-description " + 'grouping_criteria=' + str(grouping_criteria) +';' + 'sample_group=' + str(sample_group) + ';')
 
     # combine pragmas, header, GVF contents
     final_gvf = pd.DataFrame(np.vstack([gvf.columns, gvf]))

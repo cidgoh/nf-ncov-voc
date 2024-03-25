@@ -23,6 +23,7 @@ vcf_columns = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL',
 # pragmas are in column 0
 pragmas = pd.DataFrame([['##gff-version 3'],
                         ['##gvf-version 1.10'],
+                        ['##sample-description'],
                         ['##species']])
 
 # source: https://hgvs-nomenclature.org/stable/background/standards/#amino-acid-descriptions
