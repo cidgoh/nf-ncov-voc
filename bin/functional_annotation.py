@@ -243,7 +243,8 @@ if __name__ == '__main__':
     merged_dataFrame["author"] = merged_dataFrame["author"].str.strip()
     merged_dataFrame["DOI"] = merged_dataFrame["DOI"].str.strip()
     merged_dataFrame["URL"] = merged_dataFrame["URL"].str.strip()
-    merged_dataFrame["curator"] = "Paul Gordon" # for now: need to go through
+    merged_dataFrame["curator"] = "Paul Gordon" ## for now: need to go through
+    merged_dataFrame.loc[merged_dataFrame['peer review status'].isna(), 'peer review status'] = 'unknown'
     merged_dataFrame.loc[merged_dataFrame['peer review status'].str.contains("Journal"), 'peer review status'] = 'peer reviewed'
     merged_dataFrame.loc[merged_dataFrame['peer review status'].str.contains("Preprint"), 'peer review status'] = 'not peer reviewed'
     merged_dataFrame.loc[merged_dataFrame['peer review status'].str.contains("Grey literature"), 'peer review status'] = 'grey literature'
