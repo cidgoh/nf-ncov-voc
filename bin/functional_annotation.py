@@ -187,7 +187,7 @@ if __name__ == '__main__':
     dataFrame = pd.DataFrame(columns=dataFrame_cols)
 
     for file in os.listdir(path):
-        if file.endswith("binding.txt") and "_" in file:
+        if file.endswith(".txt") and "_" in file:
             file_path = os.path.join(path, file)
             print(file)
             f = open(file_path, 'r')
@@ -230,9 +230,9 @@ if __name__ == '__main__':
     # merge on "mutation" and "gene" in index ("original mutation description" and "gene symbol" in functional annotation file)
     mutation_index = mutation_index.rename(columns={"mutation": "original mutation description", 'pos':'nucleotide position',
                                                     'hgvs_aa_mutation':'amino acid mutation','hgvs_nt_mutation':'nucleotide mutation',
-                                                    'gene':'protein symbol','hgvs_alias':'amino acid mutation alias'})
+                                                    'gene':'protein symbol', 'protein_name':'protein name', 'hgvs_alias':'amino acid mutation alias'})
     # remove doubled columns from dataFrame
-    index_cols_to_use = ['nucleotide position','nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
+    index_cols_to_use = ['nucleotide position','nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias', 'protein name']
     dataFrame = dataFrame.drop(columns=index_cols_to_use)
     merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'protein symbol'], how='left') #, 'alias'
     merged_dataFrame = merged_dataFrame[dataFrame_cols]
@@ -243,6 +243,9 @@ if __name__ == '__main__':
     merged_dataFrame["author"] = merged_dataFrame["author"].str.strip()
     merged_dataFrame["DOI"] = merged_dataFrame["DOI"].str.strip()
     merged_dataFrame["URL"] = merged_dataFrame["URL"].str.strip()
-    merged_dataFrame["peer review status"] = ~merged_dataFrame["peer review status"].str.contains("Preprint")
+    merged_dataFrame["curator"] = "Paul Gordon" # for now: need to go through
+    merged_dataFrame.loc[merged_dataFrame['peer review status'].str.contains("Journal"), 'peer review status'] = 'peer reviewed'
+    merged_dataFrame.loc[merged_dataFrame['peer review status'].str.contains("Preprint"), 'peer review status'] = 'not peer reviewed'
+    merged_dataFrame.loc[merged_dataFrame['peer review status'].str.contains("Grey literature"), 'peer review status'] = 'grey literature'
 
     write_tsv(dframe=merged_dataFrame)
