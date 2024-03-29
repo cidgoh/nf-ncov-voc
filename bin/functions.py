@@ -494,11 +494,12 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
     :return: series containing SARS-CoV-2 chromosome region names at each
     nucleotide position in ``pos``
     """
-    # make an empty dataframe of the same length as pos and with four columns
-    cols_to_add = ["gene", "protein_name", "protein_symbol", "protein_id"]
-    df = pd.DataFrame(np.nan, index=range(0,pos.shape[0]), columns=cols_to_add)
-    # add positions to this df
-    df["POS"] = pos
+    # make nucleotide positions series into a df
+    df = pos.to_frame()
+    pos_column = df.columns[0]
+    # add new empty (NaN) columns
+    cols_to_use = [pos_column, "gene", "protein_name", "protein_symbol", "protein_id"]
+    df = df.reindex(columns = cols_to_use) 
 
     # loop through all CDS regions in dict to get attributes
     for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
@@ -514,7 +515,7 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             protein_id = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_id"]
 
             # fill in attributes for mutations in this CDS region
-            cds_mask = df["POS"].astype(int).between(start, end, inclusive="both")
+            cds_mask = df[pos_column].astype(int).between(start, end, inclusive="both")
             df.loc[cds_mask, "gene"] = gene
             df.loc[cds_mask, "protein_name"] = protein_name
             df.loc[cds_mask, "protein_symbol"] = protein_symbol
