@@ -36,6 +36,8 @@ def parse_args():
                         help='gene positions in JSON format') 
     parser.add_argument('--outputfile', type=str, required=True,
                         help='output file (.TSV) format')
+    parser.add_argument('--save_dois', type=str, default=None,
+                        help='output file (.TXT) format')
     return parser.parse_args()
 
 
@@ -272,3 +274,10 @@ if __name__ == '__main__':
     merged_dataFrame.loc[merged_dataFrame['peer review status'].str.contains("Grey literature"), 'peer review status'] = 'grey literature'
 
     write_tsv(dframe=merged_dataFrame)
+
+    # Adding PMIDs requires running a shell script, dois2pmcids.sh, with this txt file of DOIs as the input.
+    # After that, run addPMIDs2functionalannotation.py.
+    ###TO DO: modify dois2pmcids.sh to take the whole TSV as input and add PMIDs directly to the TSV to streamline this
+    if args.save_dois != None:
+        dois = merged_dataFrame[merged_dataFrame["DOI"].notna()].drop_duplicates(subset='DOI')
+        dois["DOI"].to_csv(args.save_dois, header=False, index=False)
