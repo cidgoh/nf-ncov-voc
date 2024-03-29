@@ -148,7 +148,7 @@ if __name__ == '__main__':
 
     args = parse_args()
     
-    # Reading the gene & proetin coordinates of SARS-CoV-2 genome
+    # Reading the gene & protein coordinates of SARS-CoV-2 genome
     with open(args.gene_positions) as fp:
         GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
     

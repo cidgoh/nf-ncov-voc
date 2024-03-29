@@ -10,11 +10,13 @@ annotation of variant called files.
 
 """
 
+import json
 import os
 import argparse
 from pathlib import Path
 import pandas as pd
 import csv
+from functions import map_pos_to_gene_protein
 
 
 def parse_args():
@@ -23,13 +25,16 @@ def parse_args():
                     'in POKAY  '
                     'https://github.com/nodrogluap/pokay/tree/master'
                     '/data for annotating SARS-COV-2 mutations')
-    parser.add_argument('--inputdir', type=str, default=None,
+    parser.add_argument('--inputdir', type=str, required=True,
                         help='directory path for input files')
-    parser.add_argument('--accession', type=str, default=None,
+    parser.add_argument('--accession', type=str, required=True,
                         help='versioned reference accession from RefSeq')
-    parser.add_argument('--mutation_index', type=str, default=None,
+    parser.add_argument('--mutation_index', type=str, required=True,
                         help='index of all mutations (.TSV)')
-    parser.add_argument('--outputfile', type=str, default=None,
+    parser.add_argument('--gene_positions', type=str,
+                        required=True,
+                        help='gene positions in JSON format') 
+    parser.add_argument('--outputfile', type=str, required=True,
                         help='output file (.TSV) format')
     return parser.parse_args()
 
@@ -177,6 +182,10 @@ if __name__ == '__main__':
     # Change the directory
     # os.chdir(path)
 
+    # Reading the gene & protein coordinates of SARS-CoV-2 genome
+    with open(args.gene_positions) as fp:
+        GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
+
 
     dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
 'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
@@ -225,7 +234,7 @@ if __name__ == '__main__':
 
     dataFrame['mutation functional annotation resource'] = 'Pokay'
 
-    # add HGVS mutations names and nucleotide positions from mutation index
+    # add HGVS mutations names, nucleotide positions, protein name and protein symbol from mutation index
     mutation_index = pd.read_csv(args.mutation_index, sep='\t')
     # merge on "mutation" and "gene" in index ("original mutation description" and "gene symbol" in functional annotation file)
     mutation_index = mutation_index.rename(columns={"mutation": "original mutation description", 'pos':'nucleotide position',
@@ -240,9 +249,22 @@ if __name__ == '__main__':
     # tidying
     merged_dataFrame = merged_dataFrame[merged_dataFrame["nucleotide position"].notna()] # names that aren't matched in the index are dropped here
     merged_dataFrame["nucleotide position"] = merged_dataFrame["nucleotide position"].astype(int)
+
+    # add gene names and symbols from JSON 
+    ###TO DO: add gene names and symbols to mutation index to simplify this
+    ###TO DO: these should be ontology names! Need to create a mapping.
+    ## 'gene symbol' is the same as 'gene name' from the JSON for now
+    json_df = map_pos_to_gene_protein(
+        merged_dataFrame["nucleotide position"], GENE_PROTEIN_POSITIONS_DICT)
+    merged_dataFrame["gene name"] = json_df["gene"]
+    merged_dataFrame["gene symbol"] = json_df["gene"]
+
+    # strip whitespace
     merged_dataFrame["author"] = merged_dataFrame["author"].str.strip()
     merged_dataFrame["DOI"] = merged_dataFrame["DOI"].str.strip()
     merged_dataFrame["URL"] = merged_dataFrame["URL"].str.strip()
+
+    # add temporary curator name, clean up 'peer review status'
     merged_dataFrame["curator"] = "Paul Gordon" ## for now: need to go through
     merged_dataFrame.loc[merged_dataFrame['peer review status'].isna(), 'peer review status'] = 'unknown'
     merged_dataFrame.loc[merged_dataFrame['peer review status'].str.contains("Journal"), 'peer review status'] = 'peer reviewed'
