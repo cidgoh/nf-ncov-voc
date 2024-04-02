@@ -87,9 +87,9 @@ def extract_source_citation(dframe):
         
     dframe['publication year'] = dframe['citation'].str.extract('.*\((.*)\).*')
     dframe['author'] = dframe['citation'].str.extract('^(.*?)et al') #.str.strip()
-    dframe['peer review status'] = dframe['URL'].str.extract('(?<=\[)(.*)')
-    dframe['URL'] = dframe['URL'].str.extract('^(.*?)\[') #.str.strip()
-    dframe['DOI'] = dframe['URL'].str.extract('(?<=doi.org/)(.*)') #.str.strip()
+    dframe['peer review status'] = dframe['URL'].astype(str).str.extract('(?<=\[)(.*)')
+    dframe['URL'] = dframe['URL'].astype(str).str.extract('^(.*?)\[') #.str.strip()
+    dframe['DOI'] = dframe['URL'].astype(str).str.extract('(?<=doi.org/)(.*)') #.str.strip()
 
     return dframe
 
@@ -314,5 +314,5 @@ if __name__ == '__main__':
     # After that, run addPMIDs2functionalannotation.py.
     ###TO DO: modify dois2pmcids.sh to take the whole TSV as input and add PMIDs directly to the TSV to streamline this
     if args.save_dois != None:
-        dois = merged_dataFrame[merged_dataFrame["DOI"].notna()].drop_duplicates(subset='DOI')
+        dois = merged_dataFrame[merged_dataFrame["DOI"]!=''].drop_duplicates(subset='DOI')
         dois["DOI"].to_csv(args.save_dois, header=False, index=False)
