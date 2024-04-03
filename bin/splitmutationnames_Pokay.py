@@ -51,8 +51,16 @@ if __name__ == '__main__':
         df[column] = df[column].astype(str).str.strip()
     col_order = df.columns
     
-    # split names in "comb_mutation" column
+    # create "comb_mutation" column with the lists from 'original mutation description'
+    df['comb_mutation'] = df['original mutation description']
     
+    # unnest all these columns
+    to_unnest = ['original mutation description', 'nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
+    df = unnest_multi(df, to_unnest, reset_index=True)
+
+    # remove the 'original mutation description' from the 'comb_mutation' entry
+    df['comb_mutation'] = df.apply(lambda row : row['comb_mutation'].replace(str(row['original mutation description']), ''), axis=1)
+
     # data cleaning: fix parsing error
     df['comb_mutation'] = df['comb_mutation'].str.replace(
         "B.1.617.2\\tT19R", "T19R", regex=False)
@@ -60,6 +68,7 @@ if __name__ == '__main__':
     for x in ["'", " "]:
         df['comb_mutation'] = df['comb_mutation'].str.replace(x, '')
     
+    ## if names to split tsv is given, use it to split up the multi-amino acid names
     # load names_to_split file
     names_to_split_df = pd.read_csv(args.names_to_split, sep='\t', header=0)
     # remove spaces and quotation marks from 'split_into' column
@@ -68,19 +77,17 @@ if __name__ == '__main__':
             'split_into'].str.replace(x, "")
     # make names_to_split_df into a dictionary
     split_dict = dict(zip(names_to_split_df.name, names_to_split_df.split_into))
-
-    # do str.replace on 'comb_mutation' and 'mutation' columns
+    # do str.replace on 'comb_mutation' and 'original mutation description' columns
     for name in split_dict.keys():
         df['comb_mutation'] = df['comb_mutation'].str.replace(
             name, split_dict[name])
-        df['mutation'] = df['mutation'].str.replace(
+        df['original mutation description'] = df['original mutation description'].str.replace(
             name, split_dict[name])
+    # unnest "mutation" column so each mutation name gets its own row
+    df['original mutation description'] = df['original mutation description'].str.split(',')
+    df = unnest_multi(df, ['original mutation description'], reset_index=True)
     
-    # unnest "mutation" column so each mutation name gets its
-    # own row
-    df['mutation'] = df['mutation'].str.split(',')
-    df = unnest_multi(df, ['mutation'], reset_index=True)
-    
+    # reset df columns
     df = df[col_order]
     
     # save modified file
