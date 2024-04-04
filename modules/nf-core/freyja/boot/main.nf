@@ -1,6 +1,6 @@
-process FREYJA_DEMIX {
+process FREYJA_BOOT {
     tag "$meta.id"
-    label 'process_low'
+    label 'process_high'
 
 
     conda "${moduleDir}/environment.yml"
@@ -10,12 +10,14 @@ process FREYJA_DEMIX {
 
     input:
     tuple val(meta), path(variants), path(depths)
+    val repeats
     path barcodes
     path lineages_meta
 
     output:
-    tuple val(meta), path("*.tsv"), emit: demix
-    path "versions.yml"           , emit: versions
+    tuple val(meta), path("*lineages.csv")  , emit: lineages
+    tuple val(meta), path("*summarized.csv"), emit: summarized
+    path "versions.yml"                     , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -25,9 +27,11 @@ process FREYJA_DEMIX {
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
     freyja \\
-        demix \\
+        boot \\
         $args \\
-        --output ${prefix}.tsv \\
+        --nt $task.cpus \\
+        --nb $repeats \\
+        --output_base $prefix \\
         --barcodes $barcodes \\
         --meta $lineages_meta \\
         $variants \\
@@ -42,12 +46,12 @@ process FREYJA_DEMIX {
     stub:
     def prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.tsv
+    touch ${prefix}_lineage.csv
+    touch ${prefix}_summarized.csv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         freyja: \$(echo \$(freyja --version 2>&1) | sed 's/^.*version //' )
     END_VERSIONS
     """
-
 }

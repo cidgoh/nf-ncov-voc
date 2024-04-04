@@ -1,10 +1,11 @@
-name: "freyja_demix"
-description: specify the relative abundance of each known haplotype
+name: "freyja_boot"
+description: Bootstrap sample demixing by resampling each site based on a multinomial distribution of read depth across all sites, where the event probabilities were determined by the fraction of the total sample reads found at each site, followed by a secondary resampling at each site according to a multinomial distribution (that is, binomial when there was only one SNV at a site), where event probabilities were determined by the frequencies of each base at the site, and the number of trials is given by the sequencing depth.
 keywords:
   - variants
   - fasta
   - deconvolution
   - wastewater
+  - bootstrapping
 tools:
   - "freyja":
       description: "Freyja recovers relative lineage abundances from mixed SARS-CoV-2 samples and provides functionality to analyze lineage dynamics."
@@ -27,6 +28,9 @@ input:
       type: file
       description: File containing depth of the variants
       pattern: "*.depth.tsv"
+  - repeats:
+      type: integer
+      description: Number of bootstrap repeats to perform
   - barcodes:
       type: file
       description: File containing lineage defining barcodes
@@ -41,10 +45,14 @@ output:
       description: |
         Groovy Map containing sample information
         e.g. [ id:'test', single_end:false ]
-  - demix:
+  - lineages:
       type: file
-      description: a tsv file that includes the lineages present, their corresponding abundances, and summarization by constellation
-      pattern: "*.demix.tsv"
+      description: a csv file that includes the lineages present and their corresponding abundances
+      pattern: "*lineages.csv"
+  - summarized:
+      type: file
+      description: a csv file that includes the lineages present but summarized by constellation and their corresponding abundances
+      pattern: "*summarized.csv"
   - versions:
       type: file
       description: File containing software versions
