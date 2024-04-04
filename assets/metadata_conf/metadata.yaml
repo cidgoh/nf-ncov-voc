@@ -31,6 +31,7 @@ Optional:
   Subtype: False
   SubLineageGroup: False
   Clade: False
+  last_updated: True
 
 # ViralAi virusseq metadata columns
 ViralAi_EpiCoV:
@@ -45,6 +46,7 @@ ViralAi_EpiCoV:
   alias: "lineage"
   purpose_of_sampling: "purpose_of_sampling_details"
   purpose_of_sequencing: "purpose_of_sequencing_details"
+  last_updated: "last_updated"
 
 # Gisaid_EpiCoV metadata columns
 Gisaid_EpiCoV:
