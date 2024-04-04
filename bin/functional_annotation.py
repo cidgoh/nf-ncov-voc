@@ -307,6 +307,7 @@ if __name__ == '__main__':
 
     # reorder columns and drop 'index1'
     merged_dataFrame = merged_dataFrame[dataFrame_cols]
+    merged_dataFrame = merged_dataFrame.reindex()
 
     write_tsv(dframe=merged_dataFrame)
 
