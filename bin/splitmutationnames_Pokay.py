@@ -42,6 +42,12 @@ if __name__ == '__main__':
 
     args = parse_args()
     
+    dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
+'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias', 'comb_mutation',
+'gene name', 'gene symbol', 'protein name', 'protein symbol', 'assay', 'mutation functional effect category',
+'mutation functional effect description', 'author', 'publication year', 'URL', 'DOI', 'PMID',
+'peer review status', 'curator', 'mutation functional annotation resource']
+    
     # split names in functional annotations file
     
     # read in functional annotations file
@@ -49,47 +55,62 @@ if __name__ == '__main__':
     # remove any leading/trailing spaces
     for column in df.columns:
         df[column] = df[column].astype(str).str.strip()
-    col_order = df.columns
     
     # create "comb_mutation" column with the lists from 'original mutation description'
     df['comb_mutation'] = df['original mutation description']
     
     # unnest all these columns
     to_unnest = ['original mutation description', 'nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
+    for column in to_unnest:
+        df[column] = df[column].str.replace('nan', '')
+        df[column] = df[column].str.split(',')
     df = unnest_multi(df, to_unnest, reset_index=True)
 
-    # remove the 'original mutation description' from the 'comb_mutation' entry
+    # keep only unique names in 'comb_mutation', no repeats
+    comb_mutation_nested_list = df['comb_mutation'].str.split(',').tolist()
+    unique_nested_list = [list(set(ls)) for ls in comb_mutation_nested_list]
+    df['comb_mutation'] = unique_nested_list
+    df['comb_mutation'] = df['comb_mutation'].str.join(",")
+
+    # remove the one 'original mutation description' from the 'comb_mutation' entry
     df['comb_mutation'] = df.apply(lambda row : row['comb_mutation'].replace(str(row['original mutation description']), ''), axis=1)
+    df['comb_mutation'] = df['comb_mutation'].str.strip(',')
+    df['comb_mutation'] = df['comb_mutation'].str.replace(',,', ',')
 
     # data cleaning: fix parsing error
-    df['comb_mutation'] = df['comb_mutation'].str.replace(
-        "B.1.617.2\\tT19R", "T19R", regex=False)
+    #df['comb_mutation'] = df['comb_mutation'].str.replace(
+    #    "B.1.617.2\\tT19R", "T19R", regex=False)
     # data cleaning: remove quotation marks, spaces
-    for x in ["'", " "]:
-        df['comb_mutation'] = df['comb_mutation'].str.replace(x, '')
     
-    ## if names to split tsv is given, use it to split up the multi-amino acid names
-    # load names_to_split file
-    names_to_split_df = pd.read_csv(args.names_to_split, sep='\t', header=0)
-    # remove spaces and quotation marks from 'split_into' column
-    for x in [' ', "'"]:
-        names_to_split_df['split_into'] = names_to_split_df[
-            'split_into'].str.replace(x, "")
-    # make names_to_split_df into a dictionary
-    split_dict = dict(zip(names_to_split_df.name, names_to_split_df.split_into))
-    # do str.replace on 'comb_mutation' and 'original mutation description' columns
-    for name in split_dict.keys():
-        df['comb_mutation'] = df['comb_mutation'].str.replace(
-            name, split_dict[name])
-        df['original mutation description'] = df['original mutation description'].str.replace(
-            name, split_dict[name])
-    # unnest "mutation" column so each mutation name gets its own row
-    df['original mutation description'] = df['original mutation description'].str.split(',')
-    df = unnest_multi(df, ['original mutation description'], reset_index=True)
+    # if names_to_split tsv is given, use it to split up the multi-amino acid names
+    if args.names_to_split != None:
+        # load names_to_split file
+        names_to_split_df = pd.read_csv(args.names_to_split, sep='\t', header=0)
+        # remove spaces and quotation marks from 'split_into' column
+        for x in [' ', "'"]:
+            names_to_split_df['split_into'] = names_to_split_df[
+                'split_into'].str.replace(x, "")
+        # make names_to_split_df into a dictionary
+        split_dict = dict(zip(names_to_split_df.name, names_to_split_df.split_into))
+        # do str.replace on 'comb_mutation' and 'original mutation description' columns
+        for name in split_dict.keys():
+            df['comb_mutation'] = df['comb_mutation'].str.replace(
+                name, split_dict[name])
+            df['original mutation description'] = df['original mutation description'].str.replace(
+                name, split_dict[name])
+        # unnest "mutation" column so each mutation name gets its own row
+        df['original mutation description'] = df['original mutation description'].str.split(',')
+        df = unnest_multi(df, ['original mutation description'], reset_index=True)
     
     # reset df columns
-    df = df[col_order]
+    df = df[dataFrame_cols]
     
+    # fix column formats
+    df['assay'] = df['assay'].str.replace('nan', '', regex=False)
+    df['PMID'] = df['PMID'].str.replace('nan', '', regex=False)
+    df['PMID'] = df['PMID'].str.replace('.0', '', regex=False)
+    df['publication year'] = df['publication year'].str.replace('.0', '', regex=False)
+
     # save modified file
     filepath = args.out_functions
     print("Saved as: ", filepath)
