@@ -9,7 +9,7 @@ This script annotates GVF files with the functional annotation.
 
 The attributes completed by this script are: 
 ["function_category", "function_description", "source",
- "citation", "comb_mutation", "heterozygosity"]
+ "citation", "comb_mutation"]
 
 """
 import argparse
@@ -44,8 +44,7 @@ def add_pokay_annotations(gvf, annotation_file):
     
     # drop columns that are going to be re-added in the merge
     functional_attributes = ["function_category", "function_description", 
-                             "source", "citation", "comb_mutation", 
-                             "heterozygosity"]
+                             "source", "citation", "comb_mutation"]
     gvf = gvf.drop(columns=functional_attributes)
 
     # load functional annotations spreadsheet
@@ -111,10 +110,6 @@ def add_pokay_annotations(gvf, annotation_file):
     # change semicolons in function descriptions to colons
     merged_df['function_description'] = merged_df[
         'function_description'].str.replace(';', ':')
-    
-    # change heterozygosity column to True/False
-    merged_df['heterozygosity'] = merged_df['heterozygosity'] == \
-                                  'heterozygous'
         
     # replace NaNs in df with empty string
     merged_df = merged_df.fillna('')
