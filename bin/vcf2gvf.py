@@ -120,7 +120,7 @@ def parse_args():
     parser.add_argument('--vcffile', type=str, default=None, required=True,
                         help='Path to a snpEFF-annotated VCF file')
     parser.add_argument('--grouping_criteria', type=str, default=None, required=True,
-                        choices=['time', 'wastewater', 'lineage']
+                        choices=['time', 'wastewater', 'lineage'],
                         help="The sample group type")
     parser.add_argument('--sample_group', type=str, default=None, required=True,
                         help='sample group name, ie. lineage, date range')
