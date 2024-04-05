@@ -44,7 +44,7 @@ if __name__ == '__main__':
         indices_to_merge = gvf_indices_list
 
     # read all indices into dask df
-    ddf = dd.read_csv(indices_to_merge, sep='\t') 
+    ddf = dd.read_csv(indices_to_merge, sep='\t', dtype={'alias': 'object', 'alias_protein': 'object', 'hgvs_aa_mutation': 'object', 'hgvs_alias': 'object', 'protein_name': 'object'}) 
     # fillna to make groupby() work
     ddf = ddf.fillna('n/a')
     # specify which columns to group by
