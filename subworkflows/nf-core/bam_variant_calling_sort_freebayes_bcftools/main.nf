@@ -16,7 +16,13 @@ workflow BAM_VARIANT_CALLING_SORT_FREEBAYES_BCFTOOLS {
     ch_versions = Channel.empty()
 
     // Variant calling
-    FREEBAYES ( ch_input, ch_fasta_fai.map{ meta, fasta, fai -> fasta }, ch_fasta_fai.map{ meta, fasta, fai -> fai }, ch_samples, ch_populations, ch_cnv )
+
+    FREEBAYES ( ch_input, 
+        ch_fasta_fai.map{ meta, fasta, fai -> [[id: meta], fasta] }, 
+        ch_fasta_fai.map{ meta, fasta, fai -> [[id: meta], fai]  }, 
+        ch_samples, 
+        ch_populations,
+        ch_cnv )
     ch_versions = ch_versions.mix(FREEBAYES.out.versions.first())
 
     // Sort VCF files
