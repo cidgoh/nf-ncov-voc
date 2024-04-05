@@ -59,35 +59,38 @@ workflow {
                   file.setPermissions('rwxr-x--x')
             }
       }
-      if (params.wastewater){
-            WASTEWATER()
+      
+            // Building configuration file for COVID-MVP
+      if(!params.skip_configuration){
+            gff_file = file(params.viral_gff, checkIfExists: true)
+            gff = [ [ id:params.virus_accession_id ], gff_file ]
+            CONFIGURE_VIRUSMVP(gff)
+            ch_json=CONFIGURE_VIRUSMVP.out.ch_json
+            ch_snpeff_db=CONFIGURE_VIRUSMVP.out.ch_snpeff_db
+            ch_snpeff_config=CONFIGURE_VIRUSMVP.out.ch_snpeff_config
+            ch_viral_fai=CONFIGURE_VIRUSMVP.out.ch_viral_fai
       }
-      else{
-             // Building configuration file for COVID-MVP
-            if(!params.skip_configuration){
-                  gff_file = file(params.viral_gff, checkIfExists: true)
-                  gff = [ [ id:params.virus_accession_id ], gff_file ]
-                  CONFIGURE_VIRUSMVP(gff)
-                  ch_json=CONFIGURE_VIRUSMVP.out.ch_json
-                  ch_snpeff_db=CONFIGURE_VIRUSMVP.out.ch_snpeff_db
-                  ch_snpeff_config=CONFIGURE_VIRUSMVP.out.ch_snpeff_config
-                  ch_viral_fai=CONFIGURE_VIRUSMVP.out.ch_viral_fai
+      if (params.virus_accession_id = "NC_045512.2"){
+            println("Executing COVID-MVP")
+            if (params.wastewater){
+                  WASTEWATER(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai)
             }
-            if (params.virus_accession_id = "NC_045512.2"){
-                  println("Executing COVID-MVP")
+            else{
                   COVIDMVP(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai) 
-                  
             }
-
-            else if (params.virus_accession_id = "NC_063383.1"){
-                  println("Executing POX-MVP")
-                  //POXMVP(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai)                    
-            }
-            else {
-                  println("Executing FLU-MVP")
-                  //FLUMVP()                                              
-            }
+            
+            
       }
+
+      else if (params.virus_accession_id = "NC_063383.1"){
+            println("Executing POX-MVP")
+            //POXMVP(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai)                    
+      }
+      else {
+            println("Executing FLU-MVP")
+            //FLUMVP()                                              
+      }
+
       
 
 }
