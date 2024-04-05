@@ -51,12 +51,12 @@ def add_pokay_annotations(gvf, annotation_file):
     df = pd.read_csv(annotation_file, sep='\t', header=0)
     # remove any leading/trailing spaces
     for column in df.columns:
-        df[column] = df[column].str.strip()
+        df[column] = df[column].astype(str).str.strip()
 
     # merge annotated vcf and functional annotation files by 'Name' and 'protein_symbol'
     df = df.rename(columns={"original mutation description": "Name", "amino acid mutation alias":"Pokay_alias", 'mutation functional effect category':"function_category", \
-                            'mutation functional effect description':"function_description", 'URL':"source"})
-    df['citation'] = df['author'] + '(' + df['publication year'] + ')'
+                            'mutation functional effect description':"function_description", 'URL':"source", 'protein symbol':'protein_symbol'})
+    df['citation'] = df['author'] + ' et al. (' + df['publication year'].str.replace(".0", "", regex=False) + ')'
     merged_df = pd.merge(df, gvf, on=['Name', 'protein_symbol'], how='right') #, 'alias'
 
     # data cleaning
