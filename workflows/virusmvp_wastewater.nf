@@ -186,8 +186,9 @@ workflow WASTEWATER {
         ch_stats = WW_SEQKIT_STATS.out.stats
         
         ANNOTATION(vcf, ch_snpeff_db, ch_snpeff_config, params.viral_genome, ch_stats, ch_json)
+        annotatted_vcf = ANNOTATION.out.gvf
         
-        
+        GVF_PROCESSING_ANNOTATION(annotatted_vcf)
         
 
             
