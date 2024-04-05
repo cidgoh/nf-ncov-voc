@@ -1,4 +1,5 @@
 #!/bin/bash
+#@author: madeline
 
 #User input arguments are --dois (filepath to txt file of dois to look for) and --out_file (filepath to final output file, a .csv)
 # eg. ./bin/dois2pmcids.sh -o out_dois.csv -i test_dois.txt
