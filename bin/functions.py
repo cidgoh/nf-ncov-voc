@@ -23,6 +23,7 @@ vcf_columns = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL',
 # pragmas are in column 0
 pragmas = pd.DataFrame([['##gff-version 3'],
                         ['##gvf-version 1.10'],
+                        ['##sample-description'],
                         ['##species']])
 
 # source: https://hgvs-nomenclature.org/stable/background/standards/#amino-acid-descriptions
@@ -347,20 +348,14 @@ def find_sample_size(table, lineage, vcf_file, wastewater):
     
 def parse_INFO(df, var_cols): # return INFO dataframe with named columns, including EFF split apart
 
-    # make 'INFO' column easier to extract attributes from:
-    # split at ;, form dataframe
-    info = df['INFO'].str.split(pat=';').apply(pd.Series)
-
-    for column in info.columns:
-        split = info[column].str.split(pat='=').apply(pd.Series)
-        title = split[0].drop_duplicates().tolist()[0]
-        if isinstance(title, str):
-            title = title.lower()
-            content = split[1]
-            # ignore "tag=" in column content
-            info[column] = content
-            # make attribute tag as column label
-            info.rename(columns={column: title}, inplace=True)
+    # extract these key-value pairs in INFO into their own columns
+    cols_to_extract = ['DP', 'ps_filter', 'ps_exc', 'EFF', 'mat_pep', 'mat_pep_desc', 'mat_pep_acc']
+    info = pd.DataFrame(columns=cols_to_extract)
+    for col in cols_to_extract:
+        pat = str(col) + "\=(.*?)\;"
+        info[col] = df['INFO'].str.extract(pat)
+    # rename uppercase columns as lowercase
+    info = info.rename(columns={'DP':'dp', 'EFF':'eff'})
 
     # concatenate info and df horizontally
     df = pd.concat([df, info], axis=1)
@@ -493,11 +488,12 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
     :return: series containing SARS-CoV-2 chromosome region names at each
     nucleotide position in ``pos``
     """
-    # make an empty dataframe of the same length as pos and with four columns
-    cols_to_add = ["gene", "protein_name", "protein_symbol", "protein_id"]
-    df = pd.DataFrame(np.nan, index=range(0,pos.shape[0]), columns=cols_to_add)
-    # add positions to this df
-    df["POS"] = pos
+    # make nucleotide positions series into a df
+    df = pos.to_frame()
+    pos_column = df.columns[0]
+    # add new empty (NaN) columns
+    cols_to_use = [pos_column, "gene", "protein_name", "protein_symbol", "protein_id"]
+    df = df.reindex(columns = cols_to_use) 
 
     # loop through all CDS regions in dict to get attributes
     for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
@@ -513,7 +509,7 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             protein_id = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_id"]
 
             # fill in attributes for mutations in this CDS region
-            cds_mask = df["POS"].astype(int).between(start, end, inclusive="both")
+            cds_mask = df[pos_column].astype(int).between(start, end, inclusive="both")
             df.loc[cds_mask, "gene"] = gene
             df.loc[cds_mask, "protein_name"] = protein_name
             df.loc[cds_mask, "protein_symbol"] = protein_symbol
@@ -548,7 +544,6 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     # get list of all NSP, 3CL, and PlPro proteins in the file:
     alias_mask = (df['gene'].str.contains("ORF1ab")) & (df['mat_pep']!='n/a')
     nsps_list = sorted(list(set(df[alias_mask]['mat_pep'].tolist())))
-
     if len(nsps_list) > 0:
         
         ## note: gene and protein_name are based on our gene positions JSON
