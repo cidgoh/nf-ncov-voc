@@ -137,6 +137,8 @@ if __name__ == '__main__':
         write_metadata(dataframe=Metadata, start_date=sdate, end_date=edate, criterion=criteria)
     
     elif criteria == "time":
+        sdate = pd.to_datetime(group.split("_")[0], format='%Y-%m-%d')
+        edate = pd.to_datetime(group.split("_")[1], format='%Y-%m-%d')
         while sdate <= edate:
             query_date = sdate + pd.DateOffset(days=window - 1)
             #print(sdate, query_date)

@@ -19,8 +19,7 @@ process extractMetadata {
 
     script:
         def prefix = task.ext.prefix ?: "${meta2.id}"
-        def time = time ? "--start_date ${params.start_date} --end_date ${params.end_date}" : ''
-
+        def time = time ? "--start_date ${params.start_date} --end_date ${params.end_date} " : ''
         """
 
         extract_metadata.py \\
