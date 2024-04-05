@@ -5,11 +5,11 @@ nextflow.enable.dsl = 2
 // import modules
 
 
-include { DOWNLOAD_VIRALAI_MULTIFASTA                    } from '../../modules/local/viralai_multifasta'
-include { DOWNLOAD_VIRALAI_METADATA                      } from '../../modules/local/viralai_metadata'
-include { DOWNLOADPANGOALIAS                             } from '../../modules/local/downloadPangoalias'
-include { PROCESS_VIRALAI_METADATA                       } from '../../modules/local/processViralai_metadata' 
-include { XZ_DECOMPRESS                                  } from '../../modules/nf-core/xz/decompress/main'
+include { DOWNLOAD_VIRALAI_MULTIFASTA                    } from '../../../modules/local/viralai/viralai_multifasta'
+include { DOWNLOAD_VIRALAI_METADATA                      } from '../../../modules/local/viralai/viralai_metadata'
+include { DOWNLOADPANGOALIAS                             } from '../../../modules/local/downloadPangoalias'
+include { PROCESS_VIRALAI_METADATA                       } from '../../../modules/local/viralai/processViralai_metadata' 
+include { XZ_DECOMPRESS                                  } from '../../../modules/nf-core/xz/decompress/main'
 
 workflow VIRALAI {
     
