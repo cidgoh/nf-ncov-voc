@@ -33,18 +33,30 @@ workflow PREPROCESSING {
             variantfile = true
         }
 
-        criteria = Channel.of(params.grouping_criteria.tokenize(',')).flatten()
+        criteria = Channel.of(params.grouping_criteria)
         EXTRACTVARIANTS(variants, metadata, variantfile, virusseq, criteria, variable = [], time=true)
         
         EXTRACTVARIANTS.out.txt
             .splitText() 
             .map{id, voc -> tuple([[id:voc.tokenize(':')[1].replaceAll(" ", "_").trim()], voc.replaceAll(" ", "_").trim()])} 
             .set{ ch_group }
-        if(EXTRACTVARIANTS.out.log)
-        logfile = EXTRACTVARIANTS.out.log
+        
+        
+        if(EXTRACTVARIANTS.out.log){
+            logfile = EXTRACTVARIANTS.out.log
+        }
         extractMetadata(metadata, ch_group, time=true)
-        ids=extractMetadata.out.txt
-        SEQKIT_GREP(sequences, ids.map{it[1]})
+        
+        if (params.grouping_criteria == "time"){
+            ids_channel = extractMetadata.out.txt.map {it-> it[1]} .flatten()
+            ids_channel.view()
+            }
+        else{
+            ids = extractMetadata.out.txt
+            ids_channel = ids.map{it[1]}
+        }
+        SEQKIT_GREP(sequences, ids_channel)
+        
 
     emit:
         metadata = extractMetadata.out.tsv

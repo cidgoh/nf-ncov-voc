@@ -1,0 +1,17 @@
+prefix: "covidmvp-2024-03-19-3months"
+gene_alias: "assets/virus_genomeAnnotation/NC_045512.2/NC_045512.2_key.json"
+mode: "reference"
+grouping_criteria: "lineage"
+viralai: true
+virusseq: true
+virusseq_update: true
+skip_classification: true
+skip_postprocessing: false
+skip_posting: true
+skip_harmonize: false
+start_date: "2020-01-01"
+end_date: "2024-03-25"
+metadata_source: "ViralAi_EpiCoV"
+metadata_config: "assets/metadata_conf/metadata.yaml"
+outdir: "results/covidmvp"
+mutation_indexfile: "results/covidmvp/covidmvp-2024-03-08/merge/2024-03-08.index.tsv"

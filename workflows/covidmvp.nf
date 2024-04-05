@@ -8,7 +8,7 @@ include {ANNOTATION                 } from '../subworkflows/local/virusmvp_annot
 include {surveillance               } from '../subworkflows/local/virusmvp_surveillance'
 include {GVF_PROCESSING_ANNOTATION  } from '../subworkflows/local/virusmvp_gvf_processing_annotations'
 include {QUALITYCONTROL             } from '../subworkflows/local/virusmvp_qc'
-include {VIRALAI                    } from '../subworkflows/local/viralai_datadownload'
+include {VIRALAI                    } from '../subworkflows/local/viralai/viralai_datadownload'
 include {CLASSIFICATION             } from '../subworkflows/local/virusmvp_classification'
 include {POSTPROCESSING             } from '../subworkflows/local/virusmvp_postprocessing'
 
@@ -97,12 +97,12 @@ workflow COVIDMVP {
         GVF_PROCESSING_ANNOTATION(annotation_gvf)
         
         if(!params.skip_postprocessing){
-            GVF_PROCESSING_ANNOTATION.out.annotation_gvf
+            /*GVF_PROCESSING_ANNOTATION.out.annotation_gvf
                 .map { [it[1]] }
                 .collect()
                 .map { gvfs -> [ [id:"postprocessing"], gvfs ] }
-                .set { ch_collected_gvfs}
-            POSTPROCESSING(ch_collected_gvfs,PREPROCESSING.out.logfile) 
+                .set { ch_collected_gvfs}*/
+            POSTPROCESSING(annotation_gvf,PREPROCESSING.out.logfile) 
         }
         
         //surveillance(ch_gvf_surveillance, ch_variant, ch_stats, ch_surveillanceIndicators, ch_metadata )

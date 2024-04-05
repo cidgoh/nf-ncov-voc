@@ -20,6 +20,8 @@ workflow ANNOTATION {
         ch_json
 
     main:
+        lineage = true
+        wastewater = []
         
         if (!params.skip_tag_problematics_sites && params.virus_accession_id == "NC_045512.2"){
             problematics_sites = file(params.probvcf, checkIfExists: true)
@@ -58,13 +60,18 @@ workflow ANNOTATION {
             json = ch_json
         }
         threshold=0.75
+        if (params.wastewater){
+            lineage = []
+            wastewater = true
+        }
         
         VCFTOGVF(
             annotation_vcf,
             ch_stats.map{it[1]},
             threshold,
             json, 
-            true
+            lineage, 
+            wastewater
             )
         gvf = VCFTOGVF.out.gvf
 
