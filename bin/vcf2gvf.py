@@ -119,8 +119,8 @@ def parse_args():
                     'file with functional annotation')
     parser.add_argument('--vcffile', type=str, default=None, required=True,
                         help='Path to a snpEFF-annotated VCF file')
-    parser.add_argument('--grouping_criteria', type=str, default=None, required=True,
-                        choices=['time', 'wastewater', 'lineage'],
+    parser.add_argument('--sample_desc', type=str, default=None, required=True,
+                        choices=['Wastewater', 'Clinical'],
                         help="The sample group type")
     parser.add_argument('--sample_group', type=str, default=None, required=True,
                         help='sample group name, ie. lineage, date range')
@@ -154,7 +154,7 @@ if __name__ == '__main__':
     
     # Assigning variables
     vcf_file = args.vcffile
-    grouping_criteria = args.grouping_criteria
+    sample_desc = args.sample_desc
     sample_group = args.sample_group
 
     # If the strain and/or stats file are None, set them as 'n/a'
@@ -179,7 +179,7 @@ if __name__ == '__main__':
     species = GENE_PROTEIN_POSITIONS_DICT['Src']['species']
     pragmas[0] = pragmas[0].str.replace("##species", "##species " + str(species))
     # temporary pragma, subject to change
-    pragmas[0] = pragmas[0].str.replace("##sample-description", "##sample-description " + 'grouping_criteria=' + str(grouping_criteria) +';' + 'sample_group=' + str(sample_group) + ';')
+    pragmas[0] = pragmas[0].str.replace("##sample-description", "##sample-description " + 'sample_desc=' + str(sample_desc) +';' + 'sample_group=' + str(sample_group) + ';')
 
     # combine pragmas, header, GVF contents
     final_gvf = pd.DataFrame(np.vstack([gvf.columns, gvf]))

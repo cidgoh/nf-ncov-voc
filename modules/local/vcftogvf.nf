@@ -14,6 +14,7 @@ process VCFTOGVF {
       tuple val(meta2), path(json)
       val lineage
       val wastewater
+      val sampledesc
           
   output:
       tuple val(meta), path("*.gvf"), emit: gvf
@@ -25,6 +26,9 @@ process VCFTOGVF {
   def strain = lineage ? "--strain ${prefix}" : ''
   def stat     = stats ? "--size_stats ${stats}" : ''
   def wastewater = wastewater ? "--wastewater" : ''
+  def group =  "--sample_group ${meta.id}"
+
+
   """
     vcf2gvf.py --vcffile $vcf \\
       $stat \\
@@ -32,6 +36,8 @@ process VCFTOGVF {
       --gene_positions $json \\
       $wastewater \\
       $strain \\
+      --sample_desc $sampledesc \\
+      $group \\
       $args \\
       --outgvf ${prefix}.gvf
 

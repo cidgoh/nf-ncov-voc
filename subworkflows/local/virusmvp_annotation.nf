@@ -63,15 +63,20 @@ workflow ANNOTATION {
         if (params.wastewater){
             lineage = []
             wastewater = true
+            data_description = "Wastewater"
         }
-        
+        else{
+            data_description = "Clinical"
+        }
+
         VCFTOGVF(
             annotation_vcf,
             ch_stats.map{it[1]},
             threshold,
             json, 
             lineage, 
-            wastewater
+            wastewater,
+            data_description,
             )
         gvf = VCFTOGVF.out.gvf
 
