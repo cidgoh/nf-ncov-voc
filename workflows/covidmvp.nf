@@ -95,14 +95,9 @@ workflow COVIDMVP {
         annotation_gvf=ANNOTATION.out.gvf
 
         GVF_PROCESSING_ANNOTATION(annotation_gvf)
-        
+        annotated_gvf = GVF_PROCESSING_ANNOTATION.out.annotation_gvf
         if(!params.skip_postprocessing){
-            /*GVF_PROCESSING_ANNOTATION.out.annotation_gvf
-                .map { [it[1]] }
-                .collect()
-                .map { gvfs -> [ [id:"postprocessing"], gvfs ] }
-                .set { ch_collected_gvfs}*/
-            POSTPROCESSING(annotation_gvf,PREPROCESSING.out.logfile) 
+            POSTPROCESSING(annotated_gvf,PREPROCESSING.out.logfile) 
         }
         
         //surveillance(ch_gvf_surveillance, ch_variant, ch_stats, ch_surveillanceIndicators, ch_metadata )
