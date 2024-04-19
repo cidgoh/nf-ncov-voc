@@ -6,9 +6,6 @@ nextflow.enable.dsl = 2
 include { GVF_TO_INDEX_LOG       } from '../../modules/local/gvftoindexandlog'
 include { MERGE_INDICES         } from '../../modules/local/mergeIndices'
 include { MERGE_LOGFILES        } from '../../modules/local/mergeLogfiles'
-//include { GVF_TO_INDEX_LOG       } from '../../modules/local/gvftoindexandlog'
-//include { POST_LOG       } from '../../modules/local/post_log'
-//include { SEQKIT_GREP           } from '../../modules/nf-core/seqkit/grep/main'
 
 
 workflow POSTPROCESSING {
@@ -39,10 +36,5 @@ workflow POSTPROCESSING {
                 .set { ch_logs}
 
         MERGE_LOGFILES(logheader, ch_logs, ch_indexfile)
-        //GVF_TO_INDEX_LOG(ch_collected_gvfs, logfile, ch_indexfile)
-        //if(!params.skip_posting){
-        //    POST_LOG(UPDATE_INDEX_LOG.out.log,  config=file(params.config, checkIfExists: true))
-        //}
-        
         
 }

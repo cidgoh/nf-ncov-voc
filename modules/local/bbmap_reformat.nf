@@ -4,9 +4,6 @@ process BBMAP {
     conda "bioconda::bbmap=30.01"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
     'https://depot.galaxyproject.org/singularity/bbmap:39.01--h92535d8_1' : ''}"
-    
-
-    publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.fasta", mode: 'copy'
 
     label 'dev_env'
 

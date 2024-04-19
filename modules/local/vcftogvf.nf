@@ -1,7 +1,6 @@
 process VCFTOGVF {
 
   tag "$meta.id"
-  errorStrategy 'ignore'
 
   conda "bioconda::pandas=1.4.3"
   container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?

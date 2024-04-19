@@ -6,7 +6,6 @@ process MERGE_INDICES {
   container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'biocontainers/dask:2023.10.1-py11-ol9_cv1' : 
         '' }"
-  
 
   input:
       tuple val(meta), path(index)

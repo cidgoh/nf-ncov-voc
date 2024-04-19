@@ -26,6 +26,7 @@ workflow COVIDMVP {
         
     main:      
         ch_voc = Channel.empty()
+        skip_variant_calling = false
         if(params.viralai){
             VIRALAI()
             metadata=VIRALAI.out.meta
@@ -82,15 +83,24 @@ workflow COVIDMVP {
             }
         }
         else{
-            if(!params.skip_qc){
+            if(seq.getExtension() == "vcf"){
+                skip_variant_calling = true
+                annotation_vcf = [ [ id:seq.getBaseName() ], seq ]
+                ch_stats = []
+            }
+            else{
+                if(!params.skip_qc){
                 QUALITYCONTROL(sequences, sequences)
                 sequences_grouped=QUALITYCONTROL.out.sequences_grouped
                 ch_stats=QUALITYCONTROL.out.stats
-            }    
+                }
+            }   
+        }
+        if (!skip_variant_calling==true){
+            VARIANT_CALLING(sequences_grouped, params.viral_genome, params.viral_genome_fai)
+            annotation_vcf=VARIANT_CALLING.out.vcf
         }
         
-        VARIANT_CALLING(sequences_grouped, params.viral_genome, params.viral_genome_fai)
-        annotation_vcf=VARIANT_CALLING.out.vcf
         ANNOTATION(annotation_vcf, ch_snpeff_db, ch_snpeff_config, params.viral_genome, ch_stats, ch_json)
         annotation_gvf=ANNOTATION.out.gvf
 

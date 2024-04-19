@@ -33,7 +33,7 @@ if (params.profile){
       System.exit(1)
       }
 
-if ( ! params.prefix ) {
+if ( !params.prefix ) {
       println("Please supply a prefix for your output files with --prefix")
       println("Use --help to print help")
       System.exit(1)

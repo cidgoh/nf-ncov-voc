@@ -27,7 +27,7 @@ workflow VARIANT_CALLING {
         
         fasta = Channel.value([[params.virus_accession_id], file(viral_genome, checkIfExists: true)])  
         
-        if (params.aligner == "bwa"){
+        if (params.viral_aligner == "bwa"){
             BWA_INDEX([[id: params.virus_accession_id], viral_genome])
         //    BWA_MEM(sequences_grouped, BWA_INDEX.out.index, false )
         //    bam=BWA_MEM.out.bam

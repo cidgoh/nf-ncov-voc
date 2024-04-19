@@ -1,7 +1,5 @@
 process DOWNLOADPANGOALIAS{
 
-    publishDir "${params.outdir}/${task.process.replaceAll(":","_")}", pattern: "scheme", mode: "copy"
-
     output:
         path("*.json"), emit: json
     

@@ -4,7 +4,7 @@ nextflow.enable.dsl = 2
 
 // import modules
 include { EXTRACTVARIANTS       } from '../../modules/local/extractVariants'
-include { extractMetadata       } from '../../modules/local/extractMetadata'
+include { EXTRACTMETADATA       } from '../../modules/local/extractMetadata'
 include { SEQKIT_GREP           } from '../../modules/nf-core/seqkit/grep/main'
 
 
@@ -33,8 +33,15 @@ workflow PREPROCESSING {
             variantfile = true
         }
 
+        if(params.variable){
+            variable = params.variable
+        }
+        else{
+            variable = []
+        }
+
         criteria = Channel.of(params.grouping_criteria)
-        EXTRACTVARIANTS(variants, metadata, variantfile, virusseq, criteria, variable = [], time=true)
+        EXTRACTVARIANTS(variants, metadata, variantfile, virusseq, criteria, params.variable, time=true)
         
         EXTRACTVARIANTS.out.txt
             .splitText() 
@@ -45,22 +52,20 @@ workflow PREPROCESSING {
         if(EXTRACTVARIANTS.out.log){
             logfile = EXTRACTVARIANTS.out.log
         }
-        extractMetadata(metadata, ch_group, time=true)
+        EXTRACTMETADATA(metadata, ch_group, time=true)
         
         if (params.grouping_criteria == "time"){
-            ids_channel = extractMetadata.out.txt.map {it-> it[1]} .flatten()
+            ids_channel = EXTRACTMETADATA.out.txt.map {it-> it[1]} .flatten()
             ids_channel.view()
             }
         else{
-            ids = extractMetadata.out.txt
+            ids = EXTRACTMETADATA.out.txt
             ids_channel = ids.map{it[1]}
         }
         SEQKIT_GREP(sequences, ids_channel)
         
-
     emit:
-        metadata = extractMetadata.out.tsv
+        metadata = EXTRACTMETADATA.out.tsv
         sequences = SEQKIT_GREP.out.filter
         logfile = logfile
-      
 }

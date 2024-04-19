@@ -54,5 +54,4 @@ workflow CLASSIFICATION{
     emit:
         merged_metadata
         sequences
-      
 }

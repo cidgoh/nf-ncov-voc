@@ -67,7 +67,7 @@ workflow WASTEWATER {
                     )  
                 }
             ch_short_reads = WW_FASTP.out.reads
-            ch_versions = ch_versions.mix(WW_FASTP.out.versions.first())
+            ch_versions = ch_versions.mix(WW_FASTP.out.versions)
         }
         
         WW_SEQKIT_STATS(ch_short_reads)    
@@ -173,10 +173,9 @@ workflow WASTEWATER {
         ch_ivar=ch_viral_bam.combine(viral_bam_index, by: 0)
         WW_IVAR_TRIM(ch_ivar, articDownloadScheme.out.bed)
         WW_SAMTOOLS_SORT(WW_IVAR_TRIM.out.bam, viral_genome)
-        //WW_SAMTOOLS_INDEX_VIRAL(WW_SAMTOOLS_SORT.out.bam)
         
-        db_name= "freyja_db"
-        FREYJA_UPDATE(db_name)
+
+        FREYJA_UPDATE(params.db_name)
         ch_barcodes = FREYJA_UPDATE.out.barcodes
         ch_lineages_meta = FREYJA_UPDATE.out.lineages_meta
                 
@@ -189,23 +188,8 @@ workflow WASTEWATER {
         annotatted_vcf = ANNOTATION.out.gvf
         
         GVF_PROCESSING_ANNOTATION(annotatted_vcf)
-        
-
-            
-        
-        
-    
-    
-
 
     emit:
-        stats          = WW_SEQKIT_STATS.out.stats
-        //vcf            = WW_IVAR_VARIANTS_TO_VCF.out.vcf
-        //variants       = FREYJA_VARIANTS.out.variants  // channel: [ val(meta), path(variants_tsv) ]
-        //depths         = FREYJA_VARIANTS.out.depths    // channel: [ val(meta), path(depths_tsv) ]
-        //demix          = FREYJA_DEMIX.out.demix        // channel: [ val(meta), path(demix_tsv) ]
-        barcodes       = ch_barcodes                   // channel: [ val(meta), path(barcodes) ]
-        lineages_meta  = ch_lineages_meta              // channel: [ val(meta), path(lineages_meta) ]
         versions       = ch_versions                   // channel: [ path(versions.yml) ]
 }
 
