@@ -179,7 +179,7 @@ workflow WASTEWATER {
         ch_barcodes = FREYJA_UPDATE.out.barcodes
         ch_lineages_meta = FREYJA_UPDATE.out.lineages_meta
                 
-        BAM_VARIANT_DEMIX_BOOT_FREYJA(WW_SAMTOOLS_SORT.out.bam, file(params.viral_genome), 100, db_name, ch_barcodes, ch_lineages_meta)
+        BAM_VARIANT_DEMIX_BOOT_FREYJA(WW_SAMTOOLS_SORT.out.bam, file(params.viral_genome), 100, params.db_name, ch_barcodes, ch_lineages_meta)
         WW_IVAR_VARIANTS_TO_VCF(BAM_VARIANT_DEMIX_BOOT_FREYJA.out.variants)
         vcf = WW_IVAR_VARIANTS_TO_VCF.out.vcf
         ch_stats = WW_SEQKIT_STATS.out.stats

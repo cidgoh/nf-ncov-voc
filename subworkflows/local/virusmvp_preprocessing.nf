@@ -16,7 +16,7 @@ workflow PREPROCESSING {
 
     main:
         variant = file(params.variant, checkIfExists: true)
-        variants = [ [ id:params.viral_genome_id ], variant ]
+        variants = [ [ id:params.virus_accession_id ], variant ]
         
         
         if(params.virusseq_update){
@@ -41,7 +41,7 @@ workflow PREPROCESSING {
         }
 
         criteria = Channel.of(params.grouping_criteria)
-        EXTRACTVARIANTS(variants, metadata, variantfile, virusseq, criteria, params.variable, time=true)
+        EXTRACTVARIANTS(variants, metadata, variantfile, virusseq, criteria, variable, time=true)
         
         EXTRACTVARIANTS.out.txt
             .splitText() 
