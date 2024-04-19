@@ -28,21 +28,21 @@ def parse_args():
                         help='VOC e.g. B.1.1.7')
     parser.add_argument('--samplingsize', type=int, default=0,
                         help='Sample size, if "0" all sequences '
-                             'extracted; Default=0')
+                        'extracted; Default=0')
     parser.add_argument('--start_date', type=str, default=None,
                         help='Date of submission from (yyyy-mm-dd); '
-                             'Default=None')
+                        'Default=None')
     parser.add_argument('--end_date', type=str, default=None,
                         help='Date of submission to (yyyy-mm-dd); '
-                             'Default=None')
+                        'Default=None')
     parser.add_argument('--window', type=int, default=7,
                         help='Number of days between start and end date '
-                             'Default=7')
+                        'Default=7')
     parser.add_argument('--outtable', type=str, default=None,
                         help='Metadata file (.tsv) format')
     parser.add_argument('--outids', type=str, default=None,
                         help='ids file (.txt) format')                                                                       
-                                                       
+    
     return parser.parse_args()
 
 
@@ -86,29 +86,24 @@ def data_filtering(dataframe):
 
 def filter_metadata(dataframe):
     if 'host_scientific_name' in dataframe.columns:
-        dataframe = dataframe[dataframe['host_scientific_name'].str.lower() ==
-                              'Homo sapiens'.lower()]
+        dataframe = dataframe[dataframe['host_scientific_name'].str.lower() == 'Homo sapiens'.lower()]
     if 'length' in dataframe.columns:
         dataframe = dataframe[dataframe['length'] >= 29000]        
     return dataframe
-
-    
 
 def write_metadata(dataframe, start_date, end_date, criterion):
     # dataframe.to_csv(args.outtable, sep="\t", compression='gzip',
     #                   quoting=csv.QUOTE_NONE, index=False, header=True)
     if criterion == "lineage":
         dataframe.to_csv(args.outtable, sep="\t", compression='gzip',
-                     quoting=csv.QUOTE_NONE, index=False, header=True)
+        quoting=csv.QUOTE_NONE, index=False, header=True)
     elif criterion == "time":
         dataframe.to_csv( str(start_date)+ "_" + str(end_date) + 
-                     "_Metadata.tsv.gz", sep="\t", compression='gzip',
-                     quoting=csv.QUOTE_NONE, index=False, header=True)
+        "_Metadata.tsv.gz", sep="\t", compression='gzip',
+        quoting=csv.QUOTE_NONE, index=False, header=True)
     else:
         dataframe.to_csv(args.outtable, sep="\t", compression='gzip',
-                     quoting=csv.QUOTE_NONE, index=False, header=True)
-
-
+        quoting=csv.QUOTE_NONE, index=False, header=True)
 
 
 if __name__ == '__main__':
@@ -117,8 +112,7 @@ if __name__ == '__main__':
         group = args.group.split(":")[1]
         criteria = args.group.split(":")[0]
         
-    Metadata = pd.read_csv(args.table, sep="\t", low_memory=False, compression='gzip',
-                           parse_dates=['sample_collection_date'])
+    Metadata = pd.read_csv(args.table, sep="\t", low_memory=False, compression='gzip', parse_dates=['sample_collection_date'])
 
     if 'sample_collection_date' in Metadata.columns:
         Metadata['sample_collection_date'] = pd.to_datetime(Metadata[
@@ -133,10 +127,9 @@ if __name__ == '__main__':
 
     """ Filtering for human associated and consensus sequence of
         at least 29Kb """ 
-   
 
     if criteria == "lineage":    
-        Metadata = Metadata[Metadata['lineage'] == group]
+        Metadata = Metadata[Metadata['alias'] == group]
         
         Metadata = data_filtering(dataframe=Metadata)
         Metadata = sub_sampling(dataframe=Metadata, subsampling=args.samplingsize)
@@ -144,6 +137,8 @@ if __name__ == '__main__':
         write_metadata(dataframe=Metadata, start_date=sdate, end_date=edate, criterion=criteria)
     
     elif criteria == "time":
+        sdate = pd.to_datetime(group.split("_")[0], format='%Y-%m-%d')
+        edate = pd.to_datetime(group.split("_")[1], format='%Y-%m-%d')
         while sdate <= edate:
             query_date = sdate + pd.DateOffset(days=window - 1)
             #print(sdate, query_date)
@@ -156,7 +151,6 @@ if __name__ == '__main__':
             
             sdate += pd.DateOffset(days=window)
 
-
     else:
         Metadata = filter_metadata(dataframe=Metadata)
         Metadata = Metadata[Metadata[criteria] == group.replace("_", " ")]
@@ -165,4 +159,3 @@ if __name__ == '__main__':
         Metadata = sub_sampling(dataframe=Metadata, subsampling=args.samplingsize)
         write_ids(dataframe=Metadata, start_date=sdate, end_date=edate, criterion=criteria)
         write_metadata(dataframe=Metadata, start_date=sdate, end_date=edate, criterion=criteria)
-        

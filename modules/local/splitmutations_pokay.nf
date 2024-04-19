@@ -19,7 +19,7 @@ process NCOVSPLITMUTATIONSPOKAY {
   def prefix = task.ext.prefix ?: "${meta.id}"
 
   """
-    splitmutationnames_Pokay.py --functional_annotations $annotations \\
+    splitmutationnames_functionalannotation.py --functional_annotations $annotations \\
       --names_to_split $tsv \\
       $args \\
       --out_functions ${prefix}.processed.tsv

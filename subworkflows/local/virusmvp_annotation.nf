@@ -20,8 +20,10 @@ workflow ANNOTATION {
         ch_json
 
     main:
+        lineage = true
+        wastewater_data = []
         
-        if (!params.skip_tag_problematics_sites && params.virus_accession_id == "NC_045512.2"){
+        if (!params.skip_problematics_sites && params.virus_accession_id == "NC_045512.2"){
             problematics_sites = file(params.probvcf, checkIfExists: true)
             vcf = [ [ id:params.virus_accession_id ], [ problematics_sites ] ]
             TAGPROBLEMATICSITES_NCOV(annotation_vcf, vcf)
@@ -39,11 +41,10 @@ workflow ANNOTATION {
         }
         
 
-        if (!params.skip_mat_peptide_annottaion && params.virus_accession_id == "NC_045512.2"){
-          
+        if (!params.skip_peptide_annottaion && params.virus_accession_id == "NC_045512.2"){
             ANNOTATEMATPEPTIDES_NCOV(
-              annotation_vcf,
-              ch_json
+                annotation_vcf,
+                ch_json
             )
             annotation_vcf=ANNOTATEMATPEPTIDES_NCOV.out.vcf
         }
@@ -58,13 +59,26 @@ workflow ANNOTATION {
             json = ch_json
         }
         threshold=0.75
-        
+        if (params.wastewater){
+            lineage = []
+            wastewater_data = true
+            data_description = "Wastewater"
+        }
+        else{
+            data_description = "Clinical"
+        }
+        if (ch_stats){
+            ch_stats = ch_stats.map{it[1]}
+        }
+
         VCFTOGVF(
             annotation_vcf,
-            ch_stats.map{it[1]},
+            ch_stats,
             threshold,
             json, 
-            true
+            lineage, 
+            wastewater_data,
+            data_description,
             )
         gvf = VCFTOGVF.out.gvf
 

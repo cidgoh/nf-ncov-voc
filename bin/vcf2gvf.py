@@ -10,7 +10,7 @@ files. Required user input is a VCF file.
 The attributes completed by this script are: 
 ['ID', 'Name', 'gene', 'protein_name', 'protein_symbol', 'protein_id', 'ps_filter', 'ps_exc', 'mat_pep',
 'mat_pep_desc','mat_pep_acc', 'ro', 'ao', 'dp', 'sample_size', 'Reference_seq',
-'Variant_seq', 'nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
+'Variant_seq', 'nt_name', 'aa_name', 'hgvs_nt', 'hgvs_aa', 'hgvs_alias', 'vcf_gene', 'mutation_type',
 'viral_lineage', 'alternate_frequency']
 """
 
@@ -20,7 +20,9 @@ import numpy as np
 import json
 from functions import parse_INFO, find_sample_size, \
     unnest_multi, get_unknown_labels, separate_attributes, rejoin_attributes, \
-        clade_defining_threshold, map_pos_to_gene_protein, add_alias_names
+    clade_defining_threshold, map_pos_to_gene_protein, add_alias_names, \
+    convert_amino_acid_codes, rewrite_nt_snps_as_hgvs, remove_nts_from_nt_name, \
+    add_hgvs_names
 from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
 
@@ -55,12 +57,12 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
         new_gvf['#type'] = '.'
     # fill '#attributes' column with empty key-value pairs to fill in later
     new_gvf['#attributes'] = empty_attributes
-            
+
     # expand #attributes into columns to fill in separately
     new_gvf = separate_attributes(new_gvf)
 
     # fill in attributes from vcf_df columns by name if they exist
-    vcf_df_cols_to_add = ['nt_name', 'aa_name', 'vcf_gene', 'mutation_type',
+    vcf_df_cols_to_add = ['vcf_gene', 'mutation_type',
                         'ps_filter', 'ps_exc', 'mat_pep','mat_pep_desc',
                         'mat_pep_acc', 'Reference_seq', 'Variant_seq',
                         "dp", "ro", "ao"]
@@ -68,6 +70,10 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
         # drop nans if they exist
         vcf_df[column] = vcf_df[column].fillna('')
         new_gvf[column] = vcf_df[column]
+    
+    for column in ['nt_name', 'aa_name']:
+        vcf_df[column] = vcf_df[column].fillna('n/a')
+        new_gvf[column] = vcf_df[column]   
 
     # add other attributes
     new_gvf['sample_size'] = sample_size
@@ -85,10 +91,17 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     
     # add 'alias' column for ORF1a/b mutations
     new_gvf = add_alias_names(new_gvf, GENE_PROTEIN_POSITIONS_DICT)
+
     # add clade_defining attribute
     new_gvf = clade_defining_threshold(args.clades_threshold,
                                              new_gvf, sample_size)
-        
+    
+    # add HGVS names columns: 'hgvs_nt', 'hgvs_aa', 'hgvs_alias'
+    new_gvf = add_hgvs_names(new_gvf)
+    
+    # save HGVS names for troubleshooting
+    #new_gvf[['nt_name', 'hgvs_nt', 'aa_name', 'hgvs_aa', 'alias', 'hgvs_alias']].to_csv('hgvs_troubleshooting.tsv', sep='\t')
+    
     # add 'ID' attribute: here, rows with the same entry in 'Name'
     # get the same ID (should all be different)
     new_gvf['ID'] = 'ID_' + new_gvf.groupby('Name', sort=False).ngroup().astype(str)
@@ -104,8 +117,13 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Converts a annotated VCF file to a GVF '
                     'file with functional annotation')
-    parser.add_argument('--vcffile', type=str, default=None,
+    parser.add_argument('--vcffile', type=str, default=None, required=True,
                         help='Path to a snpEFF-annotated VCF file')
+    parser.add_argument('--sample_desc', type=str, default=None, required=True,
+                        choices=['Wastewater', 'Clinical'],
+                        help="The sample group type")
+    parser.add_argument('--sample_group', type=str, default=None, required=True,
+                        help='sample group name, ie. lineage, date range')
     parser.add_argument('--size_stats', type=str, default=None,
                         help='Statistics file for for size extraction')
     parser.add_argument('--clades_threshold', type=float,
@@ -120,7 +138,7 @@ def parse_args():
                         help='Lineage; user mode is if strain="n/a"')
     parser.add_argument("--wastewater", help="Activate wastewater data mode",
                         action="store_true")
-    parser.add_argument('--outgvf', type=str,
+    parser.add_argument('--outgvf', type=str, required=True,
                         help='Filename for the output GVF file')
 
     return parser.parse_args()
@@ -130,12 +148,14 @@ if __name__ == '__main__':
 
     args = parse_args()
     
-    # Reading the gene & proetin coordinates of SARS-CoV-2 genome
+    # Reading the gene & protein coordinates of SARS-CoV-2 genome
     with open(args.gene_positions) as fp:
         GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
     
-    # Assigning the vcf file to a variable
+    # Assigning variables
     vcf_file = args.vcffile
+    sample_desc = args.sample_desc
+    sample_group = args.sample_group
 
     # If the strain and/or stats file are None, set them as 'n/a'
     size_stats = args.size_stats
@@ -158,6 +178,8 @@ if __name__ == '__main__':
     # add species to pragmas
     species = GENE_PROTEIN_POSITIONS_DICT['Src']['species']
     pragmas[0] = pragmas[0].str.replace("##species", "##species " + str(species))
+    # temporary pragma, subject to change
+    pragmas[0] = pragmas[0].str.replace("##sample-description", "##sample-description " + 'sample_desc=' + str(sample_desc) +';' + 'sample_group=' + str(sample_group) + ';')
 
     # combine pragmas, header, GVF contents
     final_gvf = pd.DataFrame(np.vstack([gvf.columns, gvf]))

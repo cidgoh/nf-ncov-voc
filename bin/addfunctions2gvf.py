@@ -9,16 +9,17 @@ This script annotates GVF files with the functional annotation.
 
 The attributes completed by this script are: 
 ["function_category", "function_description", "source",
- "citation", "comb_mutation", "heterozygosity"]
+ "citation", "comb_mutation"]
 
 """
+
 import argparse
 import pandas as pd
 import numpy as np
 from functions import separate_attributes, rejoin_attributes
 from functions import empty_attributes, gvf_columns, vcf_columns
 
-
+# Function to parse command line arguments
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Adds functional annotation to a GVF file')
@@ -35,8 +36,8 @@ def parse_args():
                               "this .txt filename for "
                               "troubleshooting purposes")
     return parser.parse_args()
-    
 
+# Function to add Pokay annotations to GVF file
 def add_pokay_annotations(gvf, annotation_file):
     
     # expand #attributes into columns to fill in separately
@@ -44,18 +45,19 @@ def add_pokay_annotations(gvf, annotation_file):
     
     # drop columns that are going to be re-added in the merge
     functional_attributes = ["function_category", "function_description", 
-                             "source", "citation", "comb_mutation", 
-                             "heterozygosity"]
+                             "source", "citation", "comb_mutation"]
     gvf = gvf.drop(columns=functional_attributes)
 
     # load functional annotations spreadsheet
     df = pd.read_csv(annotation_file, sep='\t', header=0)
     # remove any leading/trailing spaces
     for column in df.columns:
-        df[column] = df[column].str.strip()
+        df[column] = df[column].astype(str).str.strip()
 
-    # merge annotated vcf and functional annotation files by 'Name' and 'alias'
-    df = df.rename(columns={"mutation": "Name", "gene": "protein_symbol", "alias":"Pokay_alias"})
+    # merge annotated vcf and functional annotation files by 'Name' and 'protein_symbol'
+    df = df.rename(columns={"original mutation description": "Name", "amino acid mutation alias":"Pokay_alias", 'mutation functional effect category':"function_category", \
+                            'mutation functional effect description':"function_description", 'URL':"source", 'protein symbol':'protein_symbol'})
+    df['citation'] = df['author'] + ' et al. (' + df['publication year'].str.replace(".0", "", regex=False) + ')'
     merged_df = pd.merge(df, gvf, on=['Name', 'protein_symbol'], how='right') #, 'alias'
 
     # data cleaning
@@ -111,10 +113,6 @@ def add_pokay_annotations(gvf, annotation_file):
     # change semicolons in function descriptions to colons
     merged_df['function_description'] = merged_df[
         'function_description'].str.replace(';', ':')
-    
-    # change heterozygosity column to True/False
-    merged_df['heterozygosity'] = merged_df['heterozygosity'] == \
-                                  'heterozygous'
         
     # replace NaNs in df with empty string
     merged_df = merged_df.fillna('')
@@ -123,7 +121,6 @@ def add_pokay_annotations(gvf, annotation_file):
     merged_df = rejoin_attributes(merged_df, empty_attributes)
 
     return merged_df[gvf_columns]
-
 
 if __name__ == '__main__':
 
@@ -150,7 +147,6 @@ if __name__ == '__main__':
     print("Saved as: ", filepath)
     print("")
     final_gvf.to_csv(filepath, sep='\t', index=False, header=False)
-
 
     # get name troubleshooting report
     if args.names!='n/a':

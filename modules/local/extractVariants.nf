@@ -5,8 +5,6 @@ process EXTRACTVARIANTS {
       container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
       'https://depot.galaxyproject.org/singularity/pandas:1.4.3' : ''}"
 
-      publishDir "${params.outdir}/${params.prefix}/${task.process.replaceAll(":","_")}", pattern: "*.txt", mode: 'copy'
-
       input:
             tuple val(meta), path(variants)
             tuple val(meta2), path(metadata)

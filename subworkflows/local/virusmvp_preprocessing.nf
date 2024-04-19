@@ -4,7 +4,7 @@ nextflow.enable.dsl = 2
 
 // import modules
 include { EXTRACTVARIANTS       } from '../../modules/local/extractVariants'
-include { extractMetadata       } from '../../modules/local/extractMetadata'
+include { EXTRACTMETADATA       } from '../../modules/local/extractMetadata'
 include { SEQKIT_GREP           } from '../../modules/nf-core/seqkit/grep/main'
 
 
@@ -16,7 +16,7 @@ workflow PREPROCESSING {
 
     main:
         variant = file(params.variant, checkIfExists: true)
-        variants = [ [ id:params.viral_genome_id ], variant ]
+        variants = [ [ id:params.virus_accession_id ], variant ]
         
         
         if(params.virusseq_update){
@@ -33,22 +33,39 @@ workflow PREPROCESSING {
             variantfile = true
         }
 
-        criteria = Channel.of(params.grouping_criteria.tokenize(',')).flatten()
-        EXTRACTVARIANTS(variants, metadata, variantfile, virusseq, criteria, variable = [], time=true)
+        if(params.variable){
+            variable = params.variable
+        }
+        else{
+            variable = []
+        }
+
+        criteria = Channel.of(params.grouping_criteria)
+        EXTRACTVARIANTS(variants, metadata, variantfile, virusseq, criteria, variable, time=true)
         
         EXTRACTVARIANTS.out.txt
             .splitText() 
             .map{id, voc -> tuple([[id:voc.tokenize(':')[1].replaceAll(" ", "_").trim()], voc.replaceAll(" ", "_").trim()])} 
             .set{ ch_group }
-        if(EXTRACTVARIANTS.out.log)
-        logfile = EXTRACTVARIANTS.out.log
-        extractMetadata(metadata, ch_group, time=true)
-        ids=extractMetadata.out.txt
-        SEQKIT_GREP(sequences, ids.map{it[1]})
-
+        
+        
+        if(EXTRACTVARIANTS.out.log){
+            logfile = EXTRACTVARIANTS.out.log
+        }
+        EXTRACTMETADATA(metadata, ch_group, time=true)
+        
+        if (params.grouping_criteria == "time"){
+            ids_channel = EXTRACTMETADATA.out.txt.map {it-> it[1]} .flatten()
+            ids_channel.view()
+            }
+        else{
+            ids = EXTRACTMETADATA.out.txt
+            ids_channel = ids.map{it[1]}
+        }
+        SEQKIT_GREP(sequences, ids_channel)
+        
     emit:
-        metadata = extractMetadata.out.tsv
+        metadata = EXTRACTMETADATA.out.tsv
         sequences = SEQKIT_GREP.out.filter
         logfile = logfile
-      
 }

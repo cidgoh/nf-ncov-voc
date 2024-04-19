@@ -5,13 +5,13 @@ import logging
 # standard variables used by all scripts
 empty_attributes = 'ID=;Name=;alias=;gene=;protein_name=;protein_symbol=;\
     protein_id=;ps_filter=;ps_exc=; \
-    mat_pep=;mat_pep_desc=;mat_pep_acc=; ro=;ao=;dp=;sample_size=; \
-    Reference_seq=;Variant_seq=;nt_name=;aa_name=;vcf_gene=; \
-    mutation_type=; viral_lineage=;multi_aa_name=;multiaa_comb_mutation=; \
-    alternate_frequency=;function_category=;source=; citation=; \
-    comb_mutation=;function_description=;heterozygosity=;clade_defining=; \
-    variant=;variant_type=;voi_designation_date=;voc_designation_date=; \
-    vum_designation_date=;status=;'
+    mat_pep=;mat_pep_desc=;mat_pep_acc=;ro=;ao=;dp=;sample_size=; \
+    Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=; \
+    vcf_gene=;mutation_type=;viral_lineage=;multi_aa_name=; \
+    multiaa_comb_mutation=;alternate_frequency=;function_category=;source=; \
+    citation=;comb_mutation=;function_description=;heterozygosity=; \
+    clade_defining=;variant=;variant_type=;voi_designation_date=; \
+    voc_designation_date=;vum_designation_date=;status=;'
 empty_attributes = empty_attributes.replace(" ", "")
 
 gvf_columns = ['#seqid', '#source', '#type', '#start', '#end',
@@ -23,7 +23,114 @@ vcf_columns = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL',
 # pragmas are in column 0
 pragmas = pd.DataFrame([['##gff-version 3'],
                         ['##gvf-version 1.10'],
+                        ['##sample-description'],
                         ['##species']])
+
+# source: https://hgvs-nomenclature.org/stable/background/standards/#amino-acid-descriptions
+amino_acid_codes_dict = {'*': 'Ter', 'A': 'Ala', 'B': 'Asx', 'C': 'Cys',
+                         'D': 'Asp', 'E': 'Glu', 'F': 'Phe', 'G': 'Gly',
+                         'H': 'His', 'I': 'Ile', 'K': 'Lys', 'L': 'Leu',
+                         'M': 'Met', 'N': 'Asn', 'P': 'Pro', 'Q': 'Gln',
+                         'R': 'Arg', 'S': 'Ser', 'T': 'Thr', 'U': 'Sec',
+                         'V': 'Val', 'W': 'Trp', 'X': 'Xaa', 'Y': 'Tyr',
+                         'Z': 'Glx'}
+
+def convert_amino_acid_codes(one_letter_mutation_name):
+    three_letter_code_result = "".join([
+        amino_acid_codes_dict[ch]
+        if (ch.isupper() and ch in amino_acid_codes_dict.keys()) 
+        else ch for ch in one_letter_mutation_name])
+
+    return(three_letter_code_result)
+
+def rewrite_nt_snps_as_hgvs(original_nt_name):
+    ## NOTE: this function doesn't add the ref sequence; this must be done separately
+
+    pos = "".join([i for i in original_nt_name if i.isdigit()])
+    nts_list = [ch for ch in original_nt_name if ch.isupper()]
+    hgvs_name = "g." + pos + nts_list[0] + ">" + nts_list[1] ##may change "g." in future
+
+    return(hgvs_name)
+
+def remove_nts_from_nt_name(original_nt_name):
+    # sufficient for nt names containing "del" or "dup"
+    # will not work for "ins" or "delins"
+    hgvs_name = "".join([ch for ch in original_nt_name if not ch.isupper()])
+
+    return(hgvs_name)
+
+'''
+def convert_nt_delins_to_hgvs():
+    delins_regex = "[a-z]\\.[A-Z]+[0-9]+_[0-9]+[A-Z]+"
+    # eg. input: "g.TATT430_433ACTTCTA"
+    # eg. output: "g.430_433delinsACTTCTA"
+
+    return(hgvs_name)
+'''
+
+def add_hgvs_names(new_gvf):
+    
+    new_gvf['hgvs_nt'] = 'n/a'
+    new_gvf['hgvs_aa'] = 'n/a'
+    new_gvf['hgvs_alias'] = 'n/a'
+    
+    # fill in 'hgvs_nt'
+    
+    # define nt regex patterns
+    # for SNPs, eg. g.C45T, g.C-45T
+    nt_snp_regex = "[a-z]\\.[A-Z][0-9\\-]+[A-Z]"
+    # for dels and dups, eg. g.254_259delTGGTTG, g.361delA
+    nt_del_dup_regex = "[a-z]\\.[0-9\\-_]+(del|dup)[A-Z]+"
+    # for ins
+    nt_ins_regex = "[a-z]\\.[0-9\\-_]+ins[A-Z]+"
+    # for delins, eg. g.GCC10182_10184ACA
+    nt_delins_regex = "[a-z]\\.[A-Z]{2,}[0-9\\-_][A-Z]+" ##not quite right!
+    
+    #df.loc[mask, 'val'] = df.loc[mask, 'val'].apply(f)
+    # add hgvs nt snp names
+    nt_snp_mask = new_gvf['nt_name'].str.contains(nt_snp_regex, regex=True)
+    new_gvf.loc[nt_snp_mask, 'hgvs_nt'] = new_gvf['#seqid'] + ":" + \
+                 new_gvf.loc[nt_snp_mask, 'nt_name'].apply(rewrite_nt_snps_as_hgvs)
+    # add hgvs nt dels and dups
+    nt_del_dup_mask = new_gvf['nt_name'].str.contains(nt_del_dup_regex, regex=True)
+    new_gvf.loc[nt_del_dup_mask,'hgvs_nt'] = new_gvf['#seqid'] + ":" + \
+                new_gvf.loc[nt_del_dup_mask, 'nt_name'].apply(remove_nts_from_nt_name)
+    # add hgvs nt ins
+    nt_ins_mask = new_gvf['nt_name'].str.contains(nt_ins_regex, regex=True)
+    new_gvf.loc[nt_ins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name']  
+    # add hgvs nt delins: change to eg. g.123_129delinsAC
+    nt_delins_mask = new_gvf['nt_name'].str.contains(nt_delins_regex, regex=True)
+    #new_gvf.loc[nt_delins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + ":" + "TBA!" #new_gvf['nt_name']  
+
+    # define aa regex patterns
+    aa_snp_regex = "[A-Z*][0-9\\-]+[A-Z*]"
+    aa_other_regex = "[A-Z*]+[0-9\\-]+(del|delins|ins|dup|fs|ext)[A-Z*]*"
+    
+    # fill in 'hgvs_aa' 
+    # add hgvs aa snps to rows with protein_id!=n/a
+    aa_snp_mask = (new_gvf['aa_name'].str.contains(aa_snp_regex, regex=True)) & (new_gvf['protein_id']!='n/a')
+    new_gvf.loc[aa_snp_mask, 'hgvs_aa'] = \
+                new_gvf["protein_id"] + ":" + \
+                new_gvf.loc[aa_snp_mask, 'aa_name'].apply(convert_amino_acid_codes)
+    # add hgvs aa names for non-snps
+    aa_non_snp_mask = (new_gvf['aa_name'].str.contains(aa_other_regex, regex=True)) & (new_gvf['protein_id']!='n/a')
+    new_gvf.loc[aa_non_snp_mask, 'hgvs_aa'] = \
+                new_gvf["protein_id"] + ":" + new_gvf.loc[aa_non_snp_mask, 'aa_name'].apply(
+                    convert_amino_acid_codes)
+
+    # fill in 'hgvs_alias'
+    # add hgvs alias snps to rows with protein_id!=n/a
+    alias_snp_mask = (new_gvf['alias'].str.contains(aa_snp_regex, regex=True)) & (new_gvf['protein_id']!='n/a') & (new_gvf['alias']!='n/a')
+    new_gvf.loc[alias_snp_mask, 'hgvs_alias'] = \
+                new_gvf["protein_id"] + ":" + new_gvf.loc[alias_snp_mask, 'alias'].apply(
+                    convert_amino_acid_codes)
+    # add hgvs alias names for non-snps
+    alias_non_snp_mask = (new_gvf['alias'].str.contains(aa_other_regex, regex=True)) & (new_gvf['protein_id']!='n/a') & (new_gvf['alias']!='n/a')
+    new_gvf.loc[alias_non_snp_mask, 'hgvs_alias'] = \
+                new_gvf["protein_id"] + ":" + new_gvf.loc[alias_non_snp_mask, 'alias'].apply(
+                    convert_amino_acid_codes)
+                
+    return(new_gvf)
 
 
 def separate_attributes(df):
@@ -241,20 +348,14 @@ def find_sample_size(table, lineage, vcf_file, wastewater):
     
 def parse_INFO(df, var_cols): # return INFO dataframe with named columns, including EFF split apart
 
-    # make 'INFO' column easier to extract attributes from:
-    # split at ;, form dataframe
-    info = df['INFO'].str.split(pat=';').apply(pd.Series)
-
-    for column in info.columns:
-        split = info[column].str.split(pat='=').apply(pd.Series)
-        title = split[0].drop_duplicates().tolist()[0]
-        if isinstance(title, str):
-            title = title.lower()
-            content = split[1]
-            # ignore "tag=" in column content
-            info[column] = content
-            # make attribute tag as column label
-            info.rename(columns={column: title}, inplace=True)
+    # extract these key-value pairs in INFO into their own columns
+    cols_to_extract = ['DP', 'ps_filter', 'ps_exc', 'EFF', 'mat_pep', 'mat_pep_desc', 'mat_pep_acc']
+    info = pd.DataFrame(columns=cols_to_extract)
+    for col in cols_to_extract:
+        pat = str(col) + "\=(.*?)\;"
+        info[col] = df['INFO'].str.extract(pat)
+    # rename uppercase columns as lowercase
+    info = info.rename(columns={'DP':'dp', 'EFF':'eff'})
 
     # concatenate info and df horizontally
     df = pd.concat([df, info], axis=1)
@@ -296,7 +397,7 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
 
     # expand the contents of eff_result into separate columns, named as in the 
     # VCF header
-    eff_info = df['eff_result'].str.findall('\((.*?)\)').str[0]
+    eff_info = df['eff_result'].str.findall('\\((.*?)\\)').str[0]
     # split at pipe, form dataframe
     eff_info = eff_info.str.split(pat='|').apply(pd.Series)
     num_cols = len(eff_info.columns)
@@ -316,11 +417,11 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     df = pd.concat([df, hgvs], axis=1)
     
     # make adjustments to the nucleotide names
-    # 1) change 'c.' to 'g.' for nucleotide names ### double check that we want this
-    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("c.", "g.", regex=True) 
-    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("n.", "g.", regex=True) 
+    # 1) change 'c.' to 'g.'convert_amino_acid_codes for nucleotide names ### double check that we want this
+    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("c.", "g.", regex=False) 
+    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("n.", "g.", regex=False) 
     # 2) change nucleotide names of the form "g.C*4378A" to g.C4378AN;
-    asterisk_mask = df["hgvs_nucleotide"].str.contains('\*')
+    asterisk_mask = df["hgvs_nucleotide"].str.contains('*', regex=False)
     df.loc[asterisk_mask, "hgvs_nucleotide"] = 'g.' + df['REF'] + df['POS'] + \
         df['ALT']
     # 3) change 'Gene_Name' to "intergenic" where names contain a "*"
@@ -331,7 +432,7 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     df["Names"] = df["hgvs_nucleotide"]
     protein_mask = df["hgvs_protein"].str.contains("p.")
     df.loc[protein_mask, "Names"] = df["hgvs_protein"].str.replace(
-        "p.", "", regex=True)
+        "p.", "", regex=False)
 
     # rename some columns
     df = df.rename(columns={'Gene_Name': "vcf_gene", 'Functional_Class':
@@ -387,11 +488,12 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
     :return: series containing SARS-CoV-2 chromosome region names at each
     nucleotide position in ``pos``
     """
-    # make an empty dataframe of the same length as pos and with four columns
-    cols_to_add = ["gene", "protein_name", "protein_symbol", "protein_id"]
-    df = pd.DataFrame(np.nan, index=range(0,pos.shape[0]), columns=cols_to_add)
-    # add positions to this df
-    df["POS"] = pos
+    # make nucleotide positions series into a df
+    df = pos.to_frame()
+    pos_column = df.columns[0]
+    # add new empty (NaN) columns
+    cols_to_use = [pos_column, "gene", "protein_name", "protein_symbol", "protein_id"]
+    df = df.reindex(columns = cols_to_use) 
 
     # loop through all CDS regions in dict to get attributes
     for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
@@ -407,7 +509,7 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             protein_id = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_id"]
 
             # fill in attributes for mutations in this CDS region
-            cds_mask = df["POS"].astype(int).between(start, end, inclusive="both")
+            cds_mask = df[pos_column].astype(int).between(start, end, inclusive="both")
             df.loc[cds_mask, "gene"] = gene
             df.loc[cds_mask, "protein_name"] = protein_name
             df.loc[cds_mask, "protein_symbol"] = protein_symbol
@@ -439,14 +541,13 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     '''Creates alias names for Orf1ab mutations, reindexing the amino acid numbers.'''
     df.loc[:, 'alias'] = 'n/a'
 
-    # get list of all NSP proteins in the file:
-    alias_mask = df['mat_pep'].str.contains('nsp') & df['gene'].str.contains("ORF1")
+    # get list of all NSP, 3CL, and PlPro proteins in the file:
+    alias_mask = (df['gene'].str.contains("ORF1ab")) & (df['mat_pep']!='n/a')
     nsps_list = sorted(list(set(df[alias_mask]['mat_pep'].tolist())))
-
     if len(nsps_list) > 0:
         
         ## note: gene and protein_name are based on our gene positions JSON
-        
+
         # split up all names in alias_mask into letter-number-letter columns
         # hacky workaround to fix later: in rows that begin with a number, add "PLACEHOLDER" to the front before splitting them up, to stop NaNs
         df.loc[df['Name'].str[0].str.isdigit(), 'Name'] = "PLACEHOLDER" + df['Name'].astype(str)
@@ -458,11 +559,11 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
             df['mutation_1'] = df['Name']
             df['mutation_2'] = None
         
-        df[['1_start', '1_num', '1_end']] = df['mutation_1'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
+        df[['1_start', '1_num', '1_end']] = df['mutation_1'].str.extract('([A-Za-z]+)(\\d+\\.?\\d*)([A-Za-z]*)', expand=True)
         df['1_num'] = df['1_num'].fillna(0)
         df['1_newnum'] = 0
         
-        df[['2_start', '2_num', '2_end']] = df['mutation_2'].str.extract('([A-Za-z]+)(\d+\.?\d*)([A-Za-z]*)', expand=True)
+        df[['2_start', '2_num', '2_end']] = df['mutation_2'].str.extract('([A-Za-z]+)(\\d+\\.?\\d*)([A-Za-z]*)', expand=True)
         df['2_num'] = df['2_num'].fillna(0)
         df['2_newnum'] = 0
         

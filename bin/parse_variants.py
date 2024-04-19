@@ -164,7 +164,7 @@ def group_by_time(dataframe, start_date, end_date):
     """
     dataframe['sample_collection_date'] = pd.to_datetime(dataframe['sample_collection_date']).dt.date
     groups = []
-    date = str(start_date) + ";" + str(end_date)
+    date = str(start_date) + "_" + str(end_date)
     groups.append(date)
     
     return groups
