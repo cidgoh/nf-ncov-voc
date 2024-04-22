@@ -169,6 +169,9 @@ def rejoin_attributes(df, empty_attributes_str):
         df[col] = col + "=" + df[col].astype(str) + ';'
     # replace #attributes column with filled attributes
     df['#attributes'] = df[columns_to_join].apply(lambda row: ''.join(row.values.astype(str)), axis=1)
+    # make sure all empty key pairs are written as "attribute_key=n/a"
+    df['#attributes'] = df['#attributes'].astype(str).str.replace('=;', '=n/a;')
+    # drop extra columns
     df = df.drop(columns=columns_to_join)
     
     return(df)
