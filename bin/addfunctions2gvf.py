@@ -58,7 +58,8 @@ def add_pokay_annotations(gvf, annotation_file):
     df = df.rename(columns={"original mutation description": "Name", "amino acid mutation alias":"Pokay_alias", 'mutation functional effect category':"function_category", \
                             'mutation functional effect description':"function_description", 'URL':"source", 'protein symbol':'protein_symbol'})
     df['citation'] = df['author'] + ' et al. (' + df['publication year'].str.replace(".0", "", regex=False) + ')'
-    merged_df = pd.merge(df, gvf, on=['Name', 'protein_symbol'], how='right') #, 'alias'
+
+    merged_df = pd.merge(gvf, df, on=['Name', 'protein_symbol'], how='left') #, 'alias'
 
     # data cleaning
     merged_df['comb_mutation'] = merged_df['comb_mutation'].str.replace(
@@ -75,7 +76,7 @@ def add_pokay_annotations(gvf, annotation_file):
         merged_df["comb_mutation"].astype(str) + "," + \
         merged_df['multiaa_comb_mutation'].astype(str)
     # cleaning: remove nans, quotations marks, spaces
-    for x in [' ', 'nan', "'", '"']:
+    for x in [' ', 'nan', "'", '"', 'n/a']:
         merged_df["mutation_group"] = merged_df[
             "mutation_group"].str.replace(x, '')
     # cleaning: remove extra commas
