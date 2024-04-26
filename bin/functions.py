@@ -318,8 +318,8 @@ def find_sample_size(table, lineage, vcf_file, wastewater):
                 lineage)]['num_seqs'].values
             sample_size = num_seqs[0]
 
-        # wastewater data
-        elif wastewater==True:
+        # wastewater data or user-uploaded fasta
+        else:
             # num_seqs values should be identical, so take the
             # first value in num_seqs to be sample_size
             sample_size = strain_tsv_df['num_seqs'].values[0]
@@ -328,14 +328,6 @@ def find_sample_size(table, lineage, vcf_file, wastewater):
             if strain_tsv_df.num_seqs.nunique()!=1:
                 err = "Different values in 'num_seqs' in " + table
                 logging.info(err)
-            
-        # user-uploaded fasta
-        else:
-            filename_to_match = vcf_file.split(".sorted")[0] \
-                # looks like "strain.qc"
-            num_seqs = strain_tsv_df[strain_tsv_df['file'].str.startswith(
-                filename_to_match)]['num_seqs'].values
-            sample_size = num_seqs[0]
 
     # user-uploaded vcf
     elif table == 'n/a' and lineage == 'n/a':
