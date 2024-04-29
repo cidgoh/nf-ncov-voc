@@ -89,18 +89,21 @@ def add_hgvs_names(new_gvf):
     #df.loc[mask, 'val'] = df.loc[mask, 'val'].apply(f)
     # add hgvs nt snp names
     nt_snp_mask = new_gvf['nt_name'].str.contains(nt_snp_regex, regex=True)
-    new_gvf.loc[nt_snp_mask, 'hgvs_nt'] = new_gvf['#seqid'] + ":" + \
+    new_gvf.loc[nt_snp_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['transcript_id'] + "):" + \
                  new_gvf.loc[nt_snp_mask, 'nt_name'].apply(rewrite_nt_snps_as_hgvs)
     # add hgvs nt dels and dups
     nt_del_dup_mask = new_gvf['nt_name'].str.contains(nt_del_dup_regex, regex=True)
-    new_gvf.loc[nt_del_dup_mask,'hgvs_nt'] = new_gvf['#seqid'] + ":" + \
+    new_gvf.loc[nt_del_dup_mask,'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['transcript_id'] + "):" + \
                 new_gvf.loc[nt_del_dup_mask, 'nt_name'].apply(remove_nts_from_nt_name)
     # add hgvs nt ins
     nt_ins_mask = new_gvf['nt_name'].str.contains(nt_ins_regex, regex=True)
-    new_gvf.loc[nt_ins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + ":" + new_gvf['nt_name']  
+    new_gvf.loc[nt_ins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['transcript_id'] + "):" + new_gvf['nt_name']  
     # add hgvs nt delins: change to eg. g.123_129delinsAC
     nt_delins_mask = new_gvf['nt_name'].str.contains(nt_delins_regex, regex=True)
-    #new_gvf.loc[nt_delins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + ":" + "TBA!" #new_gvf['nt_name']  
+    #new_gvf.loc[nt_delins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['transcript_id'] + "):" + "TBA!" #new_gvf['nt_name']  
+
+    # remove transcript id in parentheses for all HGVS nucleotide names where 'transcript_id'=='n/a'
+    new_gvf['hgvs_nt'] = new_gvf['hgvs_nt'].str.replace("(n/a)", "", regex=False)
 
     # define aa regex patterns
     aa_snp_regex = "[A-Z*][0-9\\-]+[A-Z*]"
