@@ -84,7 +84,7 @@ def add_hgvs_names(new_gvf):
     # for ins
     nt_ins_regex = "[a-z]\\.[0-9\\-_]+ins[A-Z]+"
     # for delins, eg. g.GCC10182_10184ACA
-    nt_delins_regex = "[a-z]\\.[A-Z]{2,}[0-9\\-_][A-Z]+" ##not quite right!
+    nt_delins_regex = "[a-z]\.[A-Z]+-?[0-9]+_-?[0-9]+[A-Z]+" 
     
     #df.loc[mask, 'val'] = df.loc[mask, 'val'].apply(f)
     # add hgvs nt snp names
