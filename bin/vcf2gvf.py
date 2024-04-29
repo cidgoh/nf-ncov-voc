@@ -19,9 +19,8 @@ import pandas as pd
 import numpy as np
 import json
 from functions import parse_INFO, find_sample_size, \
-    unnest_multi, get_unknown_labels, separate_attributes, rejoin_attributes, \
+    get_unknown_labels, separate_attributes, rejoin_attributes, \
     clade_defining_threshold, map_pos_to_gene_protein, add_alias_names, \
-    convert_amino_acid_codes, rewrite_nt_snps_as_hgvs, remove_nts_from_nt_name, \
     add_hgvs_names
 from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
