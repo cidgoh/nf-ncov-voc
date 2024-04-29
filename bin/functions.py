@@ -80,7 +80,7 @@ def add_hgvs_names(new_gvf):
     # for SNPs, eg. g.C45T, g.C-45T
     nt_snp_regex = "[a-z]\\.[A-Z][0-9\\-]+[A-Z]"
     # for dels and dups, eg. g.254_259delTGGTTG, g.361delA
-    nt_del_dup_regex = "[a-z]\\.[0-9\\-_]+(del|dup)[A-Z]+"
+    nt_del_dup_regex = "[a-z]\\.[0-9\\-_]+(?:del|dup)[A-Z]+"
     # for ins
     nt_ins_regex = "[a-z]\\.[0-9\\-_]+ins[A-Z]+"
     # for delins, eg. g.GCC10182_10184ACA
@@ -107,7 +107,7 @@ def add_hgvs_names(new_gvf):
 
     # define aa regex patterns
     aa_snp_regex = "[A-Z*][0-9\\-]+[A-Z*]"
-    aa_other_regex = "[A-Z*]+[0-9\\-]+(del|delins|ins|dup|fs|ext)[A-Z*]*"
+    aa_other_regex = "[A-Z*]+[0-9\\-]+(?:del|delins|ins|dup|fs|ext)[A-Z*]*"
     
     # fill in 'hgvs_aa' 
     # add hgvs aa snps to rows with protein_id!=n/a
