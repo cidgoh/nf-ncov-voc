@@ -88,8 +88,9 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     new_gvf["protein_symbol"] = json_df["protein_symbol"]
     new_gvf["protein_id"] = json_df["protein_id"]
     new_gvf["transcript_id"] = json_df["transcript_id"]
+    new_gvf["alias_protein_id"] = 'n/a'
 
-    # add 'alias' column for ORF1a/b mutations
+    # add 'alias' column for ORF1a/b mutations, and fill in "alias_protein_id" for these as well
     new_gvf = add_alias_names(new_gvf, GENE_PROTEIN_POSITIONS_DICT)
 
     # add clade_defining attribute

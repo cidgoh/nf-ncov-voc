@@ -4,7 +4,7 @@ import logging
 
 # standard variables used by all scripts
 empty_attributes = 'ID=;Name=;alias=;gene=;protein_name=;protein_symbol=;\
-    protein_id=;transcript_id=;ps_filter=;ps_exc=; \
+    protein_id=;alias_protein_id=;transcript_id=;ps_filter=;ps_exc=; \
     mat_pep=;mat_pep_desc=;mat_pep_acc=;ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=; \
     vcf_gene=;mutation_type=;viral_lineage=;multi_aa_name=; \
@@ -122,15 +122,15 @@ def add_hgvs_names(new_gvf):
                     convert_amino_acid_codes)
 
     # fill in 'hgvs_alias'
-    # add hgvs alias snps to rows with protein_id!=n/a
-    alias_snp_mask = (new_gvf['alias'].str.contains(aa_snp_regex, regex=True)) & (new_gvf['protein_id']!='n/a') & (new_gvf['alias']!='n/a')
+    # add hgvs alias snps to rows with alias_protein_id!=n/a
+    alias_snp_mask = (new_gvf['alias'].str.contains(aa_snp_regex, regex=True)) & (new_gvf['alias_protein_id']!='n/a') & (new_gvf['alias']!='n/a')
     new_gvf.loc[alias_snp_mask, 'hgvs_alias'] = \
-                new_gvf["protein_id"] + ":" + new_gvf.loc[alias_snp_mask, 'alias'].apply(
+                new_gvf["alias_protein_id"] + ":" + new_gvf.loc[alias_snp_mask, 'alias'].apply(
                     convert_amino_acid_codes)
     # add hgvs alias names for non-snps
-    alias_non_snp_mask = (new_gvf['alias'].str.contains(aa_other_regex, regex=True)) & (new_gvf['protein_id']!='n/a') & (new_gvf['alias']!='n/a')
+    alias_non_snp_mask = (new_gvf['alias'].str.contains(aa_other_regex, regex=True)) & (new_gvf['alias_protein_id']!='n/a') & (new_gvf['alias']!='n/a')
     new_gvf.loc[alias_non_snp_mask, 'hgvs_alias'] = \
-                new_gvf["protein_id"] + ":" + new_gvf.loc[alias_non_snp_mask, 'alias'].apply(
+                new_gvf["alias_protein_id"] + ":" + new_gvf.loc[alias_non_snp_mask, 'alias'].apply(
                     convert_amino_acid_codes)
                 
     return(new_gvf)
@@ -570,7 +570,10 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
         # for each nsp in nsps_list, operate on the number column based on the nsp start coordinates
         for nsp in nsps_list:
             nsp_start_aa = int(GENE_PROTEIN_POSITIONS_DICT[nsp]["aa_start"])
+            nsp_protein_id = GENE_PROTEIN_POSITIONS_DICT[nsp]["protein_id"]
             nsp_mask = df['mat_pep']==nsp
+            # add alias_protein_id
+            df.loc[nsp_mask, 'alias_protein_id'] = nsp_protein_id
             # for each half of the mutation name...
             # update the numeric part
             df.loc[nsp_mask, '1_newnum'] = df['1_num'].astype(int) - nsp_start_aa + 1
