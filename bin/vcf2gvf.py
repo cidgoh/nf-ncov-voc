@@ -131,7 +131,7 @@ def parse_args():
                         help='Alternate frequency cutoff for '
                              'clade-defining mutations')
     parser.add_argument('--gene_positions', type=str,
-                        default=None,
+                        default=None, required=True,
                         help='gene positions in JSON format')
     parser.add_argument('--strain', type=str,
                         default=None,
