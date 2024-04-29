@@ -11,7 +11,7 @@ The attributes completed by this script are:
 ['ID', 'Name', 'gene', 'protein_name', 'protein_symbol', 'protein_id', 'ps_filter', 'ps_exc', 'mat_pep',
 'mat_pep_desc','mat_pep_acc', 'ro', 'ao', 'dp', 'sample_size', 'Reference_seq',
 'Variant_seq', 'nt_name', 'aa_name', 'hgvs_nt', 'hgvs_aa', 'hgvs_alias', 'vcf_gene', 'mutation_type',
-'viral_lineage', 'alternate_frequency']
+'viral_lineage', 'alternate_frequency', 'transcript_id']
 """
 
 import argparse
@@ -88,7 +88,8 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     new_gvf["protein_name"] = json_df["protein_name"]
     new_gvf["protein_symbol"] = json_df["protein_symbol"]
     new_gvf["protein_id"] = json_df["protein_id"]
-    
+    new_gvf["transcript_id"] = json_df["transcript_id"]
+
     # add 'alias' column for ORF1a/b mutations
     new_gvf = add_alias_names(new_gvf, GENE_PROTEIN_POSITIONS_DICT)
 

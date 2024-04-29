@@ -4,7 +4,7 @@ import logging
 
 # standard variables used by all scripts
 empty_attributes = 'ID=;Name=;alias=;gene=;protein_name=;protein_symbol=;\
-    protein_id=;ps_filter=;ps_exc=; \
+    protein_id=;transcript_id=;ps_filter=;ps_exc=; \
     mat_pep=;mat_pep_desc=;mat_pep_acc=;ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=; \
     vcf_gene=;mutation_type=;viral_lineage=;multi_aa_name=; \
@@ -502,6 +502,7 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["product"]
             protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]
             protein_id = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_id"]
+            transcript_id = GENE_PROTEIN_POSITIONS_DICT[entry]["locus_tag"]
 
             # fill in attributes for mutations in this CDS region
             cds_mask = df[pos_column].astype(int).between(start, end, inclusive="both")
@@ -509,6 +510,7 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             df.loc[cds_mask, "protein_name"] = protein_name
             df.loc[cds_mask, "protein_symbol"] = protein_symbol
             df.loc[cds_mask, "protein_id"] = protein_id
+            df.loc[cds_mask, "transcript_id"] = transcript_id
 
     # label all mutations that didn't belong to any gene as "intergenic"
     df.loc[df["gene"].isna(), "gene"] = "intergenic"
