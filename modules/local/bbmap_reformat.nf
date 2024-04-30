@@ -1,7 +1,7 @@
 process BBMAP {
     tag "$meta.id"
 
-    conda "bioconda::bbmap=30.01"
+    conda "bioconda::bbmap=39.01"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
     'https://depot.galaxyproject.org/singularity/bbmap:39.01--h92535d8_1' : ''}"
 
