@@ -3,7 +3,7 @@ import numpy as np
 import logging
 
 # standard variables used by all scripts
-empty_attributes = 'ID=;Name=;alias=;gene=;protein_name=;protein_symbol=;\
+empty_attributes = 'ID=;Name=;alias=;gene=;gene_symbol=;protein_name=;protein_symbol=;\
     protein_id=;alias_protein_id=;transcript_id=;ps_filter=;ps_exc=; \
     mat_pep=;mat_pep_desc=;mat_pep_acc=;ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=; \
