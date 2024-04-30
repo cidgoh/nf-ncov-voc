@@ -2,7 +2,7 @@ process VARIANTANNOTATION {
 
   tag "$meta.id"
 
-  conda "bioconda::pandas=1.4.3"
+  conda "conda-forge::pandas=1.4.3"
   container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/pandas:1.4.3' : '' }"
   
@@ -23,11 +23,10 @@ process VARIANTANNOTATION {
   """
     addvariantinfo2gvf.py \\
       --ingvf $gvf \\
-      --outgvf ${prefix}_annotated.gvf \\
-      --clades $tsv \\
       $strain \\
-
-
+      $args \\
+      --outgvf ${prefix}_annotated.gvf \\
+      --clades $tsv 
   """
 
 }
