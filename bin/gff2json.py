@@ -158,7 +158,7 @@ def parse_args():
     parser.add_argument("--gff_file", type=str, default=None, help="Path to the GFF with genome annotation")
     parser.add_argument("--json_file", type=str, default=None, help="JSON filename to save results to")
     parser.add_argument("--color_file", type=str, default=None, help="JSON file containing color codes for genes")
-    parser.add_argument("--alias_file", type=str, default=None, help="JSON file containing alias codes for prteins")
+    parser.add_argument("--alias_file", type=str, default=None, help="JSON file containing alias codes for proteins")
     return parser.parse_args()
 
 
