@@ -152,12 +152,12 @@ def extract_metadata(inp_file, chunk, df):
                    function_category] #, comb_mutation, heterozygosity]
         # print(df_list)
         df1 = pd.DataFrame(
-            columns=['original mutation description', 'protein symbol', 'mutation functional effect category'])
+            columns=['original mutation description', 'gene name', 'mutation functional effect category'])
                      #'comb_mutation', 'heterozygosity'])
         df1.loc[len(df1)] = df_list
 
         df_func['original mutation description'] = df1['original mutation description'].iloc[0]
-        df_func['protein symbol'] = df1['protein symbol'].iloc[0]
+        df_func['gene name'] = df1['gene name'].iloc[0]
         df_func['mutation functional effect category'] = df1['mutation functional effect category'].iloc[0]
         #df_func['comb_mutation'] = str(df1['comb_mutation'].iloc[0])
         #df_func['heterozygosity'] = str(df1['heterozygosity'].iloc[0])
@@ -237,7 +237,7 @@ if __name__ == '__main__':
     dataFrame = unnest_multi(dataFrame, ["original mutation description"], reset_index=False)
     dataFrame['index1'] = dataFrame.index
 
-    # add HGVS mutations names, nucleotide positions, protein name and protein symbol from mutation index
+    # add HGVS mutations names, nucleotide positions, protein name, protein symbol, and gene name from mutation index
     mutation_index = pd.read_csv(args.mutation_index, sep='\t')
     # merge on "mutation" and "gene" in index ("original mutation description" and "gene symbol" in functional annotation file)
     mutation_index = mutation_index.rename(columns={"mutation": "original mutation description", 'pos':'nucleotide position',
@@ -246,7 +246,7 @@ if __name__ == '__main__':
                                                     'protein_symbol':'protein symbol', 'hgvs_alias':'amino acid mutation alias'})
     # remove doubled columns from dataFrame
     index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
-                         'protein name', 'protein symbol', 'gene name', 'gene symbol']
+                         'protein name', 'protein symbol', 'gene symbol']
     dataFrame = dataFrame.drop(columns=index_cols_to_use)
     merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'gene name'], how='left') #, 'alias'
     #dups = mutation_index[mutation_index.duplicated(subset=['nucleotide position', 'original mutation description'], keep=False)]
