@@ -31,9 +31,6 @@ def parse_args():
                         help='versioned reference accession from RefSeq')
     parser.add_argument('--mutation_index', type=str, required=True,
                         help='index of all mutations (.TSV)')
-    parser.add_argument('--gene_positions', type=str,
-                        required=True,
-                        help='gene positions in JSON format') 
     parser.add_argument('--outputfile', type=str, required=True,
                         help='output file (.TSV) format')
     parser.add_argument('--save_dois', type=str, default=None,
@@ -188,11 +185,6 @@ if __name__ == '__main__':
     # Change the directory
     # os.chdir(path)
 
-    # Reading the gene & protein coordinates of SARS-CoV-2 genome
-    with open(args.gene_positions) as fp:
-        GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
-
-
     dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
 'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
 'gene name', 'gene symbol', 'protein name', 'protein symbol', 'assay', 'mutation functional effect category',
@@ -250,11 +242,13 @@ if __name__ == '__main__':
     # merge on "mutation" and "gene" in index ("original mutation description" and "gene symbol" in functional annotation file)
     mutation_index = mutation_index.rename(columns={"mutation": "original mutation description", 'pos':'nucleotide position',
                                                     'hgvs_aa_mutation':'amino acid mutation','hgvs_nt_mutation':'nucleotide mutation',
-                                                    'gene':'protein symbol', 'protein_name':'protein name', 'hgvs_alias':'amino acid mutation alias'})
+                                                    'gene_name':'gene name', 'gene_symbol':'gene symbol', 'protein_name':'protein name',
+                                                    'protein_symbol':'protein symbol', 'hgvs_alias':'amino acid mutation alias'})
     # remove doubled columns from dataFrame
-    index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias', 'protein name']
+    index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
+                         'protein name', 'protein symbol', 'gene name', 'gene symbol']
     dataFrame = dataFrame.drop(columns=index_cols_to_use)
-    merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'protein symbol'], how='left') #, 'alias'
+    merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'gene name'], how='left') #, 'alias'
     #dups = mutation_index[mutation_index.duplicated(subset=['nucleotide position', 'original mutation description'], keep=False)]
     #dups = dups.sort_values(by='nucleotide position')
     #dups.to_csv('madeline_testing/dups.tsv', sep='\t', index=False)
@@ -264,15 +258,6 @@ if __name__ == '__main__':
 
     # drop mutations not found in the index
     merged_dataFrame = merged_dataFrame[merged_dataFrame["nucleotide position"].notna()]
-
-    # add gene names and symbols from JSON 
-    ###TO DO: add gene names and symbols to mutation index to simplify this
-    ###TO DO: these should be ontology names! Need to create a mapping.
-    ## 'gene symbol' is the same as 'gene name' from the JSON for now
-    json_df = map_pos_to_gene_protein(
-        merged_dataFrame["nucleotide position"], GENE_PROTEIN_POSITIONS_DICT)
-    merged_dataFrame["gene name"] = json_df["gene"]
-    merged_dataFrame["gene symbol"] = json_df["gene"]
 
     # convert all columns to string type and fillna with empty strings
     for column in merged_dataFrame.columns:
