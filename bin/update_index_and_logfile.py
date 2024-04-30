@@ -59,7 +59,9 @@ def gvf2df(gvf):
     df['alias_protein'] = 'n/a'
     df.loc[df['alias']!='n/a', 'alias_protein'] = gvf['mat_pep']
     df['gene'] = gvf['gene']
+    df['gene_symbol'] = gvf['gene_symbol']
     df['protein_name'] = gvf['protein_name']
+    df['protein_symbol'] = gvf['protein_symbol']
     df['Pokay_annotation'] = gvf["function_description"].notna()
     df['lineages'] = gvf['viral_lineage']
     lineage = df['lineages'][0]
@@ -82,7 +84,7 @@ if __name__ == '__main__':
     logfile_df = pd.DataFrame(np.empty((0, 4)), columns=['pos', 'alias', 'new_mutations', 'lineages'])
 
     # set mutation index columns
-    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene', 'protein_name', 'alias', 'hgvs_alias', 'alias_protein', 'Pokay_annotation', 'lineages']
+    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene', 'gene_symbol', 'protein_name', 'protein_symbol', 'alias', 'hgvs_alias', 'alias_protein', 'Pokay_annotation', 'lineages']
 
     # open the mutation index if the path was provided
     if mutation_index_path!=None:
