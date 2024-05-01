@@ -1,5 +1,4 @@
-prefix: "covidmvp-2024-03-19-3months"
-gene_alias: "assets/virus_genomeAnnotation/NC_045512.2/NC_045512.2_key.json"
+prefix: "covidmvp-2024-04-30-3months"
 mode: "reference"
 grouping_criteria: "time"
 viralai: true
@@ -8,8 +7,8 @@ virusseq_update: false
 skip_classification: true
 skip_postprocessing: true
 skip_harmonize: false
-start_date: "2023-12-25"
-end_date: "2024-03-25"
+start_date: "2024-01-30"
+end_date: "2024-04-30"
 metadata_source: "ViralAi_EpiCoV"
 metadata_config: "assets/metadata_conf/metadata.yaml"
 outdir: "results/covidmvp"
