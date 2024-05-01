@@ -71,6 +71,10 @@ workflow ANNOTATION {
             ch_stats = ch_stats.map{it[1]}
         }
 
+        if (params.mode == 'user'){
+            lineage = []
+        }
+
         VCFTOGVF(
             annotation_vcf,
             ch_stats,

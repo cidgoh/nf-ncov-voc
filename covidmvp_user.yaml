@@ -1,5 +1,4 @@
 prefix: "covidmvp-user"
-gene_alias: "assets/virus_genomeAnnotation/NC_045512.2/NC_045512.2_key.json"
 mode: "user"
 viral_aligner: "minimap2"
 skip_classification: true
@@ -9,5 +8,5 @@ skip_harmonize: true
 start_date: "2020-01-01"
 end_date: "2024-04-15"
 outdir: "results/covidmvp"
-#seq: "data/viralai_test.fasta.gz"
-seq: "results/covidmvp/covidmvp-2024-04-15/FREEBAYES/JN.1.13.1.vcf"
+seq: "data/viralai_test.fasta.gz"
+# seq: "data/viralai_test.vcf"

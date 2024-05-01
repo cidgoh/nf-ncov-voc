@@ -35,10 +35,11 @@ workflow GVF_PROCESSING_ANNOTATION {
                     annotation_gvf,
                     split_names
                 )
+                annotation_gvf=NCOVSPLITMUTATIONSGVF.out.gvf
             }
             
             FUNCTIONALANNOTATION(
-                NCOVSPLITMUTATIONSGVF.out.gvf,
+                annotation_gvf,
                 NCOVSPLITMUTATIONSPOKAY.out.tsv
             )
             annotation_gvf=FUNCTIONALANNOTATION.out.gvf

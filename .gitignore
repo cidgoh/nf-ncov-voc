@@ -14,7 +14,6 @@ bin/__*
 *.sh
 latest*
 data/*
-*.fasta
 *.fa.xz
 *.gz
 hMPXV_*

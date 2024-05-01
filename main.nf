@@ -70,6 +70,12 @@ workflow {
             ch_snpeff_config=CONFIGURE_VIRUSMVP.out.ch_snpeff_config
             ch_viral_fai=CONFIGURE_VIRUSMVP.out.ch_viral_fai
       }
+      else{
+            ch_json = file(params.ch_json)
+            ch_snpeff_db = file(params.ch_snpeff_db)
+            ch_snpeff_config = file(params.ch_snpeff_config)
+            ch_viral_fai = file(params.ch_viral_fai)
+      }
       if (params.virus_accession_id = "NC_045512.2"){
             println("Executing COVID-MVP")
             if (params.wastewater){
