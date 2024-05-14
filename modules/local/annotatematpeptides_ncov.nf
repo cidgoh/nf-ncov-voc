@@ -4,7 +4,8 @@ process ANNOTATEMATPEPTIDES_NCOV {
 
   conda "bioconda::cyvcf=0.8.0 bioconda::gffutils=0.10.1"
   container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-      'docker://cidgoh/nf-ncov-voc-extra:0.2' : ''}"
+      'cidgoh/nf-ncov-voc-extra:0.2':
+      'cidgoh/nf-ncov-voc-extra:0.2'}"
 
   input:
       tuple val(meta), path(vcf)
