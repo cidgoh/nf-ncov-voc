@@ -3,7 +3,8 @@ process BBMAP {
 
     conda "bioconda::bbmap=39.01"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-    'https://depot.galaxyproject.org/singularity/bbmap:39.01--h92535d8_1' : ''}"
+    'https://depot.galaxyproject.org/singularity/bbmap:39.01--h92535d8_1':
+    'microbiomedata/bbtools:39.01'}"
 
     label 'dev_env'
 

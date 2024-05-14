@@ -5,7 +5,7 @@ process GVF_TO_INDEX_LOG {
   conda "conda-forge::dask=2023.10.1"
   container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'biocontainers/dask:2023.10.1-py11-ol9_cv1' : 
-        '' }"
+        'biocontainers/dask:2023.10.1-py11-ol9_cv1' }"
   
 
   input:

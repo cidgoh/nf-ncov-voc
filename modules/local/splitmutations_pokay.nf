@@ -4,7 +4,8 @@ process NCOVSPLITMUTATIONSPOKAY {
 
   conda "conda-forge::pandas=1.4.3"
   container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pandas:1.4.3' : '' }"
+        'https://depot.galaxyproject.org/singularity/pandas:1.4.3':
+        'amancevice/pandas:1.4.3' }"
   
   input:
       tuple val(meta), path(annotations)
