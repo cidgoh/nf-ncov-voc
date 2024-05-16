@@ -5,7 +5,7 @@ process TABIX_BGZIPTABIX {
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/htslib:1.19.1--h81da01d_1' :
-        'biocontainers/htslib:1.19.1--h81da01d_1' }"
+        'quay.io/biocontainers/htslib:1.19.1--h81da01d_1' }"
 
     input:
     tuple val(meta), path(input)
