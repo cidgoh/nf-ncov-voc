@@ -50,14 +50,18 @@ def add_pokay_annotations(gvf, annotation_file):
 
     # load functional annotations spreadsheet
     df = pd.read_csv(annotation_file, sep='\t', header=0)
+    df['author'] = df['author'].fillna('UNKNOWN')
     # remove any leading/trailing spaces
     for column in df.columns:
+        df[column] = df[column].fillna('')
         df[column] = df[column].astype(str).str.strip()
 
     # merge annotated vcf and functional annotation files by 'Name' and 'protein_symbol'
-    df = df.rename(columns={"original mutation description": "Name", "amino acid mutation alias":"Pokay_alias", 'variant functional effect':"function_category", \
+    df = df.rename(columns={"original mutation description": "Name", 'variant functional effect':"function_category", \
                             'variant functional effect description':"function_description", 'URL':"source", 'protein symbol':'protein_symbol'})
     df['citation'] = df['author'] + ' et al. (' + df['publication year'].str.replace(".0", "", regex=False) + ')'
+    df_columns = functional_attributes + ["Name", "protein_symbol"]
+    df = df[df_columns]
 
     merged_df = pd.merge(gvf, df, on=['Name', 'protein_symbol'], how='left') #, 'alias'
 
@@ -117,7 +121,6 @@ def add_pokay_annotations(gvf, annotation_file):
         
     # replace NaNs in df with empty string
     merged_df = merged_df.fillna('')
-
     # merge attributes back into a single column
     merged_df = rejoin_attributes(merged_df, empty_attributes)
 
