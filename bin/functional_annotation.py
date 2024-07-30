@@ -263,7 +263,7 @@ if __name__ == '__main__':
         index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
                             'protein name', 'protein symbol', 'gene name']
         dataFrame = dataFrame.drop(columns=index_cols_to_use)
-        merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'gene symbol'], how='left') #, 'alias'
+        merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'protein symbol'], how='left') #, 'alias'
         #dups = mutation_index[mutation_index.duplicated(subset=['nucleotide position', 'original mutation description'], keep=False)]
         #dups = dups.sort_values(by='nucleotide position')
         #dups.to_csv('madeline_testing/dups.tsv', sep='\t', index=False)
