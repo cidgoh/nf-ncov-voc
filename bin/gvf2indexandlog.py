@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     # create index from GVF
     # make empty index df
-    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene_name', 'gene_symbol', 'protein_name', 'protein_symbol', 'alias', 'hgvs_alias', 'alias_protein', 'Pokay_annotation', 'lineages']
+    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene_name', 'gene_symbol', 'protein_name', 'protein_symbol', 'alias', 'hgvs_alias', 'mat_pep', 'Pokay_annotation', 'lineages']
     index = pd.DataFrame(np.empty((gvf.shape[0], len(index_cols))), columns=index_cols)
     # populate index df with gvf info
     index['pos'] = gvf['#start']
@@ -58,8 +58,7 @@ if __name__ == '__main__':
     index['hgvs_nt_mutation'] = gvf['hgvs_nt']
     index['alias'] = gvf['alias']
     index['hgvs_alias'] = gvf['hgvs_alias']
-    index['alias_protein'] = 'n/a'
-    index.loc[index['alias']!='n/a', 'alias_protein'] = gvf['mat_pep']
+    index['mat_pep'] = gvf['mat_pep']
     index['gene_name'] = gvf['gene_name']
     index['gene_symbol'] = gvf['gene_symbol']
     index['protein_name'] = gvf['protein_name']
@@ -77,7 +76,7 @@ if __name__ == '__main__':
     # fill in 'new_mutations' column like: "gene:mutation"
     log['new_mutations'] = log["gene_symbol"] + ":" + log["mutation"]
     # for orf1ab mutations, fill in 'new_mutations' column like: "gene:mutation / nsp:alias"
-    log.loc[log['alias']!='n/a', 'new_mutations'] = log['new_mutations'] + " / " + log["alias_protein"] + ":" + log["alias"]
+    log.loc[log['alias']!='n/a', 'new_mutations'] = log['new_mutations'] + " / " + log["mat_pep"] + ":" + log["alias"]
     # drop duplicates (there shouldn't be any)
     log = log[['pos', 'new_mutations', 'lineages']].drop_duplicates()
     # drop any NaN rows
