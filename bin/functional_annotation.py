@@ -274,6 +274,10 @@ if __name__ == '__main__':
         # drop mutations not found in the index
         merged_dataFrame = merged_dataFrame[merged_dataFrame["nucleotide position"].notna()]
 
+    # allow mutation index to be optional
+    if args.mutation_index == 'n/a':
+        merged_dataFrame = dataFrame
+
     # convert all columns to string type and fillna with empty strings
     for column in merged_dataFrame.columns:
         merged_dataFrame[column] = merged_dataFrame[column].astype("string")
@@ -293,9 +297,10 @@ if __name__ == '__main__':
     # perform groupby and aggregation
     merged_dataFrame = merged_dataFrame.groupby(by=['index1'], as_index=False).agg(agg_dict)
 
-    #remove strings of commas in 'amino acid mutation alias'
-    merged_dataFrame.loc[merged_dataFrame['amino acid mutation alias'].str.contains(',,', regex=False), 'amino acid mutation alias'] = ''
-    merged_dataFrame.loc[merged_dataFrame['amino acid mutation alias']==',', 'amino acid mutation alias'] = ''
+    #remove strings of commas in mutation name columns
+    for column in ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']:
+        merged_dataFrame.loc[merged_dataFrame[column].str.contains(',,', regex=False), column] = ''
+        merged_dataFrame.loc[merged_dataFrame[column]==',', column] = ''
 
     # reorder columns and drop 'index1'
     merged_dataFrame = merged_dataFrame[dataFrame_cols]
