@@ -29,7 +29,7 @@ def parse_args():
                         help='directory path for input files')
     parser.add_argument('--accession', type=str, required=True,
                         help='versioned reference accession from RefSeq')
-    parser.add_argument('--mutation_index', type=str, required=True,
+    parser.add_argument('--mutation_index', type=str, default='n/a',
                         help='index of all mutations (.TSV)')
     parser.add_argument('--outputfile', type=str, required=True,
                         help='output file (.TSV) format')
@@ -47,16 +47,16 @@ def combination_mutation(c_mutations, c_mutation):
 
 
 def data_cleanup(dframe):
-    dframe['mutation functional effect description'] = dframe[
-        'mutation functional effect description'].apply(
+    dframe['variant functional effect description'] = dframe[
+        'variant functional effect description'].apply(
         lambda x: ','.join(map(str, x)))
 
-    dframe['mutation functional effect description'] = dframe[
-        'mutation functional effect description'].str.replace(',#', '')
-    dframe['mutation functional effect description'] = dframe[
-        'mutation functional effect description'].str.replace('#', '')
-    dframe['mutation functional effect description'] = dframe[
-        'mutation functional effect description'].str.strip()
+    dframe['variant functional effect description'] = dframe[
+        'variant functional effect description'].str.replace(',#', '')
+    dframe['variant functional effect description'] = dframe[
+        'variant functional effect description'].str.replace('#', '')
+    dframe['variant functional effect description'] = dframe[
+        'variant functional effect description'].str.strip()
     
     #dframe['comb_mutation'] = dframe['comb_mutation'].apply(
     #    lambda x: x[1:-1])
@@ -146,19 +146,19 @@ def extract_metadata(inp_file, chunk, df):
                 del function[chunk[url[index_url - 1]]]
 
         df_func = pd.DataFrame(function.items(), columns=['url',
-                                                          'mutation functional effect description'])
+                                                          'variant functional effect description'])
 
         df_list = [mutation_name, gene_name,
                    function_category] #, comb_mutation, heterozygosity]
         # print(df_list)
         df1 = pd.DataFrame(
-            columns=['original mutation description', 'gene name', 'mutation functional effect category'])
+            columns=['original mutation description', 'gene symbol', 'variant functional effect'])
                      #'comb_mutation', 'heterozygosity'])
         df1.loc[len(df1)] = df_list
 
         df_func['original mutation description'] = df1['original mutation description'].iloc[0]
-        df_func['gene name'] = df1['gene name'].iloc[0]
-        df_func['mutation functional effect category'] = df1['mutation functional effect category'].iloc[0]
+        df_func['gene symbol'] = df1['gene symbol'].iloc[0]
+        df_func['variant functional effect'] = df1['variant functional effect'].iloc[0]
         #df_func['comb_mutation'] = str(df1['comb_mutation'].iloc[0])
         #df_func['heterozygosity'] = str(df1['heterozygosity'].iloc[0])
 
@@ -187,8 +187,8 @@ if __name__ == '__main__':
 
     dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
 'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
-'gene name', 'gene symbol', 'protein name', 'protein symbol', 'assay', 'mutation functional effect category',
-'mutation functional effect description', 'author', 'publication year', 'URL', 'DOI', 'PMID',
+'gene name', 'gene symbol', 'protein name', 'protein symbol', 'variant functional effect',
+'variant functional effect description', 'author', 'publication year', 'URL', 'DOI', 'PMID',
 'peer review status', 'curator', 'mutation functional annotation resource']
     
     dataFrame = pd.DataFrame(columns=dataFrame_cols)
@@ -232,32 +232,47 @@ if __name__ == '__main__':
 
     dataFrame['mutation functional annotation resource'] = 'Pokay'
 
-    # before merging, unnest the 'original mutation index' column
+    # strip whitespace
+    dataFrame["author"] = dataFrame["author"].str.strip()
+    dataFrame["DOI"] = dataFrame["DOI"].str.strip()
+    dataFrame["URL"] = dataFrame["URL"].str.strip()
+
+    # add temporary curator name
+    dataFrame["curator"] = "Paul Gordon" ## for now: need to go through
+
+    # clean up 'peer review status'
+    dataFrame.loc[dataFrame['peer review status'].isna(), 'peer review status'] = 'false' ##up for debate
+    dataFrame.loc[dataFrame['peer review status'].str.contains("Journal"), 'peer review status'] = 'true'
+    dataFrame.loc[dataFrame['peer review status'].str.contains("Preprint"), 'peer review status'] = 'false'
+    dataFrame.loc[dataFrame['peer review status'].str.contains("Grey literature"), 'peer review status'] = 'false' ##up for debate
+
+    # before merging, unnest the 'original mutation description' column
     dataFrame["original mutation description"] = dataFrame["original mutation description"].str.split(',')
     dataFrame = unnest_multi(dataFrame, ["original mutation description"], reset_index=False)
     dataFrame['index1'] = dataFrame.index
 
-    # add HGVS mutations names, nucleotide positions, protein name, protein symbol, and gene name from mutation index
-    mutation_index = pd.read_csv(args.mutation_index, sep='\t')
-    # merge on "mutation" and "gene" in index ("original mutation description" and "gene symbol" in functional annotation file)
-    mutation_index = mutation_index.rename(columns={"mutation": "original mutation description", 'pos':'nucleotide position',
-                                                    'hgvs_aa_mutation':'amino acid mutation','hgvs_nt_mutation':'nucleotide mutation',
-                                                    'gene_name':'gene name', 'gene_symbol':'gene symbol', 'protein_name':'protein name',
-                                                    'protein_symbol':'protein symbol', 'hgvs_alias':'amino acid mutation alias'})
-    # remove doubled columns from dataFrame
-    index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
-                         'protein name', 'protein symbol', 'gene symbol']
-    dataFrame = dataFrame.drop(columns=index_cols_to_use)
-    merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'gene name'], how='left') #, 'alias'
-    #dups = mutation_index[mutation_index.duplicated(subset=['nucleotide position', 'original mutation description'], keep=False)]
-    #dups = dups.sort_values(by='nucleotide position')
-    #dups.to_csv('madeline_testing/dups.tsv', sep='\t', index=False)
+    # if mutation index: add HGVS mutations names, nucleotide positions, protein names, protein symbols, and gene names from it
+    if args.mutation_index != 'n/a':
+        mutation_index = pd.read_csv(args.mutation_index, sep='\t')
+        # merge on "mutation" and "gene symbol" in index ("original mutation description" and "gene symbol" in functional annotation file)
+        mutation_index = mutation_index.rename(columns={"mutation": "original mutation description", 'pos':'nucleotide position',
+                                                        'hgvs_aa_mutation':'amino acid mutation','hgvs_nt_mutation':'nucleotide mutation',
+                                                        'gene_name':'gene name', 'gene_symbol':'gene symbol', 'protein_name':'protein name',
+                                                        'protein_symbol':'protein symbol', 'hgvs_alias':'amino acid mutation alias'})
+        # remove doubled columns from dataFrame
+        index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
+                            'protein name', 'protein symbol', 'gene name']
+        dataFrame = dataFrame.drop(columns=index_cols_to_use)
+        merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'gene symbol'], how='left') #, 'alias'
+        #dups = mutation_index[mutation_index.duplicated(subset=['nucleotide position', 'original mutation description'], keep=False)]
+        #dups = dups.sort_values(by='nucleotide position')
+        #dups.to_csv('madeline_testing/dups.tsv', sep='\t', index=False)
 
-    # keep only specified columns
-    merged_dataFrame = merged_dataFrame[['index1'] + dataFrame_cols]
+        # keep only specified columns
+        merged_dataFrame = merged_dataFrame[['index1'] + dataFrame_cols]
 
-    # drop mutations not found in the index
-    merged_dataFrame = merged_dataFrame[merged_dataFrame["nucleotide position"].notna()]
+        # drop mutations not found in the index
+        merged_dataFrame = merged_dataFrame[merged_dataFrame["nucleotide position"].notna()]
 
     # convert all columns to string type and fillna with empty strings
     for column in merged_dataFrame.columns:
@@ -266,18 +281,6 @@ if __name__ == '__main__':
 
     # convert nucleotide positions to int format (still str)
     merged_dataFrame["nucleotide position"] = merged_dataFrame["nucleotide position"].str.replace('.0', '', regex=False)
-
-    # strip whitespace
-    merged_dataFrame["author"] = merged_dataFrame["author"].str.strip()
-    merged_dataFrame["DOI"] = merged_dataFrame["DOI"].str.strip()
-    merged_dataFrame["URL"] = merged_dataFrame["URL"].str.strip()
-
-    # add temporary curator name, clean up 'peer review status'
-    merged_dataFrame["curator"] = "Paul Gordon" ## for now: need to go through
-    merged_dataFrame.loc[merged_dataFrame['peer review status'].isna(), 'peer review status'] = 'unknown'
-    merged_dataFrame.loc[merged_dataFrame['peer review status'].str.contains("Journal"), 'peer review status'] = 'peer reviewed'
-    merged_dataFrame.loc[merged_dataFrame['peer review status'].str.contains("Preprint"), 'peer review status'] = 'not peer reviewed'
-    merged_dataFrame.loc[merged_dataFrame['peer review status'].str.contains("Grey literature"), 'peer review status'] = 'grey literature'
 
     # create agg dictionary
     to_list = ['original mutation description', 'nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
@@ -289,6 +292,10 @@ if __name__ == '__main__':
 
     # perform groupby and aggregation
     merged_dataFrame = merged_dataFrame.groupby(by=['index1'], as_index=False).agg(agg_dict)
+
+    #remove strings of commas in 'amino acid mutation alias'
+    merged_dataFrame.loc[merged_dataFrame['amino acid mutation alias'].str.contains(',,', regex=False), 'amino acid mutation alias'] = ''
+    merged_dataFrame.loc[merged_dataFrame['amino acid mutation alias']==',', 'amino acid mutation alias'] = ''
 
     # reorder columns and drop 'index1'
     merged_dataFrame = merged_dataFrame[dataFrame_cols]
