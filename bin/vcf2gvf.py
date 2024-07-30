@@ -8,7 +8,7 @@ This script converts VCF files that have been annotated into GVF
 files. Required user input is a VCF file.
     
 The attributes completed by this script are: 
-['ID', 'Name', 'gene', 'protein_name', 'protein_symbol', 'protein_id', 'ps_filter', 'ps_exc', 'mat_pep',
+['ID', 'Name', 'gene_name', 'gene_symbol', 'protein_name', 'protein_symbol', 'protein_id', 'ps_filter', 'ps_exc', 'mat_pep',
 'mat_pep_desc','mat_pep_acc', 'ro', 'ao', 'dp', 'sample_size', 'Reference_seq',
 'Variant_seq', 'nt_name', 'aa_name', 'hgvs_nt', 'hgvs_aa', 'hgvs_alias', 'vcf_gene', 'mutation_type',
 'viral_lineage', 'alternate_frequency', 'transcript_id']
@@ -83,7 +83,7 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     # add gene and protein attributes from JSON
     json_df = map_pos_to_gene_protein(
         vcf_df['POS'].astype(int), GENE_PROTEIN_POSITIONS_DICT)
-    new_gvf["gene"] = json_df["gene"]
+    new_gvf["gene_name"] = json_df["gene"]
     new_gvf["gene_symbol"] = json_df["gene"]
     new_gvf["protein_name"] = json_df["protein_name"]
     new_gvf["protein_symbol"] = json_df["protein_symbol"]

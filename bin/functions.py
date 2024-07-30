@@ -3,7 +3,7 @@ import numpy as np
 import logging
 
 # standard variables used by all scripts
-empty_attributes = 'ID=;Name=;alias=;gene=;gene_symbol=;protein_name=;protein_symbol=;\
+empty_attributes = 'ID=;Name=;alias=;gene_name=;gene_symbol=;protein_name=;protein_symbol=;\
     protein_id=;alias_protein_id=;transcript_id=;ps_filter=;ps_exc=; \
     mat_pep=;mat_pep_desc=;mat_pep_acc=;ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=; \
@@ -506,7 +506,7 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]
             protein_id = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_id"]
             transcript_id = GENE_PROTEIN_POSITIONS_DICT[entry]["locus_tag"]
-
+    
             # fill in attributes for mutations in this CDS region
             cds_mask = df[pos_column].astype(int).between(start, end, inclusive="both")
             df.loc[cds_mask, "gene"] = gene
@@ -542,7 +542,7 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     df.loc[:, 'alias'] = 'n/a'
 
     # get list of all NSP, 3CL, and PlPro proteins in the file:
-    alias_mask = (df['gene'].str.contains("ORF1ab")) & (df['mat_pep']!='n/a')
+    alias_mask = (df['gene_symbol'].str.contains("ORF1ab")) & (df['mat_pep']!='n/a')
     nsps_list = sorted(list(set(df[alias_mask]['mat_pep'].tolist())))
     if len(nsps_list) > 0:
         
