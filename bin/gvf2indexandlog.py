@@ -18,12 +18,12 @@ from functions import separate_attributes
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Creates an index TSV and a log TSV from one GVF')
-    parser.add_argument('--gvf_file', type=str, default=None,
+    parser.add_argument('--gvf_file', type=str, required=True,
                         help='Path to one GVF file to process')
-    parser.add_argument('--index_savefile', type=str,
-                        default=None, help='Filename to save updated index of all mutations to')
-    parser.add_argument('--log_savefile', type=str,
-                        default=None, help='Filename to save log to')
+    parser.add_argument('--index_savefile', type=str, required=True,
+                        help='Filename to save updated index of all mutations to')
+    parser.add_argument('--log_savefile', type=str, required=True,
+                        help='Filename to save log to')
 
     return parser.parse_args()
 
