@@ -44,8 +44,8 @@ if __name__ == '__main__':
     
     dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
 'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias', 'comb_mutation',
-'gene name', 'gene symbol', 'protein name', 'protein symbol', 'assay', 'mutation functional effect category',
-'mutation functional effect description', 'author', 'publication year', 'URL', 'DOI', 'PMID',
+'gene name', 'gene symbol', 'protein name', 'protein symbol', 'variant functional effect',
+'variant functional effect description', 'author', 'publication year', 'URL', 'DOI', 'PMID',
 'peer review status', 'curator', 'mutation functional annotation resource']
     
     # split names in functional annotations file
@@ -106,7 +106,6 @@ if __name__ == '__main__':
     df = df[dataFrame_cols]
     
     # fix column formats
-    df['assay'] = df['assay'].str.replace('nan', '', regex=False)
     df['PMID'] = df['PMID'].str.replace('nan', '', regex=False)
     df['PMID'] = df['PMID'].str.replace('.0', '', regex=False)
     df['publication year'] = df['publication year'].str.replace('.0', '', regex=False)
