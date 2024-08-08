@@ -90,7 +90,8 @@
         "aa_start": 1,
         "aa_end": 180,
         "color": "rgb(128,0,128)",
-        "protein_alias": "nsp1"
+        "protein_alias": "nsp1",
+        "pokay_id": "nsp1"
     },
     "nsp2": {
         "type": "mature_protein_region_of_CDS",
@@ -105,7 +106,8 @@
         "aa_start": 181,
         "aa_end": 818,
         "color": "rgb(128,0,128)",
-        "protein_alias": "nsp2"
+        "protein_alias": "nsp2",
+        "pokay_id": "nsp2"
     },
     "PL_pro": {
         "type": "mature_protein_region_of_CDS",
@@ -120,7 +122,8 @@
         "aa_start": 819,
         "aa_end": 2763,
         "color": "rgb(128,0,128)",
-        "protein_alias": "PL_pro"
+        "protein_alias": "PL_pro",
+        "pokay_id": "PLpro"
     },
     "nsp4": {
         "type": "mature_protein_region_of_CDS",
@@ -135,7 +138,8 @@
         "aa_start": 2764,
         "aa_end": 3263,
         "color": "rgb(128,0,128)",
-        "protein_alias": "nsp4"
+        "protein_alias": "nsp4",
+        "pokay_id": "nsp4"
     },
     "3CL": {
         "type": "mature_protein_region_of_CDS",
@@ -150,7 +154,8 @@
         "aa_start": 3264,
         "aa_end": 3569,
         "color": "rgb(128,0,128)",
-        "protein_alias": "3CL"
+        "protein_alias": "3CL",
+        "pokay_id": "3CL"
     },
     "nsp6": {
         "type": "mature_protein_region_of_CDS",
@@ -165,7 +170,8 @@
         "aa_start": 3570,
         "aa_end": 3859,
         "color": "rgb(128,0,128)",
-        "protein_alias": "nsp6"
+        "protein_alias": "nsp6",
+        "pokay_id": "nsp6"
     },
     "nsp7": {
         "type": "mature_protein_region_of_CDS",
@@ -180,7 +186,8 @@
         "aa_start": 3860,
         "aa_end": 3942,
         "color": "rgb(128,0,128)",
-        "protein_alias": "nsp7"
+        "protein_alias": "nsp7",
+        "pokay_id": "nsp7"
     },
     "nsp8": {
         "type": "mature_protein_region_of_CDS",
@@ -195,7 +202,8 @@
         "aa_start": 3943,
         "aa_end": 4140,
         "color": "rgb(128,0,128)",
-        "protein_alias": "nsp8"
+        "protein_alias": "nsp8",
+        "pokay_id": "nsp8"
     },
     "nsp9": {
         "type": "mature_protein_region_of_CDS",
@@ -210,7 +218,8 @@
         "aa_start": 4141,
         "aa_end": 4253,
         "color": "rgb(128,0,128)",
-        "protein_alias": "nsp9"
+        "protein_alias": "nsp9",
+        "pokay_id": "nsp9"
     },
     "nsp10": {
         "type": "mature_protein_region_of_CDS",
@@ -240,7 +249,8 @@
         "aa_start": 4393,
         "aa_end": 5324,
         "color": "rgb(128,0,128)",
-        "protein_alias": "RdRp"
+        "protein_alias": "RdRp",
+        "pokay_id": "RdRp"
     },
     "nsp13": {
         "type": "mature_protein_region_of_CDS",
@@ -358,7 +368,8 @@
         "aa_start": 1,
         "aa_end": 1273,
         "color": "rgb(142, 188, 102)",
-        "protein_alias": "S"
+        "protein_alias": "S",
+        "pokay_id": "S"
     },
     "gene-GU280_gp03": {
         "type": "gene",
@@ -388,7 +399,8 @@
         "aa_start": 1,
         "aa_end": 275,
         "color": "rgb(229, 150, 55)",
-        "protein_alias": "ORF3a"
+        "protein_alias": "ORF3a",
+        "pokay_id": "ORF3a"
     },
     "gene-GU280_gp04": {
         "type": "gene",
@@ -419,7 +431,8 @@
         "aa_start": 1,
         "aa_end": 75,
         "color": "rgb(170, 189, 82)",
-        "protein_alias": "E"
+        "protein_alias": "E",
+        "pokay_id": "E"
     },
     "gene-GU280_gp05": {
         "type": "gene",
@@ -450,7 +463,8 @@
         "aa_start": 1,
         "aa_end": 222,
         "color": "rgb(223, 67, 39)",
-        "protein_alias": "M"
+        "protein_alias": "M",
+        "pokay_id": "M"
     },
     "gene-GU280_gp06": {
         "type": "gene",
@@ -480,7 +494,8 @@
         "aa_start": 1,
         "aa_end": 61,
         "color": "rgb(196, 185, 69)",
-        "protein_alias": "ORF6"
+        "protein_alias": "ORF6",
+        "pokay_id": "ORF6"
     },
     "gene-GU280_gp07": {
         "type": "gene",
@@ -601,7 +616,8 @@
         "aa_start": 1,
         "aa_end": 419,
         "color": "rgb(80, 151, 186)",
-        "protein_alias": "N"
+        "protein_alias": "N",
+        "pokay_id": "N"
     },
     "gene-GU280_gp11": {
         "type": "gene",
