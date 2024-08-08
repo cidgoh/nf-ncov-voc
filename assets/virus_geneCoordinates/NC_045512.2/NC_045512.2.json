@@ -585,7 +585,8 @@
         "aa_start": 1,
         "aa_end": 121,
         "color": "rgb(217, 173, 61)",
-        "protein_alias": "ORF8"
+        "protein_alias": "ORF8",
+        "pokay_id": "ORF8"
     },
     "gene-GU280_gp10": {
         "type": "gene",
