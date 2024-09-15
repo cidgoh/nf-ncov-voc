@@ -1,0 +1,170 @@
+[
+    {
+        "YP_009724389.1": {
+            "type": "CDS",
+            "protein_id": "YP_009724389.1",
+            "protein_name": {
+                "label": "open reading frame 1ab polyprotein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101136"
+            },
+            "protein_symbol": {
+                "label": "Orf1ab protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101137"
+            }
+        }
+    },
+    {
+        "YP_009724389.1": {
+            "type": "CDS",
+            "protein_id": "YP_009724389.1",
+            "protein_name": {
+                "label": "open reading frame 1a polyprotein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101140"
+            },
+            "protein_symbol": {
+                "label": "Orf1a protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101141"
+            }
+        }
+    },
+    {
+        "YP_009724390.1": {
+            "type": "CDS",
+            "protein_id": "YP_009724390.1",
+            "protein_name": {
+                "label": "surface glycoprotein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101144"
+            },
+            "protein_symbol": {
+                "label": "S protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101145"
+            }
+        }
+    },
+    {
+        "YP_009724391.1": {
+            "type": "CDS",
+            "protein_id": "YP_009724391.1",
+            "protein_name": {
+                "label": "open reading frame 3a protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101148"
+            },
+            "protein_symbol": {
+                "label": "Orf3a protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101149"
+            }
+        }
+    },
+    {
+        "YP_009724392.1": {
+            "type": "CDS",
+            "protein_id": "YP_009724392.1",
+            "protein_name": {
+                "label": "envelope protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101152"
+            },
+            "protein_symbol": {
+                "label": "E protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101153"
+            }
+        }
+    },
+    {
+        "YP_009724393.1": {
+            "type": "CDS",
+            "protein_id": "YP_009724393.1",
+            "protein_name": {
+                "label": "membrane glycoprotein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101156"
+            },
+            "protein_symbol": {
+                "label": "M protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101157"
+            }
+        }
+    },
+    {
+        "YP_009724394.1": {
+            "type": "CDS",
+            "protein_id": "YP_009724394.1",
+            "protein_name": {
+                "label": "open reading frame 6 protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101160"
+            },
+            "protein_symbol": {
+                "label": "Orf6 protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101161"
+            }
+        }
+    },
+    {
+        "YP_009724395.1": {
+            "type": "CDS",
+            "protein_id": "YP_009724395.1",
+            "protein_name": {
+                "label": "open reading frame 7a protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101164"
+            },
+            "protein_symbol": {
+                "label": "Orf7a protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101165"
+            }
+        }
+    },
+    {
+        "YP_009725318.1": {
+            "type": "CDS",
+            "protein_id": "YP_009725318.1",
+            "protein_name": {
+                "label": "open reading frame 7b protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101168"
+            },
+            "protein_symbol": {
+                "label": "Orf7b protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101169"
+            }
+        }
+    },
+    {
+        "YP_009724396.1": {
+            "type": "CDS",
+            "protein_id": "YP_009724396.1",
+            "protein_name": {
+                "label": "open reading frame 8 protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101172"
+            },
+            "protein_symbol": {
+                "label": "Orf8 protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101173"
+            }
+        }
+    },
+    {
+        "YP_009724397.2": {
+            "type": "CDS",
+            "protein_id": "YP_009724397.2",
+            "protein_name": {
+                "label": "nucleocapsid phosphoprotein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101176"
+            },
+            "protein_symbol": {
+                "label": "N protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101177"
+            }
+        }
+    },
+    {
+        "YP_009725255.1": {
+            "type": "CDS",
+            "protein_id": "YP_009725255.1",
+            "protein_name": {
+                "label": "open reading frame 10 protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101180"
+            },
+            "protein_symbol": {
+                "label": "Orf10 protein (SARS-CoV-2)",
+                "uri": "GENEPIO:0101181"
+            }
+        }
+    }
+]
