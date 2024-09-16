@@ -55,7 +55,7 @@ if __name__ == '__main__':
 
         if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="gene":
             gene_ids = GENE_PROTEIN_POSITIONS_DICT[entry]["Dbxref"].replace("GeneID", "NCBIGene")
-            # find matching CDS entry in ontology_proteins JSON
+            # find matching gene entry in ontology_genes JSON
             for gene_entry in ONTOLOGY_GENES_DICT.keys():
                 if ONTOLOGY_GENES_DICT[gene_entry]["Dbxref"] == gene_ids:
                     gene_name = ONTOLOGY_GENES_DICT[gene_entry]["gene_name"]
