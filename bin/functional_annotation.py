@@ -251,7 +251,6 @@ if __name__ == '__main__':
 
     # map 'pokay_id' to 'protein_symbol' and 'mat_pep' based on JSON
     pokay_id_set = set(dataFrame['pokay_id'].tolist())
-    print(pokay_id_set)
     #pokay_id_set = {'RdRp', 'nsp4', 'M', 'ORF8', '3CL', 'nsp1', 'E', 'S', 'nsp8', 'ORF6', 'N', 'PLpro', 'nsp7', 'ORF3a', 'nsp9', 'nsp6', 'nsp2'}
     dataFrame['gene name'] = ''
     dataFrame['gene symbol'] = ''
@@ -312,8 +311,8 @@ if __name__ == '__main__':
                     # fill in mat_pep
                     dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "mat_pep"] = mat_pep
 
-    #dataFrame[['pokay_id', 'gene name', 'gene symbol', 'protein name', 'protein symbol', 'mat_pep', 'gene']].drop_duplicates().to_csv('../test_data/pokay_id.tsv', sep='\t', index=False)
-    #print("saved as '../test_data/pokay_id.tsv'")
+#    dataFrame[['pokay_id', 'gene name', 'gene symbol', 'protein name', 'protein symbol', 'mat_pep', 'gene']].drop_duplicates().to_csv('../test_data/pokay_id.tsv', sep='|', index=False)
+#    print("saved as '../test_data/pokay_id.tsv'")
 
     #before merging, unnest the 'original mutation description' column
     dataFrame["original mutation description"] = dataFrame["original mutation description"].str.split(',')
@@ -331,7 +330,7 @@ if __name__ == '__main__':
         # remove doubled columns from dataFrame
         index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
         dataFrame = dataFrame.drop(columns=index_cols_to_use)
-        merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'gene', 'mat_pep'], how='left')
+        merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'gene'], how='left') #, 'mat_pep'
         #dups = mutation_index[mutation_index.duplicated(subset=['nucleotide position', 'original mutation description'], keep=False)]
         #dups = dups.sort_values(by='nucleotide position')
         #dups.to_csv('madeline_testing/dups.tsv', sep='\t', index=False)
