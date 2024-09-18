@@ -50,16 +50,16 @@ def combination_mutation(c_mutations, c_mutation):
 
 
 def data_cleanup(dframe):
-    dframe['variant functional effect description'] = dframe[
-        'variant functional effect description'].apply(
+    dframe['measured variant functional effect description'] = dframe[
+        'measured variant functional effect description'].apply(
         lambda x: ','.join(map(str, x)))
 
-    dframe['variant functional effect description'] = dframe[
-        'variant functional effect description'].str.replace(',#', '')
-    dframe['variant functional effect description'] = dframe[
-        'variant functional effect description'].str.replace('#', '')
-    dframe['variant functional effect description'] = dframe[
-        'variant functional effect description'].str.strip()
+    dframe['measured variant functional effect description'] = dframe[
+        'measured variant functional effect description'].str.replace(',#', '')
+    dframe['measured variant functional effect description'] = dframe[
+        'measured variant functional effect description'].str.replace('#', '')
+    dframe['measured variant functional effect description'] = dframe[
+        'measured variant functional effect description'].str.strip()
     
     #dframe['comb_mutation'] = dframe['comb_mutation'].apply(
     #    lambda x: x[1:-1])
@@ -149,19 +149,19 @@ def extract_metadata(inp_file, chunk, df):
                 del function[chunk[url[index_url - 1]]]
 
         df_func = pd.DataFrame(function.items(), columns=['url',
-                                                          'variant functional effect description'])
+                                                          'measured variant functional effect description'])
 
         df_list = [mutation_name, gene_name,
                    function_category] #, comb_mutation, heterozygosity]
         # print(df_list)
         df1 = pd.DataFrame(
-            columns=['original mutation description', 'pokay_id', 'variant functional effect'])
+            columns=['original mutation description', 'pokay_id', 'measured variant functional effect'])
                      #'comb_mutation', 'heterozygosity'])
         df1.loc[len(df1)] = df_list
 
         df_func['original mutation description'] = df1['original mutation description'].iloc[0]
         df_func['pokay_id'] = df1['pokay_id'].iloc[0]
-        df_func['variant functional effect'] = df1['variant functional effect'].iloc[0]
+        df_func['measured variant functional effect'] = df1['measured variant functional effect'].iloc[0]
         #df_func['comb_mutation'] = str(df1['comb_mutation'].iloc[0])
         #df_func['heterozygosity'] = str(df1['heterozygosity'].iloc[0])
 
@@ -190,8 +190,8 @@ if __name__ == '__main__':
 
     dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
 'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
-'gene name', 'gene symbol', 'protein name', 'protein symbol', 'variant functional effect',
-'variant functional effect description', 'author', 'publication year', 'URL', 'DOI', 'PMID',
+'gene name', 'gene symbol', 'protein name', 'protein symbol', 'measured variant functional effect', 'inferred variant functional effect', 'viral life cycle functional effect',
+'measured variant functional effect description', 'CVX code', 'DrugBank Accession Number', 'Antibody Registry ID', 'author', 'publication year', 'URL', 'DOI', 'PMID',
 'peer review status', 'curator', 'mutation functional annotation resource']
     
     dataFrame = pd.DataFrame(columns=dataFrame_cols)
