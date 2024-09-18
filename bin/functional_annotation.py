@@ -240,6 +240,9 @@ if __name__ == '__main__':
     dataFrame["DOI"] = dataFrame["DOI"].str.strip()
     dataFrame["URL"] = dataFrame["URL"].str.strip()
 
+    # add BioRegistry prefix for doi
+    dataFrame["DOI"] = "doi:" + dataFrame["DOI"]
+
     # add temporary curator name
     dataFrame["curator"] = "Paul Gordon" ## for now: need to go through
 
