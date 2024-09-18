@@ -31,6 +31,9 @@ def parse_args():
                         help='versioned reference accession from RefSeq')
     parser.add_argument('--mutation_index', type=str, default='n/a',
                         help='index of all mutations (.TSV)')
+    parser.add_argument('--gene_positions', type=str,
+                        default=None, required=True,
+                        help='gene positions in JSON format')
     parser.add_argument('--outputfile', type=str, required=True,
                         help='output file (.TSV) format')
     parser.add_argument('--save_dois', type=str, default=None,
@@ -152,12 +155,12 @@ def extract_metadata(inp_file, chunk, df):
                    function_category] #, comb_mutation, heterozygosity]
         # print(df_list)
         df1 = pd.DataFrame(
-            columns=['original mutation description', 'protein symbol', 'variant functional effect'])
+            columns=['original mutation description', 'pokay_id', 'variant functional effect'])
                      #'comb_mutation', 'heterozygosity'])
         df1.loc[len(df1)] = df_list
 
         df_func['original mutation description'] = df1['original mutation description'].iloc[0]
-        df_func['protein symbol'] = df1['protein symbol'].iloc[0]
+        df_func['pokay_id'] = df1['pokay_id'].iloc[0]
         df_func['variant functional effect'] = df1['variant functional effect'].iloc[0]
         #df_func['comb_mutation'] = str(df1['comb_mutation'].iloc[0])
         #df_func['heterozygosity'] = str(df1['heterozygosity'].iloc[0])
@@ -246,31 +249,94 @@ if __name__ == '__main__':
     dataFrame.loc[dataFrame['peer review status'].str.contains("Preprint"), 'peer review status'] = 'false'
     dataFrame.loc[dataFrame['peer review status'].str.contains("Grey literature"), 'peer review status'] = 'false' ##up for debate
 
-    # before merging, unnest the 'original mutation description' column
+    # map 'pokay_id' to 'protein_symbol' and 'mat_pep' based on JSON
+    pokay_id_set = set(dataFrame['pokay_id'].tolist())
+    print(pokay_id_set)
+    #pokay_id_set = {'RdRp', 'nsp4', 'M', 'ORF8', '3CL', 'nsp1', 'E', 'S', 'nsp8', 'ORF6', 'N', 'PLpro', 'nsp7', 'ORF3a', 'nsp9', 'nsp6', 'nsp2'}
+    dataFrame['gene name'] = ''
+    dataFrame['gene symbol'] = ''
+    dataFrame['protein name'] = ''
+    dataFrame['protein symbol'] = ''
+    dataFrame['mat_pep'] = ''
+
+    # Reading the gene & protein coordinates of SARS-CoV-2 genome
+    with open(args.gene_positions) as fp:
+
+        GENE_PROTEIN_POSITIONS_DICT = json.load(fp)
+
+        for pokay_id in pokay_id_set:
+            for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
+
+                # If a gene record matches pokay_id, get 'gene_name' and 'gene_symbol'
+                if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="gene" and GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==pokay_id:
+                    # extract protein names and symbols (ontology) from JSON entry
+                    gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"]
+                    gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"]
+                    # add gene names and symbols to dataframe
+                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene name"] = gene_name
+                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene symbol"] = gene_symbol
+                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene"] = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
+                
+                # If a CDS record matches pokay_id, get 'protein_name' and 'protein_symbol'
+                if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==pokay_id:
+                    # extract protein names and symbols (ontology) from JSON entry
+                    protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["label"]
+                    protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["label"]
+                    # add protein names and symbols to dataframe
+                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein name"] = protein_name
+                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein symbol"] = protein_symbol
+
+                # If a mature peptide record matches pokay_id in the 'protein_alias' list, get name of parent, and from there get names and symbols
+                if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="mature_protein_region_of_CDS" and (pokay_id in GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]):
+                    # extract pokay_id, mat_pep, and parent id from JSON entry
+                    mat_pep = entry
+                    parent = GENE_PROTEIN_POSITIONS_DICT[entry]["Parent"]
+                    # get parent protein name and symbol from corresponding CDS entry, matching "Parent" to "ID"
+                    for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
+                        if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and (GENE_PROTEIN_POSITIONS_DICT[entry]["ID"]==parent):
+                            parent_protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["label"]
+                            parent_protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["label"]
+                            dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein name"] = parent_protein_name
+                            dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein symbol"] = parent_protein_symbol
+                            parent_gene = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
+                    # get parent gene name and symbol from corresponding parent gene entry
+                    for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
+                        if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="gene" and (GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==parent_gene):
+                            # extract gene names and symbols (ontology) from JSON entry
+                            parent_gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"]
+                            parent_gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"]
+                            # add gene names and symbols to dataframe
+                            dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene name"] = parent_gene_name
+                            dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene symbol"] = parent_gene_symbol
+                            dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene"] = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
+                    # fill in mat_pep
+                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "mat_pep"] = mat_pep
+
+    #dataFrame[['pokay_id', 'gene name', 'gene symbol', 'protein name', 'protein symbol', 'mat_pep', 'gene']].drop_duplicates().to_csv('../test_data/pokay_id.tsv', sep='\t', index=False)
+    #print("saved as '../test_data/pokay_id.tsv'")
+
+    #before merging, unnest the 'original mutation description' column
     dataFrame["original mutation description"] = dataFrame["original mutation description"].str.split(',')
     dataFrame = unnest_multi(dataFrame, ["original mutation description"], reset_index=False)
     dataFrame['index1'] = dataFrame.index
 
-    # if mutation index: add HGVS mutations names, nucleotide positions, protein names, protein symbols, and gene names from it
+    # if mutation index: add HGVS mutations names, nucleotide positions from it
     if args.mutation_index != 'n/a':
         mutation_index = pd.read_csv(args.mutation_index, sep='\t')
         # merge on "mutation" and "protein symbol" in index ("original mutation description" and "protein symbol" in functional annotation file)
         mutation_index = mutation_index.rename(columns={"mutation": "original mutation description", 'pos':'nucleotide position',
                                                         'hgvs_aa_mutation':'amino acid mutation','hgvs_nt_mutation':'nucleotide mutation',
-                                                        'gene_name':'gene name', 'gene_symbol':'gene symbol', 'protein_name':'protein name',
-                                                        'protein_symbol':'protein symbol', 'hgvs_alias':'amino acid mutation alias'})
+                                                        'hgvs_alias':'amino acid mutation alias', 'gene_symbol':'gene'})
+        print("columns", mutation_index.columns)
         # remove doubled columns from dataFrame
-        index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
-                            'protein name', 'gene symbol', 'gene name']
+        index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
         dataFrame = dataFrame.drop(columns=index_cols_to_use)
-        print('pokay', set(dataFrame['protein symbol'].tolist()))
-        print('index', set(mutation_index['protein symbol'].tolist()))
-        merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'protein symbol'], how='left') #, 'alias'
+        merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'gene', 'mat_pep'], how='left')
         #dups = mutation_index[mutation_index.duplicated(subset=['nucleotide position', 'original mutation description'], keep=False)]
         #dups = dups.sort_values(by='nucleotide position')
         #dups.to_csv('madeline_testing/dups.tsv', sep='\t', index=False)
 
-        # keep only specified columns
+        # keep only specified columns, discarding 'pokay_id' here
         merged_dataFrame = merged_dataFrame[['index1'] + dataFrame_cols]
 
         # drop mutations not found in the index
