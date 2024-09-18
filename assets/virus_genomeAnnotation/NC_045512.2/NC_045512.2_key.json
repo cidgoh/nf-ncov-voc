@@ -17,7 +17,7 @@
     "helicase" : ["nsp13"],
     "3'-to-5' exonuclease" : ["nsp14"],
     "2'-O-ribose methyltransferase" : ["nsp16"],
-    "nsp3" : ["PL_pro"],
+    "nsp3" : ["PL_pro", "PLpro"],
     "nsp2" : ["nsp2"],
     "nsp4" : ["nsp4"],
     "nsp6" : ["nsp6"],
