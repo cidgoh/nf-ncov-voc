@@ -13,7 +13,7 @@
     "surface glycoprotein" : [],
     "3C-like proteinase" : ["3CL"],
     "leader protein" : ["nsp1"],
-    "RNA-dependent RNA polymerase" : ["nsp12"],
+    "RNA-dependent RNA polymerase" : ["RdRp", "nsp12"],
     "helicase" : ["nsp13"],
     "3'-to-5' exonuclease" : ["nsp14"],
     "2'-O-ribose methyltransferase" : ["nsp16"],
