@@ -1,0 +1,2818 @@
+{
+    "NCBIGene:72551607": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551607",
+        "gene_name": {
+            "label": "orthopoxvirus gene 001 (MPOX)",
+            "uri": "GENEPIO:0101207"
+        },
+        "gene_symbol": {
+            "label": "opg001 gene (MPOX)",
+            "uri": "GENEPIO:0101382"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551595": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551595",
+        "gene_name": {
+            "label": "orthopoxvirus gene 001 (MPOX)",
+            "uri": "GENEPIO:0101207"
+        },
+        "gene_symbol": {
+            "label": "opg001 gene (MPOX)",
+            "uri": "GENEPIO:0101382"
+        },
+        "gene_orientation": {
+            "label": "reverse gene orientation",
+            "uri": "GENEPIO:0700005"
+        }
+    },
+    "NCBIGene:72551418": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551418",
+        "gene_name": {
+            "label": "orthopoxvirus gene 002 (MPOX)",
+            "uri": "GENEPIO:0101208"
+        },
+        "gene_symbol": {
+            "label": "opg002 gene (MPOX)",
+            "uri": "GENEPIO:0101383"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551594": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551594",
+        "gene_name": {
+            "label": "orthopoxvirus gene 002 (MPOX)",
+            "uri": "GENEPIO:0101208"
+        },
+        "gene_symbol": {
+            "label": "opg002 gene (MPOX)",
+            "uri": "GENEPIO:0101383"
+        },
+        "gene_orientation": {
+            "label": "reverse gene orientation",
+            "uri": "GENEPIO:0700005"
+        }
+    },
+    "NCBIGene:72551419": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551419",
+        "gene_name": {
+            "label": "orthopoxvirus gene 003 (MPOX)",
+            "uri": "GENEPIO:0101209"
+        },
+        "gene_symbol": {
+            "label": "opg003 gene (MPOX)",
+            "uri": "GENEPIO:0101384"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551593": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551593",
+        "gene_name": {
+            "label": "orthopoxvirus gene 003 (MPOX)",
+            "uri": "GENEPIO:0101209"
+        },
+        "gene_symbol": {
+            "label": "opg003 gene (MPOX)",
+            "uri": "GENEPIO:0101384"
+        },
+        "gene_orientation": {
+            "label": "reverse gene orientation",
+            "uri": "GENEPIO:0700005"
+        }
+    },
+    "NCBIGene:72551420": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551420",
+        "gene_name": {
+            "label": "orthopoxvirus gene 015 (MPOX)",
+            "uri": "GENEPIO:0101210"
+        },
+        "gene_symbol": {
+            "label": "opg015 gene (MPOX)",
+            "uri": "GENEPIO:0101385"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551592": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551592",
+        "gene_name": {
+            "label": "orthopoxvirus gene 015 (MPOX)",
+            "uri": "GENEPIO:0101210"
+        },
+        "gene_symbol": {
+            "label": "opg015 gene (MPOX)",
+            "uri": "GENEPIO:0101385"
+        },
+        "gene_orientation": {
+            "label": "reverse gene orientation",
+            "uri": "GENEPIO:0700005"
+        }
+    },
+    "NCBIGene:72551421": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551421",
+        "gene_name": {
+            "label": "orthopoxvirus gene 019 (MPOX)",
+            "uri": "GENEPIO:0101211"
+        },
+        "gene_symbol": {
+            "label": "opg019 gene (MPOX)",
+            "uri": "GENEPIO:0101386"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551422": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551422",
+        "gene_name": {
+            "label": "orthopoxvirus gene 021 (MPOX)",
+            "uri": "GENEPIO:0101212"
+        },
+        "gene_symbol": {
+            "label": "opg021 gene (MPOX)",
+            "uri": "GENEPIO:0101387"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551423": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551423",
+        "gene_name": {
+            "label": "orthopoxvirus gene 022 (MPOX)",
+            "uri": "GENEPIO:0101213"
+        },
+        "gene_symbol": {
+            "label": "opg022 gene (MPOX)",
+            "uri": "GENEPIO:0101388"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551424": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551424",
+        "gene_name": {
+            "label": "orthopoxvirus gene 023 (MPOX)",
+            "uri": "GENEPIO:0101214"
+        },
+        "gene_symbol": {
+            "label": "opg023 gene (MPOX)",
+            "uri": "GENEPIO:0101389"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551425": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551425",
+        "gene_name": {
+            "label": "orthopoxvirus gene 024 (MPOX)",
+            "uri": "GENEPIO:0101215"
+        },
+        "gene_symbol": {
+            "label": "opg024 gene (MPOX)",
+            "uri": "GENEPIO:0101390"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551426": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551426",
+        "gene_name": {
+            "label": "orthopoxvirus gene 025 (MPOX)",
+            "uri": "GENEPIO:0101216"
+        },
+        "gene_symbol": {
+            "label": "opg025 gene (MPOX)",
+            "uri": "GENEPIO:0101391"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551427": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551427",
+        "gene_name": {
+            "label": "orthopoxvirus gene 027 (MPOX)",
+            "uri": "GENEPIO:0101217"
+        },
+        "gene_symbol": {
+            "label": "opg027 gene (MPOX)",
+            "uri": "GENEPIO:0101392"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551428": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551428",
+        "gene_name": {
+            "label": "orthopoxvirus gene 029 (MPOX)",
+            "uri": "GENEPIO:0101218"
+        },
+        "gene_symbol": {
+            "label": "opg029 gene (MPOX)",
+            "uri": "GENEPIO:0101393"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551429": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551429",
+        "gene_name": {
+            "label": "orthopoxvirus gene 030 (MPOX)",
+            "uri": "GENEPIO:0101219"
+        },
+        "gene_symbol": {
+            "label": "opg030 gene (MPOX)",
+            "uri": "GENEPIO:0101394"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551430": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551430",
+        "gene_name": {
+            "label": "orthopoxvirus gene 031 (MPOX)",
+            "uri": "GENEPIO:0101220"
+        },
+        "gene_symbol": {
+            "label": "opg031 gene (MPOX)",
+            "uri": "GENEPIO:0101395"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551431": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551431",
+        "gene_name": {
+            "label": "orthopoxvirus gene 034 (MPOX)",
+            "uri": "GENEPIO:0101221"
+        },
+        "gene_symbol": {
+            "label": "opg034 gene (MPOX)",
+            "uri": "GENEPIO:0101396"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551432": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551432",
+        "gene_name": {
+            "label": "orthopoxvirus gene 035 (MPOX)",
+            "uri": "GENEPIO:0101222"
+        },
+        "gene_symbol": {
+            "label": "opg035 gene (MPOX)",
+            "uri": "GENEPIO:0101397"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551434": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551434",
+        "gene_name": {
+            "label": "orthopoxvirus gene 037 (MPOX)",
+            "uri": "GENEPIO:0101224"
+        },
+        "gene_symbol": {
+            "label": "opg037 gene (MPOX)",
+            "uri": "GENEPIO:0101399"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551435": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551435",
+        "gene_name": {
+            "label": "orthopoxvirus gene 038 (MPOX)",
+            "uri": "GENEPIO:0101225"
+        },
+        "gene_symbol": {
+            "label": "opg038 gene (MPOX)",
+            "uri": "GENEPIO:0101400"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551436": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551436",
+        "gene_name": {
+            "label": "orthopoxvirus gene 039 (MPOX)",
+            "uri": "GENEPIO:0101226"
+        },
+        "gene_symbol": {
+            "label": "opg039 gene (MPOX)",
+            "uri": "GENEPIO:0101401"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551437": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551437",
+        "gene_name": {
+            "label": "orthopoxvirus gene 040 (MPOX)",
+            "uri": "GENEPIO:0101227"
+        },
+        "gene_symbol": {
+            "label": "opg040 gene (MPOX)",
+            "uri": "GENEPIO:0101402"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551438": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551438",
+        "gene_name": {
+            "label": "orthopoxvirus gene 042 (MPOX)",
+            "uri": "GENEPIO:0101228"
+        },
+        "gene_symbol": {
+            "label": "opg042 gene (MPOX)",
+            "uri": "GENEPIO:0101403"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551439": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551439",
+        "gene_name": {
+            "label": "orthopoxvirus gene 043 (MPOX)",
+            "uri": "GENEPIO:0101229"
+        },
+        "gene_symbol": {
+            "label": "opg043 gene (MPOX)",
+            "uri": "GENEPIO:0101404"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551441": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551441",
+        "gene_name": {
+            "label": "orthopoxvirus gene 045 (MPOX)",
+            "uri": "GENEPIO:0101231"
+        },
+        "gene_symbol": {
+            "label": "opg045 gene (MPOX)",
+            "uri": "GENEPIO:0101406"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551442": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551442",
+        "gene_name": {
+            "label": "orthopoxvirus gene 046 (MPOX)",
+            "uri": "GENEPIO:0101232"
+        },
+        "gene_symbol": {
+            "label": "opg046 gene (MPOX)",
+            "uri": "GENEPIO:0101407"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551443": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551443",
+        "gene_name": {
+            "label": "orthopoxvirus gene 047 (MPOX)",
+            "uri": "GENEPIO:0101233"
+        },
+        "gene_symbol": {
+            "label": "opg047 gene (MPOX)",
+            "uri": "GENEPIO:0101408"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551444": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551444",
+        "gene_name": {
+            "label": "orthopoxvirus gene 048 (MPOX)",
+            "uri": "GENEPIO:0101234"
+        },
+        "gene_symbol": {
+            "label": "opg048 gene (MPOX)",
+            "uri": "GENEPIO:0101409"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551445": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551445",
+        "gene_name": {
+            "label": "orthopoxvirus gene 049 (MPOX)",
+            "uri": "GENEPIO:0101235"
+        },
+        "gene_symbol": {
+            "label": "opg049 gene (MPOX)",
+            "uri": "GENEPIO:0101410"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551446": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551446",
+        "gene_name": {
+            "label": "orthopoxvirus gene 050 (MPOX)",
+            "uri": "GENEPIO:0101236"
+        },
+        "gene_symbol": {
+            "label": "opg050 gene (MPOX)",
+            "uri": "GENEPIO:0101411"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551447": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551447",
+        "gene_name": {
+            "label": "orthopoxvirus gene 051 (MPOX)",
+            "uri": "GENEPIO:0101237"
+        },
+        "gene_symbol": {
+            "label": "opg051 gene (MPOX)",
+            "uri": "GENEPIO:0101412"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551448": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551448",
+        "gene_name": {
+            "label": "orthopoxvirus gene 052 (MPOX)",
+            "uri": "GENEPIO:0101238"
+        },
+        "gene_symbol": {
+            "label": "opg052 gene (MPOX)",
+            "uri": "GENEPIO:0101413"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551449": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551449",
+        "gene_name": {
+            "label": "orthopoxvirus gene 053 (MPOX)",
+            "uri": "GENEPIO:0101239"
+        },
+        "gene_symbol": {
+            "label": "opg053 gene (MPOX)",
+            "uri": "GENEPIO:0101414"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551450": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551450",
+        "gene_name": {
+            "label": "orthopoxvirus gene 054 (MPOX)",
+            "uri": "GENEPIO:0101240"
+        },
+        "gene_symbol": {
+            "label": "opg054 gene (MPOX)",
+            "uri": "GENEPIO:0101415"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551451": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551451",
+        "gene_name": {
+            "label": "orthopoxvirus gene 055 (MPOX)",
+            "uri": "GENEPIO:0101241"
+        },
+        "gene_symbol": {
+            "label": "opg055 gene (MPOX)",
+            "uri": "GENEPIO:0101416"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551452": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551452",
+        "gene_name": {
+            "label": "orthopoxvirus gene 056 (MPOX)",
+            "uri": "GENEPIO:0101242"
+        },
+        "gene_symbol": {
+            "label": "opg056 gene (MPOX)",
+            "uri": "GENEPIO:0101417"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551453": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551453",
+        "gene_name": {
+            "label": "orthopoxvirus gene 057 (MPOX)",
+            "uri": "GENEPIO:0101243"
+        },
+        "gene_symbol": {
+            "label": "opg057 gene (MPOX)",
+            "uri": "GENEPIO:0101418"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551454": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551454",
+        "gene_name": {
+            "label": "orthopoxvirus gene 058 (MPOX)",
+            "uri": "GENEPIO:0101244"
+        },
+        "gene_symbol": {
+            "label": "opg058 gene (MPOX)",
+            "uri": "GENEPIO:0101419"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551455": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551455",
+        "gene_name": {
+            "label": "orthopoxvirus gene 059 (MPOX)",
+            "uri": "GENEPIO:0101245"
+        },
+        "gene_symbol": {
+            "label": "opg059 gene (MPOX)",
+            "uri": "GENEPIO:0101420"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551456": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551456",
+        "gene_name": {
+            "label": "orthopoxvirus gene 060 (MPOX)",
+            "uri": "GENEPIO:0101246"
+        },
+        "gene_symbol": {
+            "label": "opg060 gene (MPOX)",
+            "uri": "GENEPIO:0101421"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551457": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551457",
+        "gene_name": {
+            "label": "orthopoxvirus gene 061 (MPOX)",
+            "uri": "GENEPIO:0101247"
+        },
+        "gene_symbol": {
+            "label": "opg061 gene (MPOX)",
+            "uri": "GENEPIO:0101422"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551458": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551458",
+        "gene_name": {
+            "label": "orthopoxvirus gene 062 (MPOX)",
+            "uri": "GENEPIO:0101248"
+        },
+        "gene_symbol": {
+            "label": "opg062 gene (MPOX)",
+            "uri": "GENEPIO:0101423"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551459": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551459",
+        "gene_name": {
+            "label": "orthopoxvirus gene 063 (MPOX)",
+            "uri": "GENEPIO:0101249"
+        },
+        "gene_symbol": {
+            "label": "opg063 gene (MPOX)",
+            "uri": "GENEPIO:0101424"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551460": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551460",
+        "gene_name": {
+            "label": "orthopoxvirus gene 064 (MPOX)",
+            "uri": "GENEPIO:0101250"
+        },
+        "gene_symbol": {
+            "label": "opg064 gene (MPOX)",
+            "uri": "GENEPIO:0101425"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551461": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551461",
+        "gene_name": {
+            "label": "orthopoxvirus gene 065 (MPOX)",
+            "uri": "GENEPIO:0101251"
+        },
+        "gene_symbol": {
+            "label": "opg065 gene (MPOX)",
+            "uri": "GENEPIO:0101426"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551462": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551462",
+        "gene_name": {
+            "label": "orthopoxvirus gene 066 (MPOX)",
+            "uri": "GENEPIO:0101252"
+        },
+        "gene_symbol": {
+            "label": "opg066 gene (MPOX)",
+            "uri": "GENEPIO:0101427"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551463": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551463",
+        "gene_name": {
+            "label": "orthopoxvirus gene 068 (MPOX)",
+            "uri": "GENEPIO:0101253"
+        },
+        "gene_symbol": {
+            "label": "opg068 gene (MPOX)",
+            "uri": "GENEPIO:0101428"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551464": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551464",
+        "gene_name": {
+            "label": "orthopoxvirus gene 069 (MPOX)",
+            "uri": "GENEPIO:0101254"
+        },
+        "gene_symbol": {
+            "label": "opg069 gene (MPOX)",
+            "uri": "GENEPIO:0101429"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551465": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551465",
+        "gene_name": {
+            "label": "orthopoxvirus gene 070 (MPOX)",
+            "uri": "GENEPIO:0101255"
+        },
+        "gene_symbol": {
+            "label": "opg070 gene (MPOX)",
+            "uri": "GENEPIO:0101430"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551466": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551466",
+        "gene_name": {
+            "label": "orthopoxvirus gene 071 (MPOX)",
+            "uri": "GENEPIO:0101256"
+        },
+        "gene_symbol": {
+            "label": "opg071 gene (MPOX)",
+            "uri": "GENEPIO:0101431"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551467": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551467",
+        "gene_name": {
+            "label": "orthopoxvirus gene 072 (MPOX)",
+            "uri": "GENEPIO:0101257"
+        },
+        "gene_symbol": {
+            "label": "opg072 gene (MPOX)",
+            "uri": "GENEPIO:0101432"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551468": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551468",
+        "gene_name": {
+            "label": "orthopoxvirus gene 073 (MPOX)",
+            "uri": "GENEPIO:0101258"
+        },
+        "gene_symbol": {
+            "label": "opg073 gene (MPOX)",
+            "uri": "GENEPIO:0101433"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551469": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551469",
+        "gene_name": {
+            "label": "orthopoxvirus gene 074 (MPOX)",
+            "uri": "GENEPIO:0101259"
+        },
+        "gene_symbol": {
+            "label": "opg074 gene (MPOX)",
+            "uri": "GENEPIO:0101434"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551470": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551470",
+        "gene_name": {
+            "label": "orthopoxvirus gene 075 (MPOX)",
+            "uri": "GENEPIO:0101260"
+        },
+        "gene_symbol": {
+            "label": "opg075 gene (MPOX)",
+            "uri": "GENEPIO:0101435"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551472": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551472",
+        "gene_name": {
+            "label": "orthopoxvirus gene 077 (MPOX)",
+            "uri": "GENEPIO:0101262"
+        },
+        "gene_symbol": {
+            "label": "opg077 gene (MPOX)",
+            "uri": "GENEPIO:0101437"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551473": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551473",
+        "gene_name": {
+            "label": "orthopoxvirus gene 078 (MPOX)",
+            "uri": "GENEPIO:0101263"
+        },
+        "gene_symbol": {
+            "label": "opg078 gene (MPOX)",
+            "uri": "GENEPIO:0101438"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551474": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551474",
+        "gene_name": {
+            "label": "orthopoxvirus gene 079 (MPOX)",
+            "uri": "GENEPIO:0101264"
+        },
+        "gene_symbol": {
+            "label": "opg079 gene (MPOX)",
+            "uri": "GENEPIO:0101439"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551475": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551475",
+        "gene_name": {
+            "label": "orthopoxvirus gene 080 (MPOX)",
+            "uri": "GENEPIO:0101265"
+        },
+        "gene_symbol": {
+            "label": "opg080 gene (MPOX)",
+            "uri": "GENEPIO:0101440"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551476": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551476",
+        "gene_name": {
+            "label": "orthopoxvirus gene 081 (MPOX)",
+            "uri": "GENEPIO:0101266"
+        },
+        "gene_symbol": {
+            "label": "opg081 gene (MPOX)",
+            "uri": "GENEPIO:0101441"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551477": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551477",
+        "gene_name": {
+            "label": "orthopoxvirus gene 082 (MPOX)",
+            "uri": "GENEPIO:0101267"
+        },
+        "gene_symbol": {
+            "label": "opg082 gene (MPOX)",
+            "uri": "GENEPIO:0101442"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551478": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551478",
+        "gene_name": {
+            "label": "orthopoxvirus gene 083 (MPOX)",
+            "uri": "GENEPIO:0101268"
+        },
+        "gene_symbol": {
+            "label": "opg083 gene (MPOX)",
+            "uri": "GENEPIO:0101443"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551479": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551479",
+        "gene_name": {
+            "label": "orthopoxvirus gene 084 (MPOX)",
+            "uri": "GENEPIO:0101269"
+        },
+        "gene_symbol": {
+            "label": "opg084 gene (MPOX)",
+            "uri": "GENEPIO:0101444"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551480": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551480",
+        "gene_name": {
+            "label": "orthopoxvirus gene 085 (MPOX)",
+            "uri": "GENEPIO:0101270"
+        },
+        "gene_symbol": {
+            "label": "opg085 gene (MPOX)",
+            "uri": "GENEPIO:0101445"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551481": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551481",
+        "gene_name": {
+            "label": "orthopoxvirus gene 086 (MPOX)",
+            "uri": "GENEPIO:0101271"
+        },
+        "gene_symbol": {
+            "label": "opg086 gene (MPOX)",
+            "uri": "GENEPIO:0101446"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551482": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551482",
+        "gene_name": {
+            "label": "orthopoxvirus gene 087 (MPOX)",
+            "uri": "GENEPIO:0101272"
+        },
+        "gene_symbol": {
+            "label": "opg087 gene (MPOX)",
+            "uri": "GENEPIO:0101447"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551483": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551483",
+        "gene_name": {
+            "label": "orthopoxvirus gene 088 (MPOX)",
+            "uri": "GENEPIO:0101273"
+        },
+        "gene_symbol": {
+            "label": "opg088 gene (MPOX)",
+            "uri": "GENEPIO:0101448"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551484": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551484",
+        "gene_name": {
+            "label": "orthopoxvirus gene 089 (MPOX)",
+            "uri": "GENEPIO:0101274"
+        },
+        "gene_symbol": {
+            "label": "opg089 gene (MPOX)",
+            "uri": "GENEPIO:0101449"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551485": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551485",
+        "gene_name": {
+            "label": "orthopoxvirus gene 090 (MPOX)",
+            "uri": "GENEPIO:0101275"
+        },
+        "gene_symbol": {
+            "label": "opg090 gene (MPOX)",
+            "uri": "GENEPIO:0101450"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551486": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551486",
+        "gene_name": {
+            "label": "orthopoxvirus gene 091 (MPOX)",
+            "uri": "GENEPIO:0101276"
+        },
+        "gene_symbol": {
+            "label": "opg091 gene (MPOX)",
+            "uri": "GENEPIO:0101451"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551487": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551487",
+        "gene_name": {
+            "label": "orthopoxvirus gene 092 (MPOX)",
+            "uri": "GENEPIO:0101277"
+        },
+        "gene_symbol": {
+            "label": "opg092 gene (MPOX)",
+            "uri": "GENEPIO:0101452"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551488": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551488",
+        "gene_name": {
+            "label": "orthopoxvirus gene 093 (MPOX)",
+            "uri": "GENEPIO:0101278"
+        },
+        "gene_symbol": {
+            "label": "opg093 gene (MPOX)",
+            "uri": "GENEPIO:0101453"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551489": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551489",
+        "gene_name": {
+            "label": "orthopoxvirus gene 094 (MPOX)",
+            "uri": "GENEPIO:0101279"
+        },
+        "gene_symbol": {
+            "label": "opg094 gene (MPOX)",
+            "uri": "GENEPIO:0101454"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551490": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551490",
+        "gene_name": {
+            "label": "orthopoxvirus gene 095 (MPOX)",
+            "uri": "GENEPIO:0101280"
+        },
+        "gene_symbol": {
+            "label": "opg095 gene (MPOX)",
+            "uri": "GENEPIO:0101455"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551491": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551491",
+        "gene_name": {
+            "label": "orthopoxvirus gene 096 (MPOX)",
+            "uri": "GENEPIO:0101281"
+        },
+        "gene_symbol": {
+            "label": "opg096 gene (MPOX)",
+            "uri": "GENEPIO:0101456"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551492": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551492",
+        "gene_name": {
+            "label": "orthopoxvirus gene 097 (MPOX)",
+            "uri": "GENEPIO:0101282"
+        },
+        "gene_symbol": {
+            "label": "opg097 gene (MPOX)",
+            "uri": "GENEPIO:0101457"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551493": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551493",
+        "gene_name": {
+            "label": "orthopoxvirus gene 098 (MPOX)",
+            "uri": "GENEPIO:0101283"
+        },
+        "gene_symbol": {
+            "label": "opg098 gene (MPOX)",
+            "uri": "GENEPIO:0101458"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551494": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551494",
+        "gene_name": {
+            "label": "orthopoxvirus gene 099 (MPOX)",
+            "uri": "GENEPIO:0101284"
+        },
+        "gene_symbol": {
+            "label": "opg099 gene (MPOX)",
+            "uri": "GENEPIO:0101459"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551495": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551495",
+        "gene_name": {
+            "label": "orthopoxvirus gene 100 (MPOX)",
+            "uri": "GENEPIO:0101285"
+        },
+        "gene_symbol": {
+            "label": "opg100 gene (MPOX)",
+            "uri": "GENEPIO:0101460"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551496": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551496",
+        "gene_name": {
+            "label": "orthopoxvirus gene 101 (MPOX)",
+            "uri": "GENEPIO:0101286"
+        },
+        "gene_symbol": {
+            "label": "opg101 gene (MPOX)",
+            "uri": "GENEPIO:0101461"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551497": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551497",
+        "gene_name": {
+            "label": "orthopoxvirus gene 102 (MPOX)",
+            "uri": "GENEPIO:0101287"
+        },
+        "gene_symbol": {
+            "label": "opg102 gene (MPOX)",
+            "uri": "GENEPIO:0101462"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551498": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551498",
+        "gene_name": {
+            "label": "orthopoxvirus gene 103 (MPOX)",
+            "uri": "GENEPIO:0101288"
+        },
+        "gene_symbol": {
+            "label": "opg103 gene (MPOX)",
+            "uri": "GENEPIO:0101463"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551499": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551499",
+        "gene_name": {
+            "label": "orthopoxvirus gene 104 (MPOX)",
+            "uri": "GENEPIO:0101289"
+        },
+        "gene_symbol": {
+            "label": "opg104 gene (MPOX)",
+            "uri": "GENEPIO:0101464"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551500": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551500",
+        "gene_name": {
+            "label": "orthopoxvirus gene 105 (MPOX)",
+            "uri": "GENEPIO:0101290"
+        },
+        "gene_symbol": {
+            "label": "opg105 gene (MPOX)",
+            "uri": "GENEPIO:0101465"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551501": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551501",
+        "gene_name": {
+            "label": "orthopoxvirus gene 106 (MPOX)",
+            "uri": "GENEPIO:0101291"
+        },
+        "gene_symbol": {
+            "label": "opg106 gene (MPOX)",
+            "uri": "GENEPIO:0101466"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551502": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551502",
+        "gene_name": {
+            "label": "orthopoxvirus gene 107 (MPOX)",
+            "uri": "GENEPIO:0101292"
+        },
+        "gene_symbol": {
+            "label": "opg107 gene (MPOX)",
+            "uri": "GENEPIO:0101467"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551503": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551503",
+        "gene_name": {
+            "label": "orthopoxvirus gene 108 (MPOX)",
+            "uri": "GENEPIO:0101293"
+        },
+        "gene_symbol": {
+            "label": "opg108 gene (MPOX)",
+            "uri": "GENEPIO:0101468"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551504": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551504",
+        "gene_name": {
+            "label": "orthopoxvirus gene 109 (MPOX)",
+            "uri": "GENEPIO:0101294"
+        },
+        "gene_symbol": {
+            "label": "opg109 gene (MPOX)",
+            "uri": "GENEPIO:0101469"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551505": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551505",
+        "gene_name": {
+            "label": "orthopoxvirus gene 110 (MPOX)",
+            "uri": "GENEPIO:0101295"
+        },
+        "gene_symbol": {
+            "label": "opg110 gene (MPOX)",
+            "uri": "GENEPIO:0101470"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551506": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551506",
+        "gene_name": {
+            "label": "orthopoxvirus gene 111 (MPOX)",
+            "uri": "GENEPIO:0101296"
+        },
+        "gene_symbol": {
+            "label": "opg111 gene (MPOX)",
+            "uri": "GENEPIO:0101471"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551507": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551507",
+        "gene_name": {
+            "label": "orthopoxvirus gene 112 (MPOX)",
+            "uri": "GENEPIO:0101297"
+        },
+        "gene_symbol": {
+            "label": "opg112 gene (MPOX)",
+            "uri": "GENEPIO:0101472"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551508": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551508",
+        "gene_name": {
+            "label": "orthopoxvirus gene 113 (MPOX)",
+            "uri": "GENEPIO:0101298"
+        },
+        "gene_symbol": {
+            "label": "opg113 gene (MPOX)",
+            "uri": "GENEPIO:0101473"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551509": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551509",
+        "gene_name": {
+            "label": "orthopoxvirus gene 114 (MPOX)",
+            "uri": "GENEPIO:0101299"
+        },
+        "gene_symbol": {
+            "label": "opg114 gene (MPOX)",
+            "uri": "GENEPIO:0101474"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551510": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551510",
+        "gene_name": {
+            "label": "orthopoxvirus gene 115 (MPOX)",
+            "uri": "GENEPIO:0101300"
+        },
+        "gene_symbol": {
+            "label": "opg115 gene (MPOX)",
+            "uri": "GENEPIO:0101475"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551511": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551511",
+        "gene_name": {
+            "label": "orthopoxvirus gene 116 (MPOX)",
+            "uri": "GENEPIO:0101301"
+        },
+        "gene_symbol": {
+            "label": "opg116 gene (MPOX)",
+            "uri": "GENEPIO:0101476"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551512": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551512",
+        "gene_name": {
+            "label": "orthopoxvirus gene 117 (MPOX)",
+            "uri": "GENEPIO:0101302"
+        },
+        "gene_symbol": {
+            "label": "opg117 gene (MPOX)",
+            "uri": "GENEPIO:0101477"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551513": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551513",
+        "gene_name": {
+            "label": "orthopoxvirus gene 118 (MPOX)",
+            "uri": "GENEPIO:0101303"
+        },
+        "gene_symbol": {
+            "label": "opg118 gene (MPOX)",
+            "uri": "GENEPIO:0101478"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551514": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551514",
+        "gene_name": {
+            "label": "orthopoxvirus gene 119 (MPOX)",
+            "uri": "GENEPIO:0101304"
+        },
+        "gene_symbol": {
+            "label": "opg119 gene (MPOX)",
+            "uri": "GENEPIO:0101479"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551515": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551515",
+        "gene_name": {
+            "label": "orthopoxvirus gene 120 (MPOX)",
+            "uri": "GENEPIO:0101305"
+        },
+        "gene_symbol": {
+            "label": "opg120 gene (MPOX)",
+            "uri": "GENEPIO:0101480"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551516": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551516",
+        "gene_name": {
+            "label": "orthopoxvirus gene 121 (MPOX)",
+            "uri": "GENEPIO:0101306"
+        },
+        "gene_symbol": {
+            "label": "opg121 gene (MPOX)",
+            "uri": "GENEPIO:0101481"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551517": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551517",
+        "gene_name": {
+            "label": "orthopoxvirus gene 122 (MPOX)",
+            "uri": "GENEPIO:0101307"
+        },
+        "gene_symbol": {
+            "label": "opg122 gene (MPOX)",
+            "uri": "GENEPIO:0101482"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551518": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551518",
+        "gene_name": {
+            "label": "orthopoxvirus gene 123 (MPOX)",
+            "uri": "GENEPIO:0101308"
+        },
+        "gene_symbol": {
+            "label": "opg123 gene (MPOX)",
+            "uri": "GENEPIO:0101483"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551519": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551519",
+        "gene_name": {
+            "label": "orthopoxvirus gene 124 (MPOX)",
+            "uri": "GENEPIO:0101309"
+        },
+        "gene_symbol": {
+            "label": "opg124 gene (MPOX)",
+            "uri": "GENEPIO:0101484"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551520": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551520",
+        "gene_name": {
+            "label": "orthopoxvirus gene 125 (MPOX)",
+            "uri": "GENEPIO:0101310"
+        },
+        "gene_symbol": {
+            "label": "opg125 gene (MPOX)",
+            "uri": "GENEPIO:0101485"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551521": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551521",
+        "gene_name": {
+            "label": "orthopoxvirus gene 126 (MPOX)",
+            "uri": "GENEPIO:0101311"
+        },
+        "gene_symbol": {
+            "label": "opg126 gene (MPOX)",
+            "uri": "GENEPIO:0101486"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551522": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551522",
+        "gene_name": {
+            "label": "orthopoxvirus gene 127 (MPOX)",
+            "uri": "GENEPIO:0101312"
+        },
+        "gene_symbol": {
+            "label": "opg127 gene (MPOX)",
+            "uri": "GENEPIO:0101487"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551523": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551523",
+        "gene_name": {
+            "label": "orthopoxvirus gene 128 (MPOX)",
+            "uri": "GENEPIO:0101313"
+        },
+        "gene_symbol": {
+            "label": "opg128 gene (MPOX)",
+            "uri": "GENEPIO:0101488"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551524": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551524",
+        "gene_name": {
+            "label": "orthopoxvirus gene 129 (MPOX)",
+            "uri": "GENEPIO:0101314"
+        },
+        "gene_symbol": {
+            "label": "opg129 gene (MPOX)",
+            "uri": "GENEPIO:0101489"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551525": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551525",
+        "gene_name": {
+            "label": "orthopoxvirus gene 130 (MPOX)",
+            "uri": "GENEPIO:0101315"
+        },
+        "gene_symbol": {
+            "label": "opg130 gene (MPOX)",
+            "uri": "GENEPIO:0101490"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551526": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551526",
+        "gene_name": {
+            "label": "orthopoxvirus gene 131 (MPOX)",
+            "uri": "GENEPIO:0101316"
+        },
+        "gene_symbol": {
+            "label": "opg131 gene (MPOX)",
+            "uri": "GENEPIO:0101491"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551527": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551527",
+        "gene_name": {
+            "label": "orthopoxvirus gene 132 (MPOX)",
+            "uri": "GENEPIO:0101317"
+        },
+        "gene_symbol": {
+            "label": "opg132 gene (MPOX)",
+            "uri": "GENEPIO:0101492"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551528": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551528",
+        "gene_name": {
+            "label": "orthopoxvirus gene 133 (MPOX)",
+            "uri": "GENEPIO:0101318"
+        },
+        "gene_symbol": {
+            "label": "opg133 gene (MPOX)",
+            "uri": "GENEPIO:0101493"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551529": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551529",
+        "gene_name": {
+            "label": "orthopoxvirus gene 134 (MPOX)",
+            "uri": "GENEPIO:0101319"
+        },
+        "gene_symbol": {
+            "label": "opg134 gene (MPOX)",
+            "uri": "GENEPIO:0101494"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551530": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551530",
+        "gene_name": {
+            "label": "orthopoxvirus gene 135 (MPOX)",
+            "uri": "GENEPIO:0101320"
+        },
+        "gene_symbol": {
+            "label": "opg135 gene (MPOX)",
+            "uri": "GENEPIO:0101495"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551531": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551531",
+        "gene_name": {
+            "label": "orthopoxvirus gene 136 (MPOX)",
+            "uri": "GENEPIO:0101321"
+        },
+        "gene_symbol": {
+            "label": "opg136 gene (MPOX)",
+            "uri": "GENEPIO:0101496"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551532": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551532",
+        "gene_name": {
+            "label": "orthopoxvirus gene 137 (MPOX)",
+            "uri": "GENEPIO:0101322"
+        },
+        "gene_symbol": {
+            "label": "opg137 gene (MPOX)",
+            "uri": "GENEPIO:0101497"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551533": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551533",
+        "gene_name": {
+            "label": "orthopoxvirus gene 138 (MPOX)",
+            "uri": "GENEPIO:0101323"
+        },
+        "gene_symbol": {
+            "label": "opg138 gene (MPOX)",
+            "uri": "GENEPIO:0101498"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551534": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551534",
+        "gene_name": {
+            "label": "orthopoxvirus gene 139 (MPOX)",
+            "uri": "GENEPIO:0101324"
+        },
+        "gene_symbol": {
+            "label": "opg139 gene (MPOX)",
+            "uri": "GENEPIO:0101499"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551535": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551535",
+        "gene_name": {
+            "label": "orthopoxvirus gene 140 (MPOX)",
+            "uri": "GENEPIO:0101325"
+        },
+        "gene_symbol": {
+            "label": "opg140 gene (MPOX)",
+            "uri": "GENEPIO:0101500"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551536": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551536",
+        "gene_name": {
+            "label": "orthopoxvirus gene 141 (MPOX)",
+            "uri": "GENEPIO:0101326"
+        },
+        "gene_symbol": {
+            "label": "opg141 gene (MPOX)",
+            "uri": "GENEPIO:0101501"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551537": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551537",
+        "gene_name": {
+            "label": "orthopoxvirus gene 142 (MPOX)",
+            "uri": "GENEPIO:0101327"
+        },
+        "gene_symbol": {
+            "label": "opg142 gene (MPOX)",
+            "uri": "GENEPIO:0101502"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551538": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551538",
+        "gene_name": {
+            "label": "orthopoxvirus gene 143 (MPOX)",
+            "uri": "GENEPIO:0101328"
+        },
+        "gene_symbol": {
+            "label": "opg143 gene (MPOX)",
+            "uri": "GENEPIO:0101503"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551539": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551539",
+        "gene_name": {
+            "label": "orthopoxvirus gene 144 (MPOX)",
+            "uri": "GENEPIO:0101329"
+        },
+        "gene_symbol": {
+            "label": "opg144 gene (MPOX)",
+            "uri": "GENEPIO:0101504"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551540": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551540",
+        "gene_name": {
+            "label": "orthopoxvirus gene 145 (MPOX)",
+            "uri": "GENEPIO:0101330"
+        },
+        "gene_symbol": {
+            "label": "opg145 gene (MPOX)",
+            "uri": "GENEPIO:0101505"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551541": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551541",
+        "gene_name": {
+            "label": "orthopoxvirus gene 146 (MPOX)",
+            "uri": "GENEPIO:0101331"
+        },
+        "gene_symbol": {
+            "label": "opg146 gene (MPOX)",
+            "uri": "GENEPIO:0101506"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551542": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551542",
+        "gene_name": {
+            "label": "orthopoxvirus gene 147 (MPOX)",
+            "uri": "GENEPIO:0101332"
+        },
+        "gene_symbol": {
+            "label": "opg147 gene (MPOX)",
+            "uri": "GENEPIO:0101507"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551543": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551543",
+        "gene_name": {
+            "label": "orthopoxvirus gene 148 (MPOX)",
+            "uri": "GENEPIO:0101333"
+        },
+        "gene_symbol": {
+            "label": "opg148 gene (MPOX)",
+            "uri": "GENEPIO:0101508"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551544": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551544",
+        "gene_name": {
+            "label": "orthopoxvirus gene 149 (MPOX)",
+            "uri": "GENEPIO:0101334"
+        },
+        "gene_symbol": {
+            "label": "opg149 gene (MPOX)",
+            "uri": "GENEPIO:0101509"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551545": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551545",
+        "gene_name": {
+            "label": "orthopoxvirus gene 150 (MPOX)",
+            "uri": "GENEPIO:0101335"
+        },
+        "gene_symbol": {
+            "label": "opg150 gene (MPOX)",
+            "uri": "GENEPIO:0101510"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551546": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551546",
+        "gene_name": {
+            "label": "orthopoxvirus gene 151 (MPOX)",
+            "uri": "GENEPIO:0101336"
+        },
+        "gene_symbol": {
+            "label": "opg151 gene (MPOX)",
+            "uri": "GENEPIO:0101511"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551547": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551547",
+        "gene_name": {
+            "label": "orthopoxvirus gene 153 (MPOX)",
+            "uri": "GENEPIO:0101337"
+        },
+        "gene_symbol": {
+            "label": "opg153 gene (MPOX)",
+            "uri": "GENEPIO:0101512"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551548": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551548",
+        "gene_name": {
+            "label": "orthopoxvirus gene 154 (MPOX)",
+            "uri": "GENEPIO:0101338"
+        },
+        "gene_symbol": {
+            "label": "opg154 gene (MPOX)",
+            "uri": "GENEPIO:0101513"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551549": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551549",
+        "gene_name": {
+            "label": "orthopoxvirus gene 155 (MPOX)",
+            "uri": "GENEPIO:0101339"
+        },
+        "gene_symbol": {
+            "label": "opg155 gene (MPOX)",
+            "uri": "GENEPIO:0101514"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551550": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551550",
+        "gene_name": {
+            "label": "orthopoxvirus gene 156 (MPOX)",
+            "uri": "GENEPIO:0101340"
+        },
+        "gene_symbol": {
+            "label": "opg156 gene (MPOX)",
+            "uri": "GENEPIO:0101515"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551551": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551551",
+        "gene_name": {
+            "label": "orthopoxvirus gene 157 (MPOX)",
+            "uri": "GENEPIO:0101341"
+        },
+        "gene_symbol": {
+            "label": "opg157 gene (MPOX)",
+            "uri": "GENEPIO:0101516"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551552": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551552",
+        "gene_name": {
+            "label": "orthopoxvirus gene 158 (MPOX)",
+            "uri": "GENEPIO:0101342"
+        },
+        "gene_symbol": {
+            "label": "opg158 gene (MPOX)",
+            "uri": "GENEPIO:0101517"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551553": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551553",
+        "gene_name": {
+            "label": "orthopoxvirus gene 159 (MPOX)",
+            "uri": "GENEPIO:0101343"
+        },
+        "gene_symbol": {
+            "label": "opg159 gene (MPOX)",
+            "uri": "GENEPIO:0101518"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551554": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551554",
+        "gene_name": {
+            "label": "orthopoxvirus gene 160 (MPOX)",
+            "uri": "GENEPIO:0101344"
+        },
+        "gene_symbol": {
+            "label": "opg160 gene (MPOX)",
+            "uri": "GENEPIO:0101519"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551555": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551555",
+        "gene_name": {
+            "label": "orthopoxvirus gene 161 (MPOX)",
+            "uri": "GENEPIO:0101345"
+        },
+        "gene_symbol": {
+            "label": "opg161 gene (MPOX)",
+            "uri": "GENEPIO:0101520"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551556": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551556",
+        "gene_name": {
+            "label": "orthopoxvirus gene 162 (MPOX)",
+            "uri": "GENEPIO:0101346"
+        },
+        "gene_symbol": {
+            "label": "opg162 gene (MPOX)",
+            "uri": "GENEPIO:0101521"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551557": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551557",
+        "gene_name": {
+            "label": "orthopoxvirus gene 163 (MPOX)",
+            "uri": "GENEPIO:0101347"
+        },
+        "gene_symbol": {
+            "label": "opg163 gene (MPOX)",
+            "uri": "GENEPIO:0101522"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551558": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551558",
+        "gene_name": {
+            "label": "orthopoxvirus gene 164 (MPOX)",
+            "uri": "GENEPIO:0101348"
+        },
+        "gene_symbol": {
+            "label": "opg164 gene (MPOX)",
+            "uri": "GENEPIO:0101523"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551559": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551559",
+        "gene_name": {
+            "label": "orthopoxvirus gene 165 (MPOX)",
+            "uri": "GENEPIO:0101349"
+        },
+        "gene_symbol": {
+            "label": "opg165 gene (MPOX)",
+            "uri": "GENEPIO:0101524"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551560": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551560",
+        "gene_name": {
+            "label": "orthopoxvirus gene 166 (MPOX)",
+            "uri": "GENEPIO:0101350"
+        },
+        "gene_symbol": {
+            "label": "opg166 gene (MPOX)",
+            "uri": "GENEPIO:0101525"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551561": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551561",
+        "gene_name": {
+            "label": "orthopoxvirus gene 167 (MPOX)",
+            "uri": "GENEPIO:0101351"
+        },
+        "gene_symbol": {
+            "label": "opg167 gene (MPOX)",
+            "uri": "GENEPIO:0101526"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551562": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551562",
+        "gene_name": {
+            "label": "orthopoxvirus gene 170 (MPOX)",
+            "uri": "GENEPIO:0101352"
+        },
+        "gene_symbol": {
+            "label": "opg170 gene (MPOX)",
+            "uri": "GENEPIO:0101527"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551563": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551563",
+        "gene_name": {
+            "label": "orthopoxvirus gene 171 (MPOX)",
+            "uri": "GENEPIO:0101353"
+        },
+        "gene_symbol": {
+            "label": "opg171 gene (MPOX)",
+            "uri": "GENEPIO:0101528"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551564": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551564",
+        "gene_name": {
+            "label": "orthopoxvirus gene 172 (MPOX)",
+            "uri": "GENEPIO:0101354"
+        },
+        "gene_symbol": {
+            "label": "opg172 gene (MPOX)",
+            "uri": "GENEPIO:0101529"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551565": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551565",
+        "gene_name": {
+            "label": "orthopoxvirus gene 173 (MPOX)",
+            "uri": "GENEPIO:0101355"
+        },
+        "gene_symbol": {
+            "label": "opg173 gene (MPOX)",
+            "uri": "GENEPIO:0101530"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551566": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551566",
+        "gene_name": {
+            "label": "orthopoxvirus gene 174 (MPOX)",
+            "uri": "GENEPIO:0101356"
+        },
+        "gene_symbol": {
+            "label": "opg174 gene (MPOX)",
+            "uri": "GENEPIO:0101531"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551567": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551567",
+        "gene_name": {
+            "label": "orthopoxvirus gene 175 (MPOX)",
+            "uri": "GENEPIO:0101357"
+        },
+        "gene_symbol": {
+            "label": "opg175 gene (MPOX)",
+            "uri": "GENEPIO:0101532"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551568": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551568",
+        "gene_name": {
+            "label": "orthopoxvirus gene 176 (MPOX)",
+            "uri": "GENEPIO:0101358"
+        },
+        "gene_symbol": {
+            "label": "opg176 gene (MPOX)",
+            "uri": "GENEPIO:0101533"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551569": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551569",
+        "gene_name": {
+            "label": "orthopoxvirus gene 178 (MPOX)",
+            "uri": "GENEPIO:0101359"
+        },
+        "gene_symbol": {
+            "label": "opg178 gene (MPOX)",
+            "uri": "GENEPIO:0101534"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551570": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551570",
+        "gene_name": {
+            "label": "orthopoxvirus gene 180 (MPOX)",
+            "uri": "GENEPIO:0101360"
+        },
+        "gene_symbol": {
+            "label": "opg180 gene (MPOX)",
+            "uri": "GENEPIO:0101535"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551571": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551571",
+        "gene_name": {
+            "label": "orthopoxvirus gene 181 (MPOX)",
+            "uri": "GENEPIO:0101361"
+        },
+        "gene_symbol": {
+            "label": "opg181 gene (MPOX)",
+            "uri": "GENEPIO:0101536"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551572": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551572",
+        "gene_name": {
+            "label": "orthopoxvirus gene 185 (MPOX)",
+            "uri": "GENEPIO:0101362"
+        },
+        "gene_symbol": {
+            "label": "opg185 gene (MPOX)",
+            "uri": "GENEPIO:0101537"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551573": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551573",
+        "gene_name": {
+            "label": "orthopoxvirus gene 187 (MPOX)",
+            "uri": "GENEPIO:0101363"
+        },
+        "gene_symbol": {
+            "label": "opg187 gene (MPOX)",
+            "uri": "GENEPIO:0101538"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551574": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551574",
+        "gene_name": {
+            "label": "orthopoxvirus gene 188 (MPOX)",
+            "uri": "GENEPIO:0101364"
+        },
+        "gene_symbol": {
+            "label": "opg188 gene (MPOX)",
+            "uri": "GENEPIO:0101539"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551575": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551575",
+        "gene_name": {
+            "label": "orthopoxvirus gene 189 (MPOX)",
+            "uri": "GENEPIO:0101365"
+        },
+        "gene_symbol": {
+            "label": "opg189 gene (MPOX)",
+            "uri": "GENEPIO:0101540"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551576": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551576",
+        "gene_name": {
+            "label": "orthopoxvirus gene 190 (MPOX)",
+            "uri": "GENEPIO:0101366"
+        },
+        "gene_symbol": {
+            "label": "opg190 gene (MPOX)",
+            "uri": "GENEPIO:0101541"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551577": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551577",
+        "gene_name": {
+            "label": "orthopoxvirus gene 191 (MPOX)",
+            "uri": "GENEPIO:0101367"
+        },
+        "gene_symbol": {
+            "label": "opg191 gene (MPOX)",
+            "uri": "GENEPIO:0101542"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551578": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551578",
+        "gene_name": {
+            "label": "orthopoxvirus gene 192 (MPOX)",
+            "uri": "GENEPIO:0101368"
+        },
+        "gene_symbol": {
+            "label": "opg192 gene (MPOX)",
+            "uri": "GENEPIO:0101543"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551579": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551579",
+        "gene_name": {
+            "label": "orthopoxvirus gene 193 (MPOX)",
+            "uri": "GENEPIO:0101369"
+        },
+        "gene_symbol": {
+            "label": "opg193 gene (MPOX)",
+            "uri": "GENEPIO:0101544"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551580": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551580",
+        "gene_name": {
+            "label": "orthopoxvirus gene 195 (MPOX)",
+            "uri": "GENEPIO:0101370"
+        },
+        "gene_symbol": {
+            "label": "opg195 gene (MPOX)",
+            "uri": "GENEPIO:0101545"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551581": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551581",
+        "gene_name": {
+            "label": "orthopoxvirus gene 197 (MPOX)",
+            "uri": "GENEPIO:0101371"
+        },
+        "gene_symbol": {
+            "label": "opg197 gene (MPOX)",
+            "uri": "GENEPIO:0101546"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551582": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551582",
+        "gene_name": {
+            "label": "orthopoxvirus gene 198 (MPOX)",
+            "uri": "GENEPIO:0101372"
+        },
+        "gene_symbol": {
+            "label": "opg198 gene (MPOX)",
+            "uri": "GENEPIO:0101547"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551583": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551583",
+        "gene_name": {
+            "label": "orthopoxvirus gene 199 (MPOX)",
+            "uri": "GENEPIO:0101373"
+        },
+        "gene_symbol": {
+            "label": "opg199 gene (MPOX)",
+            "uri": "GENEPIO:0101548"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551584": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551584",
+        "gene_name": {
+            "label": "orthopoxvirus gene 200 (MPOX)",
+            "uri": "GENEPIO:0101374"
+        },
+        "gene_symbol": {
+            "label": "opg200 gene (MPOX)",
+            "uri": "GENEPIO:0101549"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551585": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551585",
+        "gene_name": {
+            "label": "orthopoxvirus gene 204 (MPOX)",
+            "uri": "GENEPIO:0101375"
+        },
+        "gene_symbol": {
+            "label": "opg204 gene (MPOX)",
+            "uri": "GENEPIO:0101550"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551586": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551586",
+        "gene_name": {
+            "label": "orthopoxvirus gene 205 (MPOX)",
+            "uri": "GENEPIO:0101376"
+        },
+        "gene_symbol": {
+            "label": "opg205 gene (MPOX)",
+            "uri": "GENEPIO:0101551"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551587": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551587",
+        "gene_name": {
+            "label": "orthopoxvirus gene 208 (MPOX)",
+            "uri": "GENEPIO:0101377"
+        },
+        "gene_symbol": {
+            "label": "opg208 gene (MPOX)",
+            "uri": "GENEPIO:0101552"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551588": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551588",
+        "gene_name": {
+            "label": "orthopoxvirus gene 209 (MPOX)",
+            "uri": "GENEPIO:0101378"
+        },
+        "gene_symbol": {
+            "label": "opg209 gene (MPOX)",
+            "uri": "GENEPIO:0101553"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551589": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551589",
+        "gene_name": {
+            "label": "orthopoxvirus gene 210 (MPOX)",
+            "uri": "GENEPIO:0101379"
+        },
+        "gene_symbol": {
+            "label": "opg210 gene (MPOX)",
+            "uri": "GENEPIO:0101554"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551590": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551590",
+        "gene_name": {
+            "label": "orthopoxvirus gene 005 (MPOX)",
+            "uri": "GENEPIO:0101380"
+        },
+        "gene_symbol": {
+            "label": "opg005 gene (MPOX)",
+            "uri": "GENEPIO:0101555"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    },
+    "NCBIGene:72551591": {
+        "type": "gene",
+        "Dbxref": "NCBIGene:72551591",
+        "gene_name": {
+            "label": "orthopoxvirus gene 016 (MPOX)",
+            "uri": "GENEPIO:0101381"
+        },
+        "gene_symbol": {
+            "label": "opg016 gene (MPOX)",
+            "uri": "GENEPIO:0101556"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
+        }
+    }
+}
