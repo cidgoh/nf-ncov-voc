@@ -9,6 +9,14 @@
         "gene_symbol": {
             "label": "orf1ab gene (SARS-CoV-2)",
             "uri": "GENEPIO:0101135"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
         }
     },
     "NCBIGene:43740568": {
@@ -21,6 +29,14 @@
         "gene_symbol": {
             "label": "s gene (SARS-CoV-2)",
             "uri": "GENEPIO:0101143"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
         }
     },
     "NCBIGene:43740569": {
@@ -33,6 +49,14 @@
         "gene_symbol": {
             "label": "orf3a gene (SARS-CoV-2)",
             "uri": "GENEPIO:0101147"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
         }
     },
     "NCBIGene:43740570": {
@@ -45,6 +69,14 @@
         "gene_symbol": {
             "label": "e gene (SARS-CoV-2)",
             "uri": "GENEPIO:0101151"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
         }
     },
     "NCBIGene:43740571": {
@@ -57,6 +89,14 @@
         "gene_symbol": {
             "label": "m gene (SARS-CoV-2)",
             "uri": "GENEPIO:0101155"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
         }
     },
     "NCBIGene:43740572": {
@@ -69,6 +109,14 @@
         "gene_symbol": {
             "label": "orf6 gene (SARS-CoV-2)",
             "uri": "GENEPIO:0101159"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
         }
     },
     "NCBIGene:43740573": {
@@ -81,6 +129,14 @@
         "gene_symbol": {
             "label": "orf7a gene (SARS-CoV-2)",
             "uri": "GENEPIO:0101163"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
         }
     },
     "NCBIGene:43740574": {
@@ -93,6 +149,14 @@
         "gene_symbol": {
             "label": "orf7b gene (SARS-CoV-2)",
             "uri": "GENEPIO:0101167"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
         }
     },
     "NCBIGene:43740577": {
@@ -105,6 +169,14 @@
         "gene_symbol": {
             "label": "orf8 gene (SARS-CoV-2)",
             "uri": "GENEPIO:0101171"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
         }
     },
     "NCBIGene:43740575": {
@@ -117,6 +189,14 @@
         "gene_symbol": {
             "label": "n gene (SARS-CoV-2)",
             "uri": "GENEPIO:0101175"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
         }
     },
     "NCBIGene:43740576": {
@@ -129,6 +209,14 @@
         "gene_symbol": {
             "label": "orf10 gene (SARS-CoV-2)",
             "uri": "GENEPIO:0101179"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
+        "gene_orientation": {
+            "label": "forward gene orientation",
+            "uri": "GENEPIO:0700004"
         }
     }
 }
