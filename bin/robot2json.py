@@ -46,7 +46,6 @@ if __name__ == '__main__':
     gene_symbols['gene_symbol_id'] = gene_symbols['Ontology ID']
     gene_symbols = gene_symbols[['Dbxref', 'gene_symbol', 'gene_symbol_id']]
     gene_symbols['Dbxref'] = gene_symbols['Dbxref'].str.replace("GeneID", "NCBIGene") #'JSON_match'
-    gene_symbols.to_csv("GENE_SYMBOLS_HAVOC.tsv", sep='\t', header=True, index=False)
 
     genes = pd.merge(gene_names, gene_symbols, on='Dbxref', how='left')
 
@@ -57,12 +56,10 @@ if __name__ == '__main__':
     # add gene orientation
     genes['gene_orientation'] = "forward gene orientation"
     genes['gene_orientation_id'] = "GENEPIO:0700004"
-    reverse_gene_ids = ["NCBIGene:72551595", "NCBIGene:72551594", "NCBIGene:72551593", "NCBIGene:72551592"]
+    reverse_gene_ids = ["NCBIGene:72551595", "NCBIGene:72551594", "NCBIGene:72551593", "NCBIGene:72551592"] # for MPOX
     #print(genes[genes['gene_symbol'].duplicated(keep=False)]) #show which genes are duplicated
     genes.loc[genes["Dbxref"].isin(reverse_gene_ids), 'gene_orientation'] = "reverse gene orientation"
     genes.loc[genes["Dbxref"].isin(reverse_gene_ids), 'gene_orientation_id'] = "GENEPIO:0700005"
-
-    genes.to_csv("GENES_HAVOC.tsv", sep='\t', header=True, index=False)
 
     # Define a custom function to create a nested structure
     # ncbigene and the gene name are all the same, this is causing HAVOC
@@ -94,15 +91,30 @@ if __name__ == '__main__':
     protein_names = sars[sars['parent class'].str.contains("protein name")].copy(deep=True)
     protein_names['protein_name'] = protein_names['label']
     protein_names['protein_name_id'] = protein_names['Ontology ID']
-    protein_names['protein_id'] = protein_names['Dbxref'].str.split(pat=",", expand=True)[0].str.split(":", expand=True)[1] # extract eg. "YP_010377182.1" from "GenBank:YP_010377182.1,GeneID:72551595"
+    if protein_names['Dbxref'].str.contains(",GeneID", regex=False).any():
+        protein_names['protein_id'] = protein_names['Dbxref'].str.split(pat=",GeneID", expand=True)[0]
+    else:
+        protein_names['protein_id'] = protein_names['Dbxref']
+    if protein_names['protein_id'].str.contains("GenBank:", regex=False).any():
+        protein_names['protein_id'] = protein_names['protein_id'].str.split("GenBank:", expand=True)[1] # extract eg. "YP_010377182.1" from "GenBank:YP_010377182.1,GeneID:72551595"
+    else:
+        protein_names['protein_id'] = protein_names['protein_id']
+    #print(protein_names['protein_id'])
     protein_names = protein_names[['protein_id', 'protein_name', 'protein_name_id']]
 
     protein_symbols = sars[sars['parent class'].str.contains("protein symbol")].copy(deep=True)
     protein_symbols['protein_symbol'] = protein_symbols['label']
     protein_symbols['protein_symbol_id'] = protein_symbols['Ontology ID']
-    protein_symbols['protein_id'] = protein_symbols['Dbxref'].str.split(pat=",", expand=True)[0].str.split(":", expand=True)[1] # extract eg. "YP_010377182.1" from "GenBank:YP_010377182.1,GeneID:72551595"
+    if protein_symbols['Dbxref'].str.contains(",GeneID", regex=False).any():
+        protein_symbols['protein_id'] = protein_symbols['Dbxref'].str.split(pat=",GeneID", expand=True)[0]
+    else:
+        protein_symbols['protein_id'] = protein_symbols['Dbxref']
+    if protein_symbols['protein_id'].str.contains("GenBank:", regex=False).any():
+        protein_symbols['protein_id'] = protein_symbols['protein_id'].str.split("GenBank:", expand=True)[1] # extract eg. "YP_010377182.1" from "GenBank:YP_010377182.1,GeneID:72551595"
+    else:
+        protein_symbols['protein_id'] = protein_symbols['protein_id'] # extract eg. "YP_010377182.1" from "GenBank:YP_010377182.1,GeneID:72551595"
     protein_symbols = protein_symbols[['protein_id', 'protein_symbol', 'protein_symbol_id']]
-
+    #print(protein_symbols['protein_id'])
     proteins = pd.merge(protein_names, protein_symbols, on='protein_id', how='left')
 
     # Define a custom function to create a nested structure
