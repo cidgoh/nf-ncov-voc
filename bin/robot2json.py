@@ -67,7 +67,12 @@ if __name__ == '__main__':
     # Define a custom function to create a nested structure
     # ncbigene and the gene name are all the same, this is causing HAVOC
     def custom_nested_structure_genes(row):
-        return {row['Dbxref']: {'type': 'gene', 'Dbxref': row['Dbxref'], 'gene_name': {'label': row['gene_name'], 'uri': row['gene_name_id']}, 'gene_symbol': {'label': row['gene_symbol'], 'uri': row['gene_symbol_id']}, 'gene_orientation': {'label': row['gene_orientation'], 'uri': row['gene_orientation_id']}}}
+        return {row['Dbxref']: {'type': 'gene', 'Dbxref': row['Dbxref'], 
+                                'gene_name': {'label': row['gene_name'], 'uri': row['gene_name_id']}, 
+                                'gene_symbol': {'label': row['gene_symbol'], 'uri': row['gene_symbol_id']}, 
+                                'strand_orientation': {'label': row['strand_orientation'], 'uri': row['strand_orientation_id']},
+                                'gene_orientation': {'label': row['gene_orientation'], 'uri': row['gene_orientation_id']}
+                                }}
 
     # Apply the custom function to each row of the DataFrame
     json_data_custom = genes.apply(custom_nested_structure_genes, axis=1).tolist() # saves a list of dicts
@@ -102,7 +107,9 @@ if __name__ == '__main__':
 
     # Define a custom function to create a nested structure
     def custom_nested_structure_proteins(row):
-        return {row['protein_id']: {'type': 'CDS', 'protein_id': row['protein_id'], 'protein_name': {'label': row['protein_name'], 'uri': row['protein_name_id']}, 'protein_symbol': {'label': row['protein_symbol'], 'uri': row['protein_symbol_id']}}}
+        return {row['protein_id']: {'type': 'CDS', 'protein_id': row['protein_id'],
+                                    'protein_name': {'label': row['protein_name'], 'uri': row['protein_name_id']}, 
+                                    'protein_symbol': {'label': row['protein_symbol'], 'uri': row['protein_symbol_id']}}}
     
     # Apply the custom function to each row of the DataFrame
     json_data_custom = proteins.apply(custom_nested_structure_proteins, axis=1).tolist() # list of dicts

@@ -10,6 +10,10 @@
             "label": "opg001 gene (MPOX)",
             "uri": "GENEPIO:0101382"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -25,6 +29,10 @@
         "gene_symbol": {
             "label": "opg001 gene (MPOX)",
             "uri": "GENEPIO:0101382"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "reverse gene orientation",
@@ -42,6 +50,10 @@
             "label": "opg002 gene (MPOX)",
             "uri": "GENEPIO:0101383"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -57,6 +69,10 @@
         "gene_symbol": {
             "label": "opg002 gene (MPOX)",
             "uri": "GENEPIO:0101383"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "reverse gene orientation",
@@ -74,6 +90,10 @@
             "label": "opg003 gene (MPOX)",
             "uri": "GENEPIO:0101384"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -89,6 +109,10 @@
         "gene_symbol": {
             "label": "opg003 gene (MPOX)",
             "uri": "GENEPIO:0101384"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "reverse gene orientation",
@@ -106,6 +130,10 @@
             "label": "opg015 gene (MPOX)",
             "uri": "GENEPIO:0101385"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -121,6 +149,10 @@
         "gene_symbol": {
             "label": "opg015 gene (MPOX)",
             "uri": "GENEPIO:0101385"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "reverse gene orientation",
@@ -138,6 +170,10 @@
             "label": "opg019 gene (MPOX)",
             "uri": "GENEPIO:0101386"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -153,6 +189,10 @@
         "gene_symbol": {
             "label": "opg021 gene (MPOX)",
             "uri": "GENEPIO:0101387"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -170,6 +210,10 @@
             "label": "opg022 gene (MPOX)",
             "uri": "GENEPIO:0101388"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -185,6 +229,10 @@
         "gene_symbol": {
             "label": "opg023 gene (MPOX)",
             "uri": "GENEPIO:0101389"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -202,6 +250,10 @@
             "label": "opg024 gene (MPOX)",
             "uri": "GENEPIO:0101390"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -217,6 +269,10 @@
         "gene_symbol": {
             "label": "opg025 gene (MPOX)",
             "uri": "GENEPIO:0101391"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -234,6 +290,10 @@
             "label": "opg027 gene (MPOX)",
             "uri": "GENEPIO:0101392"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -249,6 +309,10 @@
         "gene_symbol": {
             "label": "opg029 gene (MPOX)",
             "uri": "GENEPIO:0101393"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -266,6 +330,10 @@
             "label": "opg030 gene (MPOX)",
             "uri": "GENEPIO:0101394"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -281,6 +349,10 @@
         "gene_symbol": {
             "label": "opg031 gene (MPOX)",
             "uri": "GENEPIO:0101395"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -298,6 +370,10 @@
             "label": "opg034 gene (MPOX)",
             "uri": "GENEPIO:0101396"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -313,6 +389,10 @@
         "gene_symbol": {
             "label": "opg035 gene (MPOX)",
             "uri": "GENEPIO:0101397"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -330,6 +410,10 @@
             "label": "opg037 gene (MPOX)",
             "uri": "GENEPIO:0101399"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -345,6 +429,10 @@
         "gene_symbol": {
             "label": "opg038 gene (MPOX)",
             "uri": "GENEPIO:0101400"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -362,6 +450,10 @@
             "label": "opg039 gene (MPOX)",
             "uri": "GENEPIO:0101401"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -377,6 +469,10 @@
         "gene_symbol": {
             "label": "opg040 gene (MPOX)",
             "uri": "GENEPIO:0101402"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -394,6 +490,10 @@
             "label": "opg042 gene (MPOX)",
             "uri": "GENEPIO:0101403"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -409,6 +509,10 @@
         "gene_symbol": {
             "label": "opg043 gene (MPOX)",
             "uri": "GENEPIO:0101404"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -426,6 +530,10 @@
             "label": "opg045 gene (MPOX)",
             "uri": "GENEPIO:0101406"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -441,6 +549,10 @@
         "gene_symbol": {
             "label": "opg046 gene (MPOX)",
             "uri": "GENEPIO:0101407"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -458,6 +570,10 @@
             "label": "opg047 gene (MPOX)",
             "uri": "GENEPIO:0101408"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -473,6 +589,10 @@
         "gene_symbol": {
             "label": "opg048 gene (MPOX)",
             "uri": "GENEPIO:0101409"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -490,6 +610,10 @@
             "label": "opg049 gene (MPOX)",
             "uri": "GENEPIO:0101410"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -505,6 +629,10 @@
         "gene_symbol": {
             "label": "opg050 gene (MPOX)",
             "uri": "GENEPIO:0101411"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -522,6 +650,10 @@
             "label": "opg051 gene (MPOX)",
             "uri": "GENEPIO:0101412"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -537,6 +669,10 @@
         "gene_symbol": {
             "label": "opg052 gene (MPOX)",
             "uri": "GENEPIO:0101413"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -554,6 +690,10 @@
             "label": "opg053 gene (MPOX)",
             "uri": "GENEPIO:0101414"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -569,6 +709,10 @@
         "gene_symbol": {
             "label": "opg054 gene (MPOX)",
             "uri": "GENEPIO:0101415"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -586,6 +730,10 @@
             "label": "opg055 gene (MPOX)",
             "uri": "GENEPIO:0101416"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -601,6 +749,10 @@
         "gene_symbol": {
             "label": "opg056 gene (MPOX)",
             "uri": "GENEPIO:0101417"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -618,6 +770,10 @@
             "label": "opg057 gene (MPOX)",
             "uri": "GENEPIO:0101418"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -633,6 +789,10 @@
         "gene_symbol": {
             "label": "opg058 gene (MPOX)",
             "uri": "GENEPIO:0101419"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -650,6 +810,10 @@
             "label": "opg059 gene (MPOX)",
             "uri": "GENEPIO:0101420"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -665,6 +829,10 @@
         "gene_symbol": {
             "label": "opg060 gene (MPOX)",
             "uri": "GENEPIO:0101421"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -682,6 +850,10 @@
             "label": "opg061 gene (MPOX)",
             "uri": "GENEPIO:0101422"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -697,6 +869,10 @@
         "gene_symbol": {
             "label": "opg062 gene (MPOX)",
             "uri": "GENEPIO:0101423"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -714,6 +890,10 @@
             "label": "opg063 gene (MPOX)",
             "uri": "GENEPIO:0101424"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -729,6 +909,10 @@
         "gene_symbol": {
             "label": "opg064 gene (MPOX)",
             "uri": "GENEPIO:0101425"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -746,6 +930,10 @@
             "label": "opg065 gene (MPOX)",
             "uri": "GENEPIO:0101426"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -761,6 +949,10 @@
         "gene_symbol": {
             "label": "opg066 gene (MPOX)",
             "uri": "GENEPIO:0101427"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -778,6 +970,10 @@
             "label": "opg068 gene (MPOX)",
             "uri": "GENEPIO:0101428"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -793,6 +989,10 @@
         "gene_symbol": {
             "label": "opg069 gene (MPOX)",
             "uri": "GENEPIO:0101429"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -810,6 +1010,10 @@
             "label": "opg070 gene (MPOX)",
             "uri": "GENEPIO:0101430"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -825,6 +1029,10 @@
         "gene_symbol": {
             "label": "opg071 gene (MPOX)",
             "uri": "GENEPIO:0101431"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -842,6 +1050,10 @@
             "label": "opg072 gene (MPOX)",
             "uri": "GENEPIO:0101432"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -857,6 +1069,10 @@
         "gene_symbol": {
             "label": "opg073 gene (MPOX)",
             "uri": "GENEPIO:0101433"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -874,6 +1090,10 @@
             "label": "opg074 gene (MPOX)",
             "uri": "GENEPIO:0101434"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -889,6 +1109,10 @@
         "gene_symbol": {
             "label": "opg075 gene (MPOX)",
             "uri": "GENEPIO:0101435"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -906,6 +1130,10 @@
             "label": "opg077 gene (MPOX)",
             "uri": "GENEPIO:0101437"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -921,6 +1149,10 @@
         "gene_symbol": {
             "label": "opg078 gene (MPOX)",
             "uri": "GENEPIO:0101438"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -938,6 +1170,10 @@
             "label": "opg079 gene (MPOX)",
             "uri": "GENEPIO:0101439"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -953,6 +1189,10 @@
         "gene_symbol": {
             "label": "opg080 gene (MPOX)",
             "uri": "GENEPIO:0101440"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -970,6 +1210,10 @@
             "label": "opg081 gene (MPOX)",
             "uri": "GENEPIO:0101441"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -985,6 +1229,10 @@
         "gene_symbol": {
             "label": "opg082 gene (MPOX)",
             "uri": "GENEPIO:0101442"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1002,6 +1250,10 @@
             "label": "opg083 gene (MPOX)",
             "uri": "GENEPIO:0101443"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1017,6 +1269,10 @@
         "gene_symbol": {
             "label": "opg084 gene (MPOX)",
             "uri": "GENEPIO:0101444"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1034,6 +1290,10 @@
             "label": "opg085 gene (MPOX)",
             "uri": "GENEPIO:0101445"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1049,6 +1309,10 @@
         "gene_symbol": {
             "label": "opg086 gene (MPOX)",
             "uri": "GENEPIO:0101446"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1066,6 +1330,10 @@
             "label": "opg087 gene (MPOX)",
             "uri": "GENEPIO:0101447"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1081,6 +1349,10 @@
         "gene_symbol": {
             "label": "opg088 gene (MPOX)",
             "uri": "GENEPIO:0101448"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1098,6 +1370,10 @@
             "label": "opg089 gene (MPOX)",
             "uri": "GENEPIO:0101449"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1113,6 +1389,10 @@
         "gene_symbol": {
             "label": "opg090 gene (MPOX)",
             "uri": "GENEPIO:0101450"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1130,6 +1410,10 @@
             "label": "opg091 gene (MPOX)",
             "uri": "GENEPIO:0101451"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1145,6 +1429,10 @@
         "gene_symbol": {
             "label": "opg092 gene (MPOX)",
             "uri": "GENEPIO:0101452"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1162,6 +1450,10 @@
             "label": "opg093 gene (MPOX)",
             "uri": "GENEPIO:0101453"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1177,6 +1469,10 @@
         "gene_symbol": {
             "label": "opg094 gene (MPOX)",
             "uri": "GENEPIO:0101454"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1194,6 +1490,10 @@
             "label": "opg095 gene (MPOX)",
             "uri": "GENEPIO:0101455"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1209,6 +1509,10 @@
         "gene_symbol": {
             "label": "opg096 gene (MPOX)",
             "uri": "GENEPIO:0101456"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1226,6 +1530,10 @@
             "label": "opg097 gene (MPOX)",
             "uri": "GENEPIO:0101457"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1241,6 +1549,10 @@
         "gene_symbol": {
             "label": "opg098 gene (MPOX)",
             "uri": "GENEPIO:0101458"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1258,6 +1570,10 @@
             "label": "opg099 gene (MPOX)",
             "uri": "GENEPIO:0101459"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1273,6 +1589,10 @@
         "gene_symbol": {
             "label": "opg100 gene (MPOX)",
             "uri": "GENEPIO:0101460"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1290,6 +1610,10 @@
             "label": "opg101 gene (MPOX)",
             "uri": "GENEPIO:0101461"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1305,6 +1629,10 @@
         "gene_symbol": {
             "label": "opg102 gene (MPOX)",
             "uri": "GENEPIO:0101462"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1322,6 +1650,10 @@
             "label": "opg103 gene (MPOX)",
             "uri": "GENEPIO:0101463"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1337,6 +1669,10 @@
         "gene_symbol": {
             "label": "opg104 gene (MPOX)",
             "uri": "GENEPIO:0101464"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1354,6 +1690,10 @@
             "label": "opg105 gene (MPOX)",
             "uri": "GENEPIO:0101465"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1369,6 +1709,10 @@
         "gene_symbol": {
             "label": "opg106 gene (MPOX)",
             "uri": "GENEPIO:0101466"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1386,6 +1730,10 @@
             "label": "opg107 gene (MPOX)",
             "uri": "GENEPIO:0101467"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1401,6 +1749,10 @@
         "gene_symbol": {
             "label": "opg108 gene (MPOX)",
             "uri": "GENEPIO:0101468"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1418,6 +1770,10 @@
             "label": "opg109 gene (MPOX)",
             "uri": "GENEPIO:0101469"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1433,6 +1789,10 @@
         "gene_symbol": {
             "label": "opg110 gene (MPOX)",
             "uri": "GENEPIO:0101470"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1450,6 +1810,10 @@
             "label": "opg111 gene (MPOX)",
             "uri": "GENEPIO:0101471"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1465,6 +1829,10 @@
         "gene_symbol": {
             "label": "opg112 gene (MPOX)",
             "uri": "GENEPIO:0101472"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1482,6 +1850,10 @@
             "label": "opg113 gene (MPOX)",
             "uri": "GENEPIO:0101473"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1497,6 +1869,10 @@
         "gene_symbol": {
             "label": "opg114 gene (MPOX)",
             "uri": "GENEPIO:0101474"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1514,6 +1890,10 @@
             "label": "opg115 gene (MPOX)",
             "uri": "GENEPIO:0101475"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1529,6 +1909,10 @@
         "gene_symbol": {
             "label": "opg116 gene (MPOX)",
             "uri": "GENEPIO:0101476"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1546,6 +1930,10 @@
             "label": "opg117 gene (MPOX)",
             "uri": "GENEPIO:0101477"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1561,6 +1949,10 @@
         "gene_symbol": {
             "label": "opg118 gene (MPOX)",
             "uri": "GENEPIO:0101478"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1578,6 +1970,10 @@
             "label": "opg119 gene (MPOX)",
             "uri": "GENEPIO:0101479"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1593,6 +1989,10 @@
         "gene_symbol": {
             "label": "opg120 gene (MPOX)",
             "uri": "GENEPIO:0101480"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1610,6 +2010,10 @@
             "label": "opg121 gene (MPOX)",
             "uri": "GENEPIO:0101481"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1625,6 +2029,10 @@
         "gene_symbol": {
             "label": "opg122 gene (MPOX)",
             "uri": "GENEPIO:0101482"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1642,6 +2050,10 @@
             "label": "opg123 gene (MPOX)",
             "uri": "GENEPIO:0101483"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1657,6 +2069,10 @@
         "gene_symbol": {
             "label": "opg124 gene (MPOX)",
             "uri": "GENEPIO:0101484"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1674,6 +2090,10 @@
             "label": "opg125 gene (MPOX)",
             "uri": "GENEPIO:0101485"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1689,6 +2109,10 @@
         "gene_symbol": {
             "label": "opg126 gene (MPOX)",
             "uri": "GENEPIO:0101486"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1706,6 +2130,10 @@
             "label": "opg127 gene (MPOX)",
             "uri": "GENEPIO:0101487"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1721,6 +2149,10 @@
         "gene_symbol": {
             "label": "opg128 gene (MPOX)",
             "uri": "GENEPIO:0101488"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1738,6 +2170,10 @@
             "label": "opg129 gene (MPOX)",
             "uri": "GENEPIO:0101489"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1753,6 +2189,10 @@
         "gene_symbol": {
             "label": "opg130 gene (MPOX)",
             "uri": "GENEPIO:0101490"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1770,6 +2210,10 @@
             "label": "opg131 gene (MPOX)",
             "uri": "GENEPIO:0101491"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1785,6 +2229,10 @@
         "gene_symbol": {
             "label": "opg132 gene (MPOX)",
             "uri": "GENEPIO:0101492"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1802,6 +2250,10 @@
             "label": "opg133 gene (MPOX)",
             "uri": "GENEPIO:0101493"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1817,6 +2269,10 @@
         "gene_symbol": {
             "label": "opg134 gene (MPOX)",
             "uri": "GENEPIO:0101494"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1834,6 +2290,10 @@
             "label": "opg135 gene (MPOX)",
             "uri": "GENEPIO:0101495"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1849,6 +2309,10 @@
         "gene_symbol": {
             "label": "opg136 gene (MPOX)",
             "uri": "GENEPIO:0101496"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1866,6 +2330,10 @@
             "label": "opg137 gene (MPOX)",
             "uri": "GENEPIO:0101497"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1881,6 +2349,10 @@
         "gene_symbol": {
             "label": "opg138 gene (MPOX)",
             "uri": "GENEPIO:0101498"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1898,6 +2370,10 @@
             "label": "opg139 gene (MPOX)",
             "uri": "GENEPIO:0101499"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1913,6 +2389,10 @@
         "gene_symbol": {
             "label": "opg140 gene (MPOX)",
             "uri": "GENEPIO:0101500"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1930,6 +2410,10 @@
             "label": "opg141 gene (MPOX)",
             "uri": "GENEPIO:0101501"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1945,6 +2429,10 @@
         "gene_symbol": {
             "label": "opg142 gene (MPOX)",
             "uri": "GENEPIO:0101502"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1962,6 +2450,10 @@
             "label": "opg143 gene (MPOX)",
             "uri": "GENEPIO:0101503"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -1977,6 +2469,10 @@
         "gene_symbol": {
             "label": "opg144 gene (MPOX)",
             "uri": "GENEPIO:0101504"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -1994,6 +2490,10 @@
             "label": "opg145 gene (MPOX)",
             "uri": "GENEPIO:0101505"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2009,6 +2509,10 @@
         "gene_symbol": {
             "label": "opg146 gene (MPOX)",
             "uri": "GENEPIO:0101506"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2026,6 +2530,10 @@
             "label": "opg147 gene (MPOX)",
             "uri": "GENEPIO:0101507"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2041,6 +2549,10 @@
         "gene_symbol": {
             "label": "opg148 gene (MPOX)",
             "uri": "GENEPIO:0101508"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2058,6 +2570,10 @@
             "label": "opg149 gene (MPOX)",
             "uri": "GENEPIO:0101509"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2073,6 +2589,10 @@
         "gene_symbol": {
             "label": "opg150 gene (MPOX)",
             "uri": "GENEPIO:0101510"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2090,6 +2610,10 @@
             "label": "opg151 gene (MPOX)",
             "uri": "GENEPIO:0101511"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2105,6 +2629,10 @@
         "gene_symbol": {
             "label": "opg153 gene (MPOX)",
             "uri": "GENEPIO:0101512"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2122,6 +2650,10 @@
             "label": "opg154 gene (MPOX)",
             "uri": "GENEPIO:0101513"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2137,6 +2669,10 @@
         "gene_symbol": {
             "label": "opg155 gene (MPOX)",
             "uri": "GENEPIO:0101514"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2154,6 +2690,10 @@
             "label": "opg156 gene (MPOX)",
             "uri": "GENEPIO:0101515"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2169,6 +2709,10 @@
         "gene_symbol": {
             "label": "opg157 gene (MPOX)",
             "uri": "GENEPIO:0101516"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2186,6 +2730,10 @@
             "label": "opg158 gene (MPOX)",
             "uri": "GENEPIO:0101517"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2201,6 +2749,10 @@
         "gene_symbol": {
             "label": "opg159 gene (MPOX)",
             "uri": "GENEPIO:0101518"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2218,6 +2770,10 @@
             "label": "opg160 gene (MPOX)",
             "uri": "GENEPIO:0101519"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2233,6 +2789,10 @@
         "gene_symbol": {
             "label": "opg161 gene (MPOX)",
             "uri": "GENEPIO:0101520"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2250,6 +2810,10 @@
             "label": "opg162 gene (MPOX)",
             "uri": "GENEPIO:0101521"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2265,6 +2829,10 @@
         "gene_symbol": {
             "label": "opg163 gene (MPOX)",
             "uri": "GENEPIO:0101522"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2282,6 +2850,10 @@
             "label": "opg164 gene (MPOX)",
             "uri": "GENEPIO:0101523"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2297,6 +2869,10 @@
         "gene_symbol": {
             "label": "opg165 gene (MPOX)",
             "uri": "GENEPIO:0101524"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2314,6 +2890,10 @@
             "label": "opg166 gene (MPOX)",
             "uri": "GENEPIO:0101525"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2329,6 +2909,10 @@
         "gene_symbol": {
             "label": "opg167 gene (MPOX)",
             "uri": "GENEPIO:0101526"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2346,6 +2930,10 @@
             "label": "opg170 gene (MPOX)",
             "uri": "GENEPIO:0101527"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2361,6 +2949,10 @@
         "gene_symbol": {
             "label": "opg171 gene (MPOX)",
             "uri": "GENEPIO:0101528"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2378,6 +2970,10 @@
             "label": "opg172 gene (MPOX)",
             "uri": "GENEPIO:0101529"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2393,6 +2989,10 @@
         "gene_symbol": {
             "label": "opg173 gene (MPOX)",
             "uri": "GENEPIO:0101530"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2410,6 +3010,10 @@
             "label": "opg174 gene (MPOX)",
             "uri": "GENEPIO:0101531"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2425,6 +3029,10 @@
         "gene_symbol": {
             "label": "opg175 gene (MPOX)",
             "uri": "GENEPIO:0101532"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2442,6 +3050,10 @@
             "label": "opg176 gene (MPOX)",
             "uri": "GENEPIO:0101533"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2457,6 +3069,10 @@
         "gene_symbol": {
             "label": "opg178 gene (MPOX)",
             "uri": "GENEPIO:0101534"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2474,6 +3090,10 @@
             "label": "opg180 gene (MPOX)",
             "uri": "GENEPIO:0101535"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2489,6 +3109,10 @@
         "gene_symbol": {
             "label": "opg181 gene (MPOX)",
             "uri": "GENEPIO:0101536"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2506,6 +3130,10 @@
             "label": "opg185 gene (MPOX)",
             "uri": "GENEPIO:0101537"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2521,6 +3149,10 @@
         "gene_symbol": {
             "label": "opg187 gene (MPOX)",
             "uri": "GENEPIO:0101538"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2538,6 +3170,10 @@
             "label": "opg188 gene (MPOX)",
             "uri": "GENEPIO:0101539"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2553,6 +3189,10 @@
         "gene_symbol": {
             "label": "opg189 gene (MPOX)",
             "uri": "GENEPIO:0101540"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2570,6 +3210,10 @@
             "label": "opg190 gene (MPOX)",
             "uri": "GENEPIO:0101541"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2585,6 +3229,10 @@
         "gene_symbol": {
             "label": "opg191 gene (MPOX)",
             "uri": "GENEPIO:0101542"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2602,6 +3250,10 @@
             "label": "opg192 gene (MPOX)",
             "uri": "GENEPIO:0101543"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2617,6 +3269,10 @@
         "gene_symbol": {
             "label": "opg193 gene (MPOX)",
             "uri": "GENEPIO:0101544"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2634,6 +3290,10 @@
             "label": "opg195 gene (MPOX)",
             "uri": "GENEPIO:0101545"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2649,6 +3309,10 @@
         "gene_symbol": {
             "label": "opg197 gene (MPOX)",
             "uri": "GENEPIO:0101546"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2666,6 +3330,10 @@
             "label": "opg198 gene (MPOX)",
             "uri": "GENEPIO:0101547"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2681,6 +3349,10 @@
         "gene_symbol": {
             "label": "opg199 gene (MPOX)",
             "uri": "GENEPIO:0101548"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2698,6 +3370,10 @@
             "label": "opg200 gene (MPOX)",
             "uri": "GENEPIO:0101549"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2713,6 +3389,10 @@
         "gene_symbol": {
             "label": "opg204 gene (MPOX)",
             "uri": "GENEPIO:0101550"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2730,6 +3410,10 @@
             "label": "opg205 gene (MPOX)",
             "uri": "GENEPIO:0101551"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2745,6 +3429,10 @@
         "gene_symbol": {
             "label": "opg208 gene (MPOX)",
             "uri": "GENEPIO:0101552"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2762,6 +3450,10 @@
             "label": "opg209 gene (MPOX)",
             "uri": "GENEPIO:0101553"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2777,6 +3469,10 @@
         "gene_symbol": {
             "label": "opg210 gene (MPOX)",
             "uri": "GENEPIO:0101554"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
@@ -2794,6 +3490,10 @@
             "label": "opg005 gene (MPOX)",
             "uri": "GENEPIO:0101555"
         },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
+        },
         "gene_orientation": {
             "label": "forward gene orientation",
             "uri": "GENEPIO:0700004"
@@ -2809,6 +3509,10 @@
         "gene_symbol": {
             "label": "opg016 gene (MPOX)",
             "uri": "GENEPIO:0101556"
+        },
+        "strand_orientation": {
+            "label": "sense strand orientation",
+            "uri": "GENEPIO:0700002"
         },
         "gene_orientation": {
             "label": "forward gene orientation",
