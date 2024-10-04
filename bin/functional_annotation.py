@@ -188,7 +188,15 @@ if __name__ == '__main__':
     # Change the directory
     # os.chdir(path)
 
-    dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
+    if args.accession=='NC_063383.1': # add gene orientation and strand orientation for MPOX
+        dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
+'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
+'gene name', 'gene symbol', 'gene orientation', 'strand orientation', 'protein name', 'protein symbol', 'measured variant functional effect', 'inferred variant functional effect', 'viral life cycle functional effect',
+'measured variant functional effect description', 'CVX code', 'DrugBank Accession Number', 'Antibody Registry ID', 'author', 'publication year', 'URL', 'DOI', 'PMID',
+'peer review status', 'curator', 'mutation functional annotation resource']
+    
+    else:
+        dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
 'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
 'gene name', 'gene symbol', 'protein name', 'protein symbol', 'measured variant functional effect', 'inferred variant functional effect', 'viral life cycle functional effect',
 'measured variant functional effect description', 'CVX code', 'DrugBank Accession Number', 'Antibody Registry ID', 'author', 'publication year', 'URL', 'DOI', 'PMID',
@@ -247,7 +255,7 @@ if __name__ == '__main__':
     dataFrame["curator"] = "Paul Gordon" ## for now: need to go through
 
     # clean up 'peer review status'
-    dataFrame.loc[dataFrame['peer review status'].isna(), 'peer review status'] = 'false' ##up for debate
+    dataFrame.loc[dataFrame['peer review status'].isna(), 'peer review status'] = '' ##up for debate
     dataFrame.loc[dataFrame['peer review status'].str.contains("Journal"), 'peer review status'] = 'true'
     dataFrame.loc[dataFrame['peer review status'].str.contains("Preprint"), 'peer review status'] = 'false'
     dataFrame.loc[dataFrame['peer review status'].str.contains("Grey literature"), 'peer review status'] = 'false' ##up for debate
@@ -270,17 +278,22 @@ if __name__ == '__main__':
             for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
 
                 # If a gene record matches pokay_id, get 'gene_name' and 'gene_symbol'
-                if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="gene" and GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==pokay_id:
+                if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="gene" and ("gene" in GENE_PROTEIN_POSITIONS_DICT[entry].keys()) and GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==pokay_id:
                     # extract protein names and symbols (ontology) from JSON entry
                     gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"]
                     gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"]
+                    gene_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_orientation"]["label"]
+                    strand_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["strand_orientation"]["label"]
                     # add gene names and symbols to dataframe
                     dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene name"] = gene_name
                     dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene symbol"] = gene_symbol
                     dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene"] = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
-                
+                    if args.accession=='NC_063383.1': # add gene orientation and strand orientation for MPOX
+                        dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene orientation"] = gene_orientation
+                        dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "strand orientation"] = strand_orientation
+
                 # If a CDS record matches pokay_id, get 'protein_name' and 'protein_symbol'
-                if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==pokay_id:
+                if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and ("gene" in GENE_PROTEIN_POSITIONS_DICT[entry].keys()) and GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==pokay_id:
                     # extract protein names and symbols (ontology) from JSON entry
                     protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["label"]
                     protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["label"]
@@ -329,7 +342,7 @@ if __name__ == '__main__':
         mutation_index = mutation_index.rename(columns={"mutation": "original mutation description", 'pos':'nucleotide position',
                                                         'hgvs_aa_mutation':'amino acid mutation','hgvs_nt_mutation':'nucleotide mutation',
                                                         'hgvs_alias':'amino acid mutation alias', 'gene_symbol':'gene'})
-        print("columns", mutation_index.columns)
+        #print("columns", mutation_index.columns)
         # remove doubled columns from dataFrame
         index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
         dataFrame = dataFrame.drop(columns=index_cols_to_use)
@@ -355,6 +368,7 @@ if __name__ == '__main__':
 
     # convert nucleotide positions to int format (still str)
     merged_dataFrame["nucleotide position"] = merged_dataFrame["nucleotide position"].str.replace('.0', '', regex=False)
+
 
     # create agg dictionary
     to_list = ['original mutation description', 'nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
