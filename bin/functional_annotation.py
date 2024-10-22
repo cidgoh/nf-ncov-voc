@@ -302,7 +302,9 @@ if __name__ == '__main__':
                     dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein symbol"] = protein_symbol
 
                 # If a mature peptide record matches pokay_id in the 'protein_alias' list, get name of parent, and from there get names and symbols
-                if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="mature_protein_region_of_CDS" and (pokay_id in GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]):
+                if (GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="mature_protein_region_of_CDS" or \
+                    (GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and args.accession=='NC_063383.1')) \
+                    and (pokay_id in GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]):
                     # extract pokay_id, mat_pep, and parent id from JSON entry
                     mat_pep = entry
                     parent = GENE_PROTEIN_POSITIONS_DICT[entry]["Parent"]
@@ -343,6 +345,11 @@ if __name__ == '__main__':
                                                         'hgvs_aa_mutation':'amino acid mutation','hgvs_nt_mutation':'nucleotide mutation',
                                                         'hgvs_alias':'amino acid mutation alias', 'gene_symbol':'gene'})
         #print("columns", mutation_index.columns)
+        # remove index columns that don't have a nucleotide mutation entry
+        initial_length = mutation_index.shape[0]
+        mutation_index = mutation_index[mutation_index['nucleotide mutation'].notna()]
+        after_length = mutation_index.shape[0]
+        print("Removed " + str(initial_length - after_length) + "/" + str(after_length) + " mutation index rows that are missing a nucleotide mutation")
         # remove doubled columns from dataFrame
         index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
         dataFrame = dataFrame.drop(columns=index_cols_to_use)
