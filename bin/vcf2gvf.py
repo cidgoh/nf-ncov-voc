@@ -11,7 +11,7 @@ The attributes completed by this script are:
 ['ID', 'Name', 'gene_name', 'gene_symbol', 'protein_name', 'protein_symbol', 'protein_id', 'ps_filter', 'ps_exc', 'mat_pep',
 'mat_pep_desc','mat_pep_acc', 'ro', 'ao', 'dp', 'sample_size', 'Reference_seq',
 'Variant_seq', 'nt_name', 'aa_name', 'hgvs_nt', 'hgvs_aa', 'hgvs_alias', 'vcf_gene', 'mutation_type',
-'viral_lineage', 'alternate_frequency', 'transcript_id']
+'viral_lineage', 'alternate_frequency', 'locus_tag']
 """
 
 import argparse
@@ -83,12 +83,15 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     # add gene and protein attributes from JSON
     json_df = map_pos_to_gene_protein(
         vcf_df['POS'].astype(int), GENE_PROTEIN_POSITIONS_DICT)
-    new_gvf["gene_name"] = json_df["gene"]
-    new_gvf["gene_symbol"] = json_df["gene"]
+    new_gvf["gene"] = json_df["gene"]
+    new_gvf["gene_name"] = json_df["gene_name"]
+    new_gvf["gene_symbol"] = json_df["gene_symbol"]
+    new_gvf["product"] = json_df["product"]
+    new_gvf["protein_alias"] = json_df["protein_alias"]
     new_gvf["protein_name"] = json_df["protein_name"]
     new_gvf["protein_symbol"] = json_df["protein_symbol"]
     new_gvf["protein_id"] = json_df["protein_id"]
-    new_gvf["transcript_id"] = json_df["transcript_id"]
+    new_gvf["locus_tag"] = json_df["locus_tag"]
     new_gvf["alias_protein_id"] = 'n/a'
 
     # add 'alias' column for ORF1a/b mutations, and fill in "alias_protein_id" for these as well

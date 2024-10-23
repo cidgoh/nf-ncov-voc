@@ -3,8 +3,9 @@ import numpy as np
 import logging
 
 # standard variables used by all scripts
-empty_attributes = 'ID=;Name=;alias=;gene_name=;gene_symbol=;protein_name=;protein_symbol=;\
-    protein_id=;alias_protein_id=;transcript_id=;ps_filter=;ps_exc=; \
+empty_attributes = 'ID=;Name=;alias=;gene=;gene_name=;gene_symbol=;product=; \
+    protein_alias=;protein_name=;protein_symbol=;\
+    protein_id=;alias_protein_id=;locus_tag=;ps_filter=;ps_exc=; \
     mat_pep=;mat_pep_desc=;mat_pep_acc=;ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=; \
     vcf_gene=;mutation_type=;viral_lineage=;multi_aa_name=; \
@@ -12,6 +13,7 @@ empty_attributes = 'ID=;Name=;alias=;gene_name=;gene_symbol=;protein_name=;prote
     citation=;comb_mutation=;function_description=;heterozygosity=; \
     clade_defining=;variant=;variant_type=;voi_designation_date=; \
     voc_designation_date=;vum_designation_date=;status=;'
+
 empty_attributes = empty_attributes.replace(" ", "")
 
 gvf_columns = ['#seqid', '#source', '#type', '#start', '#end',
@@ -89,20 +91,20 @@ def add_hgvs_names(new_gvf):
     #df.loc[mask, 'val'] = df.loc[mask, 'val'].apply(f)
     # add hgvs nt snp names
     nt_snp_mask = new_gvf['nt_name'].str.contains(nt_snp_regex, regex=True)
-    new_gvf.loc[nt_snp_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['transcript_id'] + "):" + \
+    new_gvf.loc[nt_snp_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + \
                  new_gvf.loc[nt_snp_mask, 'nt_name'].apply(rewrite_nt_snps_as_hgvs)
     # add hgvs nt dels and dups
     nt_del_dup_mask = new_gvf['nt_name'].str.contains(nt_del_dup_regex, regex=True)
-    new_gvf.loc[nt_del_dup_mask,'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['transcript_id'] + "):" + \
+    new_gvf.loc[nt_del_dup_mask,'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + \
                 new_gvf.loc[nt_del_dup_mask, 'nt_name'].apply(remove_nts_from_nt_name)
     # add hgvs nt ins
     nt_ins_mask = new_gvf['nt_name'].str.contains(nt_ins_regex, regex=True)
-    new_gvf.loc[nt_ins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['transcript_id'] + "):" + new_gvf['nt_name']  
+    new_gvf.loc[nt_ins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + new_gvf['nt_name']  
     # add hgvs nt delins: change to eg. g.123_129delinsAC
     nt_delins_mask = new_gvf['nt_name'].str.contains(nt_delins_regex, regex=True)
-    #new_gvf.loc[nt_delins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['transcript_id'] + "):" + "TBA!" #new_gvf['nt_name']  
+    #new_gvf.loc[nt_delins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + "TBA!" #new_gvf['nt_name']  
 
-    # remove transcript id in parentheses for all HGVS nucleotide names where 'transcript_id'=='n/a'
+    # remove transcript id in parentheses for all HGVS nucleotide names where 'locus_tag'=='n/a'
     new_gvf['hgvs_nt'] = new_gvf['hgvs_nt'].str.replace("(n/a)", "", regex=False)
 
     # define aa regex patterns
@@ -506,25 +508,44 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
 
     # loop through all CDS regions in dict to get attributes
     for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
-        if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and ("protein_alias" in GENE_PROTEIN_POSITIONS_DICT[entry].keys()):
+
+        if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and ("protein_alias" in GENE_PROTEIN_POSITIONS_DICT[entry]):
+
             # extract values from JSON entry
             start = GENE_PROTEIN_POSITIONS_DICT[entry]["start"]
             end = GENE_PROTEIN_POSITIONS_DICT[entry]["end"]
             #aa_start = GENE_PROTEIN_POSITIONS_DICT[entry]["aa_start"]
             #aa_end = GENE_PROTEIN_POSITIONS_DICT[entry]["aa_end"]
             gene = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
-            protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["product"]
-            protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]
+            product = GENE_PROTEIN_POSITIONS_DICT[entry]["product"]
+            protein_alias = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]
+            protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["label"]
+            protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["label"]
             protein_id = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_id"]
-            transcript_id = GENE_PROTEIN_POSITIONS_DICT[entry]["locus_tag"]
+            locus_tag = GENE_PROTEIN_POSITIONS_DICT[entry]["locus_tag"]
     
             # fill in attributes for mutations in this CDS region
             cds_mask = df[pos_column].astype(int).between(start, end, inclusive="both")
             df.loc[cds_mask, "gene"] = gene
+            df.loc[cds_mask, "product"] = product
+            df.loc[cds_mask, "protein_alias"] = ','.join(protein_alias)
             df.loc[cds_mask, "protein_name"] = protein_name
             df.loc[cds_mask, "protein_symbol"] = protein_symbol
             df.loc[cds_mask, "protein_id"] = protein_id
-            df.loc[cds_mask, "transcript_id"] = transcript_id
+            df.loc[cds_mask, "locus_tag"] = locus_tag
+
+        if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="gene":
+
+            # extract values from JSON entry
+            start = GENE_PROTEIN_POSITIONS_DICT[entry]["start"]
+            end = GENE_PROTEIN_POSITIONS_DICT[entry]["end"]
+            gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"]
+            gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"]
+            
+            # fill in attributes for mutations in this gene region
+            gene_mask = df[pos_column].astype(int).between(start, end, inclusive="both")
+            df.loc[gene_mask, "gene_name"] = gene_name
+            df.loc[gene_mask, "gene_symbol"] = gene_symbol
 
     # label all mutations that didn't belong to any gene as "intergenic"
     df.loc[df["gene"].isna(), "gene"] = "intergenic"
