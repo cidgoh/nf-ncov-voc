@@ -2050,7 +2050,10 @@
         "protein_symbol": {
             "label": "Opg057 protein (MPOX)",
             "uri": "GENEPIO:0101754"
-        }
+        },
+        "protein_alias": [
+            "VP37"
+        ]
     },
     "gene-NBT03_gp038": {
         "type": "gene",
