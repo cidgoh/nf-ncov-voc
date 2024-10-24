@@ -3,14 +3,15 @@ import numpy as np
 import logging
 
 # standard variables used by all scripts
-empty_attributes = 'ID=;Name=;alias=;gene=;gene_name=;gene_symbol=;product=; \
+empty_attributes = 'ID=;original_mutation_description=;alias=;gene=;gene_name=;gene_symbol=;product=; \
     protein_alias=;protein_name=;protein_symbol=;\
     protein_id=;alias_protein_id=;locus_tag=;ps_filter=;ps_exc=; \
     mat_pep=;mat_pep_desc=;mat_pep_acc=;ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=; \
     vcf_gene=;mutation_type=;viral_lineage=;multi_aa_name=; \
-    multiaa_comb_mutation=;alternate_frequency=;function_category=;source=; \
-    citation=;comb_mutation=;function_description=;heterozygosity=; \
+    multiaa_comb_mutation=;alternate_frequency=;measured_variant_functional_effect=;inferred_variant_functional_effect=; \
+    viral_life_cycle_functional_effect=;URL=; \
+    citation=;comb_mutation=;measured_variant_functional_effect_description=;heterozygosity=; \
     clade_defining=;variant=;variant_type=;voi_designation_date=; \
     voc_designation_date=;vum_designation_date=;status=;'
 
@@ -582,13 +583,13 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
 
         # split up all names in alias_mask into letter-number-letter columns
         # hacky workaround to fix later: in rows that begin with a number, add "PLACEHOLDER" to the front before splitting them up, to stop NaNs
-        df.loc[df['Name'].str[0].str.isdigit(), 'Name'] = "PLACEHOLDER" + df['Name'].astype(str)
+        df.loc[df['original_mutation_description'].str[0].str.isdigit(), 'original_mutation_description'] = "PLACEHOLDER" + df['original_mutation_description'].astype(str)
 
         # split at underscores
-        if df['Name'].str.contains("_").any():
-            df[['mutation_1', 'mutation_2']] = df['Name'].str.split('_', expand=True)
+        if df['original_mutation_description'].str.contains("_").any():
+            df[['mutation_1', 'mutation_2']] = df['original_mutation_description'].str.split('_', expand=True)
         else:
-            df['mutation_1'] = df['Name']
+            df['mutation_1'] = df['original_mutation_description']
             df['mutation_2'] = None
         
         df[['1_start', '1_num', '1_end']] = df['mutation_1'].str.extract('([A-Za-z]+)(\\d+\\.?\\d*)([A-Za-z]*)', expand=True)
@@ -618,7 +619,7 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
         df.loc[alias_mask, 'alias'] = df['1_alias'].astype(str) + '_' + df['2_alias'].astype(str)
 
         # remove the placeholder
-        df['Name'] = df['Name'].str.replace("PLACEHOLDER","")
+        df['original_mutation_description'] = df['original_mutation_description'].str.replace("PLACEHOLDER","")
         df['alias'] = df['alias'].str.replace("PLACEHOLDER","")
         
         # remove nans
