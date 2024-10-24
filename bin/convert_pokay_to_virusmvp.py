@@ -407,4 +407,5 @@ if __name__ == '__main__':
     ###TO DO: modify dois2pmcids.sh to take the whole TSV as input and add PMIDs directly to the TSV to streamline this
     if args.save_dois != None:
         dois = merged_dataFrame[merged_dataFrame["DOI"]!=''].drop_duplicates(subset='DOI')
+        dois["DOI"] = dois["DOI"].str.replace("doi:", "", regex=False)
         dois["DOI"].to_csv(args.save_dois, header=False, index=False)
