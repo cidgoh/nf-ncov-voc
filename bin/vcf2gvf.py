@@ -86,6 +86,8 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     new_gvf["gene"] = json_df["gene"]
     new_gvf["gene_name"] = json_df["gene_name"]
     new_gvf["gene_symbol"] = json_df["gene_symbol"]
+    new_gvf["strand_orientation"] = json_df["strand_orientation"]
+    new_gvf["gene_orientation"] = json_df["gene_orientation"]
     new_gvf["product"] = json_df["product"]
     new_gvf["protein_alias"] = json_df["protein_alias"]
     new_gvf["protein_name"] = json_df["protein_name"]

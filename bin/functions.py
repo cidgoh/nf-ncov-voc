@@ -3,8 +3,9 @@ import numpy as np
 import logging
 
 # standard variables used by all scripts
-empty_attributes = 'ID=;original_mutation_description=;alias=;gene=;gene_name=;gene_symbol=;product=; \
-    protein_alias=;protein_name=;protein_symbol=;\
+empty_attributes = 'ID=;original_mutation_description=;alias=;gene=;gene_name=;gene_symbol=; \
+    strand_orientation=;gene_orientation=; \
+    product=;protein_alias=;protein_name=;protein_symbol=;\
     protein_id=;alias_protein_id=;locus_tag=;ps_filter=;ps_exc=; \
     mat_pep=;mat_pep_desc=;mat_pep_acc=;ro=;ao=;dp=;sample_size=; \
     Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=; \
@@ -542,11 +543,15 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             end = GENE_PROTEIN_POSITIONS_DICT[entry]["end"]
             gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"]
             gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"]
+            strand_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["strand_orientation"]["label"]
+            gene_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_orientation"]["label"]
             
             # fill in attributes for mutations in this gene region
             gene_mask = df[pos_column].astype(int).between(start, end, inclusive="both")
             df.loc[gene_mask, "gene_name"] = gene_name
             df.loc[gene_mask, "gene_symbol"] = gene_symbol
+            df.loc[gene_mask, "strand_orientation"] = strand_orientation
+            df.loc[gene_mask, "gene_orientation"] = gene_orientation
 
     # label all mutations that didn't belong to any gene as "intergenic"
     df.loc[df["gene"].isna(), "gene"] = "intergenic"
