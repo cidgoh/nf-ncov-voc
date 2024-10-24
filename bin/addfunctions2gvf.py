@@ -37,8 +37,8 @@ def parse_args():
                               "troubleshooting purposes")
     return parser.parse_args()
 
-# Function to add Pokay annotations to GVF file
-def add_pokay_annotations(gvf, annotation_file):
+# Function to add template annotations to GVF file
+def add_template_annotations(gvf, annotation_file):
     
     # expand #attributes into columns to fill in separately
     gvf = separate_attributes(gvf)
@@ -51,9 +51,9 @@ def add_pokay_annotations(gvf, annotation_file):
     # load functional annotations spreadsheet
     df = pd.read_csv(annotation_file, sep='\t', header=0)
     # replace spaces in column names with underscores to match the gvf attributes
-    pokay_columns = df.columns.tolist()
-    underscore_columns = [col.replace(" ", "_") for col in pokay_columns]
-    rename_dict = dict(zip(pokay_columns, underscore_columns))
+    template_columns = df.columns.tolist()
+    underscore_columns = [col.replace(" ", "_") for col in template_columns]
+    rename_dict = dict(zip(template_columns, underscore_columns))
     df = df.rename(columns=rename_dict)
     # if no author, fill with "UNKNOWN"
     df['author'] = df['author'].fillna('UNKNOWN')
@@ -144,12 +144,12 @@ if __name__ == '__main__':
     gvf = gvf[~gvf['#seqid'].astype(str).str.contains("#")]
 
     # add functional annotations
-    pokay_annotated_gvf = add_pokay_annotations(gvf, args.functional_annotations)
+    template_annotated_gvf = add_template_annotations(gvf, args.functional_annotations)
 
     # add pragmas to df, then save to .gvf
     # columns are now 0, 1, ...
-    final_gvf = pd.DataFrame(np.vstack([pokay_annotated_gvf.columns,
-                                            pokay_annotated_gvf]))
+    final_gvf = pd.DataFrame(np.vstack([template_annotated_gvf.columns,
+                                            template_annotated_gvf]))
     final_gvf = pragmas.append(final_gvf)
     filepath = args.outgvf  # outdir + strain + ".annotated.gvf"
     print("Saved as: ", filepath)
@@ -162,11 +162,11 @@ if __name__ == '__main__':
         # functional_annotations) to a .tsv file
         
         # create mask to find which rows do not have a functional annotation
-        notinPokay_mask = pokay_annotated_gvf["#attributes"].str.contains("measured_variant_functional_effect=;")
+        notintemplate_mask = template_annotated_gvf["#attributes"].str.contains("measured_variant_functional_effect=;")
         # extract all mutation names from #attributes column
-        names = pd.Series(pokay_annotated_gvf["#attributes"].str.findall('(?<=original_mutation_description=)(.*?)(?=;)').str[0])
-        # get unique mutation names not in Pokay
-        unmatched_names = pd.Series(names[notinPokay_mask].unique())
+        names = pd.Series(template_annotated_gvf["#attributes"].str.findall('(?<=original_mutation_description=)(.*?)(?=;)').str[0])
+        # get unique mutation names not in template
+        unmatched_names = pd.Series(names[notintemplate_mask].unique())
         # save unmatched names to file
         if unmatched_names.shape[0] != 0:
             unmatched_names.to_csv(args.names, sep='\t',
