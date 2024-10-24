@@ -69,7 +69,8 @@
         "protein_symbol": {
             "label": "Opg001 protein (MPOX)",
             "uri": "GENEPIO:0101720"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp002": {
         "type": "gene",
@@ -124,7 +125,8 @@
         "protein_symbol": {
             "label": "Opg002 protein (MPOX)",
             "uri": "GENEPIO:0101721"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp003": {
         "type": "gene",
@@ -179,7 +181,8 @@
         "protein_symbol": {
             "label": "Opg003 protein (MPOX)",
             "uri": "GENEPIO:0101722"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp004": {
         "type": "gene",
@@ -234,7 +237,8 @@
         "protein_symbol": {
             "label": "Opg015 protein (MPOX)",
             "uri": "GENEPIO:0101723"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp005": {
         "type": "gene",
@@ -289,7 +293,8 @@
         "protein_symbol": {
             "label": "Opg019 protein (MPOX)",
             "uri": "GENEPIO:0101724"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp006": {
         "type": "gene",
@@ -344,7 +349,8 @@
         "protein_symbol": {
             "label": "Opg021 protein (MPOX)",
             "uri": "GENEPIO:0101725"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp007": {
         "type": "gene",
@@ -399,7 +405,8 @@
         "protein_symbol": {
             "label": "Opg022 protein (MPOX)",
             "uri": "GENEPIO:0101726"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp008": {
         "type": "gene",
@@ -454,7 +461,8 @@
         "protein_symbol": {
             "label": "Opg023 protein (MPOX)",
             "uri": "GENEPIO:0101727"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp009": {
         "type": "gene",
@@ -509,7 +517,8 @@
         "protein_symbol": {
             "label": "Opg024 protein (MPOX)",
             "uri": "GENEPIO:0101728"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp010": {
         "type": "gene",
@@ -564,7 +573,8 @@
         "protein_symbol": {
             "label": "Opg025 protein (MPOX)",
             "uri": "GENEPIO:0101729"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp011": {
         "type": "gene",
@@ -619,7 +629,8 @@
         "protein_symbol": {
             "label": "Opg027 protein (MPOX)",
             "uri": "GENEPIO:0101730"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp012": {
         "type": "gene",
@@ -674,7 +685,8 @@
         "protein_symbol": {
             "label": "Opg029 protein (MPOX)",
             "uri": "GENEPIO:0101731"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp013": {
         "type": "gene",
@@ -729,7 +741,8 @@
         "protein_symbol": {
             "label": "Opg030 protein (MPOX)",
             "uri": "GENEPIO:0101732"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp014": {
         "type": "gene",
@@ -784,7 +797,8 @@
         "protein_symbol": {
             "label": "Opg031 protein (MPOX)",
             "uri": "GENEPIO:0101733"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp015": {
         "type": "gene",
@@ -839,7 +853,8 @@
         "protein_symbol": {
             "label": "Opg034 protein (MPOX)",
             "uri": "GENEPIO:0101734"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp016": {
         "type": "gene",
@@ -894,7 +909,8 @@
         "protein_symbol": {
             "label": "Opg035 protein (MPOX)",
             "uri": "GENEPIO:0101735"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp017": {
         "type": "gene",
@@ -949,7 +965,8 @@
         "protein_symbol": {
             "label": "Opg035 protein (MPOX)",
             "uri": "GENEPIO:0101735"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp018": {
         "type": "gene",
@@ -1004,7 +1021,8 @@
         "protein_symbol": {
             "label": "Opg037 protein (MPOX)",
             "uri": "GENEPIO:0101736"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp019": {
         "type": "gene",
@@ -1059,7 +1077,8 @@
         "protein_symbol": {
             "label": "Opg038 protein (MPOX)",
             "uri": "GENEPIO:0101737"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp020": {
         "type": "gene",
@@ -1114,7 +1133,8 @@
         "protein_symbol": {
             "label": "Opg039 protein (MPOX)",
             "uri": "GENEPIO:0101738"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp021": {
         "type": "gene",
@@ -1169,7 +1189,8 @@
         "protein_symbol": {
             "label": "Opg040 protein (MPOX)",
             "uri": "GENEPIO:0101739"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp022": {
         "type": "gene",
@@ -1224,7 +1245,8 @@
         "protein_symbol": {
             "label": "Opg042 protein (MPOX)",
             "uri": "GENEPIO:0101740"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp023": {
         "type": "gene",
@@ -1279,7 +1301,8 @@
         "protein_symbol": {
             "label": "Opg043 protein (MPOX)",
             "uri": "GENEPIO:0101741"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp024": {
         "type": "gene",
@@ -1334,7 +1357,8 @@
         "protein_symbol": {
             "label": "Opg043 protein (MPOX)",
             "uri": "GENEPIO:0101741"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp025": {
         "type": "gene",
@@ -1389,7 +1413,8 @@
         "protein_symbol": {
             "label": "Opg045 protein (MPOX)",
             "uri": "GENEPIO:0101742"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp026": {
         "type": "gene",
@@ -1444,7 +1469,8 @@
         "protein_symbol": {
             "label": "Opg046 protein (MPOX)",
             "uri": "GENEPIO:0101743"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp027": {
         "type": "gene",
@@ -1499,7 +1525,8 @@
         "protein_symbol": {
             "label": "Opg047 protein (MPOX)",
             "uri": "GENEPIO:0101744"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp028": {
         "type": "gene",
@@ -1554,7 +1581,8 @@
         "protein_symbol": {
             "label": "Opg048 protein (MPOX)",
             "uri": "GENEPIO:0101745"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp029": {
         "type": "gene",
@@ -1609,7 +1637,8 @@
         "protein_symbol": {
             "label": "Opg049 protein (MPOX)",
             "uri": "GENEPIO:0101746"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp030": {
         "type": "gene",
@@ -1664,7 +1693,8 @@
         "protein_symbol": {
             "label": "Opg050 protein (MPOX)",
             "uri": "GENEPIO:0101747"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp031": {
         "type": "gene",
@@ -1719,7 +1749,8 @@
         "protein_symbol": {
             "label": "Opg051 protein (MPOX)",
             "uri": "GENEPIO:0101748"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp032": {
         "type": "gene",
@@ -1774,7 +1805,8 @@
         "protein_symbol": {
             "label": "Opg052 protein (MPOX)",
             "uri": "GENEPIO:0101749"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp033": {
         "type": "gene",
@@ -1829,7 +1861,8 @@
         "protein_symbol": {
             "label": "Opg053 protein (MPOX)",
             "uri": "GENEPIO:0101750"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp034": {
         "type": "gene",
@@ -1884,7 +1917,8 @@
         "protein_symbol": {
             "label": "Opg054 protein (MPOX)",
             "uri": "GENEPIO:0101751"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp035": {
         "type": "gene",
@@ -1939,7 +1973,8 @@
         "protein_symbol": {
             "label": "Opg055 protein (MPOX)",
             "uri": "GENEPIO:0101752"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp036": {
         "type": "gene",
@@ -1994,7 +2029,8 @@
         "protein_symbol": {
             "label": "Opg056 protein (MPOX)",
             "uri": "GENEPIO:0101753"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp037": {
         "type": "gene",
@@ -2050,9 +2086,7 @@
             "label": "Opg057 protein (MPOX)",
             "uri": "GENEPIO:0101754"
         },
-        "protein_alias": [
-            "VP37"
-        ]
+        "protein_alias": ["VP37"]
     },
     "gene-NBT03_gp038": {
         "type": "gene",
@@ -2107,7 +2141,8 @@
         "protein_symbol": {
             "label": "Opg058 protein (MPOX)",
             "uri": "GENEPIO:0101755"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp039": {
         "type": "gene",
@@ -2161,7 +2196,8 @@
         "protein_symbol": {
             "label": "Opg059 protein (MPOX)",
             "uri": "GENEPIO:0101756"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp040": {
         "type": "gene",
@@ -2216,7 +2252,8 @@
         "protein_symbol": {
             "label": "Opg060 protein (MPOX)",
             "uri": "GENEPIO:0101757"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp041": {
         "type": "gene",
@@ -2271,7 +2308,8 @@
         "protein_symbol": {
             "label": "Opg061 protein (MPOX)",
             "uri": "GENEPIO:0101758"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp042": {
         "type": "gene",
@@ -2326,7 +2364,8 @@
         "protein_symbol": {
             "label": "Opg062 protein (MPOX)",
             "uri": "GENEPIO:0101759"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp043": {
         "type": "gene",
@@ -2381,7 +2420,8 @@
         "protein_symbol": {
             "label": "Opg063 protein (MPOX)",
             "uri": "GENEPIO:0101760"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp044": {
         "type": "gene",
@@ -2436,7 +2476,8 @@
         "protein_symbol": {
             "label": "Opg064 protein (MPOX)",
             "uri": "GENEPIO:0101761"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp045": {
         "type": "gene",
@@ -2491,7 +2532,8 @@
         "protein_symbol": {
             "label": "Opg065 protein (MPOX)",
             "uri": "GENEPIO:0101762"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp046": {
         "type": "gene",
@@ -2546,7 +2588,8 @@
         "protein_symbol": {
             "label": "Opg066 protein (MPOX)",
             "uri": "GENEPIO:0101763"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp047": {
         "type": "gene",
@@ -2601,7 +2644,8 @@
         "protein_symbol": {
             "label": "Opg068 protein (MPOX)",
             "uri": "GENEPIO:0101764"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp048": {
         "type": "gene",
@@ -2656,7 +2700,8 @@
         "protein_symbol": {
             "label": "Opg069 protein (MPOX)",
             "uri": "GENEPIO:0101765"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp049": {
         "type": "gene",
@@ -2711,7 +2756,8 @@
         "protein_symbol": {
             "label": "Opg070 protein (MPOX)",
             "uri": "GENEPIO:0101766"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp050": {
         "type": "gene",
@@ -2766,7 +2812,8 @@
         "protein_symbol": {
             "label": "Opg071 protein (MPOX)",
             "uri": "GENEPIO:0101767"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp051": {
         "type": "gene",
@@ -2821,7 +2868,8 @@
         "protein_symbol": {
             "label": "Opg072 protein (MPOX)",
             "uri": "GENEPIO:0101768"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp052": {
         "type": "gene",
@@ -2874,7 +2922,8 @@
         "protein_symbol": {
             "label": "Opg073 protein (MPOX)",
             "uri": "GENEPIO:0101769"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp053": {
         "type": "gene",
@@ -2929,7 +2978,8 @@
         "protein_symbol": {
             "label": "Opg074 protein (MPOX)",
             "uri": "GENEPIO:0101770"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp054": {
         "type": "gene",
@@ -2984,7 +3034,8 @@
         "protein_symbol": {
             "label": "Opg075 protein (MPOX)",
             "uri": "GENEPIO:0101771"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp055": {
         "type": "gene",
@@ -3037,7 +3088,8 @@
         "protein_symbol": {
             "label": "Opg075 protein (MPOX)",
             "uri": "GENEPIO:0101771"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp056": {
         "type": "gene",
@@ -3092,7 +3144,8 @@
         "protein_symbol": {
             "label": "Opg077 protein (MPOX)",
             "uri": "GENEPIO:0101772"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp057": {
         "type": "gene",
@@ -3147,7 +3200,8 @@
         "protein_symbol": {
             "label": "Opg078 protein (MPOX)",
             "uri": "GENEPIO:0101773"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp058": {
         "type": "gene",
@@ -3202,7 +3256,8 @@
         "protein_symbol": {
             "label": "Opg079 protein (MPOX)",
             "uri": "GENEPIO:0101774"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp059": {
         "type": "gene",
@@ -3257,7 +3312,8 @@
         "protein_symbol": {
             "label": "Opg080 protein (MPOX)",
             "uri": "GENEPIO:0101775"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp060": {
         "type": "gene",
@@ -3312,7 +3368,8 @@
         "protein_symbol": {
             "label": "Opg081 protein (MPOX)",
             "uri": "GENEPIO:0101776"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp061": {
         "type": "gene",
@@ -3367,7 +3424,8 @@
         "protein_symbol": {
             "label": "Opg082 protein (MPOX)",
             "uri": "GENEPIO:0101777"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp062": {
         "type": "gene",
@@ -3422,7 +3480,8 @@
         "protein_symbol": {
             "label": "Opg083 protein (MPOX)",
             "uri": "GENEPIO:0101778"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp063": {
         "type": "gene",
@@ -3477,7 +3536,8 @@
         "protein_symbol": {
             "label": "Opg084 protein (MPOX)",
             "uri": "GENEPIO:0101779"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp064": {
         "type": "gene",
@@ -3532,7 +3592,8 @@
         "protein_symbol": {
             "label": "Opg085 protein (MPOX)",
             "uri": "GENEPIO:0101780"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp065": {
         "type": "gene",
@@ -3587,7 +3648,8 @@
         "protein_symbol": {
             "label": "Opg086 protein (MPOX)",
             "uri": "GENEPIO:0101781"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp066": {
         "type": "gene",
@@ -3642,7 +3704,8 @@
         "protein_symbol": {
             "label": "Opg087 protein (MPOX)",
             "uri": "GENEPIO:0101782"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp067": {
         "type": "gene",
@@ -3697,7 +3760,8 @@
         "protein_symbol": {
             "label": "Opg088 protein (MPOX)",
             "uri": "GENEPIO:0101783"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp068": {
         "type": "gene",
@@ -3752,7 +3816,8 @@
         "protein_symbol": {
             "label": "Opg089 protein (MPOX)",
             "uri": "GENEPIO:0101784"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp069": {
         "type": "gene",
@@ -3807,7 +3872,8 @@
         "protein_symbol": {
             "label": "Opg090 protein (MPOX)",
             "uri": "GENEPIO:0101785"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp070": {
         "type": "gene",
@@ -3862,7 +3928,8 @@
         "protein_symbol": {
             "label": "Opg091 protein (MPOX)",
             "uri": "GENEPIO:0101786"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp071": {
         "type": "gene",
@@ -3917,7 +3984,8 @@
         "protein_symbol": {
             "label": "Opg092 protein (MPOX)",
             "uri": "GENEPIO:0101787"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp072": {
         "type": "gene",
@@ -3972,7 +4040,8 @@
         "protein_symbol": {
             "label": "Opg093 protein (MPOX)",
             "uri": "GENEPIO:0101788"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp073": {
         "type": "gene",
@@ -4027,7 +4096,8 @@
         "protein_symbol": {
             "label": "Opg094 protein (MPOX)",
             "uri": "GENEPIO:0101789"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp074": {
         "type": "gene",
@@ -4082,7 +4152,8 @@
         "protein_symbol": {
             "label": "Opg095 protein (MPOX)",
             "uri": "GENEPIO:0101790"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp075": {
         "type": "gene",
@@ -4137,7 +4208,8 @@
         "protein_symbol": {
             "label": "Opg096 protein (MPOX)",
             "uri": "GENEPIO:0101791"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp076": {
         "type": "gene",
@@ -4192,7 +4264,8 @@
         "protein_symbol": {
             "label": "Opg097 protein (MPOX)",
             "uri": "GENEPIO:0101792"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp077": {
         "type": "gene",
@@ -4247,7 +4320,8 @@
         "protein_symbol": {
             "label": "Opg098 protein (MPOX)",
             "uri": "GENEPIO:0101793"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp078": {
         "type": "gene",
@@ -4302,7 +4376,8 @@
         "protein_symbol": {
             "label": "Opg099 protein (MPOX)",
             "uri": "GENEPIO:0101794"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp079": {
         "type": "gene",
@@ -4357,7 +4432,8 @@
         "protein_symbol": {
             "label": "Opg100 protein (MPOX)",
             "uri": "GENEPIO:0101795"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp080": {
         "type": "gene",
@@ -4412,7 +4488,8 @@
         "protein_symbol": {
             "label": "Opg101 protein (MPOX)",
             "uri": "GENEPIO:0101796"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp081": {
         "type": "gene",
@@ -4467,7 +4544,8 @@
         "protein_symbol": {
             "label": "Opg102 protein (MPOX)",
             "uri": "GENEPIO:0101797"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp082": {
         "type": "gene",
@@ -4522,7 +4600,8 @@
         "protein_symbol": {
             "label": "Opg103 protein (MPOX)",
             "uri": "GENEPIO:0101798"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp083": {
         "type": "gene",
@@ -4577,7 +4656,8 @@
         "protein_symbol": {
             "label": "Opg104 protein (MPOX)",
             "uri": "GENEPIO:0101799"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp084": {
         "type": "gene",
@@ -4632,7 +4712,8 @@
         "protein_symbol": {
             "label": "Opg105 protein (MPOX)",
             "uri": "GENEPIO:0101800"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp085": {
         "type": "gene",
@@ -4687,7 +4768,8 @@
         "protein_symbol": {
             "label": "Opg106 protein (MPOX)",
             "uri": "GENEPIO:0101801"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp086": {
         "type": "gene",
@@ -4742,7 +4824,8 @@
         "protein_symbol": {
             "label": "Opg107 protein (MPOX)",
             "uri": "GENEPIO:0101802"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp087": {
         "type": "gene",
@@ -4797,7 +4880,8 @@
         "protein_symbol": {
             "label": "Opg108 protein (MPOX)",
             "uri": "GENEPIO:0101803"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp088": {
         "type": "gene",
@@ -4852,7 +4936,8 @@
         "protein_symbol": {
             "label": "Opg109 protein (MPOX)",
             "uri": "GENEPIO:0101804"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp089": {
         "type": "gene",
@@ -4907,7 +4992,8 @@
         "protein_symbol": {
             "label": "Opg110 protein (MPOX)",
             "uri": "GENEPIO:0101805"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp090": {
         "type": "gene",
@@ -4962,7 +5048,8 @@
         "protein_symbol": {
             "label": "Opg111 protein (MPOX)",
             "uri": "GENEPIO:0101806"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp091": {
         "type": "gene",
@@ -5017,7 +5104,8 @@
         "protein_symbol": {
             "label": "Opg112 protein (MPOX)",
             "uri": "GENEPIO:0101807"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp092": {
         "type": "gene",
@@ -5072,7 +5160,8 @@
         "protein_symbol": {
             "label": "Opg113 protein (MPOX)",
             "uri": "GENEPIO:0101808"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp093": {
         "type": "gene",
@@ -5127,7 +5216,8 @@
         "protein_symbol": {
             "label": "Opg114 protein (MPOX)",
             "uri": "GENEPIO:0101809"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp094": {
         "type": "gene",
@@ -5182,7 +5272,8 @@
         "protein_symbol": {
             "label": "Opg115 protein (MPOX)",
             "uri": "GENEPIO:0101810"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp095": {
         "type": "gene",
@@ -5237,7 +5328,8 @@
         "protein_symbol": {
             "label": "Opg116 protein (MPOX)",
             "uri": "GENEPIO:0101811"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp096": {
         "type": "gene",
@@ -5292,7 +5384,8 @@
         "protein_symbol": {
             "label": "Opg117 protein (MPOX)",
             "uri": "GENEPIO:0101812"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp097": {
         "type": "gene",
@@ -5347,7 +5440,8 @@
         "protein_symbol": {
             "label": "Opg118 protein (MPOX)",
             "uri": "GENEPIO:0101813"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp098": {
         "type": "gene",
@@ -5402,7 +5496,8 @@
         "protein_symbol": {
             "label": "Opg119 protein (MPOX)",
             "uri": "GENEPIO:0101814"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp099": {
         "type": "gene",
@@ -5457,7 +5552,8 @@
         "protein_symbol": {
             "label": "Opg120 protein (MPOX)",
             "uri": "GENEPIO:0101815"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp100": {
         "type": "gene",
@@ -5512,7 +5608,8 @@
         "protein_symbol": {
             "label": "Opg121 protein (MPOX)",
             "uri": "GENEPIO:0101816"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp101": {
         "type": "gene",
@@ -5567,7 +5664,8 @@
         "protein_symbol": {
             "label": "Opg122 protein (MPOX)",
             "uri": "GENEPIO:0101817"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp102": {
         "type": "gene",
@@ -5622,7 +5720,8 @@
         "protein_symbol": {
             "label": "Opg123 protein (MPOX)",
             "uri": "GENEPIO:0101818"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp103": {
         "type": "gene",
@@ -5677,7 +5776,8 @@
         "protein_symbol": {
             "label": "Opg124 protein (MPOX)",
             "uri": "GENEPIO:0101819"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp104": {
         "type": "gene",
@@ -5732,7 +5832,8 @@
         "protein_symbol": {
             "label": "Opg125 protein (MPOX)",
             "uri": "GENEPIO:0101820"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp105": {
         "type": "gene",
@@ -5787,7 +5888,8 @@
         "protein_symbol": {
             "label": "Opg126 protein (MPOX)",
             "uri": "GENEPIO:0101821"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp106": {
         "type": "gene",
@@ -5842,7 +5944,8 @@
         "protein_symbol": {
             "label": "Opg127 protein (MPOX)",
             "uri": "GENEPIO:0101822"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp107": {
         "type": "gene",
@@ -5897,7 +6000,8 @@
         "protein_symbol": {
             "label": "Opg128 protein (MPOX)",
             "uri": "GENEPIO:0101823"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp108": {
         "type": "gene",
@@ -5952,7 +6056,8 @@
         "protein_symbol": {
             "label": "Opg129 protein (MPOX)",
             "uri": "GENEPIO:0101824"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp109": {
         "type": "gene",
@@ -6007,7 +6112,8 @@
         "protein_symbol": {
             "label": "Opg130 protein (MPOX)",
             "uri": "GENEPIO:0101825"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp110": {
         "type": "gene",
@@ -6062,7 +6168,8 @@
         "protein_symbol": {
             "label": "Opg131 protein (MPOX)",
             "uri": "GENEPIO:0101826"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp111": {
         "type": "gene",
@@ -6117,7 +6224,8 @@
         "protein_symbol": {
             "label": "Opg132 protein (MPOX)",
             "uri": "GENEPIO:0101827"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp112": {
         "type": "gene",
@@ -6172,7 +6280,8 @@
         "protein_symbol": {
             "label": "Opg133 protein (MPOX)",
             "uri": "GENEPIO:0101828"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp113": {
         "type": "gene",
@@ -6227,7 +6336,8 @@
         "protein_symbol": {
             "label": "Opg134 protein (MPOX)",
             "uri": "GENEPIO:0101829"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp114": {
         "type": "gene",
@@ -6282,7 +6392,8 @@
         "protein_symbol": {
             "label": "Opg135 protein (MPOX)",
             "uri": "GENEPIO:0101830"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp115": {
         "type": "gene",
@@ -6337,7 +6448,8 @@
         "protein_symbol": {
             "label": "Opg136 protein (MPOX)",
             "uri": "GENEPIO:0101831"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp116": {
         "type": "gene",
@@ -6392,7 +6504,8 @@
         "protein_symbol": {
             "label": "Opg137 protein (MPOX)",
             "uri": "GENEPIO:0101832"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp117": {
         "type": "gene",
@@ -6447,7 +6560,8 @@
         "protein_symbol": {
             "label": "Opg138 protein (MPOX)",
             "uri": "GENEPIO:0101833"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp118": {
         "type": "gene",
@@ -6502,7 +6616,8 @@
         "protein_symbol": {
             "label": "Opg139 protein (MPOX)",
             "uri": "GENEPIO:0101834"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp119": {
         "type": "gene",
@@ -6557,7 +6672,8 @@
         "protein_symbol": {
             "label": "Opg140 protein (MPOX)",
             "uri": "GENEPIO:0101835"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp120": {
         "type": "gene",
@@ -6611,7 +6727,8 @@
         "protein_symbol": {
             "label": "Opg141 protein (MPOX)",
             "uri": "GENEPIO:0101836"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp121": {
         "type": "gene",
@@ -6666,7 +6783,8 @@
         "protein_symbol": {
             "label": "Opg142 protein (MPOX)",
             "uri": "GENEPIO:0101837"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp122": {
         "type": "gene",
@@ -6721,7 +6839,8 @@
         "protein_symbol": {
             "label": "Opg143 protein (MPOX)",
             "uri": "GENEPIO:0101838"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp123": {
         "type": "gene",
@@ -6776,7 +6895,8 @@
         "protein_symbol": {
             "label": "Opg144 protein (MPOX)",
             "uri": "GENEPIO:0101839"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp124": {
         "type": "gene",
@@ -6831,7 +6951,8 @@
         "protein_symbol": {
             "label": "Opg145 protein (MPOX)",
             "uri": "GENEPIO:0101840"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp125": {
         "type": "gene",
@@ -6886,7 +7007,8 @@
         "protein_symbol": {
             "label": "Opg146 protein (MPOX)",
             "uri": "GENEPIO:0101841"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp126": {
         "type": "gene",
@@ -6941,7 +7063,8 @@
         "protein_symbol": {
             "label": "Opg147 protein (MPOX)",
             "uri": "GENEPIO:0101842"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp127": {
         "type": "gene",
@@ -6996,7 +7119,8 @@
         "protein_symbol": {
             "label": "Opg148 protein (MPOX)",
             "uri": "GENEPIO:0101843"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp128": {
         "type": "gene",
@@ -7051,7 +7175,8 @@
         "protein_symbol": {
             "label": "Opg149 protein (MPOX)",
             "uri": "GENEPIO:0101844"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp129": {
         "type": "gene",
@@ -7106,7 +7231,8 @@
         "protein_symbol": {
             "label": "Opg150 protein (MPOX)",
             "uri": "GENEPIO:0101845"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp130": {
         "type": "gene",
@@ -7161,7 +7287,8 @@
         "protein_symbol": {
             "label": "Opg151 protein (MPOX)",
             "uri": "GENEPIO:0101846"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp131": {
         "type": "gene",
@@ -7216,7 +7343,8 @@
         "protein_symbol": {
             "label": "Opg153 protein (MPOX)",
             "uri": "GENEPIO:0101847"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp132": {
         "type": "gene",
@@ -7271,7 +7399,8 @@
         "protein_symbol": {
             "label": "Opg154 protein (MPOX)",
             "uri": "GENEPIO:0101848"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp133": {
         "type": "gene",
@@ -7326,7 +7455,8 @@
         "protein_symbol": {
             "label": "Opg155 protein (MPOX)",
             "uri": "GENEPIO:0101849"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp134": {
         "type": "gene",
@@ -7381,7 +7511,8 @@
         "protein_symbol": {
             "label": "Opg156 protein (MPOX)",
             "uri": "GENEPIO:0101850"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp135": {
         "type": "gene",
@@ -7436,7 +7567,8 @@
         "protein_symbol": {
             "label": "Opg157 protein (MPOX)",
             "uri": "GENEPIO:0101851"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp136": {
         "type": "gene",
@@ -7490,7 +7622,8 @@
         "protein_symbol": {
             "label": "Opg158 protein (MPOX)",
             "uri": "GENEPIO:0101852"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp137": {
         "type": "gene",
@@ -7545,7 +7678,8 @@
         "protein_symbol": {
             "label": "Opg159 protein (MPOX)",
             "uri": "GENEPIO:0101853"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp138": {
         "type": "gene",
@@ -7600,7 +7734,8 @@
         "protein_symbol": {
             "label": "Opg160 protein (MPOX)",
             "uri": "GENEPIO:0101854"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp139": {
         "type": "gene",
@@ -7655,7 +7790,8 @@
         "protein_symbol": {
             "label": "Opg161 protein (MPOX)",
             "uri": "GENEPIO:0101855"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp140": {
         "type": "gene",
@@ -7710,7 +7846,8 @@
         "protein_symbol": {
             "label": "Opg162 protein (MPOX)",
             "uri": "GENEPIO:0101856"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp141": {
         "type": "gene",
@@ -7765,7 +7902,8 @@
         "protein_symbol": {
             "label": "Opg163 protein (MPOX)",
             "uri": "GENEPIO:0101857"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp142": {
         "type": "gene",
@@ -7820,7 +7958,8 @@
         "protein_symbol": {
             "label": "Opg164 protein (MPOX)",
             "uri": "GENEPIO:0101858"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp143": {
         "type": "gene",
@@ -7875,7 +8014,8 @@
         "protein_symbol": {
             "label": "Opg165 protein (MPOX)",
             "uri": "GENEPIO:0101859"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp144": {
         "type": "gene",
@@ -7930,7 +8070,8 @@
         "protein_symbol": {
             "label": "Opg167 protein (MPOX)",
             "uri": "GENEPIO:0101861"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp145": {
         "type": "gene",
@@ -7985,7 +8126,8 @@
         "protein_symbol": {
             "label": "Opg170 protein (MPOX)",
             "uri": "GENEPIO:0101862"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp146": {
         "type": "gene",
@@ -8040,7 +8182,8 @@
         "protein_symbol": {
             "label": "Opg171 protein (MPOX)",
             "uri": "GENEPIO:0101863"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp147": {
         "type": "gene",
@@ -8095,7 +8238,8 @@
         "protein_symbol": {
             "label": "Opg172 protein (MPOX)",
             "uri": "GENEPIO:0101864"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp148": {
         "type": "gene",
@@ -8150,7 +8294,8 @@
         "protein_symbol": {
             "label": "Opg173 protein (MPOX)",
             "uri": "GENEPIO:0101865"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp149": {
         "type": "gene",
@@ -8205,7 +8350,8 @@
         "protein_symbol": {
             "label": "Opg174 protein (MPOX)",
             "uri": "GENEPIO:0101866"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp150": {
         "type": "gene",
@@ -8260,7 +8406,8 @@
         "protein_symbol": {
             "label": "Opg175 protein (MPOX)",
             "uri": "GENEPIO:0101867"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp151": {
         "type": "gene",
@@ -8315,7 +8462,8 @@
         "protein_symbol": {
             "label": "Opg176 protein (MPOX)",
             "uri": "GENEPIO:0101868"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp152": {
         "type": "gene",
@@ -8370,7 +8518,8 @@
         "protein_symbol": {
             "label": "Opg178 protein (MPOX)",
             "uri": "GENEPIO:0101869"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp153": {
         "type": "gene",
@@ -8425,7 +8574,8 @@
         "protein_symbol": {
             "label": "Opg180 protein (MPOX)",
             "uri": "GENEPIO:0101870"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp154": {
         "type": "gene",
@@ -8480,7 +8630,8 @@
         "protein_symbol": {
             "label": "Opg181 protein (MPOX)",
             "uri": "GENEPIO:0101871"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp155": {
         "type": "gene",
@@ -8535,7 +8686,8 @@
         "protein_symbol": {
             "label": "Opg185 protein (MPOX)",
             "uri": "GENEPIO:0101872"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp156": {
         "type": "gene",
@@ -8590,7 +8742,8 @@
         "protein_symbol": {
             "label": "Opg187 protein (MPOX)",
             "uri": "GENEPIO:0101873"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp157": {
         "type": "gene",
@@ -8645,7 +8798,8 @@
         "protein_symbol": {
             "label": "Opg188 protein (MPOX)",
             "uri": "GENEPIO:0101874"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp158": {
         "type": "gene",
@@ -8700,7 +8854,8 @@
         "protein_symbol": {
             "label": "Opg189 protein (MPOX)",
             "uri": "GENEPIO:0101875"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp159": {
         "type": "gene",
@@ -8755,7 +8910,8 @@
         "protein_symbol": {
             "label": "Opg190 protein (MPOX)",
             "uri": "GENEPIO:0101876"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp160": {
         "type": "gene",
@@ -8810,7 +8966,8 @@
         "protein_symbol": {
             "label": "Opg191 protein (MPOX)",
             "uri": "GENEPIO:0101877"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp161": {
         "type": "gene",
@@ -8865,7 +9022,8 @@
         "protein_symbol": {
             "label": "Opg192 protein (MPOX)",
             "uri": "GENEPIO:0101878"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp162": {
         "type": "gene",
@@ -8920,7 +9078,8 @@
         "protein_symbol": {
             "label": "Opg193 protein (MPOX)",
             "uri": "GENEPIO:0101879"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp163": {
         "type": "gene",
@@ -8975,7 +9134,8 @@
         "protein_symbol": {
             "label": "Opg195 protein (MPOX)",
             "uri": "GENEPIO:0101880"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp164": {
         "type": "gene",
@@ -9029,7 +9189,8 @@
         "protein_symbol": {
             "label": "Opg197 protein (MPOX)",
             "uri": "GENEPIO:0101881"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp165": {
         "type": "gene",
@@ -9084,7 +9245,8 @@
         "protein_symbol": {
             "label": "Opg198 protein (MPOX)",
             "uri": "GENEPIO:0101882"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp166": {
         "type": "gene",
@@ -9139,7 +9301,8 @@
         "protein_symbol": {
             "label": "Opg199 protein (MPOX)",
             "uri": "GENEPIO:0101883"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp167": {
         "type": "gene",
@@ -9194,7 +9357,8 @@
         "protein_symbol": {
             "label": "Opg200 protein (MPOX)",
             "uri": "GENEPIO:0101884"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp168": {
         "type": "gene",
@@ -9249,7 +9413,8 @@
         "protein_symbol": {
             "label": "Opg204 protein (MPOX)",
             "uri": "GENEPIO:0101885"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp169": {
         "type": "gene",
@@ -9304,7 +9469,8 @@
         "protein_symbol": {
             "label": "Opg205 protein (MPOX)",
             "uri": "GENEPIO:0101886"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp170": {
         "type": "gene",
@@ -9359,7 +9525,8 @@
         "protein_symbol": {
             "label": "Opg208 protein (MPOX)",
             "uri": "GENEPIO:0101887"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp171": {
         "type": "gene",
@@ -9414,7 +9581,8 @@
         "protein_symbol": {
             "label": "Opg209 protein (MPOX)",
             "uri": "GENEPIO:0101888"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp172": {
         "type": "gene",
@@ -9469,7 +9637,8 @@
         "protein_symbol": {
             "label": "Opg210 protein (MPOX)",
             "uri": "GENEPIO:0101889"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp173": {
         "type": "gene",
@@ -9524,7 +9693,8 @@
         "protein_symbol": {
             "label": "Opg005 protein (MPOX)",
             "uri": "GENEPIO:0101890"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp174": {
         "type": "gene",
@@ -9576,7 +9746,8 @@
         "protein_symbol": {
             "label": "Opg016 protein (MPOX)",
             "uri": "GENEPIO:0101891"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp175": {
         "type": "gene",
@@ -9629,7 +9800,8 @@
         "protein_symbol": {
             "label": "Opg015 protein (MPOX)",
             "uri": "GENEPIO:0101723"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp176": {
         "type": "gene",
@@ -9684,7 +9856,8 @@
         "protein_symbol": {
             "label": "Opg003 protein (MPOX)",
             "uri": "GENEPIO:0101722"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp177": {
         "type": "gene",
@@ -9739,7 +9912,8 @@
         "protein_symbol": {
             "label": "Opg002 protein (MPOX)",
             "uri": "GENEPIO:0101721"
-        }
+        },
+        "protein_alias": []
     },
     "gene-NBT03_gp178": {
         "type": "gene",
@@ -9794,7 +9968,8 @@
         "protein_symbol": {
             "label": "Opg001 protein (MPOX)",
             "uri": "GENEPIO:0101720"
-        }
+        },
+        "protein_alias": []
     },
     "INTERGENIC": {
         "type": "INTERGENIC",
