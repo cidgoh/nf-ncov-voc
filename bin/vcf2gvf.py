@@ -76,7 +76,7 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
 
     # add other attributes
     new_gvf['sample_size'] = sample_size
-    new_gvf['Name'] = vcf_df["Names"]
+    new_gvf['original_mutation_description'] = vcf_df["Names"]
     new_gvf['viral_lineage'] = strain
     new_gvf['alternate_frequency'] = vcf_df["AF"]
     
@@ -109,7 +109,7 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     
     # add 'ID' attribute: here, rows with the same entry in 'Name'
     # get the same ID (should all be different)
-    new_gvf['ID'] = 'ID_' + new_gvf.groupby('Name', sort=False).ngroup().astype(str)
+    new_gvf['ID'] = 'ID_' + new_gvf.groupby('original_mutation_description', sort=False).ngroup().astype(str)
     
     # merge attributes back into a single column
     new_gvf = rejoin_attributes(new_gvf, empty_attributes)
