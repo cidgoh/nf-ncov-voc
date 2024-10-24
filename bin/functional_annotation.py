@@ -316,16 +316,16 @@ if __name__ == '__main__':
                             dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein name"] = parent_protein_name
                             dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein symbol"] = parent_protein_symbol
                             parent_gene = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
-                    # get parent gene name and symbol from corresponding parent gene entry
-                    for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
-                        if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="gene" and (GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==parent_gene):
-                            # extract gene names and symbols (ontology) from JSON entry
-                            parent_gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"]
-                            parent_gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"]
-                            # add gene names and symbols to dataframe
-                            dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene name"] = parent_gene_name
-                            dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene symbol"] = parent_gene_symbol
-                            dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene"] = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
+                            # get parent gene name and symbol from corresponding parent gene entry
+                            for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
+                                if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="gene" and (GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==parent_gene):
+                                    # extract gene names and symbols (ontology) from JSON entry
+                                    parent_gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"]
+                                    parent_gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"]
+                                    # add gene names and symbols to dataframe
+                                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene name"] = parent_gene_name
+                                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene symbol"] = parent_gene_symbol
+                                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene"] = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
                     # fill in mat_pep
                     dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "mat_pep"] = mat_pep
 
