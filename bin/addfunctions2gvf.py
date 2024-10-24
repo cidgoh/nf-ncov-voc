@@ -8,7 +8,7 @@ Created on Wed Jul  5 08:25:48 2023
 This script annotates GVF files with the functional annotation.
 
 The attributes completed by this script are: 
-["function_category", "function_description", "source",
+["measured_variant_functional_effect", "measured_variant_functional_effect_description", "source",
  "citation", "comb_mutation"]
 
 """
@@ -44,26 +44,30 @@ def add_pokay_annotations(gvf, annotation_file):
     gvf = separate_attributes(gvf)
     
     # drop columns that are going to be re-added in the merge
-    functional_attributes = ["function_category", "function_description", 
-                             "source", "citation", "comb_mutation"]
+    functional_attributes = ["measured_variant_functional_effect", "measured_variant_functional_effect_description", 
+                             "URL", "citation"] #"comb_mutation"
     gvf = gvf.drop(columns=functional_attributes)
 
     # load functional annotations spreadsheet
     df = pd.read_csv(annotation_file, sep='\t', header=0)
+    # replace spaces in column names with underscores to match the gvf attributes
+    pokay_columns = df.columns.tolist()
+    underscore_columns = [col.replace(" ", "_") for col in pokay_columns]
+    rename_dict = dict(zip(pokay_columns, underscore_columns))
+    df = df.rename(columns=rename_dict)
+    # if no author, fill with "UNKNOWN"
     df['author'] = df['author'].fillna('UNKNOWN')
     # remove any leading/trailing spaces
     for column in df.columns:
         df[column] = df[column].fillna('')
         df[column] = df[column].astype(str).str.strip()
 
-    # merge annotated vcf and functional annotation files by 'Name' and 'protein_symbol'
-    df = df.rename(columns={"original mutation description": "Name", 'variant functional effect':"function_category", \
-                            'variant functional effect description':"function_description", 'URL':"source", 'protein symbol':'protein_symbol'})
-    df['citation'] = df['author'] + ' et al. (' + df['publication year'].str.replace(".0", "", regex=False) + ')'
-    df_columns = functional_attributes + ["Name", "protein_symbol"]
+    # merge annotated vcf and functional annotation files by 'original_mutation_description' and 'protein_symbol'
+    df['citation'] = df['author'] + ' et al. (' + df['publication_year'].str.replace(".0", "", regex=False) + ')'
+    df_columns = functional_attributes + ["original_mutation_description", "protein_symbol"]
     df = df[df_columns]
 
-    merged_df = pd.merge(gvf, df, on=['Name', 'protein_symbol'], how='left') #, 'alias'
+    merged_df = pd.merge(gvf, df, on=['original_mutation_description', 'protein_symbol'], how='left') #, 'alias'
 
     # data cleaning
     merged_df['comb_mutation'] = merged_df['comb_mutation'].str.replace(
@@ -76,7 +80,7 @@ def add_pokay_annotations(gvf, annotation_file):
     
     # join columns with commas in between
     merged_df["mutation_group"] = \
-        merged_df["Name"].astype(str) + "," + \
+        merged_df["original_mutation_description"].astype(str) + "," + \
         merged_df["comb_mutation"].astype(str) + "," + \
         merged_df['multiaa_comb_mutation'].astype(str)
     # cleaning: remove nans, quotations marks, spaces
@@ -101,12 +105,12 @@ def add_pokay_annotations(gvf, annotation_file):
     merged_df["mutation_group"] = pd.Series(sorted_group_list)
 
     # make another column to check if all members of the group are
-    # represented individually in 'Name' (True/False)
-    unique_Name_entries = set(merged_df['Name'].tolist())
-    group_fully_represented = [set(x).issubset(unique_Name_entries)
+    # represented individually in 'original_mutation_description' (True/False)
+    unique_original_mutation_description_entries = set(merged_df['original_mutation_description'].tolist())
+    group_fully_represented = [set(x).issubset(unique_original_mutation_description_entries)
                                for x in nested_list]
     merged_df['group_fully_represented'] = group_fully_represented
-    # drop rows with mutation group members not found in 'Name',
+    # drop rows with mutation group members not found in 'original_mutation_description',
     # leaving the index unchanged
     merged_df = merged_df[merged_df['group_fully_represented']==True]
 
@@ -116,8 +120,8 @@ def add_pokay_annotations(gvf, annotation_file):
         'mutation_group', sort=False).ngroup().astype(str)
     
     # change semicolons in function descriptions to colons
-    merged_df['function_description'] = merged_df[
-        'function_description'].str.replace(';', ':')
+    merged_df['measured_variant_functional_effect_description'] = merged_df[
+        'measured_variant_functional_effect_description'].str.replace(';', ':')
         
     # replace NaNs in df with empty string
     merged_df = merged_df.fillna('')
@@ -158,9 +162,9 @@ if __name__ == '__main__':
         # functional_annotations) to a .tsv file
         
         # create mask to find which rows do not have a functional annotation
-        notinPokay_mask = pokay_annotated_gvf["#attributes"].str.contains("function_category=;")
+        notinPokay_mask = pokay_annotated_gvf["#attributes"].str.contains("measured_variant_functional_effect=;")
         # extract all mutation names from #attributes column
-        names = pd.Series(pokay_annotated_gvf["#attributes"].str.findall('(?<=Name=)(.*?)(?=;)').str[0])
+        names = pd.Series(pokay_annotated_gvf["#attributes"].str.findall('(?<=original_mutation_description=)(.*?)(?=;)').str[0])
         # get unique mutation names not in Pokay
         unmatched_names = pd.Series(names[notinPokay_mask].unique())
         # save unmatched names to file
