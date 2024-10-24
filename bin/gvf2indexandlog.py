@@ -53,7 +53,7 @@ if __name__ == '__main__':
     index = pd.DataFrame(np.empty((gvf.shape[0], len(index_cols))), columns=index_cols)
     # populate index df with gvf info
     index['pos'] = gvf['#start']
-    index['mutation'] = gvf['Name'].str.replace("p.", "", regex=False)
+    index['mutation'] = gvf['original_mutation_description'].str.replace("p.", "", regex=False)
     index['hgvs_aa_mutation'] = gvf['hgvs_aa']
     index['hgvs_nt_mutation'] = gvf['hgvs_nt']
     index['alias'] = gvf['alias']
