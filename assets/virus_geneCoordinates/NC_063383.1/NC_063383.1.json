@@ -980,7 +980,7 @@
             "uri": "GENEPIO:0700004"
         }
     },
-    "VP37": {
+    "MPXVgp025": {
         "type": "CDS",
         "start": 21105,
         "end": 22433,
@@ -997,7 +997,6 @@
         "aa_start": 1,
         "aa_end": 442,
         "color": "rgb(196, 185, 69)",
-        "protein_alias": "VP37",
         "protein_name": {
             "label": "Ankyrin-like protein (1) (MPOX)",
             "uri": "GENEPIO:0101571"
