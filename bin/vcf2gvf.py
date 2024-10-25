@@ -8,10 +8,10 @@ This script converts VCF files that have been annotated into GVF
 files. Required user input is a VCF file.
     
 The attributes completed by this script are: 
-['ID', 'Name', 'gene', 'protein_name', 'protein_symbol', 'protein_id', 'ps_filter', 'ps_exc', 'mat_pep',
+['ID', 'Name', 'gene_name', 'gene_symbol', 'protein_name', 'protein_symbol', 'protein_id', 'ps_filter', 'ps_exc', 'mat_pep',
 'mat_pep_desc','mat_pep_acc', 'ro', 'ao', 'dp', 'sample_size', 'Reference_seq',
 'Variant_seq', 'nt_name', 'aa_name', 'hgvs_nt', 'hgvs_aa', 'hgvs_alias', 'vcf_gene', 'mutation_type',
-'viral_lineage', 'alternate_frequency']
+'viral_lineage', 'alternate_frequency', 'locus_tag']
 """
 
 import argparse
@@ -19,9 +19,8 @@ import pandas as pd
 import numpy as np
 import json
 from functions import parse_INFO, find_sample_size, \
-    unnest_multi, get_unknown_labels, separate_attributes, rejoin_attributes, \
+    get_unknown_labels, separate_attributes, rejoin_attributes, \
     clade_defining_threshold, map_pos_to_gene_protein, add_alias_names, \
-    convert_amino_acid_codes, rewrite_nt_snps_as_hgvs, remove_nts_from_nt_name, \
     add_hgvs_names
 from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
@@ -77,7 +76,7 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
 
     # add other attributes
     new_gvf['sample_size'] = sample_size
-    new_gvf['Name'] = vcf_df["Names"]
+    new_gvf['original_mutation_description'] = vcf_df["Names"]
     new_gvf['viral_lineage'] = strain
     new_gvf['alternate_frequency'] = vcf_df["AF"]
     
@@ -85,11 +84,19 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     json_df = map_pos_to_gene_protein(
         vcf_df['POS'].astype(int), GENE_PROTEIN_POSITIONS_DICT)
     new_gvf["gene"] = json_df["gene"]
+    new_gvf["gene_name"] = json_df["gene_name"]
+    new_gvf["gene_symbol"] = json_df["gene_symbol"]
+    new_gvf["strand_orientation"] = json_df["strand_orientation"]
+    new_gvf["gene_orientation"] = json_df["gene_orientation"]
+    new_gvf["product"] = json_df["product"]
+    new_gvf["protein_alias"] = json_df["protein_alias"]
     new_gvf["protein_name"] = json_df["protein_name"]
     new_gvf["protein_symbol"] = json_df["protein_symbol"]
     new_gvf["protein_id"] = json_df["protein_id"]
-    
-    # add 'alias' column for ORF1a/b mutations
+    new_gvf["locus_tag"] = json_df["locus_tag"]
+    new_gvf["alias_protein_id"] = 'n/a'
+
+    # add 'alias' column for ORF1a/b mutations, and fill in "alias_protein_id" for these as well
     new_gvf = add_alias_names(new_gvf, GENE_PROTEIN_POSITIONS_DICT)
 
     # add clade_defining attribute
@@ -104,7 +111,7 @@ def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
     
     # add 'ID' attribute: here, rows with the same entry in 'Name'
     # get the same ID (should all be different)
-    new_gvf['ID'] = 'ID_' + new_gvf.groupby('Name', sort=False).ngroup().astype(str)
+    new_gvf['ID'] = 'ID_' + new_gvf.groupby('original_mutation_description', sort=False).ngroup().astype(str)
     
     # merge attributes back into a single column
     new_gvf = rejoin_attributes(new_gvf, empty_attributes)
@@ -131,11 +138,14 @@ def parse_args():
                         help='Alternate frequency cutoff for '
                              'clade-defining mutations')
     parser.add_argument('--gene_positions', type=str,
-                        default=None,
+                        default=None, required=True,
                         help='gene positions in JSON format')
     parser.add_argument('--strain', type=str,
                         default=None,
-                        help='Lineage; user mode is if strain="n/a"')
+                        help='Pangolin lineage; user mode is if strain="n/a"')
+    parser.add_argument('--clade', type=str,
+                        default=None,
+                        help='Nextclade clade')
     parser.add_argument("--wastewater", help="Activate wastewater data mode",
                         action="store_true")
     parser.add_argument('--outgvf', type=str, required=True,

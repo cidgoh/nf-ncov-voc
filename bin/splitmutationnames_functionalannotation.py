@@ -42,28 +42,56 @@ if __name__ == '__main__':
 
     args = parse_args()
     
-    dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
-'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias', 'comb_mutation',
-'gene name', 'gene symbol', 'protein name', 'protein symbol', 'assay', 'mutation functional effect category',
-'mutation functional effect description', 'author', 'publication year', 'URL', 'DOI', 'PMID',
-'peer review status', 'curator', 'mutation functional annotation resource']
-    
     # split names in functional annotations file
     
     # read in functional annotations file
     df = pd.read_csv(args.functional_annotations, sep='\t', header=0)
+
+    dataFrame_cols = df.columns.tolist() + ['comb_mutation']
+
     # remove any leading/trailing spaces
     for column in df.columns:
         df[column] = df[column].astype(str).str.strip()
-    
+
     # create "comb_mutation" column with the lists from 'original mutation description'
     df['comb_mutation'] = df['original mutation description']
     
     # unnest all these columns
     to_unnest = ['original mutation description', 'nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
+    df['amino acid mutation alias'] = df['amino acid mutation alias'].replace('nan', np.nan, regex=False)
+
     for column in to_unnest:
-        df[column] = df[column].str.replace('nan', '')
-        df[column] = df[column].str.split(',')
+        # convert not-null values to lists
+        df.loc[df[column].notna(), column] = df[column].astype(str).str.split(',')
+        #convert null values to empty lists
+        df.loc[df[column].isnull(),[column]] = df.loc[df[column].isnull(),column].apply(lambda x: [])
+        # make temporary column for lengths of lists
+        len_count = column + ' length'
+        df.loc[df[column].notna(), len_count] = df[column].str.len()
+
+    # make sure all columns have the same number of elements; if they don't, throw an error
+    if not (df['original mutation description length'].equals(df['nucleotide position length'])):
+        print("Original mutation description and nucleotide position columns are of unequal length")   
+    if not (df['nucleotide mutation length'].equals(df['nucleotide position length'])):
+        print("Nucleotide mutation and nucleotide position columns are of unequal length")  
+    if not (df['amino acid mutation length'].equals(df['nucleotide position length'])):
+        print("Amino acid mutation and nucleotide position columns are of unequal length")  
+    if not (df['amino acid mutation alias length'].equals(df['nucleotide position length'])):
+        print("Amino acid mutation alias and nucleotide position columns are of unequal length")
+        # this is only column that SHOULD have an issue, so the solution is hardcoded here:
+        # calculate how many elements to add to each list
+        df['to_add'] = df['nucleotide position length'] - df['amino acid mutation alias length']
+        # convert columns to lists of lists
+        A_list = df['amino acid mutation alias'].tolist() # column that needs padding with NaNs, represented as a nested list
+        add_list = df['to_add'].tolist() # list of integers representing how many elements to add to each list
+        na_list = [np.nan]*len(add_list) # flat list of NaNs
+        # create new list padded with NaNs
+        nas_to_add_list = [[a]*b for a,b in zip(na_list, add_list)] # nested list of NaNs to add
+        padded_list = [a + b for a,b in zip(A_list, nas_to_add_list)] # column to explode padded with NaNs
+        # add padded column to df
+        df['amino acid mutation alias'] = padded_list
+        
+    # explode list columns
     df = unnest_multi(df, to_unnest, reset_index=True)
 
     # keep only unique names in 'comb_mutation', no repeats
@@ -106,7 +134,6 @@ if __name__ == '__main__':
     df = df[dataFrame_cols]
     
     # fix column formats
-    df['assay'] = df['assay'].str.replace('nan', '', regex=False)
     df['PMID'] = df['PMID'].str.replace('nan', '', regex=False)
     df['PMID'] = df['PMID'].str.replace('.0', '', regex=False)
     df['publication year'] = df['publication year'].str.replace('.0', '', regex=False)
