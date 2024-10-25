@@ -30,6 +30,8 @@ def parse_args():
     parser.add_argument('--functional_annotations', type=str,
                         default=None, help='TSV file of functional '
                                            'annotations')
+    parser.add_argument('--functional_annotation_resource', type=str,
+                        default='Pokay', help='Functional annotation file identifier; can be versioned (eg. "Pokay_v1.0")')
     parser.add_argument("--names", type=str, default='n/a',
     			help="Save mutation names without "
                               "functional annotations to "
@@ -38,7 +40,7 @@ def parse_args():
     return parser.parse_args()
 
 # Function to add template annotations to GVF file
-def add_template_annotations(gvf, annotation_file):
+def add_template_annotations(gvf, annotation_file, annotation_resource):
     
     # expand #attributes into columns to fill in separately
     gvf = separate_attributes(gvf)
@@ -122,7 +124,10 @@ def add_template_annotations(gvf, annotation_file):
     # change semicolons in function descriptions to colons
     merged_df['measured_variant_functional_effect_description'] = merged_df[
         'measured_variant_functional_effect_description'].str.replace(';', ':')
-        
+    
+    # add functional_description_resource attribute
+    merged_df['functional_annotation_resource'] = annotation_resource
+
     # replace NaNs in df with empty string
     merged_df = merged_df.fillna('')
     # merge attributes back into a single column
@@ -144,7 +149,7 @@ if __name__ == '__main__':
     gvf = gvf[~gvf['#seqid'].astype(str).str.contains("#")]
 
     # add functional annotations
-    template_annotated_gvf = add_template_annotations(gvf, args.functional_annotations)
+    template_annotated_gvf = add_template_annotations(gvf, args.functional_annotations, args.functional_annotation_resource)
 
     # add pragmas to df, then save to .gvf
     # columns are now 0, 1, ...
