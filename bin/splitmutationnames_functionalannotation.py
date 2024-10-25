@@ -42,16 +42,13 @@ if __name__ == '__main__':
 
     args = parse_args()
     
-    dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
-'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias', 'comb_mutation',
-'gene name', 'gene symbol', 'protein name', 'protein symbol', 'measured variant functional effect',
-'inferred variant functional effect', 'viral life cycle functional effect', 'measured variant functional effect description',
-'author', 'publication year', 'URL', 'DOI', 'PMID', 'peer review status', 'curator', 'mutation functional annotation resource']
-    
     # split names in functional annotations file
     
     # read in functional annotations file
     df = pd.read_csv(args.functional_annotations, sep='\t', header=0)
+
+    dataFrame_cols = df.columns.tolist() + ['comb_mutation']
+
     # remove any leading/trailing spaces
     for column in df.columns:
         df[column] = df[column].astype(str).str.strip()

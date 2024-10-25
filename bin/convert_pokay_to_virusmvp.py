@@ -50,16 +50,16 @@ def combination_mutation(c_mutations, c_mutation):
 
 
 def data_cleanup(dframe):
-    dframe['measured variant functional effect description'] = dframe[
-        'measured variant functional effect description'].apply(
+    dframe['variant functional effect description'] = dframe[
+        'variant functional effect description'].apply(
         lambda x: ','.join(map(str, x)))
 
-    dframe['measured variant functional effect description'] = dframe[
-        'measured variant functional effect description'].str.replace(',#', '')
-    dframe['measured variant functional effect description'] = dframe[
-        'measured variant functional effect description'].str.replace('#', '')
-    dframe['measured variant functional effect description'] = dframe[
-        'measured variant functional effect description'].str.strip()
+    dframe['variant functional effect description'] = dframe[
+        'variant functional effect description'].str.replace(',#', '')
+    dframe['variant functional effect description'] = dframe[
+        'variant functional effect description'].str.replace('#', '')
+    dframe['variant functional effect description'] = dframe[
+        'variant functional effect description'].str.strip()
     
     #dframe['comb_mutation'] = dframe['comb_mutation'].apply(
     #    lambda x: x[1:-1])
@@ -149,7 +149,7 @@ def extract_metadata(inp_file, chunk, df):
                 del function[chunk[url[index_url - 1]]]
 
         df_func = pd.DataFrame(function.items(), columns=['url',
-                                                          'measured variant functional effect description'])
+                                                          'variant functional effect description'])
 
         df_list = [mutation_name, gene_name,
                    function_category] #, comb_mutation, heterozygosity]
@@ -192,14 +192,14 @@ if __name__ == '__main__':
         dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
 'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
 'gene name', 'gene symbol', 'gene orientation', 'strand orientation', 'protein name', 'protein symbol', 'measured variant functional effect', 'inferred variant functional effect', 'viral life cycle functional effect',
-'measured variant functional effect description', 'CVX code', 'DrugBank Accession Number', 'Antibody Registry ID', 'author', 'publication year', 'URL', 'DOI', 'PMID',
+'variant functional effect description', 'CVX code', 'DrugBank Accession Number', 'Antibody Registry ID', 'author', 'publication year', 'URL', 'DOI', 'PMID',
 'peer review status', 'curator', 'mutation functional annotation resource']
     
     else:
         dataFrame_cols = ['organism', 'reference accession', 'reference database name', 'nucleotide position',
 'original mutation description', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias',
 'gene name', 'gene symbol', 'protein name', 'protein symbol', 'measured variant functional effect', 'inferred variant functional effect', 'viral life cycle functional effect',
-'measured variant functional effect description', 'CVX code', 'DrugBank Accession Number', 'Antibody Registry ID', 'author', 'publication year', 'URL', 'DOI', 'PMID',
+'variant functional effect description', 'CVX code', 'DrugBank Accession Number', 'Antibody Registry ID', 'author', 'publication year', 'URL', 'DOI', 'PMID',
 'peer review status', 'curator', 'mutation functional annotation resource']
     
     dataFrame = pd.DataFrame(columns=dataFrame_cols)
