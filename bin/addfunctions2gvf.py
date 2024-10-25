@@ -47,7 +47,9 @@ def add_template_annotations(gvf, annotation_file, annotation_resource):
     
     # drop columns that are going to be re-added in the merge
     functional_attributes = ["measured_variant_functional_effect", "measured_variant_functional_effect_description", 
-                             "URL", "citation"] #"comb_mutation"
+                            "URL", "citation", "organism", "reference_accession", "reference_database_name", 'CVX_code',
+                            'DrugBank_Accession_Number', 'Antibody_Registry_ID', "author", "publication_year", "DOI", "PMID", "peer_review_status",
+                            "curator", "mutation_functional_annotation_resource"] #"comb_mutation"
     gvf = gvf.drop(columns=functional_attributes)
 
     # load functional annotations spreadsheet
@@ -127,6 +129,9 @@ def add_template_annotations(gvf, annotation_file, annotation_resource):
     
     # add functional_description_resource attribute
     merged_df['functional_annotation_resource'] = annotation_resource
+
+    # make sure 'publication_year' is an integer
+    merged_df['publication_year'] = merged_df['publication_year'].str.replace('.0', '', regex=False)
 
     # replace NaNs in df with empty string
     merged_df = merged_df.fillna('')

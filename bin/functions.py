@@ -8,14 +8,16 @@ empty_attributes = 'ID=;original_mutation_description=;alias=;gene=;gene_name=;g
     product=;protein_alias=;protein_name=;protein_symbol=;\
     protein_id=;alias_protein_id=;locus_tag=;ps_filter=;ps_exc=; \
     mat_pep=;mat_pep_desc=;mat_pep_acc=;ro=;ao=;dp=;sample_size=; \
-    Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=; \
+    Reference_seq=;Variant_seq=;nt_name=;aa_name=;hgvs_nt=;hgvs_aa=;hgvs_alias=;heterozygosity=; \
     vcf_gene=;mutation_type=;viral_lineage=;clade=;multi_aa_name=; \
     multiaa_comb_mutation=;alternate_frequency=;measured_variant_functional_effect=;inferred_variant_functional_effect=; \
-    viral_life_cycle_functional_effect=;URL=; \
+    viral_life_cycle_functional_effect=;author=;publication_year=;DOI=;PMID=;URL=;peer_review_status=; \
     citation=;comb_mutation=;measured_variant_functional_effect_description=; \
-    mutation_functional_annotation_resource=;functional_annotation_resource=;heterozygosity=; \
+    mutation_functional_annotation_resource=;functional_annotation_resource=;curator=; \
     clade_defining=;variant=;variant_type=;voi_designation_date=; \
-    voc_designation_date=;vum_designation_date=;status=;'
+    voc_designation_date=;vum_designation_date=;status=; \
+    organism=;reference_accession=;reference_database_name=; \
+    CVX_code=;DrugBank_Accession_Number=;Antibody_Registry_ID=;'
 
 empty_attributes = empty_attributes.replace(" ", "")
 
