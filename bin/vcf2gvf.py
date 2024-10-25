@@ -142,7 +142,10 @@ def parse_args():
                         help='gene positions in JSON format')
     parser.add_argument('--strain', type=str,
                         default=None,
-                        help='Lineage; user mode is if strain="n/a"')
+                        help='Pangolin lineage; user mode is if strain="n/a"')
+    parser.add_argument('--clade', type=str,
+                        default=None,
+                        help='Nextclade clade')
     parser.add_argument("--wastewater", help="Activate wastewater data mode",
                         action="store_true")
     parser.add_argument('--outgvf', type=str, required=True,
