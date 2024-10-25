@@ -8,7 +8,7 @@ Created on Wed Jul  5 08:25:48 2023
 This script annotates GVF files with the functional annotation.
 
 The attributes completed by this script are: 
-["measured_variant_functional_effect", "measured_variant_functional_effect_description", "source",
+["measured_variant_functional_effect", "variant_functional_effect_description", "source",
  "citation", "comb_mutation"]
 
 """
@@ -46,7 +46,7 @@ def add_template_annotations(gvf, annotation_file, annotation_resource):
     gvf = separate_attributes(gvf)
     
     # drop columns that are going to be re-added in the merge
-    functional_attributes = ["measured_variant_functional_effect", "measured_variant_functional_effect_description", 
+    functional_attributes = ["measured_variant_functional_effect", "variant_functional_effect_description", 
                             "URL", "citation", "organism", "reference_accession", "reference_database_name", 'CVX_code',
                             'DrugBank_Accession_Number', 'Antibody_Registry_ID', "author", "publication_year", "DOI", "PMID", "peer_review_status",
                             "curator", "mutation_functional_annotation_resource"] #"comb_mutation"
@@ -124,8 +124,8 @@ def add_template_annotations(gvf, annotation_file, annotation_resource):
         'mutation_group', sort=False).ngroup().astype(str)
     
     # change semicolons in function descriptions to colons
-    merged_df['measured_variant_functional_effect_description'] = merged_df[
-        'measured_variant_functional_effect_description'].str.replace(';', ':')
+    merged_df['variant_functional_effect_description'] = merged_df[
+        'variant_functional_effect_description'].str.replace(';', ':')
     
     # add functional_description_resource attribute
     merged_df['functional_annotation_resource'] = annotation_resource

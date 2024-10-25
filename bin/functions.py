@@ -12,7 +12,7 @@ empty_attributes = 'ID=;original_mutation_description=;alias=;gene=;gene_name=;g
     vcf_gene=;mutation_type=;viral_lineage=;clade=;multi_aa_name=; \
     multiaa_comb_mutation=;alternate_frequency=;measured_variant_functional_effect=;inferred_variant_functional_effect=; \
     viral_life_cycle_functional_effect=;author=;publication_year=;DOI=;PMID=;URL=;peer_review_status=; \
-    citation=;comb_mutation=;measured_variant_functional_effect_description=; \
+    citation=;comb_mutation=;variant_functional_effect_description=; \
     mutation_functional_annotation_resource=;functional_annotation_resource=;curator=; \
     clade_defining=;variant=;variant_type=;voi_designation_date=; \
     voc_designation_date=;vum_designation_date=;status=; \
