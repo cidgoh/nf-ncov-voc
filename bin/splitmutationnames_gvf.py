@@ -51,8 +51,10 @@ if __name__ == '__main__':
     # expand #attributes into columns to edit separately
     gvf = separate_attributes(gvf)
 
-    # split names in "Names" attribute into separate rows
-    gvf = split_names(args.names_to_split, gvf, col_to_split='Name')
+    # if names_to_split tsv is given, use it to split up the multi-amino acid names
+    if args.names_to_split != None:
+        # split names in "Names" attribute into separate rows
+        gvf = split_names(args.names_to_split, gvf, col_to_split='Name')
     
     # rename IDs: rows with the same entry in 'Name'
     # get the same ID

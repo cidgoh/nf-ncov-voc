@@ -1,0 +1,47 @@
+Issues / Notes	Dbxref	Ontology ID	parent class	Equivalence axiom	Subclass axiom	label	definition	references	definition source	alternative label	Reported	term tracker item	entity type	created	parent class ID	is about label	alt definition	is about	comment	example of usage	contributor	curation status	editor note	database cross reference	see also	Subclass ID	Subclass label	english exact synonym	english broad synonym	english narrow synonym	english related synonym																	
+ORF1ab	GeneID:43740578	GENEPIO:0101134	gene name (SARS-CoV-2)			open reading frame 1ab gene (SARS-CoV-2)							Instance			orf1ab gene (SARS-CoV-2)'		GENEPIO:0100155													
+ORF1ab	GeneID:43740578	GENEPIO:0101135	gene symbol (SARS-CoV-2)			orf1ab gene (SARS-CoV-2)							Instance			orf1ab gene (SARS-CoV-2)'		GENEPIO:0100155													
+ORF1ab	YP_009724389.1	GENEPIO:0101136	protein name (SARS-CoV-2)			open reading frame 1ab polyprotein (SARS-CoV-2)							Instance			replicase polyprotein 1ab (SARS-CoV-2)		PR_P0DTD1-1													
+ORF1ab	YP_009724389.1	GENEPIO:0101137	protein symbol (SARS-CoV-2)			Orf1ab protein (SARS-CoV-2)							Instance			replicase polyprotein 1ab (SARS-CoV-2)		PR_P0DTD1-1																						
+ORF1a	YP_009724389.1	GENEPIO:0101140	protein name (SARS-CoV-2)			open reading frame 1a polyprotein (SARS-CoV-2)							Instance			replicase polyprotein 1a (SARS-CoV-2)		PR_P0DTC1-1													
+ORF1a	YP_009724389.1	GENEPIO:0101141	protein symbol (SARS-CoV-2)			Orf1a protein (SARS-CoV-2)							Instance			replicase polyprotein 1a (SARS-CoV-2)		PR_P0DTC1-1													
+S	GeneID:43740568	GENEPIO:0101142	gene name (SARS-CoV-2)			surface glycoprotein gene (SARS-CoV-2)							Instance			Spike gene (SARS-CoV-2)'		GENEPIO:0100154													
+S	GeneID:43740568	GENEPIO:0101143	gene symbol (SARS-CoV-2)			s gene (SARS-CoV-2)							Instance			Spike gene (SARS-CoV-2)'		GENEPIO:0100154													
+S	YP_009724390.1	GENEPIO:0101144	protein name (SARS-CoV-2)			surface glycoprotein (SARS-CoV-2)							Instance			spike glycoprotein (SARS-CoV-2)		PR_P0DTC2													
+S	YP_009724390.1	GENEPIO:0101145	protein symbol (SARS-CoV-2)			S protein (SARS-CoV-2)							Instance			spike glycoprotein (SARS-CoV-2)		PR_P0DTC2													
+ORF3a	GeneID:43740569	GENEPIO:0101146	gene name (SARS-CoV-2)			open reading frame 3a gene (SARS-CoV-2)							Instance			orf3a gene (SARS-CoV-2)'		GENEPIO:0100173													
+ORF3a	GeneID:43740569	GENEPIO:0101147	gene symbol (SARS-CoV-2)			orf3a gene (SARS-CoV-2)							Instance			orf3a gene (SARS-CoV-2)'		GENEPIO:0100173													
+ORF3a	YP_009724391.1	GENEPIO:0101148	protein name (SARS-CoV-2)			open reading frame 3a protein (SARS-CoV-2)							Instance			ORF3a protein (SARS-CoV-2)		PR_P0DTC3													
+ORF3a	YP_009724391.1	GENEPIO:0101149	protein symbol (SARS-CoV-2)			Orf3a protein (SARS-CoV-2)							Instance			ORF3a protein (SARS-CoV-2)		PR_P0DTC3													
+E	GeneID:43740570	GENEPIO:0101150	gene name (SARS-CoV-2)			envelope gene (SARS-CoV-2)							Instance			E gene (SARS-CoV-2)'		GENEPIO:0100151													
+E	GeneID:43740570	GENEPIO:0101151	gene symbol (SARS-CoV-2)			e gene (SARS-CoV-2)							Instance			E gene (SARS-CoV-2)'		GENEPIO:0100151													
+E	YP_009724392.1	GENEPIO:0101152	protein name (SARS-CoV-2)			envelope protein (SARS-CoV-2)							Instance			envelope small membrane protein (SARS-CoV-2)		PR_P0DTC4													
+E	YP_009724392.1	GENEPIO:0101153	protein symbol (SARS-CoV-2)			E protein (SARS-CoV-2)							Instance			envelope small membrane protein (SARS-CoV-2)		PR_P0DTC4													
+M	GeneID:43740571	GENEPIO:0101154	gene name (SARS-CoV-2)			membrane glycoprotein gene (SARS-CoV-2)							Instance			M gene (SARS-CoV-2)'		GENEPIO:0100152													
+M	GeneID:43740571	GENEPIO:0101155	gene symbol (SARS-CoV-2)			m gene (SARS-CoV-2)							Instance			M gene (SARS-CoV-2)'		GENEPIO:0100152													
+M	YP_009724393.1	GENEPIO:0101156	protein name (SARS-CoV-2)			membrane glycoprotein (SARS-CoV-2)							Instance			membrane protein (SARS-CoV-2)		PR_P0DTC5													
+M	YP_009724393.1	GENEPIO:0101157	protein symbol (SARS-CoV-2)			M protein (SARS-CoV-2)							Instance			membrane protein (SARS-CoV-2)		PR_P0DTC5													
+ORF6	GeneID:43740572	GENEPIO:0101158	gene name (SARS-CoV-2)			open reading frame 6 gene (SARS-CoV-2)							Instance			orf6 gene (SARS-CoV-2)'		GENEPIO:0100175													
+ORF6	GeneID:43740572	GENEPIO:0101159	gene symbol (SARS-CoV-2)			orf6 gene (SARS-CoV-2)							Instance			orf6 gene (SARS-CoV-2)'		GENEPIO:0100175													
+ORF6	YP_009724394.1	GENEPIO:0101160	protein name (SARS-CoV-2)			open reading frame 6 protein (SARS-CoV-2)							Instance			ORF6 protein (SARS-CoV-2)		PR_P0DTC6													
+ORF6	YP_009724394.1	GENEPIO:0101161	protein symbol (SARS-CoV-2)			Orf6 protein (SARS-CoV-2)							Instance			ORF6 protein (SARS-CoV-2)		PR_P0DTC6													
+ORF7a	GeneID:43740573	GENEPIO:0101162	gene name (SARS-CoV-2)			open reading frame 7a gene (SARS-CoV-2)							Instance			orf7a gene (SARS-CoV-2)'		GENEPIO:0100176													
+ORF7a	GeneID:43740573	GENEPIO:0101163	gene symbol (SARS-CoV-2)			orf7a gene (SARS-CoV-2)							Instance			orf7a gene (SARS-CoV-2)'		GENEPIO:0100176													
+ORF7a	YP_009724395.1	GENEPIO:0101164	protein name (SARS-CoV-2)			open reading frame 7a protein (SARS-CoV-2)							Instance			ORF7a protein (SARS-CoV-2)		PR_P0DTC7													
+ORF7a	YP_009724395.1	GENEPIO:0101165	protein symbol (SARS-CoV-2)			Orf7a protein (SARS-CoV-2)							Instance			ORF7a protein (SARS-CoV-2)		PR_P0DTC7													
+ORF7b	GeneID:43740574	GENEPIO:0101166	gene name (SARS-CoV-2)			open reading frame 7b gene (SARS-CoV-2)							Instance			orf7b gene (SARS-CoV-2)'		GENEPIO:0100177													
+ORF7b	GeneID:43740574	GENEPIO:0101167	gene symbol (SARS-CoV-2)			orf7b gene (SARS-CoV-2)							Instance			orf7b gene (SARS-CoV-2)'		GENEPIO:0100177													
+ORF7b	YP_009725318.1	GENEPIO:0101168	protein name (SARS-CoV-2)			open reading frame 7b protein (SARS-CoV-2)							Instance			ORF7b protein (SARS-CoV-2)		PR_P0DTD8													
+ORF7b	YP_009725318.1	GENEPIO:0101169	protein symbol (SARS-CoV-2)			Orf7b protein (SARS-CoV-2)							Instance			ORF7b protein (SARS-CoV-2)		PR_P0DTD8													
+ORF8	GeneID:43740577	GENEPIO:0101170	gene name (SARS-CoV-2)			open reading frame 8 gene (SARS-CoV-2)							Instance			orf8 gene (SARS-CoV-2)'		GENEPIO:0100178													
+ORF8	GeneID:43740577	GENEPIO:0101171	gene symbol (SARS-CoV-2)			orf8 gene (SARS-CoV-2)							Instance			orf8 gene (SARS-CoV-2)'		GENEPIO:0100178													
+ORF8	YP_009724396.1	GENEPIO:0101172	protein name (SARS-CoV-2)			open reading frame 8 protein (SARS-CoV-2)							Instance			ORF8 protein (SARS-CoV-2) 		PR_P0DTC8													
+ORF8	YP_009724396.1	GENEPIO:0101173	protein symbol (SARS-CoV-2)			Orf8 protein (SARS-CoV-2)							Instance			ORF8 protein (SARS-CoV-2) 		PR_P0DTC8													
+N	GeneID:43740575	GENEPIO:0101174	gene name (SARS-CoV-2)			nucleocapsid phosphoprotein gene (SARS-CoV-2)							Instance			N gene (SARS-CoV-2)'		GENEPIO:0100153													
+N	GeneID:43740575	GENEPIO:0101175	gene symbol (SARS-CoV-2)			n gene (SARS-CoV-2)							Instance			N gene (SARS-CoV-2)'		GENEPIO:0100153													
+N	YP_009724397.2	GENEPIO:0101176	protein name (SARS-CoV-2)			nucleocapsid phosphoprotein (SARS-CoV-2)							Instance			nucleoprotein (SARS-CoV-2)		PR_P0DTC9													
+N	YP_009724397.2	GENEPIO:0101177	protein symbol (SARS-CoV-2)			N protein (SARS-CoV-2)							Instance			nucleoprotein (SARS-CoV-2)		PR_P0DTC9													
+ORF10	GeneID:43740576	GENEPIO:0101178	gene name (SARS-CoV-2)			open reading frame 10 gene (SARS-CoV-2)							Instance			orf10 gene (SARS-CoV-2)'		GENEPIO:0100181													
+ORF10	GeneID:43740576	GENEPIO:0101179	gene symbol (SARS-CoV-2)			orf10 gene (SARS-CoV-2)							Instance			orf10 gene (SARS-CoV-2)'		GENEPIO:0100181													
+ORF10	YP_009725255.1	GENEPIO:0101180	protein name (SARS-CoV-2)			open reading frame 10 protein (SARS-CoV-2)							Instance			putative ORF10 protein (SARS-CoV-2)		PR_A0A663DJA2													
+ORF10	YP_009725255.1	GENEPIO:0101181	protein symbol (SARS-CoV-2)			Orf10 protein (SARS-CoV-2)							Instance			putative ORF10 protein (SARS-CoV-2)		PR_A0A663DJA2													
