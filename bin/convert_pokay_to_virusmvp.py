@@ -88,7 +88,7 @@ def extract_source_citation(dframe):
     dframe['publication year'] = dframe['citation'].str.extract('.*\((.*)\).*')
     dframe['author'] = dframe['citation'].str.extract('^(.*?)et al') #.str.strip()
     dframe['peer review status'] = dframe['URL'].astype(str).str.extract('(?<=\[)(.*)')
-    dframe['URL'] = dframe['URL'].astype(str).str.extract('^(.*?)\[') #.str.strip()
+    dframe['URL'] = dframe['URL'].astype(str).str.split(expand=True)[0] 
     dframe['DOI'] = dframe['URL'].astype(str).str.extract('(?<=doi.org/)(.*)') #.str.strip()
 
     return dframe
