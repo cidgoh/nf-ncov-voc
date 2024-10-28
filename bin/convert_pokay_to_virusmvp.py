@@ -292,18 +292,42 @@ if __name__ == '__main__':
                         dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene orientation"] = gene_orientation
                         dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "strand orientation"] = strand_orientation
 
-                # If a CDS record matches pokay_id, get 'protein_name' and 'protein_symbol'
-                if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and ("gene" in GENE_PROTEIN_POSITIONS_DICT[entry].keys()) and GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==pokay_id:
-                    # extract protein names and symbols (ontology) from JSON entry
-                    protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["label"]
-                    protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["label"]
-                    # add protein names and symbols to dataframe
-                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein name"] = protein_name
-                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein symbol"] = protein_symbol
+                # If a CDS record matches pokay_id in 'gene' or 'protein_alias', get 'protein_name' and 'protein_symbol'
+                if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and ("gene" in GENE_PROTEIN_POSITIONS_DICT[entry].keys()):
+                    if (GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==pokay_id):
+                        # extract protein names and symbols (ontology) from JSON entry
+                        protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["label"]
+                        protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["label"]
+                        # add protein names and symbols to dataframe
+                        dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein name"] = protein_name
+                        dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein symbol"] = protein_symbol
+                    elif (pokay_id in GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]):
+                        gene = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
+                        # extract protein names and symbols (ontology) from JSON entry
+                        protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["label"]
+                        protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["label"]
+                        # add protein names and symbols to dataframe
+                        dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein name"] = protein_name
+                        dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "protein symbol"] = protein_symbol
+                        # get 'gene_name' and 'gene_symbol'
+                        for entry in GENE_PROTEIN_POSITIONS_DICT.keys():
+                            if GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="gene" and ("gene" in GENE_PROTEIN_POSITIONS_DICT[entry].keys()) and GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]==gene:
+                                # extract protein names and symbols (ontology) from JSON entry
+                                gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"]
+                                gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"]
+                                gene_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_orientation"]["label"]
+                                strand_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["strand_orientation"]["label"]
+                                # add gene names and symbols to dataframe
+                                dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene name"] = gene_name
+                                dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene symbol"] = gene_symbol
+                                dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene"] = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
+                                if args.accession=='NC_063383.1': # add gene orientation and strand orientation for MPOX
+                                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "gene orientation"] = gene_orientation
+                                    dataFrame.loc[dataFrame["pokay_id"]==pokay_id, "strand orientation"] = strand_orientation
+
 
                 # If a mature peptide record matches pokay_id in the 'protein_alias' list, get name of parent, and from there get names and symbols
-                if (GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="mature_protein_region_of_CDS" or \
-                    (GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="CDS" and args.accession=='NC_063383.1')) \
+                if (GENE_PROTEIN_POSITIONS_DICT[entry]["type"]=="mature_protein_region_of_CDS") \
                     and (pokay_id in GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]):
                     # extract pokay_id, mat_pep, and parent id from JSON entry
                     mat_pep = entry
