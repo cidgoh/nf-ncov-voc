@@ -63,7 +63,7 @@ if __name__ == '__main__':
     index['gene_symbol'] = gvf['gene_symbol']
     index['protein_name'] = gvf['protein_name']
     index['protein_symbol'] = gvf['protein_symbol']
-    index['Pokay_annotation'] = gvf["function_description"].notna()
+    index['Pokay_annotation'] = gvf["variant_functional_effect_description"].notna()
     index['lineages'] = gvf['viral_lineage']
     # tidying
     index = index.drop_duplicates()

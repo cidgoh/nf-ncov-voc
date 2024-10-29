@@ -54,11 +54,11 @@ if __name__ == '__main__':
     # if names_to_split tsv is given, use it to split up the multi-amino acid names
     if args.names_to_split != None:
         # split names in "Names" attribute into separate rows
-        gvf = split_names(args.names_to_split, gvf, col_to_split='Name')
+        gvf = split_names(args.names_to_split, gvf, col_to_split='original_mutation_description')
     
-    # rename IDs: rows with the same entry in 'Name'
+    # rename IDs: rows with the same entry in 'original_mutation_description'
     # get the same ID
-    gvf['ID'] = 'ID_' + gvf.groupby('Name', sort=False).ngroup().astype(str)
+    gvf['ID'] = 'ID_' + gvf.groupby('original_mutation_description', sort=False).ngroup().astype(str)
     
     # merge attributes back into a single column
     gvf = rejoin_attributes(gvf, empty_attributes)
