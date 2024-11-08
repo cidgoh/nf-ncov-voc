@@ -353,9 +353,10 @@ if __name__ == '__main__':
         # remove doubled columns from dataFrame
         index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
         dataFrame = dataFrame.drop(columns=index_cols_to_use)
+        # drop duplicate rows from mutation index
+        mutation_index = mutation_index.drop_duplicates(subset=index_cols_to_use)
+        # merge
         merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'gene'], how='left') #, 'mat_pep'
-        #dups = mutation_index[mutation_index.duplicated(subset=['nucleotide position', 'original mutation description'], keep=False)]
-        #dups = dups.sort_values(by='nucleotide position')
         #dups.to_csv('madeline_testing/dups.tsv', sep='\t', index=False)
 
         # keep only specified columns, discarding 'pokay_id' here
@@ -395,6 +396,9 @@ if __name__ == '__main__':
 
     # reorder columns and drop 'index1'
     merged_dataFrame = merged_dataFrame[dataFrame_cols]
+
+    # drop duplicates
+    merged_dataFrame = merged_dataFrame.drop_duplicates()
 
     # sort by nucleotide position and reindex
     merged_dataFrame = merged_dataFrame.sort_values(by='nucleotide position')
