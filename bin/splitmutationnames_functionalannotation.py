@@ -70,7 +70,7 @@ if __name__ == '__main__':
         # make temporary column for lengths of lists
         len_count = column + ' length'
         df.loc[df[column].notna(), len_count] = df[column].str.len()
-    print("made it")
+
     # make sure all columns have the same number of elements; if they don't, throw an error
     if not (df['original mutation description length'].equals(df['nucleotide position length'])):
         print("Original mutation description and nucleotide position columns are of unequal length")   
@@ -146,6 +146,5 @@ if __name__ == '__main__':
     # save modified file
     filepath = args.out_functions
     print("Saved as: ", filepath)
-    print("")
     df.to_csv(filepath, sep='\t', index=False, header=True)
 
