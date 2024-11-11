@@ -46,7 +46,8 @@ if __name__ == '__main__':
     
     # read in functional annotations file
     df = pd.read_csv(args.functional_annotations, sep='\t', header=0)
-
+    df = df.drop_duplicates()
+    
     dataFrame_cols = df.columns.tolist() + ['comb_mutation']
 
     # remove any leading/trailing spaces
@@ -64,7 +65,8 @@ if __name__ == '__main__':
         # convert not-null values to lists
         df.loc[df[column].notna(), column] = df[column].astype(str).str.split(',')
         #convert null values to empty lists
-        df.loc[df[column].isnull(),[column]] = df.loc[df[column].isnull(),column].apply(lambda x: [])
+        df[column] = df[column].fillna("").apply(list)
+        #df.loc[df[column].isnull(),[column]] = df.loc[df[column].isnull(),column].apply(lambda x: [])
         # make temporary column for lengths of lists
         len_count = column + ' length'
         df.loc[df[column].notna(), len_count] = df[column].str.len()
@@ -90,7 +92,7 @@ if __name__ == '__main__':
         padded_list = [a + b for a,b in zip(A_list, nas_to_add_list)] # column to explode padded with NaNs
         # add padded column to df
         df['amino acid mutation alias'] = padded_list
-        
+
     # explode list columns
     df = unnest_multi(df, to_unnest, reset_index=True)
 
@@ -138,8 +140,11 @@ if __name__ == '__main__':
     df['PMID'] = df['PMID'].str.replace('.0', '', regex=False)
     df['publication year'] = df['publication year'].str.replace('.0', '', regex=False)
 
+    # drop duplicate rows
+    df = df.drop_duplicates()
+
     # save modified file
     filepath = args.out_functions
     print("Saved as: ", filepath)
-    print("")
     df.to_csv(filepath, sep='\t', index=False, header=True)
+
