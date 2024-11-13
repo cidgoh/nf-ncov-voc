@@ -70,6 +70,7 @@ def add_template_annotations(gvf, annotation_file, annotation_resource):
     df['citation'] = df['author'] + ' et al. (' + df['publication_year'].str.replace(".0", "", regex=False) + ')'
     df_columns = functional_attributes + ["original_mutation_description", "protein_symbol"]
     df = df[df_columns]
+    df = df.drop_duplicates()
 
     merged_df = pd.merge(gvf, df, on=['original_mutation_description', 'protein_symbol'], how='left') #, 'alias'
 

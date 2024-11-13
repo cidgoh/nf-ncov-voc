@@ -49,9 +49,9 @@ if __name__ == '__main__':
     # rearrange columns
     functional_annotation_df = functional_annotation_df[functional_annotation_columns]
 
-    # make sure years are integers
-    #functional_annotation_df['publication year'] = functional_annotation_df['publication year'].astype(str).replace('.0', 'CAT', regex=False)
+    # make sure years and PMIDs are integers
     functional_annotation_df["publication year"] = functional_annotation_df["publication year"].astype('Int64')
+    functional_annotation_df['PMID'] = functional_annotation_df['PMID'].str.replace('.0', '', regex=False)
 
     # save to TSV
     functional_annotation_df.to_csv(args.outputfile, sep='\t', header=True, index=False)
