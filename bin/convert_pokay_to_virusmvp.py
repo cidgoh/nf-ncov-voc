@@ -59,6 +59,8 @@ def data_cleanup(dframe):
     dframe['variant functional effect description'] = dframe[
         'variant functional effect description'].str.replace('#', '')
     dframe['variant functional effect description'] = dframe[
+        'variant functional effect description'].str.replace('"', "'", regex=False)
+    dframe['variant functional effect description'] = dframe[
         'variant functional effect description'].str.strip()
     
     #dframe['comb_mutation'] = dframe['comb_mutation'].apply(
@@ -413,7 +415,7 @@ if __name__ == '__main__':
     # perform groupby and aggregation
     merged_dataFrame = merged_dataFrame.groupby(by=['index1'], as_index=False).agg(agg_dict)
 
-    #remove strings of commas in mutation name columns
+    # remove strings of commas in mutation name columns
     for column in ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']:
         merged_dataFrame.loc[merged_dataFrame[column].str.contains(',,', regex=False), column] = ''
         merged_dataFrame.loc[merged_dataFrame[column]==',', column] = ''
