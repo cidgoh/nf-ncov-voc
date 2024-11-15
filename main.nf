@@ -7,7 +7,7 @@ script_files = "$baseDir/bin"
 
 // include workflows
 include { COVIDMVP } from './workflows/covidmvp'
-//include { POXMVP } from './workflows/poxmvp'
+include { POXMVP } from './workflows/poxmvp'
 include { WASTEWATER } from './workflows/virusmvp_wastewater'
 //include { FLUMVP                    } from './workflows/flumvp'
 
@@ -18,7 +18,6 @@ include { CONFIGURE_VIRUSMVP } from './subworkflows/local/virusmvp_config'
 include {printHelp              } from './modules/local/help'
 include {cidgohHeader           } from './modules/local/header'
 include {workflowHeader         } from './modules/local/wf_header'
-
 
 
 if (params.help){
@@ -44,8 +43,6 @@ if ( !params.prefix ) {
             }
 }
 
-
-
 // main workflow
 workflow {
       main:
@@ -60,22 +57,14 @@ workflow {
             }
       }
       
-            // Building configuration file for COVID-MVP
-      if(!params.skip_configuration){
-            gff_file = file(params.viral_gff, checkIfExists: true)
-            gff = [ [ id:params.virus_accession_id ], gff_file ]
-            CONFIGURE_VIRUSMVP(gff)
-            ch_json=CONFIGURE_VIRUSMVP.out.ch_json
-            ch_snpeff_db=CONFIGURE_VIRUSMVP.out.ch_snpeff_db
-            ch_snpeff_config=CONFIGURE_VIRUSMVP.out.ch_snpeff_config
-            ch_viral_fai=CONFIGURE_VIRUSMVP.out.ch_viral_fai
-      }
-      else{
-            ch_json = file(params.ch_json)
-            ch_snpeff_db = file(params.ch_snpeff_db)
-            ch_snpeff_config = file(params.ch_snpeff_config)
-            ch_viral_fai = file(params.ch_viral_fai)
-      }
+      CONFIGURE_VIRUSMVP()
+      json_file = file(params.genecoord, checkIfExists: true)
+      ch_json = [ [ id:params.virus_accession_id ], [ json_file ] ]
+      
+      ch_snpeff_db=CONFIGURE_VIRUSMVP.out.ch_snpeff_db
+      ch_snpeff_config=CONFIGURE_VIRUSMVP.out.ch_snpeff_config
+      ch_viral_fai=CONFIGURE_VIRUSMVP.out.ch_viral_fai
+      
       if (params.virus_accession_id = "NC_045512.2"){
             println("Executing COVID-MVP")
             if (params.wastewater){
@@ -84,19 +73,15 @@ workflow {
             else{
                   COVIDMVP(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai) 
             }
-            
-            
       }
 
       else if (params.virus_accession_id = "NC_063383.1"){
             println("Executing POX-MVP")
-            //POXMVP(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai)                    
+            if (params.wastewater){
+                  WASTEWATER(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai)
+            }
+            else{
+                  POXMVP(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai) 
+            }
       }
-      else {
-            println("Executing FLU-MVP")
-            //FLUMVP()                                              
-      }
-
-      
-
 }
