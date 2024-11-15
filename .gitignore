@@ -19,5 +19,5 @@ data/*
 hMPXV_*
 bin/web.log
 assets/config.ini
-*-params.yaml
 *.xz
+*.log
