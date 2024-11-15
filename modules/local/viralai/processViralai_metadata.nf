@@ -12,7 +12,6 @@ process PROCESS_VIRALAI_METADATA {
     output:
         tuple val(meta), path("*.csv.gz"), emit: gz
 
-
     script:
 
         """
