@@ -7,19 +7,37 @@
 
 ## Introduction
 
-**nf-ncov-voc** is a bioinformatics analysis workflow used for
-performing variant calling on SARS-CoV-2 genomes to identify and
-profile mutations in Variants of Concern (VOCs), Variants of
-Interest (VOIs) and Variants under Monitoring (VUMs). This workflow has
-four main stages - **Preprocessing**, **Genomic Analysis (Variant
-Calling)** , **Functional Annotation** and **Surveillance**.
-**nf-ncov-voc** workflow can be used in combination with an interactive
-visualization tool [COVID-MVP](https://github.com/cidgoh/COVID-MVP)
-or as a stand-alone high-throughput analysis tool to produce
-mutation profiles and surveillance reports.
+**nf-ncov-voc** is a bioinformatics workflow developed to process viral genomes and integrate the contextual data.
+The workflow was intially designed for processing SARS-CoV-2 for COVID-19 pandemic response and has been later adapted for more priority viruses e.g., Mpox and Influenza. The workflow is developed in a modular structure with several modules and sub-workflows leveraged from [nf-core](https://nf-co.re). These modules and sub-workflows are assembled in a plug-n-play manner based on the data and viral charatceristics. Each virus supported by the workflow has its own workflow file that directs the assembly of sub-workflows and modules.
 
-As an input, **nf-ncov-voc** workflow requires SARS-CoV-2 consensus
-sequences in `FASTA` format and Metadata file in `TSV` format.
+The workflow is built using [Nextflow](https://www.nextflow.io)- [DSL2](https://www.nextflow.io/docs/latest/dsl2.html), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It can use `conda`/`Docker`/`Singularity` containers making installation trivial and results highly reproducible.
+
+**nf-ncov-voc** workflow can be used in combination with an interactive
+visualization tool [VIRUS-MVP](https://github.com/cidgoh/VIRUS-MVP) or as a stand-alone high-throughput analysis tool to produce mutation profiles and surveillance reports.
+
+A detailed structure and each module of the workflow is presented
+below in the dataflow diagram
+
+### nf-ncov-voc Dataflow
+
+![DataFlow](figs/COVIDMVP.drawio.png)
+
+### Functional Annotation
+
+**nf-ncov-voc** offers a unique opportunity to integrate the contextual data with genomics data. Variant Called File (VCF) generated for each group or sample is then converted to a Genome Variant File (GVF) to integrate the functions associated to different mutations. For more information of how the functions are curated and structured see the dedicated repository [_Pokay_](https://github.com/nodrogluap/pokay)
+
+**nf-ncov-voc** with the help of functional data in _Pokay_, produces surveillance reports that are developed in collaboration with the Public Health partners and offers a high-level yet comprehensive report on each mutation its associated functions in literature.
+
+### Input data
+
+As an input, **nf-ncov-voc** can accept different formats, Whole Genome Sequences (WGS) in `FASTA` format with a Metadata file in `TSV` format; paired-end short read sequences in `FASTQ` format with a Metadata file in `TSV` format. Additionally, the input can also be `VCF` file that contains variants called.
+
+### Grouping data
+
+### Quality control
+
+### Variant Calling
+
 Sequences in pre-processing stage are filtered using Metadata
 variables, quality filtered and assigned lineages. Sequences
 assigned as VOCs, VOIs and VUMs are then mapped to SARS-CoV-2 genome,
@@ -34,19 +52,6 @@ Finally, in the surveillance module, these functional profiles are
 summarized using functional indicators to highlight key functions
 and mutations responsible for them for e.g. **P618H** role in
 _convalescent plasma escape_.
-
-The workflow is built using [Nextflow](https://www.nextflow.io)-
-[DSL2](https://www.nextflow.io/docs/latest/dsl2.html), a workflow
-tool to run tasks across multiple compute infrastructures in a very
-portable manner. It can use `conda`/`Docker`/`Singularity`
-containers making installation trivial and results highly reproducible.
-
-A detailed structure and each module of the workflow is presented
-below in the dataflow diagram
-
-### nf-ncov-voc Dataflow
-
-![DataFlow](figs/COVIDMVP.drawio.png)
 
 ### Pre-Processing
 
@@ -120,6 +125,8 @@ for Omicron variant using
 See the
 [parameters](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs/PARAMETERS.md)
 docs for all available options when running the workflow.
+
+** Further developments will continue to adapt nf-ncov-voc to other viruses in near furture. **
 
 ## Usage
 
