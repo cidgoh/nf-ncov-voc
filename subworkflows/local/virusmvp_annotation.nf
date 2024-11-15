@@ -51,13 +51,13 @@ workflow ANNOTATION {
         
         //VCF to GVF transformation
         
-        if (ch_json == []){
+        /*if (ch_json == []){
             json_file = file(params.genecoord, checkIfExists: true)
             json = [ [ id:params.virus_accession_id ], [ json_file ] ]
         }
         else{
             json = ch_json
-        }
+        }*/
         threshold=0.75
         if (params.wastewater){
             lineage = []
@@ -79,7 +79,7 @@ workflow ANNOTATION {
             annotation_vcf,
             ch_stats,
             threshold,
-            json, 
+            ch_json, 
             lineage, 
             wastewater_data,
             data_description,
