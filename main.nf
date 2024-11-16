@@ -18,7 +18,6 @@ include { workflowHeader     } from './modules/local/wf_header'
 
 // main workflow
 workflow {
-      //script_files = "${baseDir}/bin"
       if (params.help) {
             log.info(cidgohHeader())
             log.info(workflowHeader())
@@ -55,7 +54,7 @@ workflow {
                   }
             }
             catch (Exception e) {
-                  log.warn("Unable to set permissions for files in ${script_files}: ${e.message}")
+                  log.warn("Unable to set permissions for script files: ${e.message}")
             }
       }
       CONFIGURE_VIRUSMVP()
@@ -81,6 +80,6 @@ workflow {
             POXMVP(ch_json, ch_snpeff_db, ch_snpeff_config)
       }
       else {
-            error "Unsupported virus accession ID: ${params.virus_accession_id}"
+            error("Unsupported virus accession ID: ${params.virus_accession_id}")
       }
 }
