@@ -51,11 +51,16 @@ workflow {
       log.info workflowHeader()
 
       if (!params.skip_permissions) {
-            allFiles = listOfFiles = file("$script_files/*")
-            for( def file : allFiles ) {
-                  file.setPermissions('rwxr-x--x')
-            }
-      }
+            try {
+                  def scriptFiles = file("$script_files/*")
+                  scriptFiles.each { file ->
+                        if (file.isFile()) {
+                              file.setPermissions('rwxr-xr-x')  // 755 in octal, more standard permissions
+                        }
+                  }
+            } catch (Exception e) {
+                  log.warn "Unable to set permissions for files in $script_files: ${e.message}"}
+                  }
       
       CONFIGURE_VIRUSMVP()
       json_file = file(params.genecoord, checkIfExists: true)

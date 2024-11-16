@@ -49,8 +49,7 @@ def gvf2tsv(gvf):
     df.columns = df.columns.str.replace("#", "")
 
     # drop unwanted columns
-    df = df.drop(labels=['seqid', 'type', 'end',
-                         'strand', 'score', 'phase', 'id'], axis=1)
+    df = df.drop(labels=['seqid', 'type', 'end', 'strand', 'score', 'phase', 'id'], axis=1)
 
     # rename 'dp' column to 'sequence_depth', make 'viral_lineage'
     # plural
