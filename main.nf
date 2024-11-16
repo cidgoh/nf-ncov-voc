@@ -18,7 +18,7 @@ include { workflowHeader     } from './modules/local/wf_header'
 
 // main workflow
 workflow {
-      script_files = "${baseDir}/bin"
+      //script_files = "${baseDir}/bin"
       if (params.help) {
             log.info(cidgohHeader())
             log.info(workflowHeader())
@@ -47,7 +47,7 @@ workflow {
 
       if (!params.skip_permissions) {
             try {
-                  def scriptFiles = file("${script_files}/*")
+                  def scriptFiles = file("${baseDir}/bin/*")
                   scriptFiles.each { file ->
                         if (file.isFile()) {
                               file.setPermissions('rwxr-xr-x')
@@ -72,14 +72,15 @@ workflow {
             log.info("Running WASTEWATER workflow")
             WASTEWATER(ch_json, ch_snpeff_db, ch_snpeff_config)
       }
+      else if (params.virus_accession_id == "NC_045512.2") {
+            log.info("Executing COVIDMVP workflow")
+            COVIDMVP(ch_json, ch_snpeff_db, ch_snpeff_config)
+      }
+      else if (params.virus_accession_id == "NC_063383.1") {
+            log.info("Executing POXMVP workflow")
+            POXMVP(ch_json, ch_snpeff_db, ch_snpeff_config)
+      }
       else {
-            def mvp_workflow = params.virus_accession_id == "NC_045512.2"
-                  ? COVIDMVP
-                  : params.virus_accession_id == "NC_063383.1"
-                        ? POXMVP
-                        : { error("Unsupported virus accession ID: ${params.virus_accession_id}") }
-
-            log.info("Executing ${mvp_workflow.name}")
-            mvp_workflow(ch_json, ch_snpeff_db, ch_snpeff_config)
+            error "Unsupported virus accession ID: ${params.virus_accession_id}"
       }
 }
