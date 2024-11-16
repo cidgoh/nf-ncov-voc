@@ -9,15 +9,14 @@ script_files = "$baseDir/bin"
 include { COVIDMVP } from './workflows/covidmvp'
 include { POXMVP } from './workflows/poxmvp'
 include { WASTEWATER } from './workflows/virusmvp_wastewater'
-//include { FLUMVP                    } from './workflows/flumvp'
 
 // include subworkflows
 include { CONFIGURE_VIRUSMVP } from './subworkflows/local/virusmvp_config'
 
 // include modules
-include {printHelp              } from './modules/local/help'
-include {cidgohHeader           } from './modules/local/header'
-include {workflowHeader         } from './modules/local/wf_header'
+include { printHelp           } from './modules/local/help'
+include { cidgohHeader        } from './modules/local/header'
+include { workflowHeader      } from './modules/local/wf_header'
 
 
 if (params.help){
@@ -61,32 +60,33 @@ workflow {
             } catch (Exception e) {
                   log.warn "Unable to set permissions for files in $script_files: ${e.message}"}
                   }
-      
       CONFIGURE_VIRUSMVP()
       json_file = file(params.genecoord, checkIfExists: true)
-      ch_json = [ [ id:params.virus_accession_id ], [ json_file ] ]
-      
-      ch_snpeff_db=CONFIGURE_VIRUSMVP.out.ch_snpeff_db
-      ch_snpeff_config=CONFIGURE_VIRUSMVP.out.ch_snpeff_config
-      ch_viral_fai=CONFIGURE_VIRUSMVP.out.ch_viral_fai
-      
-      if (params.virus_accession_id = "NC_045512.2"){
+      ch_json = Channel.of(tuple([id: params.virus_accession_id], json_file))
+      ch_snpeff_db = CONFIGURE_VIRUSMVP.out.ch_snpeff_db
+      ch_snpeff_config = CONFIGURE_VIRUSMVP.out.ch_snpeff_config
+
+      // Debug: Print channel contents
+      ch_json.view { "ch_json: $it" }
+      ch_snpeff_db.view { "ch_snpeff_db: $it" }
+      ch_snpeff_config.view { "ch_snpeff_config: $it" }
+
+      if (params.wastewater) {
+      println "Running WASTEWATER workflow"
+      WASTEWATER(ch_json, ch_snpeff_db, ch_snpeff_config)
+      } else {
+      switch(params.virus_accession_id) {
+      case "NC_045512.2":
             println("Executing COVID-MVP")
-            if (params.wastewater){
-                  WASTEWATER(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai)
-            }
-            else{
-                  COVIDMVP(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai) 
-            }
+            COVIDMVP(ch_json, ch_snpeff_db, ch_snpeff_config)
+            break
+      case "NC_063383.1":
+            println("Executing POX-MVP")
+            POXMVP(ch_json, ch_snpeff_db, ch_snpeff_config)
+            break
+      default:
+            error "Unsupported virus accession ID: ${params.virus_accession_id}"
+      }
       }
 
-      else if (params.virus_accession_id = "NC_063383.1"){
-            println("Executing POX-MVP")
-            if (params.wastewater){
-                  WASTEWATER(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai)
-            }
-            else{
-                  POXMVP(ch_json, ch_snpeff_db, ch_snpeff_config, ch_viral_fai) 
-            }
-      }
 }
