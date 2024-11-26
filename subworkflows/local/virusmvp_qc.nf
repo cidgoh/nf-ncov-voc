@@ -8,14 +8,14 @@ include { SEQKIT_STATS } from '../../modules/nf-core/seqkit/stats/main'
 
 workflow QUALITYCONTROL {
     take:
-    sequences_grouped     
+    sequences             
     ch_collected_sequences
 
     main:
-    BBMAP(sequences_grouped)
+    BBMAP(sequences)
     SEQKIT_STATS(ch_collected_sequences)
 
     emit:
-    sequences_grouped = BBMAP.out.fasta
-    stats             = SEQKIT_STATS.out.stats
+    sequences = BBMAP.out.fasta
+    stats     = SEQKIT_STATS.out.stats
 }

@@ -37,4 +37,5 @@ workflow POSTPROCESSING {
 
         MERGE_LOGFILES(logheader, ch_logs, ch_indexfile)
         
+        
 }
