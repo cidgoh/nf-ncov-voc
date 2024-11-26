@@ -28,8 +28,7 @@ def parse_args():
 
 def gvf2tsv(gvf):
     # read in gvf
-    gvf_columns = ['#seqid', '#source', '#type', '#start', '#end',
-                   '#score', '#strand', '#phase', '#attributes']
+    gvf_columns = ['#seqid', '#source', '#type', '#start', '#end', '#score', '#strand', '#phase', '#attributes']
 
     df = pd.read_csv(gvf, sep='\t', names=gvf_columns)
     # remove pragmas and original header

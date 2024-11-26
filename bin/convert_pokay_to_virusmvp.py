@@ -16,7 +16,7 @@ import argparse
 from pathlib import Path
 import pandas as pd
 import csv
-from functions import map_pos_to_gene_protein, unnest_multi
+from functions import unnest_multi
 
 
 def parse_args():

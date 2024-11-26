@@ -21,8 +21,7 @@ empty_attributes = 'ID=;original_mutation_description=;alias=;gene=;gene_name=;g
 
 empty_attributes = empty_attributes.replace(" ", "")
 
-gvf_columns = ['#seqid', '#source', '#type', '#start', '#end',
-               '#score', '#strand', '#phase', '#attributes']
+gvf_columns = ['#seqid', '#source', '#type', '#start', '#end', '#score', '#strand', '#phase', '#attributes']
 
 vcf_columns = ['#CHROM', 'POS', 'ID', 'REF', 'ALT', 'QUAL',
                 'FILTER', 'INFO', 'FORMAT', 'unknown']
@@ -34,13 +33,7 @@ pragmas = pd.DataFrame([['##gff-version 3'],
                         ['##species']])
 
 # source: https://hgvs-nomenclature.org/stable/background/standards/#amino-acid-descriptions
-amino_acid_codes_dict = {'*': 'Ter', 'A': 'Ala', 'B': 'Asx', 'C': 'Cys',
-                         'D': 'Asp', 'E': 'Glu', 'F': 'Phe', 'G': 'Gly',
-                         'H': 'His', 'I': 'Ile', 'K': 'Lys', 'L': 'Leu',
-                         'M': 'Met', 'N': 'Asn', 'P': 'Pro', 'Q': 'Gln',
-                         'R': 'Arg', 'S': 'Ser', 'T': 'Thr', 'U': 'Sec',
-                         'V': 'Val', 'W': 'Trp', 'X': 'Xaa', 'Y': 'Tyr',
-                         'Z': 'Glx'}
+amino_acid_codes_dict = {'*': 'Ter', 'A': 'Ala', 'B': 'Asx', 'C': 'Cys', 'D': 'Asp', 'E': 'Glu', 'F': 'Phe', 'G': 'Gly', 'H': 'His', 'I': 'Ile', 'K': 'Lys', 'L': 'Leu', 'M': 'Met', 'N': 'Asn', 'P': 'Pro', 'Q': 'Gln', 'R': 'Arg', 'S': 'Ser', 'T': 'Thr', 'U': 'Sec', 'V': 'Val', 'W': 'Trp', 'X': 'Xaa', 'Y': 'Tyr', 'Z': 'Glx'}
 
 def convert_amino_acid_codes(one_letter_mutation_name):
     three_letter_code_result = "".join([

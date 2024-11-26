@@ -10,7 +10,6 @@ If an existing mutation index is provided, the new indices are added to it.
 """
 import dask
 dask.config.set({'dataframe.query-planning': True})
-from dask.distributed import Client
 import dask.dataframe as dd
 import argparse
 
@@ -26,45 +25,30 @@ def parse_args():
     parser.add_argument('--index_savefile', type=str,
                         default=None, help='TSV filename to save updated \
                             index of all mutations to')
-    parser.add_argument('--cpus', type=int, default=1,
-                        help='Number of CPUs to use')
 
     return parser.parse_args()
 
 
 if __name__ == '__main__':
+
     args = parse_args()
     original_index = args.original_index
     gvf_indices_list = args.gvf_indices
     index_savefile = args.index_savefile
-    cpus = args.cpus
-
-    # Set up Dask distributed client with specified CPUs
-    client = Client(n_workers=cpus)
-    print(f"Dask client initialized with {cpus} workers. Dashboard available at {client.dashboard_link}")
 
     # if an original index is provided, merge the new indices with it
-    if original_index is not None:
+    if original_index!=None:
         indices_to_merge = [original_index] + gvf_indices_list
+    # if an original index is not provided, make an entirely new index
     else:
         indices_to_merge = gvf_indices_list
 
     # read all indices into dask df
-    ddf = dd.read_csv(
-        indices_to_merge,
-        sep='\t',
-        dtype={
-            'alias': 'object',
-            'alias_protein': 'object',
-            'hgvs_aa_mutation': 'object',
-            'hgvs_alias': 'object',
-            'protein_name': 'object'
-        }
-    )
+    ddf = dd.read_csv(indices_to_merge, sep='\t', dtype={'alias': 'object', 'alias_protein': 'object', 'hgvs_aa_mutation': 'object', 'hgvs_alias': 'object', 'protein_name': 'object'}) 
     # fillna to make groupby() work
     ddf = ddf.fillna('n/a')
     # specify which columns to group by
-    group_cols = [x for x in ddf.columns if x != 'lineages']
+    group_cols = [x for x in ddf.columns if x!='lineages']
     # do groupby operation
     ddf = ddf.groupby(by=group_cols)['lineages'].apply(','.join).reset_index()
     # sort by 'pos'
@@ -72,5 +56,3 @@ if __name__ == '__main__':
 
     # save ddf as a single TSV
     ddf.to_csv(index_savefile, single_file=True, sep='\t', index=False)
-
-    print("Index merging completed. File saved at:", index_savefile)
