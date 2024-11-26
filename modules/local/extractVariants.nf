@@ -15,12 +15,12 @@ process EXTRACTVARIANTS {
       val time
 
       output:
-      tuple val(meta2), path("*.txt"), emit: txt
-      tuple val(meta2), path("*.log"), emit: log, optional: true
+      tuple val(meta), path("*.txt"), emit: txt
+      tuple val(meta), path("*.log"), emit: log, optional: true
 
       script:
 
-      def prefix = task.ext.prefix ?: "${meta2.id}"
+      def prefix = task.ext.prefix ?: "${meta.id}"
       def val_variant_file = variant_file ? "--variants ${variants}" : ''
       def virusseq_update = virusseq ? "--virusseq" : ''
       def val_time = time ? "--start_date ${params.start_date} --end_date ${params.end_date}" : ''

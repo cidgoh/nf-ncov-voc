@@ -1,5 +1,7 @@
 process MERGE_INDICES {
   tag "${meta.id}"
+  cpus 6
+
   conda "conda-forge::dask=2023.10.1"
   container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
     ? 'biocontainers/dask:2023.10.1-py11-ol9_cv1'
@@ -20,6 +22,7 @@ process MERGE_INDICES {
     merge_indices.py \\
         --gvf_indices ${index} \\
         ${last_index} \\
+        --cpus ${task.cpus} \\
         --index_savefile ${end_date}.index.tsv
   """
 }
