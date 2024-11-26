@@ -63,10 +63,6 @@ workflow {
       ch_snpeff_db = CONFIGURE_VIRUSMVP.out.ch_snpeff_db
       ch_snpeff_config = CONFIGURE_VIRUSMVP.out.ch_snpeff_config
 
-      // Debug: Print channel contents
-      ch_json.view { "ch_json: ${it}" }
-      ch_snpeff_db.view { "ch_snpeff_db: ${it}" }
-      ch_snpeff_config.view { "ch_snpeff_config: ${it}" }
       if (params.wastewater) {
             log.info("Running WASTEWATER workflow")
             WASTEWATER(ch_json, ch_snpeff_db, ch_snpeff_config)
