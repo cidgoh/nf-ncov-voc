@@ -5,7 +5,7 @@ nextflow.enable.dsl = 2
 include { PREPROCESSING             } from '../subworkflows/local/virusmvp_preprocessing'
 include { VARIANT_CALLING           } from '../subworkflows/local/virusmvp_variantcalling'
 include { ANNOTATION                } from '../subworkflows/local/virusmvp_annotation'
-include { surveillance              } from '../subworkflows/local/virusmvp_surveillance'
+include { SURVEILLANCE              } from '../subworkflows/local/virusmvp_surveillance'
 include { GVF_PROCESSING_ANNOTATION } from '../subworkflows/local/virusmvp_gvf_processing_annotations'
 include { QUALITYCONTROL            } from '../subworkflows/local/virusmvp_qc'
 include { VIRALAI                   } from '../subworkflows/local/viralai/viralai_datadownload'
@@ -18,8 +18,8 @@ include { METADATA_HARMONIZER       } from '../modules/local/harmonize_metadata'
 
 workflow COVIDMVP {
     take:
-    ch_json         
-    ch_snpeff_db    
+    ch_json
+    ch_snpeff_db
     ch_snpeff_config
 
     main:
@@ -54,28 +54,23 @@ workflow COVIDMVP {
         }
         if (!params.skip_classification) {
             CLASSIFICATION(metadata, sequences)
-            metadata = CLASSIFICATION.out.metadata
+            metadata = CLASSIFICATION.out.merged_metadata
         }
 
         PREPROCESSING(metadata, sequences)
         metadata = PREPROCESSING.out.metadata
         sequences = PREPROCESSING.out.sequences
 
-        sequences
-            .map { fasta_files ->
-                tuple([[id: fasta_files.getBaseName(2)], [fasta_files]])
-            }
-            .set { sequences_grouped }
+        // Step 2: Process SEQKIT_GREP output
 
-        sequences
-            .map { [it[1]] }
+        ch_collected_sequences = sequences
+            .map { it[1] }
             .collect()
-            .map { sequences -> [[id: "seqkit_stat"], sequences] }
-            .set { ch_collected_sequences }
+            .map { seqs -> [[id: "seqkit_stat"], seqs] }
 
         if (!params.skip_qc) {
-            QUALITYCONTROL(sequences_grouped, ch_collected_sequences)
-            sequences_grouped = QUALITYCONTROL.out.sequences_grouped
+            QUALITYCONTROL(sequences, ch_collected_sequences)
+            sequences_grouped = QUALITYCONTROL.out.sequences
             ch_stats = QUALITYCONTROL.out.stats
         }
     }
@@ -87,12 +82,13 @@ workflow COVIDMVP {
         }
         else {
             if (!params.skip_qc) {
-                QUALITYCONTROL(sequences, sequences)
-                sequences_grouped = QUALITYCONTROL.out.sequences_grouped
+                QUALITYCONTROL(sequences, ch_collected_sequences)
+                sequences_grouped = QUALITYCONTROL.out.sequences
                 ch_stats = QUALITYCONTROL.out.stats
             }
         }
     }
+
     if (!skip_variant_calling == true) {
         VARIANT_CALLING(sequences_grouped, params.viral_genome, params.viral_genome_fai)
         annotation_vcf = VARIANT_CALLING.out.vcf
@@ -106,4 +102,6 @@ workflow COVIDMVP {
     if (!params.skip_postprocessing) {
         POSTPROCESSING(annotated_gvf, PREPROCESSING.out.logfile)
     }
+
+    SURVEILLANCE(annotated_gvf)
 }

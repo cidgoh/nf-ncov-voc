@@ -5,7 +5,7 @@ nextflow.enable.dsl = 2
 include { PREPROCESSING             } from '../subworkflows/local/virusmvp_preprocessing'
 include { VARIANT_CALLING           } from '../subworkflows/local/virusmvp_variantcalling'
 include { ANNOTATION                } from '../subworkflows/local/virusmvp_annotation'
-include { surveillance              } from '../subworkflows/local/virusmvp_surveillance'
+include { SURVEILLANCE              } from '../subworkflows/local/virusmvp_surveillance'
 include { GVF_PROCESSING_ANNOTATION } from '../subworkflows/local/virusmvp_gvf_processing_annotations'
 include { QUALITYCONTROL            } from '../subworkflows/local/virusmvp_qc'
 //include {VIRALAI                    } from '../subworkflows/local/viralai/viralai_datadownload'
@@ -18,8 +18,8 @@ include { METADATA_HARMONIZER       } from '../modules/local/harmonize_metadata'
 
 workflow POXMVP {
     take:
-    ch_json         
-    ch_snpeff_db    
+    ch_json
+    ch_snpeff_db
     ch_snpeff_config
 
     main:
