@@ -369,7 +369,7 @@ if __name__ == '__main__':
         # merge on "mutation" and "protein symbol" in index ("original mutation description" and "protein symbol" in functional annotation file)
         mutation_index = mutation_index.rename(columns={"mutation": "original mutation description", 'pos':'nucleotide position',
                                                         'hgvs_aa_mutation':'amino acid mutation','hgvs_nt_mutation':'nucleotide mutation',
-                                                        'hgvs_alias':'amino acid mutation alias', 'gene_symbol':'gene'})
+                                                        'hgvs_alias':'amino acid mutation alias', 'gene_symbol':'gene symbol'})
         #print("columns", mutation_index.columns)
         # remove index columns that don't have a nucleotide mutation entry
         initial_length = mutation_index.shape[0]
@@ -382,7 +382,7 @@ if __name__ == '__main__':
         # drop duplicate rows from mutation index
         mutation_index = mutation_index.drop_duplicates(subset=index_cols_to_use)
         # merge
-        merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'gene'], how='left') #, 'mat_pep'
+        merged_dataFrame = pd.merge(dataFrame, mutation_index, on=['original mutation description', 'gene symbol'], how='left') #, 'mat_pep'
         #dups.to_csv('madeline_testing/dups.tsv', sep='\t', index=False)
 
         # keep only specified columns, discarding 'pokay_id' here

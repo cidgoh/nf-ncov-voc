@@ -576,7 +576,7 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
     df.loc[:, 'alias'] = 'n/a'
 
     # get list of all NSP, 3CL, and PlPro proteins in the file:
-    alias_mask = (df['gene_symbol'].str.contains("ORF1ab")) & (df['mat_pep']!='n/a')
+    alias_mask = (df['gene_symbol'].str.contains("orf1ab")) & (df['mat_pep']!='n/a')
     nsps_list = sorted(list(set(df[alias_mask]['mat_pep'].tolist())))
     if len(nsps_list) > 0:
         
