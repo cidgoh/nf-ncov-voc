@@ -603,6 +603,8 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
         
         # for each nsp in nsps_list, operate on the number column based on the nsp start coordinates
         for nsp in nsps_list:
+            if nsp=='PL_proPLpro':
+                nsp='PL_pro'
             nsp_start_aa = int(GENE_PROTEIN_POSITIONS_DICT[nsp]["aa_start"])
             nsp_protein_id = GENE_PROTEIN_POSITIONS_DICT[nsp]["protein_id"]
             nsp_mask = df['mat_pep']==nsp
