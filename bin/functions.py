@@ -361,7 +361,7 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     cols_to_extract = ['DP', 'ps_filter', 'ps_exc', 'EFF', 'mat_pep', 'mat_pep_desc', 'mat_pep_acc']
     info = pd.DataFrame(columns=cols_to_extract)
     for col in cols_to_extract:
-        pat = str(col) + "\=(.*?)\;"
+        pat = str(col) + "\=(.*?)(?=[\;]|$)" 
         info[col] = df['INFO'].str.extract(pat)
     # rename uppercase columns as lowercase
     info = info.rename(columns={'DP':'dp', 'EFF':'eff'})
