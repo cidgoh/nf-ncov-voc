@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
     # create index from GVF
     # make empty index df
-    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene_name', 'gene_symbol', 'protein_name', 'protein_symbol', 'alias', 'hgvs_alias', 'mat_pep', 'Pokay_annotation', 'lineages']
+    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene_name', 'gene_symbol', 'protein_name', 'protein_symbol', 'alias', 'hgvs_alias', 'mat_pep', 'pokay_annotation', 'lineages']
     index = pd.DataFrame(np.empty((gvf.shape[0], len(index_cols))), columns=index_cols)
     # populate index df with gvf info
     index['pos'] = gvf['#start']
@@ -63,7 +63,7 @@ if __name__ == '__main__':
     index['gene_symbol'] = gvf['gene_symbol']
     index['protein_name'] = gvf['protein_name']
     index['protein_symbol'] = gvf['protein_symbol']
-    index['Pokay_annotation'] = gvf["variant_functional_effect_description"].notna()
+    index['pokay_annotation'] = gvf["variant_functional_effect_description"].notna()
     index['lineages'] = gvf['viral_lineage']
     # tidying
     index = index.drop_duplicates()
