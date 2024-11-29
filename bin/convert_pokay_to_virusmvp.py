@@ -371,11 +371,13 @@ if __name__ == '__main__':
                                                         'hgvs_aa_mutation':'amino acid mutation','hgvs_nt_mutation':'nucleotide mutation',
                                                         'hgvs_alias':'amino acid mutation alias', 'gene_symbol':'gene symbol'})
         #print("columns", mutation_index.columns)
+        '''
         # remove index columns that don't have a nucleotide mutation entry
         initial_length = mutation_index.shape[0]
         mutation_index = mutation_index[mutation_index['nucleotide mutation'].notna()]
         after_length = mutation_index.shape[0]
         print("Removed " + str(initial_length - after_length) + "/" + str(after_length) + " mutation index rows that are missing a nucleotide mutation")
+        '''
         # remove doubled columns from dataFrame
         index_cols_to_use = ['nucleotide position', 'nucleotide mutation', 'amino acid mutation', 'amino acid mutation alias']
         dataFrame = dataFrame.drop(columns=index_cols_to_use)
