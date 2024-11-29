@@ -72,26 +72,23 @@ if __name__ == '__main__':
         df.loc[df[column].notna(), len_count] = df[column].str.len()
 
     # make sure all columns have the same number of elements; if they don't, throw an error
-    if not (df['original mutation description length'].equals(df['nucleotide position length'])):
-        print("Original mutation description and nucleotide position columns are of unequal length")   
-    if not (df['nucleotide mutation length'].equals(df['nucleotide position length'])):
-        print("Nucleotide mutation and nucleotide position columns are of unequal length")  
-    if not (df['amino acid mutation length'].equals(df['nucleotide position length'])):
-        print("Amino acid mutation and nucleotide position columns are of unequal length")  
-    if not (df['amino acid mutation alias length'].equals(df['nucleotide position length'])):
-        print("Amino acid mutation alias and nucleotide position columns are of unequal length")
-        # this is only column that SHOULD have an issue, so the solution is hardcoded here:
-        # calculate how many elements to add to each list
-        df['to_add'] = df['nucleotide position length'] - df['amino acid mutation alias length']
-        # convert columns to lists of lists
-        A_list = df['amino acid mutation alias'].tolist() # column that needs padding with NaNs, represented as a nested list
-        add_list = df['to_add'].tolist() # list of integers representing how many elements to add to each list
-        na_list = [np.nan]*len(add_list) # flat list of NaNs
-        # create new list padded with NaNs
-        nas_to_add_list = [[a]*b for a,b in zip(na_list, add_list)] # nested list of NaNs to add
-        padded_list = [a + b for a,b in zip(A_list, nas_to_add_list)] # column to explode padded with NaNs
-        # add padded column to df
-        df['amino acid mutation alias'] = padded_list
+    for length_column in ['original mutation description length', 'nucleotide mutation length', 'amino acid mutation length', 'amino acid mutation alias length']:
+        if not (df[length_column].equals(df['nucleotide position length'])):
+            column = length_column.replace(' length', '')
+            #print(column + " and nucleotide position columns are of unequal length")   
+            # now fix it by padding the shorter list with nans
+            # calculate how many elements to add to each list
+            df['to_add'] = df['nucleotide position length'] - df[length_column]
+            # convert columns to lists of lists
+            A_list = df[column].tolist() # column that needs padding with NaNs, represented as a nested list
+            add_list = df['to_add'].tolist() # list of integers representing how many elements to add to each list
+            na_list = [np.nan]*len(add_list) # flat list of NaNs
+            # create new list padded with NaNs
+            nas_to_add_list = [[a]*b for a,b in zip(na_list, add_list)] # nested list of NaNs to add
+            padded_list = [a + b for a,b in zip(A_list, nas_to_add_list)] # column to explode padded with NaNs
+            # add padded column to df
+            df[column] = padded_list
+            #print("Fixed.")
 
     # explode list columns
     df = unnest_multi(df, to_unnest, reset_index=True)
