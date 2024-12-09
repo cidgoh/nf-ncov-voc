@@ -25,7 +25,7 @@ process GVF2TSV {
     gvf2tsv.py \\
         --gvf_file ${gvf} \\
         ${args} \\
-        --outtsv ${prefix}.tsv
+        --outtsv ${prefix}_annotated.tsv
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

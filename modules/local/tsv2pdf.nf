@@ -19,15 +19,11 @@ process TSV2PDF {
     def prefix = task.ext.prefix ?: "${meta.id}"
 
     """
-    echo "Inputs:"
-    echo "TSV file: ${tsv}"
-    echo "Indicators file: ${surveillanceindicators}"
-    echo "Metadata: ${metadata}"
     surveillance_report_pdf.py \
         --tsv ${tsv} \
         --functions_table ${surveillanceindicators} \
         ${metadata_arg} \
         ${virusseq_arg} \
-        --output ${prefix}.pdf
+        --output ${prefix}_annotated.pdf
     """
 }
