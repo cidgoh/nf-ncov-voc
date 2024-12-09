@@ -21,8 +21,8 @@ import json
 from functions import parse_INFO, find_sample_size, \
     get_unknown_labels, separate_attributes, rejoin_attributes, \
     clade_defining_threshold, map_pos_to_gene_protein, add_alias_names, \
-    add_hgvs_names
-from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
+    add_hgvs_names, empty_attributes, gvf_columns, vcf_columns, pragmas
+#from functions import empty_attributes, gvf_columns, vcf_columns, pragmas
 
 
 def vcftogvf(vcf, strain, GENE_PROTEIN_POSITIONS_DICT, sample_size):
