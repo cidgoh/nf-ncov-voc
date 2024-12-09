@@ -59,17 +59,17 @@ workflow COVIDMVP {
 
         PREPROCESSING(metadata, sequences)
         metadata = PREPROCESSING.out.metadata
-        sequences = PREPROCESSING.out.sequences
+        processed_sequences = PREPROCESSING.out.sequences
 
         // Step 2: Process SEQKIT_GREP output
 
-        ch_collected_sequences = sequences
+        ch_collected_sequences = processed_sequences
             .map { it[1] }
             .collect()
             .map { seqs -> [[id: "seqkit_stat"], seqs] }
 
         if (!params.skip_qc) {
-            QUALITYCONTROL(sequences, ch_collected_sequences)
+            QUALITYCONTROL(processed_sequences, ch_collected_sequences)
             sequences_grouped = QUALITYCONTROL.out.sequences
             ch_stats = QUALITYCONTROL.out.stats
         }
@@ -82,7 +82,7 @@ workflow COVIDMVP {
         }
         else {
             if (!params.skip_qc) {
-                QUALITYCONTROL(sequences, ch_collected_sequences)
+                QUALITYCONTROL(sequences, sequences)
                 sequences_grouped = QUALITYCONTROL.out.sequences
                 ch_stats = QUALITYCONTROL.out.stats
             }
@@ -102,6 +102,8 @@ workflow COVIDMVP {
     if (!params.skip_postprocessing) {
         POSTPROCESSING(annotated_gvf, PREPROCESSING.out.logfile)
     }
-
-    SURVEILLANCE(annotated_gvf)
+    if (!params.skip_surveillance) {
+        ch_metadata = params.metadata ? Channel.value(file(params.metadata)) : Channel.value(null)
+        SURVEILLANCE(annotated_gvf, ch_metadata)
+    }
 }
