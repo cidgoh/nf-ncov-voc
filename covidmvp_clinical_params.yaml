@@ -1,6 +1,8 @@
 mode: "reference"
+seq: "/scratch/group_share/nextflow_workdir/mzanwar/93/c3c398c03ff4a68a688446f139cda0/2024-11-15T02%3A00%3A02Z.5f384c10-e08e-4567-ae6e-a1e26035e4b3.multi.fa.xz"
+meta: "/scratch/group_share/nextflow_workdir/mzanwar/2d/63961dce3ce007283f6f9f71413044/viralai_metadata_processed.csv.gz"
 grouping_criteria: "lineage"
-viralai: true
+viralai: false
 virusseq: true
 virusseq_update: false
 skip_classification: true
@@ -8,7 +10,7 @@ skip_postprocessing: false
 skip_posting: true
 skip_harmonize: false
 start_date: "2020-01-01"
-end_date: "2024-10-25"
+end_date: "2024-12-02"
 metadata_source: "ViralAi_EpiCoV"
 metadata_config: "/project/def-virusmvp/mzanwar/nf-ncov-voc/assets/metadata_conf/metadata.yaml"
 outdir: "/project/def-virusmvp/mzanwar/nf-ncov-voc/results/covidmvp"
