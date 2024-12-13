@@ -54,16 +54,18 @@ if __name__ == '__main__':
         indices_to_merge,
         sep='\t',
         dtype={
-            'alias': 'object',
-            'alias_protein': 'object',
+            'pos': 'int64',  # Assuming 'pos' is an integer column
+            'mutation': 'object',
             'hgvs_aa_mutation': 'object',
-            'hgvs_alias': 'object',
-            'protein_name': 'object',
+            'hgvs_nt_mutation': 'object',
             'gene_name': 'object',
             'gene_symbol': 'object',
-            'mat_pep': 'object',
+            'protein_name': 'object',
             'protein_symbol': 'object',
-            'pos': 'int64',  # Assuming 'pos' is an integer column
+            'alias': 'object',
+            'hgvs_alias': 'object',
+            'mat_pep': 'object',
+            'pokay_annotation': 'object',
             'lineages': 'object'
         }
     )

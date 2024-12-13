@@ -64,10 +64,10 @@ if __name__ == '__main__':
         # convert original_index to match the logfile columns
         # read index into pandas df
         og_index = pd.read_csv(original_index, sep='\t').fillna('n/a')
-        # fill in 'new_mutations' column like: "gene:mutation"
-        og_index['new_mutations'] = og_index["gene"] + ":" + og_index["mutation"]
+        # fill in 'new_mutations' column like: "protein:mutation"
+        og_index['new_mutations'] = og_index["protein_symbol"] + ":" + og_index["mutation"]
         # for orf1ab mutations, fill in 'new_mutations' column like: "gene:mutation / nsp:alias"
-        og_index.loc[og_index['alias']!='n/a', 'new_mutations'] = og_index['new_mutations'] + " / " + og_index["alias_protein"] + ":" + og_index["alias"]
+        og_index.loc[og_index['alias']!='n/a', 'new_mutations'] = og_index['new_mutations'] + " / " + og_index["mat_pep"] + ":" + og_index["alias"]
         # drop duplicates (there shouldn't be any)
         og_index = og_index[['pos', 'new_mutations', 'lineages']].drop_duplicates()
         # drop any NaN rows
