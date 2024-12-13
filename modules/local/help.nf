@@ -1,5 +1,6 @@
 def printHelp() {
-  log.info"""
+  log.info(
+    """
   Usage:
     nextflow run main.nf -profile [singularity | docker | conda) --prefix [prefix] --mode [reference | user]  [workflow-options]
 
@@ -29,15 +30,15 @@ def printHelp() {
     --gisaid_metadata         If lineage assignment is preferred by mapping metadata to GISAID
                               metadata file, provide the metadata file (.tsv file)
     --variants                Provide a variants file
-                              (.tsv) (Default: $baseDir/assets/ncov_variants/variants_who.tsv)
+                              (.tsv) (Default: ${baseDir}/assets/ncov_variants/variants_who.tsv)
     --outdir                  Output directory
-                              (Default: $baseDir/results)
+                              (Default: ${baseDir}/results)
     --gff                     Path to annotation gff for variant consequence calling and typing.
-                              (Default: $baseDir/assets/ncov_genomeFeatures/MN908947.3.gff3)
+                              (Default: ${baseDir}/assets/ncov_genomeFeatures/MN908947.3.gff3)
     --ref                     Path to SARS-CoV-2 reference fasta file
-                              (Default: $baseDir/assets/ncov_refdb/*)
+                              (Default: ${baseDir}/assets/ncov_refdb/*)
     --bwa_index               Path to BWA index files
-                              (Default: $baseDir/assets/ncov_refdb/*)
+                              (Default: ${baseDir}/assets/ncov_refdb/*)
 
   Selection options:
 
@@ -84,4 +85,5 @@ def printHelp() {
                               statement to the surveillance report.
                               see https://virusseq-dataportal.ca/acknowledgements
   """.stripIndent()
+  )
 }

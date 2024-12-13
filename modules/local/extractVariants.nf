@@ -19,7 +19,6 @@ process EXTRACTVARIANTS {
       tuple val(meta), path("*.log"), emit: log, optional: true
 
       script:
-
       def prefix = task.ext.prefix ?: "${meta.id}"
       def val_variant_file = variant_file ? "--variants ${variants}" : ''
       def virusseq_update = virusseq ? "--virusseq" : ''

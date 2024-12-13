@@ -1,7 +1,7 @@
 process DOWNLOAD_VIRALAI_MULTIFASTA {
     container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
         ? 'docker://cidgoh/virus-mvp-viralai:latest'
-        : ''}"
+        : 'cidgoh/virus-mvp-viralai:latest'}"
 
     output:
     path ("*.xz"), emit: xz
