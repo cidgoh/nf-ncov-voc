@@ -58,7 +58,13 @@ if __name__ == '__main__':
             'alias_protein': 'object',
             'hgvs_aa_mutation': 'object',
             'hgvs_alias': 'object',
-            'protein_name': 'object'
+            'protein_name': 'object',
+            'gene_name': 'object',
+            'gene_symbol': 'object',
+            'mat_pep': 'object',
+            'protein_symbol': 'object',
+            'pos': 'int64',  # Assuming 'pos' is an integer column
+            'lineages': 'object'
         }
     )
     # fillna to make groupby() work
