@@ -103,7 +103,6 @@ workflow COVIDMVP {
         POSTPROCESSING(annotated_gvf, PREPROCESSING.out.logfile)
     }
     if (!params.skip_surveillance) {
-        ch_metadata = params.metadata ? Channel.value(file(params.metadata)) : Channel.value(null)
-        SURVEILLANCE(annotated_gvf, ch_metadata)
+        SURVEILLANCE(annotated_gvf, metadata)
     }
 }
