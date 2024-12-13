@@ -14,12 +14,12 @@ workflow SURVEILLANCE {
   GVF2TSV(ch_gvf)
   tsv = GVF2TSV.out.surveillancetsv
   surveillance_indicators = Channel.value([id: "surveillance", file: params.surveillance_indicators])
+
   if (params.mode == 'reference') {
     metadata = ch_metadata
   }
   else {
     metadata = [[], []]
   }
-  // Use a conditional operator to handle the case where metadata might be null
   TSV2PDF(tsv, surveillance_indicators, metadata)
 }

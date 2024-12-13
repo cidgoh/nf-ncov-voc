@@ -8,7 +8,6 @@ include { SNPEFF_BUILD   } from '../../modules/local/snpeff_build'
 include { SAMTOOLS_FAIDX } from '../../modules/nf-core/samtools/faidx/main'
 
 workflow CONFIGURE_VIRUSMVP {
-    
     main:
     ch_snpeff_db = Channel.empty()
     ch_snpeff_config = Channel.empty()
@@ -22,11 +21,7 @@ workflow CONFIGURE_VIRUSMVP {
     ch_snpeff_db = SNPEFF_BUILD.out.db
     ch_snpeff_config = SNPEFF_BUILD.out.config
 
-    //SAMTOOLS_FAIDX([[id: params.virus_accession_id], params.viral_genome], [[], []])
-    //ch_viral_fai = SAMTOOLS_FAIDX.out.fai
-
     emit:
-    ch_snpeff_db    
+    ch_snpeff_db
     ch_snpeff_config
-    //ch_viral_fai    
 }

@@ -20,8 +20,8 @@ include { BAM_SORT_STATS_SAMTOOLS                     } from '../nf-core/bam_sor
 workflow VARIANT_CALLING {
     take:
     sequences_grouped
-    viral_genome     
-    viral_genome_fai 
+    viral_genome
+    viral_genome_fai
 
     main:
 

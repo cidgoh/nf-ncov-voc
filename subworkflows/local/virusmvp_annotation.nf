@@ -12,12 +12,12 @@ include { ANNOTATEMATPEPTIDES_NCOV } from '../../modules/local/annotatematpeptid
 
 workflow ANNOTATION {
     take:
-    annotation_vcf  
-    ch_snpeff_db    
+    annotation_vcf
+    ch_snpeff_db
     ch_snpeff_config
-    viral_genome    
-    ch_stats        
-    ch_json         
+    viral_genome
+    ch_stats
+    ch_json
 
     main:
     lineage = true

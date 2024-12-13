@@ -8,7 +8,7 @@ include { SEQKIT_STATS } from '../../modules/nf-core/seqkit/stats/main'
 
 workflow QUALITYCONTROL {
     take:
-    sequences             
+    sequences
     ch_collected_sequences
 
     main:

@@ -15,7 +15,7 @@ include { NEXTCLADE_DATASETGET           } from '../../modules/nf-core/nextclade
 // Define the workflow
 workflow CLASSIFICATION {
     take:
-    metadata 
+    metadata
     sequences
 
     main:
