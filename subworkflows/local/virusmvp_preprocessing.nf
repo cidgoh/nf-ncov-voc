@@ -8,7 +8,7 @@ include { SEQKIT_GREP     } from '../../modules/nf-core/seqkit/grep/main'
 
 workflow PREPROCESSING {
     take:
-    metadata 
+    metadata
     sequences
 
     main:
