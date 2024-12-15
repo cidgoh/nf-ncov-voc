@@ -24,6 +24,7 @@ workflow COVIDMVP {
 
     main:
     //ch_voc = Channel.empty()
+    metadata = Channel.empty()
     skip_variant_calling = false
     if (params.viralai) {
         VIRALAI()
