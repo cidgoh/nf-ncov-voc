@@ -13,7 +13,6 @@ weekly*
 bin/__*
 *.sh
 latest*
-data/*
 *.fa.xz
 *.gz
 hMPXV_*
