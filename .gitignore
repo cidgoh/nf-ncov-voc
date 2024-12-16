@@ -1,11 +1,7 @@
 .nextflow*
-work/*
 results/*
 .idea/*
-.github/data/metadata
-.github/data/sequence
 .DS_store
-testing/*
 *.ipynb
 weekly*
 *.error
