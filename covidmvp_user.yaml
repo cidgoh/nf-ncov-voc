@@ -4,7 +4,6 @@ skip_classification: true
 skip_postprocessing: true
 skip_posting: true
 skip_harmonize: true
-start_date: "2020-01-01"
 outdir: "results/covidmvp"
 seq: "test_data/sars-cov-2/sars-cov-2_test_data_1x.fa"
 # seq: "data/viralai_test.vcf"

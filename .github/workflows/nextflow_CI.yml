@@ -6,8 +6,8 @@ on:
       - development
 
 jobs:
-  test:
-    name: Run pipeline test
+  test_sarscov2_user:
+    name: Run pipeline test (user)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -17,6 +17,21 @@ jobs:
           wget -qO- get.nextflow.io | bash
           sudo mv nextflow /usr/local/bin/
 
-      - name: Run pipeline test
+      - name: Run pipeline test (default)
         run: |
           nextflow run main.nf -profile docker --prefix "covidmvp-user-$(date +%Y-%m-%d)" -params-file covidmvp_user.yaml
+
+  test_sarscov2_reference:
+    name: Run pipeline test (reference)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Nextflow
+        run: |
+          wget -qO- get.nextflow.io | bash
+          sudo mv nextflow /usr/local/bin/
+
+      - name: Run pipeline test (alternative)
+        run: |
+          nextflow run main.nf -profile docker --prefix "covidmvp-$(date +%Y-%m-%d)" -params-file covidmvp_clinical_params.yaml
