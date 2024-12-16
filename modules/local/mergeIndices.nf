@@ -1,6 +1,6 @@
 process MERGE_INDICES {
   tag "${meta.id}"
-  cpus 6
+  cpus 4
 
   conda "conda-forge::dask=2023.10.1"
   container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
