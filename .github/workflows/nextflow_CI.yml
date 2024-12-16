@@ -17,25 +17,9 @@ jobs:
           wget -qO- get.nextflow.io | bash
           sudo mv nextflow /usr/local/bin/
 
-      - name: Install Singularity
-        run: |
-          sudo apt-get update && sudo apt-get install -y \
-            build-essential \
-            libssl-dev \
-            uuid-dev \
-            libgpgme11-dev \
-            squashfs-tools \
-            libseccomp-dev \
-            wget \
-            pkg-config \
-            git \
-            cryptsetup
-          wget https://github.com/sylabs/singularity/releases/download/v3.10.0/singularity-ce_3.10.0-focal_amd64.deb
-          sudo dpkg -i singularity-ce_3.10.0-focal_amd64.deb
-
       - name: Run pipeline test (user)
         run: |
-          nextflow run main.nf -profile singularity --prefix "covidmvp-user-$(date +%Y-%m-%d)" -params-file covidmvp_user.yaml
+          nextflow run main.nf -profile docker --prefix "covidmvp-user-$(date +%Y-%m-%d)" -params-file covidmvp_user.yaml
 
   test_sarscov2_reference:
     name: Run pipeline test (reference)
@@ -48,22 +32,6 @@ jobs:
           wget -qO- get.nextflow.io | bash
           sudo mv nextflow /usr/local/bin/
 
-      - name: Install Singularity
-        run: |
-          sudo apt-get update && sudo apt-get install -y \
-            build-essential \
-            libssl-dev \
-            uuid-dev \
-            libgpgme11-dev \
-            squashfs-tools \
-            libseccomp-dev \
-            wget \
-            pkg-config \
-            git \
-            cryptsetup
-          wget https://github.com/sylabs/singularity/releases/download/v3.10.0/singularity-ce_3.10.0-focal_amd64.deb
-          sudo dpkg -i singularity-ce_3.10.0-focal_amd64.deb
-
       - name: Run pipeline test (reference)
         run: |
-          nextflow run main.nf -profile singularity --prefix "covidmvp-$(date +%Y-%m-%d)" -params-file covidmvp_clinical_params.yaml
+          nextflow run main.nf -profile docker --prefix "covidmvp-$(date +%Y-%m-%d)" --end_date $(date +%Y-%m-%d) -params-file covidmvp_clinical_params.yaml

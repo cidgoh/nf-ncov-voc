@@ -8,7 +8,6 @@ skip_postprocessing: false
 skip_posting: true
 skip_harmonize: true
 start_date: "2020-01-01"
-end_date: "(date +%Y-%m-%d)"
 metadata_source: "ViralAi_EpiCoV"
 metadata_config: "metadata_conf/metadata.yaml"
 outdir: "results/covidmvp"
