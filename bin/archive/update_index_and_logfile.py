@@ -58,8 +58,10 @@ def gvf2df(gvf):
     df['hgvs_alias'] = gvf['hgvs_alias']
     df['alias_protein'] = 'n/a'
     df.loc[df['alias']!='n/a', 'alias_protein'] = gvf['mat_pep']
-    df['gene'] = gvf['gene']
+    df['gene_name'] = gvf['gene']
+    df['gene_symbol'] = gvf['gene_symbol']
     df['protein_name'] = gvf['protein_name']
+    df['protein_symbol'] = gvf['protein_symbol']
     df['Pokay_annotation'] = gvf["function_description"].notna()
     df['lineages'] = gvf['viral_lineage']
     lineage = df['lineages'][0]
@@ -82,7 +84,7 @@ if __name__ == '__main__':
     logfile_df = pd.DataFrame(np.empty((0, 4)), columns=['pos', 'alias', 'new_mutations', 'lineages'])
 
     # set mutation index columns
-    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene', 'protein_name', 'alias', 'hgvs_alias', 'alias_protein', 'Pokay_annotation', 'lineages']
+    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene_name', 'gene_symbol', 'protein_name', 'protein_symbol', 'alias', 'hgvs_alias', 'alias_protein', 'Pokay_annotation', 'lineages']
 
     # open the mutation index if the path was provided
     if mutation_index_path!=None:
@@ -119,8 +121,8 @@ if __name__ == '__main__':
             lineage_mask = mutation_index['lineages'].str.contains(lineage)
             lineage_chunk = mutation_index.loc[lineage_mask,:].copy()
             # fill in 'new_mutations' column like: "gene:mutation / nsp:alias"
-            lineage_chunk['new_mutations'] = lineage_chunk["gene"] + ":" + lineage_chunk["mutation"]
-            orf1ab_mask = lineage_chunk['gene'].astype(str).str.contains("ORF1ab")
+            lineage_chunk['new_mutations'] = lineage_chunk["gene_symbol"] + ":" + lineage_chunk["mutation"]
+            orf1ab_mask = lineage_chunk['gene_symbol'].astype(str).str.contains("ORF1ab")
             lineage_chunk.loc[orf1ab_mask, 'new_mutations'] = lineage_chunk['new_mutations'] + " / " + lineage_chunk["alias_protein"] + ":" + lineage_chunk["alias"]
             intergenic_mask = lineage_chunk['protein_name'].astype(str).str.contains("nan")
             lineage_chunk.loc[intergenic_mask, 'new_mutations'] =  lineage_chunk.loc[intergenic_mask, 'new_mutations'].str.replace("nan", "intergenic", regex=True)

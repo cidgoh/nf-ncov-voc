@@ -1,24 +1,18 @@
 process GVF_TO_INDEX_LOG {
-
-  tag "$meta.id"
-
+  tag "${meta.id}"
   conda "conda-forge::dask=2023.10.1"
-  container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'biocontainers/dask:2023.10.1-py11-ol9_cv1' : 
-        'quay.io/biocontainers/dask:2023.10.1-py11-ol9_cv1' }"
-  
+  container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
+    ? 'biocontainers/dask:2023.10.1-py11-ol9_cv1'
+    : 'daskdev/dask:2023.10.1-py3.11'}"
 
   input:
-      tuple val(meta), path(gvf)
-      
+  tuple val(meta), path(gvf)
+
   output:
-      tuple val(meta), path("*.tsv"), emit: index
-      tuple val(meta), path("*.log"), emit: log
-      
+  tuple val(meta), path("*.tsv"), emit: index
+  tuple val(meta), path("*.log"), emit: log
 
   script:
-
-  def args = task.ext.args ?: ''
   def prefix = task.ext.prefix ?: "${meta.id}"
   def end_date = "${params.end_date}"
 
@@ -26,8 +20,6 @@ process GVF_TO_INDEX_LOG {
     gvf2indexandlog.py \\
         --gvf_file ${gvf} \\
         --index_savefile ${prefix}.${end_date}.index.tsv \\
-        --log_savefile ${prefix}.${end_date}.log 
-
+        --log_savefile ${prefix}.${end_date}.log
   """
-
 }

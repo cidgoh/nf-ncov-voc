@@ -18,12 +18,12 @@ from functions import separate_attributes
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Creates an index TSV and a log TSV from one GVF')
-    parser.add_argument('--gvf_file', type=str, default=None,
+    parser.add_argument('--gvf_file', type=str, required=True,
                         help='Path to one GVF file to process')
-    parser.add_argument('--index_savefile', type=str,
-                        default=None, help='Filename to save updated index of all mutations to')
-    parser.add_argument('--log_savefile', type=str,
-                        default=None, help='Filename to save log to')
+    parser.add_argument('--index_savefile', type=str, required=True,
+                        help='Filename to save updated index of all mutations to')
+    parser.add_argument('--log_savefile', type=str, required=True,
+                        help='Filename to save log to')
 
     return parser.parse_args()
 
@@ -49,20 +49,21 @@ if __name__ == '__main__':
 
     # create index from GVF
     # make empty index df
-    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene', 'protein_name', 'alias', 'hgvs_alias', 'alias_protein', 'Pokay_annotation', 'lineages']
+    index_cols=['pos', 'mutation', 'hgvs_aa_mutation', 'hgvs_nt_mutation', 'gene_name', 'gene_symbol', 'protein_name', 'protein_symbol', 'alias', 'hgvs_alias', 'mat_pep', 'pokay_annotation', 'lineages']
     index = pd.DataFrame(np.empty((gvf.shape[0], len(index_cols))), columns=index_cols)
     # populate index df with gvf info
     index['pos'] = gvf['#start']
-    index['mutation'] = gvf['Name'].str.replace("p.", "", regex=False)
+    index['mutation'] = gvf['original_mutation_description'].str.replace("p.", "", regex=False)
     index['hgvs_aa_mutation'] = gvf['hgvs_aa']
     index['hgvs_nt_mutation'] = gvf['hgvs_nt']
     index['alias'] = gvf['alias']
     index['hgvs_alias'] = gvf['hgvs_alias']
-    index['alias_protein'] = 'n/a'
-    index.loc[index['alias']!='n/a', 'alias_protein'] = gvf['mat_pep']
-    index['gene'] = gvf['gene']
+    index['mat_pep'] = gvf['mat_pep']
+    index['gene_name'] = gvf['gene_name']
+    index['gene_symbol'] = gvf['gene_symbol']
     index['protein_name'] = gvf['protein_name']
-    index['Pokay_annotation'] = gvf["function_description"].notna()
+    index['protein_symbol'] = gvf['protein_symbol']
+    index['pokay_annotation'] = gvf["variant_functional_effect_description"].notna()
     index['lineages'] = gvf['viral_lineage']
     # tidying
     index = index.drop_duplicates()
@@ -73,9 +74,9 @@ if __name__ == '__main__':
     # create log from index
     log = index.copy()
     # fill in 'new_mutations' column like: "gene:mutation"
-    log['new_mutations'] = log["gene"] + ":" + log["mutation"]
+    log['new_mutations'] = log["gene_symbol"] + ":" + log["mutation"]
     # for orf1ab mutations, fill in 'new_mutations' column like: "gene:mutation / nsp:alias"
-    log.loc[log['alias']!='n/a', 'new_mutations'] = log['new_mutations'] + " / " + log["alias_protein"] + ":" + log["alias"]
+    log.loc[log['alias']!='n/a', 'new_mutations'] = log['new_mutations'] + " / " + log["mat_pep"] + ":" + log["alias"]
     # drop duplicates (there shouldn't be any)
     log = log[['pos', 'new_mutations', 'lineages']].drop_duplicates()
     # drop any NaN rows

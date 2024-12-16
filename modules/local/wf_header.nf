@@ -1,4 +1,4 @@
-def workflowHeader(){
+def workflowHeader() {
     return """
 
     ███╗   ██╗███████╗    ███╗   ██╗ ██████╗ ██████╗ ██╗   ██╗      ██╗   ██╗ ██████╗  ██████╗

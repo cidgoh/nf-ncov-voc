@@ -1,492 +1,326 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
 
-@authors: madeline & zohaib
-
-This script produces summary of surveillance report in a tex format.
-It uses tsv file generated in gvf2tsv as an input and
-functional indicator file to produce tex file which can be
-used for producing PDF file.
-
-This script is based on Jared Simpson's code in ncov-tools
-https://github.com/jts/ncov-tools/blob/master/workflow/scripts/generate_report.py
-
-"""
-
-import argparse
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.platypus import Paragraph, Spacer, SimpleDocTemplate, PageBreak, Table, TableStyle
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter, landscape
+from reportlab.lib.units import inch
+from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER
 import pandas as pd
-import os
-import argparse
+from collections import defaultdict
 from datetime import datetime
-import glob
-import csv
-import sys
-import re
-from collections import OrderedDict
-import numpy as np
-
-
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description='Summarizes raw surveillance file (TSV) into '
-                    'indicator centric and mutation centric readable '
-                    'PDF report')
-    parser.add_argument('--tsv', type=str, default=None,
-                        help='Path to surveillance report TSV file')
-    parser.add_argument('--functions_table', type=str, default=None,
-                        help='TSV file containing Pokay '
-                             'Functional categories:Indicators '
-                             'category mappings')
-    parser.add_argument('--metadata', type=str, default='n/a',
-                        help='Metadata file for contextual data')
-    parser.add_argument('--frequency_threshold', type=float,
-                        default=0.25,
-                        help='Alternate frequency threshold cutoff '
-                             'for inclusion in report')
-    parser.add_argument('--virusseq', type=bool, default=False,
-                        help='VirusSeq dataset')
-
-    return parser.parse_args()
-
-
-def summarize_functions(tsv, functions_df_template):
-    # load functions_df template
-    df = pd.read_csv(functions_df_template, sep='\t', header=0)
-
-    # populate the Mutations column row by row
-    for row in df['Sub-categories from POKAY']:
-        row_mutations_set = set()
-        # get list of Pokay categories
-        category_list = row.split(',')
-        for category in category_list:
-            # remove trailing spaces to enable matching
-            category = category.rstrip()
-            # find mutation names that match that category and add
-            # them to the set
-            cat_mutations = tsv[tsv['function_category'] == category][
-                'name']
-            cat_mutations_set = set(cat_mutations)
-            # add category mutations set to row mutations set
-            row_mutations_set.update(cat_mutations_set)
-        # save row mutations set in the 'Mutations' column, sorted
-        # alphabetically
-        row_list = sorted(list(row_mutations_set))
-        row_str = ', '.join(str(e) for e in row_list)
-        mask = df['Sub-categories from POKAY'] == row
-        df.loc[mask, 'Mutations'] = row_str
-
-    return df
-
-
-def calculate_frequency(dataframe, newcolname, divisor):
-    if dataframe['ao'][dataframe['ao'].astype(str).str.contains(
-            ",")].empty:  # if there are no commas anywhere in the 'ao' column, calculate AF straight out
-        dataframe[newcolname] = dataframe['ao'].astype(int) / dataframe[
-            divisor].astype(int)
-    else:  # if there is a comma, add the numbers together to calculate alternate frequency
-        # tsv_df['added_ao'] = tsv_df['ao'].astype(str).apply(lambda x: sum(map(int, x.split(','))))
-        split_series = dataframe['ao'].str.split(pat=',').apply(
-            pd.Series)
-        # rename series columns to 'ao_0', 'ao_1', etc.
-        split_series.columns = ['ao_' + str(name) for name in
-                                split_series.columns.values]
-        # ensure all counts are numeric
-        for column in split_series.columns:
-            split_series[column] = pd.to_numeric(split_series[column],
-                                                 errors='coerce')
-        # append series to tsv_df
-        dataframe = pd.concat([dataframe, split_series], axis=1)
-        # calculate frequency for each column
-        colnames = [i for i in dataframe.columns.values.tolist() if
-                    'ao_' in i]
-        for column in colnames:
-            dataframe[column] = dataframe[column] / dataframe[
-                divisor].astype(int)
-        # combine columns into one column
-        dataframe[newcolname] = dataframe[colnames].apply(
-            lambda row: ','.join(row.values.astype(str)), axis=1)
-        # drop split columns
-        dataframe = dataframe.drop(labels=colnames, axis=1)
-        dataframe[newcolname] = dataframe[newcolname].str.replace(
-            ',nan', '')
-
-    return dataframe
-
-
-def add_source_hyperref(dataframe):
-    dataframe["Citation"] = "\href{" + dataframe["Citation URL"].astype(
-        str) + "}{" + dataframe["Citation"] + "}"
-    return dataframe
-
-
-def summarize_mutations(tsv, functions_dataframe):
-    named_mutations = functions_dataframe['Mutations'].values.tolist()
-    named_mutations = ', '.join(str(e) for e in named_mutations).split(
-        ', ')
-    named_mutations = set(named_mutations)
-    if metadata != 'n/a':
-        tsv_df_cols = ['name', 'function_category',
-                       'function_description', 'viral_lineages',
-                       'citation', 'ao', 'dp', 'reference_seq',
-                       'variant_seq', 'citation_url']
-    else:
-        tsv_df_cols = ['name', 'function_category',
-                       'function_description',
-                       'citation', 'ao', 'dp', 'reference_seq',
-                       'variant_seq', 'citation_url']
-
-    # create empty dataframe
-    df = pd.DataFrame(columns=tsv_df_cols)
-
-    for mutation in named_mutations:
-        # get rows of the tsv for that mutation
-        tsv_rows = tsv[tsv['name'] == mutation]
-        # keep certain columns of the tsv rows
-        tsv_rows = tsv_rows[tsv_df_cols]
-        # concatenate dfs
-        df = pd.concat((df, tsv_rows))
-
-    # remove clade-defining values from strains column
-    # renaming 'viral_clade_defining' to 'viral_lineages'
-    if metadata != 'n/a':
-        df['viral_lineages'] = df[
-            'viral_lineages'].str.replace(r"=.*?;", ",", regex=True)
-        # remove trailing commas
-        df['viral_lineages'] = df[
-            'viral_lineages'].str.rstrip(' ').str.rstrip(',')
-
-        # rename mutations_df columns
-        # Removing 'Frequency (Variant)' for now
-        # Renaming 'dp' to 'sequence_depth'
-        final_mutations_df_cols = ['Mutations', 'Sub-category',
-                                   'Function', 'Lineages', 'Citation',
-                                   'Alternate Allele Obs',
-                                   'Sequence Depth', 'Reference Allele',
-                                   'Alternate Allele', 'Citation URL']
-    else:
-        final_mutations_df_cols = ['Mutations', 'Sub-category',
-                                   'Function', 'Citation',
-                                   'Alternate Allele Obs',
-                                   'Sequence Depth', 'Reference Allele',
-                                   'Alternate Allele', 'Citation URL']
-    renaming_dict = dict(zip(tsv_df_cols, final_mutations_df_cols))
-    df = df.rename(columns=renaming_dict)
-
-    # add 'Frequency (Functional)' column
-    # adding if condition
-    # if there are no commas
-    # anywhere in the 'ao' column, calculate AF straight out
-    #if df['Alternate Allele Obs'][df['Alternate Allele Obs'].astype(
-    #        str).str.contains("n/a")].empty:
-    #    df['Alternate Frequency'] = np.nan
-    if df['Alternate Allele Obs'][df['Alternate Allele Obs'].astype(
-            str).str.contains(",")].empty:
-        df['Alternate Frequency'] = round(
-            df['Alternate Allele Obs'].astype(
-                int) / df['Sequence Depth'].astype(int), 2)
-    else:
-        # if there is a comma, add the numbers together to calculate
-        # alternate frequency tsv_df['added_ao'] = tsv_df[
-        # 'ao'].astype(str).apply(lambda x: sum(map(int, x.split(',
-        # '))))
-        df['Agg Alternate Allele'] = df['Alternate Allele Obs'].apply(
-            lambda x: sum(map(int, x.split(','))))
-        # rename series columns to 'ao_0', 'ao_1', etc.
-        df['Alternate Frequency'] = round(df['Agg Alternate ' \
-                                             'Allele'].astype(
-            int) / df['Sequence Depth'].astype(int), 2)
-
-    df = add_source_hyperref(dataframe=df)
-    if not df['Alternate Frequency'].isnull().values.any():
-        mask = df['Alternate Frequency'] >= args.frequency_threshold
-        df = df[mask]
-    if metadata != 'n/a':
-        mutations_df_cols = ['Mutations', 'Sub-category',
-                             'Function', 'Lineages', 'Citation',
-                             'Sequence Depth', 'Reference Allele',
-                             'Alternate Allele',
-                             'Alternate Frequency']
-    else:
-        mutations_df_cols = ['Mutations', 'Sub-category',
-                             'Function', 'Citation',
-                             'Sequence Depth', 'Reference Allele',
-                             'Alternate Allele', 'Alternate Frequency']
-    df = df[mutations_df_cols]
-    return df
-
-
-#
-# utility class to assist in converting
-# a tsv into a latex table - it can
-# rename header columns (name_map)
-# perform arbitrary transforms (row_func)
-# and filter out columns/rows
-#
-
-
-class TableFormatter:
-    def __init__(self):
-        self.name_map = dict()
-        self.row_func = dict()
-        self.column_filter = dict()
-        self.row_accept = None
-        self.table_spec = ""
-        self.size = "normalsize"
-
-
-# latex starting boilerplate to set up the document class, packages, etc
-def write_preamble():
-    p = r'''
-\documentclass{article}
-\usepackage[margin=0.5in, right=1.125in, footskip=35pt]{geometry}
-\usepackage{fancyheadings}
-
-\usepackage{lastpage}
-\pagestyle{fancy}
-\usepackage{hyperref}
-\usepackage[utf8]{inputenc}
-\usepackage{graphicx}
-\usepackage{array}
-\usepackage{float}
-\usepackage{microtype}
-\pagestyle{fancy}
-\geometry{textwidth=6.0in}
-
-
-\lhead{\small
-        \vspace{-2.0\baselineskip}\href{
-        https://github.com/cidgoh/nf-ncov-voc}{nf-ncov-voc}}
-\rhead{\small
-        \vspace{-2.0\baselineskip}\thepage\ of \pageref{LastPage}}
-\cfoot{\small
-        \vspace{-2.0\baselineskip}\href{mailto:mzanwar@sfu.ca}{
-        Contact Us}}
-\rfoot{\small
-        \vspace{-2.0\baselineskip}CIDGOH\textsuperscript{
-        \textcopyright}}
-\renewcommand{\footrulewidth}{1pt}% default is 0pt
-
-
-\usepackage{longtable}
-
-\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
-
-\emergencystretch 3em
-
-
-\begin{document}
-
-
-
-'''
-    print(p)
-
-
-# latex ending boilerplate
-def write_postamble():
-    p = r'''
-\end{document}'''
-    print(p)
-
-
-# count the number of rows in a tsv file
-def count_tsv(filename):
-    c = 0
-    with(open(filename)) as f:
-        reader = csv.DictReader(f, delimiter="\t")
-        for row in reader:
-            c += 1
-    return c
-
-
-def escape_latex(s):
-    s = s.replace("_", "\_")
-    s = s.replace("&", "\&")
-    s = s.replace("%", "\%")
-    s = s.replace("#", "\#")
-    s = s.replace("$", "\$")
-    if not "href" in s:
-        s = s.replace("{", "\{")
-        s = s.replace("}", "\}")
-    s = s.replace("~", "\textasciitilde")
-    s = s.replace("^", "\textasciicircum}")
-    return s
-
-
-# high-level function to transform a tsv into a latex table
-# performing remapping of column names and arbitrary transformation
-# of values within each column (e.g. escaping characters latex
-# doesn't like) using table formatter
-def df_to_table(df, table_formatter):
-    reader = df.to_dict(into=OrderedDict, orient='records')
-
-    rows = list()
-    header = list()
-
-    for row in reader:
-
-        # remove columns
-        for k in table_formatter.column_filter:
-            del row[k]
-
-        # skip rows that fail the row filter, if any
-        if table_formatter.row_accept is not None and not \
-                table_formatter.row_accept(
-                    row):
-            continue
-
-        if len(header) == 0:
-
-            # remap column names
-            for k in row.keys():
-                if k in table_formatter.name_map:
-                    header.append(table_formatter.name_map[k])
-                else:
-                    header.append(escape_latex(k))
-
-        # transform with row func
-        for k in row:
-            if k in table_formatter.row_func:
-                row[k] = table_formatter.row_func[k](row[k])
-        rows.append(row.values())
-
-    # write latex to stdout
-    write_table(table_formatter.table_spec, header, rows,
-                table_formatter.size)
-
-
-# latex for displaying a table
-def write_table(spec, header, rows, size):
-    # print(r"\begin{center}")
-    print(r"\%s" % size)
-
-    print(r"\begin{longtable}{%s}" % spec)
-
-    print(r"\hline")
-    print(" & ".join(header) + r" \\ \hline")
-    print(r"\endhead")
-    for r in rows:
-        print(" & ".join(
-            [escape_latex(str(v)) for v in r]) + r" \\ \hline")
-
-    print(r"\end{longtable}")
-    print(r"\normalsize")
-    # print(r"\end{center}")
-
-
-# write the large per-sample QC table
-def write_func_summary(df):
-    tf = TableFormatter()
-    tf.size = "scriptsize"
-    tf.table_spec = "{|p{4.0cm}|p{7.0cm}|p{5.0cm}|}"
-
-    print(r"\section*{Indicator}")
-    print(
-        r"This table contains key indicators "
-        r"identified")
-    df_to_table(df, tf)
-
-
-def write_mutation_summary(df):
-    tf = TableFormatter()
-    tf.size = "scriptsize"
-    if metadata != 'n/a':
-        tf.table_spec = "{|p{1.2cm}|p{2.5cm}|p{3.3cm}|p{1.8cm}|p{1.5cm}|p{1.0cm}|p{1.6cm}|p{1.3cm}|p{1.3cm}|}"
-    else:
-        tf.table_spec = "{|p{1.2cm}|p{2.5cm}|p{3.3cm}|p{1.8cm}|p{1.0cm}|p{1.3cm}|p{1.3cm}|p{1.3cm}|}"
-
-    print(r"\section*{Mutation Significance}")
-    print(
-        r"This table contains key functional impacts of mutations "
-        r"identified")
-    df_to_table(df, tf)
-
-
-if __name__ == '__main__':
-
-    args = parse_args()
-    functions_template = args.functions_table
-    report_tsv = args.tsv
-    metadata = args.metadata
-    tsv_df = pd.read_csv(report_tsv, sep='\t', header=0)
-
-    if metadata != 'n/a':
-        metadata_df = pd.read_csv(metadata, sep="\t", low_memory=False, compression='gzip',
-                                  parse_dates=[
-                                      'sample_collection_date'])
-
+import argparse
+
+
+def get_unique_non_na_value(df, column_name):
+    """Get the unique non-N/A value from a column, or return 'Unknown' if not found."""
+    unique_values = df[column_name].dropna().unique()
+    return unique_values[0] if len(unique_values) == 1 else "Multiple values" if len(unique_values) > 1 else "Unknown"
+
+def generate_metadata_section(tsv_df, metadata_file=None):
+    """Generates metadata text from the TSV file and optional metadata file."""
+    styles = getSampleStyleSheet()
+    
+    # Create custom styles
+    title_style = ParagraphStyle(
+        'TitleStyle',
+        parent=styles['Heading1'],
+        fontSize=16,
+        alignment=TA_CENTER,
+        spaceAfter=12
+    )
+    heading_style = ParagraphStyle(
+        'HeadingStyle',
+        parent=styles['Heading2'],
+        fontSize=12,
+        spaceBefore=6,
+        spaceAfter=6
+    )
+    normal_style = ParagraphStyle(
+        'NormalStyle',
+        parent=styles['Normal'],
+        fontSize=10,
+        spaceBefore=3,
+        spaceAfter=3
+    )
+
+    # Get the lineage/clade, organism, reference accession, and reference database name
+    lineage_clade = get_unique_non_na_value(tsv_df, 'clade')
+    organism = get_unique_non_na_value(tsv_df, 'organism')
+    ref_accession = get_unique_non_na_value(tsv_df, 'reference_accession')
+    ref_db_name = get_unique_non_na_value(tsv_df, 'reference_database_name')
+
+    report_date = datetime.today().strftime('%Y-%m-%d')
+
+    if metadata_file:
+        metadata_df = pd.read_csv(metadata_file, sep="\t", low_memory=False, compression='gzip')
         metadata_df['sample_collection_date'] = pd.to_datetime(
-            metadata_df['sample_collection_date'], format='%Y-%m-%d',
-            errors='coerce')
-        lineages = []
-        for lineage in tsv_df['viral_lineages']:
-            lineage = lineage.split(", ")
-            lineages.extend(lineage)
-
-        base = os.path.basename(args.tsv)
-        variant = base.split('_')[0]
-        # make functions_df
-        functions_df = summarize_functions(tsv=tsv_df,
-                                           functions_df_template=
-                                           functions_template)
-
-        # make mutations_df
-        mutations_df = summarize_mutations(tsv=tsv_df,
-                                           functions_dataframe=functions_df)
-        write_preamble()
-
-        print(r"\section*{Surveillance report}")
-        print(
-            r"Surveillance generated by nf-ncov-voc for %s variant" % (
-                variant))
-
-        print(r"\subsection*{Date }")
-        print(
-            r"This report is generated on %s using %s number of genomes collected between %s and %s "
-            % (
-                datetime.today().strftime('%Y-%m-%d'),
-                len(metadata_df.index),
-                pd.to_datetime(metadata_df['sample_collection_date'].min()).date(),
-                pd.to_datetime(metadata_df['sample_collection_date'].max()).date()))
-
-        print(r"\section*{Pango Lineages}")
-        print(r"{Pango Lineages in this report }%s "
-              % sorted(set(lineages)))
-        write_func_summary(df=functions_df)
-        write_mutation_summary(df=mutations_df)
-
-        if args.virusseq is True:
-            print(r"\newpage")
-            print("The results here are in whole or "
-                  "part based upon data hosted at the "
-                  "Canadian VirusSeq Data Portal: "
-                  " \href{https://virusseq-dataportal.ca/}{"
-                  "https://virusseq-dataportal.ca/}."
-                  "We wish to acknowledge the following "
-                  "organisations/laboratories for "
-                  "contributing data to the Portal: "
-                  "Canadian Public Health Laboratory "
-                  "Network (CPHLN), CanCOGGeN VirusSeq "
-                  "and the list of labs available at "
-                  "\href{https://virusseq-dataportal.ca/acknowledgements"
-                  "}{https://virusseq-dataportal.ca/acknowledgements})")
-
-        write_postamble()
-
-        # mutations_df.to_csv('mutations.tsv', sep='\t', index=False)
+            metadata_df['sample_collection_date'], format='%Y-%m-%d', errors='coerce'
+        )
+        start_date = metadata_df['sample_collection_date'].min().date()
+        end_date = metadata_df['sample_collection_date'].max().date()
+        num_genomes = len(metadata_df)
+        
+        genome_info = f"using {num_genomes} number of genomes collected between {start_date} and {end_date}"
     else:
-        # base = os.path.basename(args.tsv)
-        # variant = base.split('_')[0]
-        # make functions_df
-        functions_df = summarize_functions(tsv=tsv_df,
-                                           functions_df_template=
-                                           functions_template)
-        # make mutations_df
-        mutations_df = summarize_mutations(tsv=tsv_df,
-                                           functions_dataframe=functions_df)
-        write_preamble()
-        print(r"\section*{Surveillance report}")
-        write_func_summary(df=functions_df)
-        write_mutation_summary(df=mutations_df)
-        write_postamble()
+        genome_info = "genome collection information not available"
+
+    elements = [
+        Paragraph("Surveillance Report", title_style),
+        Paragraph("Report Details", heading_style),
+        Paragraph(f"Surveillance generated by nf-ncov-voc for lineage/clade: {lineage_clade}", normal_style),
+        Paragraph(f"This report is generated on {report_date} {genome_info}", normal_style),
+        Spacer(1, 12),
+        Paragraph("Additional Information", heading_style),
+        Paragraph(f"Organism: {organism}", normal_style),
+        Paragraph(f"Reference Accession: {ref_accession}", normal_style),
+        Paragraph(f"Reference Database Name: {ref_db_name}", normal_style),
+    ]
+
+    return elements
+
+
+def wrap_text_in_cell(cell, style):
+    if isinstance(cell, str):
+        return Paragraph(cell, style)
+    return cell
+
+def generate_first_table(tsv_df, indicator_mapping_df, styles):
+    """Generates the first table: Indicator Summary."""
+    def get_mutations_by_category(tsv_df, categories):
+        mutations_by_category = defaultdict(set)
+        for category in categories.split(','):
+            category = category.strip()
+            mutations = tsv_df.loc[tsv_df['measured_variant_functional_effect'] == category, 'original_mutation_description']
+            mutations_by_category[category].update(mutations)
+        return ', '.join(sorted({m for ms in mutations_by_category.values() for m in ms}))
+
+    first_table_data = [["Surveillance Indicator", "Functional Categories", "Mutations"]]
+    for _, row in indicator_mapping_df.iterrows():
+        mutations = get_mutations_by_category(tsv_df, row["Sub-categories from POKAY"])
+        first_table_data.append([row["Indicator"], row["Sub-categories from POKAY"], mutations])
+
+    wrapped_style = ParagraphStyle(
+        name="Wrapped",
+        parent=styles["Normal"],
+        fontSize=8,
+        leading=10,
+        wordWrap='CJK',
+        alignment=TA_LEFT
+    )
+
+    wrapped_data = [[wrap_text_in_cell(cell, wrapped_style) for cell in row] for row in first_table_data]
+
+    first_table = Table(wrapped_data, colWidths=[2 * inch, 2.5 * inch, 4 * inch])
+    first_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+    ]))
+    description = "This table contains key indicators identified"
+    return create_paginated_table(first_table_data, styles, "Table 1: Indicator Summary", description)
+
+
+def generate_second_table(tsv_df, styles):
+    """Generates the second table with unique mutation details."""
+    columns = {
+        "Mutations": "original_mutation_description",
+        "Functional Category": "measured_variant_functional_effect",
+        "Annotation Resource": "functional_annotation_resource",
+        "Lineages": "viral_lineages",
+        "Clade": "clade",
+        "Sequence Depth": "dp",
+        "Reference Allele": "reference_seq",
+        "Alternate Allele": "variant_seq",
+        "Alternate Frequency": "alternate_frequency"
+    }
+    
+    # Filter out columns with all NaN values
+    valid_columns = {k: v for k, v in columns.items() if not tsv_df[v].isna().all()}
+    
+    # Prepare data
+    data = [list(valid_columns.keys())]  # Add headers
+    
+    # Create a temporary dataframe with only the columns we need
+    temp_df = tsv_df.dropna(subset=["measured_variant_functional_effect"])
+    temp_df = temp_df[[v for v in valid_columns.values()]]
+    
+    # Round the alternate_frequency to 3 decimal places
+    temp_df['alternate_frequency'] = temp_df['alternate_frequency'].apply(lambda x: round(float(x), 3) if pd.notnull(x) else "N/A")
+    
+    # Remove duplicates
+    temp_df = temp_df.drop_duplicates()
+    
+    # Convert dataframe to list of lists
+    for _, row in temp_df.iterrows():
+        data.append([row[v] for v in valid_columns.values()])
+
+    description = "This table contains key functional impacts of mutations identified"
+    return create_paginated_table(data, styles, "Table 2: Mutation Details Summary", description)
+
+def generate_third_table(tsv_df, styles):
+    """Generates the third table with functional effects, including publication year and citation."""
+    columns = {
+        "Mutations": "original_mutation_description",
+        "Functional Category": "measured_variant_functional_effect",
+        "Annotation Resource": "functional_annotation_resource",
+        "Functional Effect": "variant_functional_effect_description",
+        "Publication Year": "publication_year",
+        "Citation": "citation",
+        "URL": "url"  # We'll use this to create the hyperlink
+    }
+    
+    data = [list(columns.keys())[:-1]]  # Add headers, excluding the URL column
+    
+    # Create a custom style for the hyperlink
+    link_style = ParagraphStyle(
+        'LinkStyle',
+        parent=styles['Normal'],
+        fontSize=8,
+        textColor='blue'
+    )
+
+    for _, row in tsv_df.dropna(subset=["measured_variant_functional_effect"]).iterrows():
+        row_data = []
+        for key, col in columns.items():
+            if key == "Citation":
+                # Create a hyperlink for the citation using HTML-style link
+                url = row.get(columns["URL"], "")
+                citation_text = row.get(col, "")
+                if url and citation_text:
+                    link_text = f'<a href="{url}" color="blue">{citation_text}</a>'
+                    paragraph = Paragraph(link_text, link_style)
+                    row_data.append(paragraph)
+                else:
+                    row_data.append(citation_text)
+            elif key == "Publication Year":
+                # Convert publication year to integer and then to string
+                year = row.get(col)
+                if pd.notna(year):
+                    year_str = str(int(year))
+                else:
+                    year_str = ""
+                row_data.append(year_str)
+            elif key != "URL":  # Skip the URL column in the final table
+                row_data.append(row.get(col, ""))
+        data.append(row_data)
+
+    description = "This table contains detailed functional descriptions of each functional category"
+    
+    # Adjust column widths to accommodate new columns
+    col_widths = [1.5*inch, 1.5*inch, 1.5*inch, 2*inch, 1*inch, 2*inch]
+    
+    return create_paginated_table(data, styles, "Table 3: Functional Effect Summary", description, col_widths=col_widths)
+
+def create_paginated_table(data, styles, title, description=None, max_width=9*inch, col_widths=None):
+    """Creates a table that can split across pages automatically with text wrapping."""
+    
+    def wrap_text(cell, width):
+        if isinstance(cell, str):
+            return Paragraph(cell, ParagraphStyle(
+                name="Wrapped",
+                parent=styles["Normal"],
+                fontSize=8,
+                leading=10,
+                wordWrap='CJK',
+                alignment=TA_LEFT
+            ))
+        return cell
+
+    col_widths = col_widths or [max_width / len(data[0])] * len(data[0])
+    wrapped_data = [[wrap_text(cell, col_widths[i]) for i, cell in enumerate(row)] for row in data]
+
+    table = Table(wrapped_data, colWidths=col_widths, repeatRows=1)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+    ]))
+
+    elements = []
+    elements.append(Paragraph(title, styles["Heading2"]))
+    if description:
+        elements.append(Paragraph(description, styles["Normal"]))
+    elements.append(table)
+    elements.append(PageBreak())
+    
+    return elements
+
+def generate_pdf(tsv_file, output_pdf, metadata_file=None, indicator_mapping=None, args=None):
+    """Main function to generate the PDF with table descriptions and VirusSeq acknowledgment."""
+    tsv_df = pd.read_csv(tsv_file, sep='\t', header=0)
+    metadata_elements = generate_metadata_section(tsv_df, metadata_file)
+    indicator_mapping_df = pd.read_csv(indicator_mapping, sep='\t', header=0)
+    styles = getSampleStyleSheet()
+
+    # Initialize PDF
+    pdf = SimpleDocTemplate(output_pdf, pagesize=landscape(letter), 
+                            topMargin=0.5*inch, bottomMargin=0.5*inch, 
+                            leftMargin=0.5*inch, rightMargin=0.5*inch)
+    elements = []
+
+    # Add metadata section
+    elements.extend(metadata_elements)
+    elements.append(PageBreak())
+
+    try:
+        # Add tables
+        elements.extend(generate_first_table(tsv_df, indicator_mapping_df, styles))
+        elements.extend(generate_second_table(tsv_df, styles))
+        elements.extend(generate_third_table(tsv_df, styles))
+
+        # Add VirusSeq acknowledgment if args.virusseq is True
+        if args and args.virusseq:
+            elements.append(PageBreak())
+            virusseq_style = ParagraphStyle(
+                'VirusSeqAcknowledgment',
+                parent=styles['Normal'],
+                fontSize=8,
+                leading=10,
+                alignment=TA_JUSTIFY
+            )
+            virusseq_text = (
+                "The results here are in whole or part based upon data hosted at the "
+                "Canadian VirusSeq Data Portal: "
+                "<a href='https://virusseq-dataportal.ca/'>https://virusseq-dataportal.ca/</a>. "
+                "We wish to acknowledge the following organisations/laboratories for "
+                "contributing data to the Portal: Canadian Public Health Laboratory "
+                "Network (CPHLN), CanCOGGeN VirusSeq and the list of labs available at "
+                "<a href='https://virusseq-dataportal.ca/acknowledgements'>"
+                "https://virusseq-dataportal.ca/acknowledgements</a>."
+            )
+            elements.append(Paragraph(virusseq_text, virusseq_style))
+
+        # Build PDF
+        pdf.build(elements)
+    except Exception as e:
+        print(f"Error generating PDF: {e}")
+        print("Consider reducing the amount of data or increasing the page size.")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Generate surveillance report PDF")
+    parser.add_argument("--tsv", required=True, help="Input TSV file")
+    parser.add_argument("--functions_table", required=True, help="Functions table file")
+    parser.add_argument("--metadata", help="Metadata file")
+    parser.add_argument("--virusseq", action="store_true", help="Include VirusSeq acknowledgment")
+    parser.add_argument("--output", required=True, help="Output PDF file name")
+    args = parser.parse_args()
+
+    # Generate PDF
+    generate_pdf(args.tsv, args.output, args.metadata, args.functions_table, args)

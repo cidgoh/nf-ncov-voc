@@ -1,12 +1,12 @@
 process POSTPROCESSING {
 
-  tag {"linking output files to rsync"}
+  tag { "linking output files to rsync" }
 
   input:
-    val surveillance
+  val surveillance
 
   script:
-      """
+  """
       rm -rf /scratch/mzanwar/COVID-MVP/nf-ncov-voc/latest_gvf/*
       ln -s ${params.outdir}/${params.prefix}/annotation_vcfTogvf/* /scratch/mzanwar/COVID-MVP/nf-ncov-voc/latest_gvf/
       

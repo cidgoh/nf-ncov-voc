@@ -1,11 +1,7 @@
 .nextflow*
-work/*
 results/*
 .idea/*
-.github/data/metadata
-.github/data/sequence
 .DS_store
-testing/*
 *.ipynb
 weekly*
 *.error
@@ -13,11 +9,10 @@ weekly*
 bin/__*
 *.sh
 latest*
-data/*
 *.fa.xz
 *.gz
 hMPXV_*
 bin/web.log
 assets/config.ini
-*-params.yaml
 *.xz
+*.log

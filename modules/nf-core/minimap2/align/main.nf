@@ -1,12 +1,10 @@
 process MINIMAP2_ALIGN {
-    tag "$meta.id"
+    tag "${meta.id}"
     label 'process_medium'
-
-    // Note: the versions here need to match the versions used in the mulled container below and minimap2/index
     conda "${moduleDir}/environment.yml"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/mulled-v2-66534bcbb7031a148b13e2ad42583020b9cd25c4:365b17b986c1a60c1b82c6066a9345f38317b763-0' :
-        'quay.io/biocontainers/mulled-v2-66534bcbb7031a148b13e2ad42583020b9cd25c4:365b17b986c1a60c1b82c6066a9345f38317b763-0' }"
+    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
+        ? 'https://depot.galaxyproject.org/singularity/mulled-v2-66534bcbb7031a148b13e2ad42583020b9cd25c4:365b17b986c1a60c1b82c6066a9345f38317b763-0'
+        : 'quay.io/biocontainers/mulled-v2-66534bcbb7031a148b13e2ad42583020b9cd25c4:365b17b986c1a60c1b82c6066a9345f38317b763-0'}"
 
     input:
     tuple val(meta), path(reads)
@@ -18,13 +16,13 @@ process MINIMAP2_ALIGN {
     output:
     tuple val(meta), path("*.paf"), optional: true, emit: paf
     tuple val(meta), path("*.bam"), optional: true, emit: bam
-    path "versions.yml"           , emit: versions
+    path "versions.yml", emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args  = task.ext.args ?: ''
+    def args = task.ext.args ?: ''
     def args2 = task.ext.args2 ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
     def bam_output = bam_format ? "-a | samtools sort -@ ${task.cpus} -o ${prefix}.bam ${args2}" : "-o ${prefix}.paf"
@@ -32,13 +30,13 @@ process MINIMAP2_ALIGN {
     def set_cigar_bam = cigar_bam && bam_format ? "-L" : ''
     """
     minimap2 \\
-        $args \\
-        -t $task.cpus \\
+        ${args} \\
+        -t ${task.cpus} \\
         ${reference ?: reads} \\
-        $reads \\
-        $cigar_paf \\
-        $set_cigar_bam \\
-        $bam_output
+        ${reads} \\
+        ${cigar_paf} \\
+        ${set_cigar_bam} \\
+        ${bam_output}
 
 
     cat <<-END_VERSIONS > versions.yml
@@ -51,7 +49,7 @@ process MINIMAP2_ALIGN {
     def prefix = task.ext.prefix ?: "${meta.id}"
     def output_file = bam_format ? "${prefix}.bam" : "${prefix}.paf"
     """
-    touch $output_file
+    touch ${output_file}
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

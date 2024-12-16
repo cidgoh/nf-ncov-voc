@@ -1,18 +1,18 @@
 process NCOVSPLITMUTATIONSGVF {
 
-  tag "$meta.id"
+  tag "${meta.id}"
 
   conda "conda-forge::pandas=1.4.3"
-  container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pandas:1.4.3':
-        'amancevice/pandas:1.4.3' }"
-  
+  container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
+    ? 'https://depot.galaxyproject.org/singularity/pandas:1.4.3'
+    : 'amancevice/pandas:1.4.3'}"
+
   input:
-      tuple val(meta), path(gvf)
-      path(tsv)
+  tuple val(meta), path(gvf)
+  path tsv
 
   output:
-      tuple val(meta), path("*.gvf"), emit: gvf
+  tuple val(meta), path("*.gvf"), emit: gvf
 
   script:
 
@@ -20,9 +20,9 @@ process NCOVSPLITMUTATIONSGVF {
   def prefix = task.ext.prefix ?: "${meta.id}"
 
   """
-    splitmutationnames_gvf.py --ingvf $gvf \\
-      --names_to_split $tsv \\
-      $args \\
+    splitmutationnames_gvf.py --ingvf ${gvf} \\
+      --names_to_split ${tsv} \\
+      ${args} \\
       --outgvf ${prefix}.processed.gvf 
 
   """

@@ -4,31 +4,30 @@
 
 // Define the process to run
 process CONVERTGFFTOJSON {
-     tag "$meta.id"
-
+    tag "${meta.id}"
     conda "conda-forge::pandas=1.4.3"
-    container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
-        'https://depot.galaxyproject.org/singularity/pandas:1.4.3':
-        'amancevice/pandas:1.4.3' }"
+    container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
+        ? 'https://depot.galaxyproject.org/singularity/pandas:1.4.3'
+        : 'amancevice/pandas:1.4.3'}"
 
     input:
-        tuple val(meta), path(gff)
-        path(color)
-        path(alias)
-    
+    tuple val(meta), path(gff)
+    path color
+    path alias
+
     output:
-        tuple val(meta), path("*.json"), emit: json
+    tuple val(meta), path("*.json"), emit: json
 
     script:
-        def prefix = task.ext.prefix ?: "${meta.id}"
-        def color = color ? "--color_file ${color}" : ''
-        def alias = alias ? "--alias_file ${alias}" : ''
-        
-        """
+    def prefix = task.ext.prefix ?: "${meta.id}"
+    def val_color = color ? "--color_file ${color}" : ''
+    def val_alias = alias ? "--alias_file ${alias}" : ''
+
+    """
         gff2json.py \\
         --gff_file ${gff} \\
-        $color \\
-        $alias \\
+        ${val_color} \\
+        ${val_alias} \\
         --json_file ${prefix}.json
         
         """

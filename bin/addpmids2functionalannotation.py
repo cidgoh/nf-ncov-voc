@@ -38,14 +38,20 @@ if __name__ == '__main__':
     pmids_df = pmids_df[pmids_df["PMID"].notna()]
     pmids_df = pmids_df.drop_duplicates(subset='DOI', keep='first')
     pmids_df = pmids_df[['PMID', 'DOI']]
+    pmids_df['DOI'] = "doi:" + pmids_df['DOI']
+    pmids_df['PMID'] = "pmid:" + pmids_df['PMID'].astype(str)
 
     #merge them
     functional_annotation_df = functional_annotation_df.drop(columns='PMID')
     functional_annotation_df = pd.merge(functional_annotation_df, pmids_df, on='DOI', how='left')
-    functional_annotation_df["PMID"] = functional_annotation_df["PMID"].astype('Int64')
+    #functional_annotation_df["PMID"] = functional_annotation_df["PMID"].astype('Int64')
 
     # rearrange columns
     functional_annotation_df = functional_annotation_df[functional_annotation_columns]
+
+    # make sure years and PMIDs are integers
+    functional_annotation_df["publication year"] = functional_annotation_df["publication year"].astype('Int64')
+    functional_annotation_df['PMID'] = functional_annotation_df['PMID'].str.replace('.0', '', regex=False)
 
     # save to TSV
     functional_annotation_df.to_csv(args.outputfile, sep='\t', header=True, index=False)
