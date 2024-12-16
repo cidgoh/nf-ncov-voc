@@ -3,7 +3,7 @@ process MERGE_LOGFILES {
     conda "conda-forge::dask=2023.10.1"
     container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
         ? 'biocontainers/dask:2023.10.1-py11-ol9_cv1'
-        : 'quay.io/biocontainers/dask:2023.10.1-py11-ol9_cv1'}"
+        : 'daskdev/dask:2023.10.1-py3.11'}"
 
     input:
     tuple val(meta), path(log_header)
