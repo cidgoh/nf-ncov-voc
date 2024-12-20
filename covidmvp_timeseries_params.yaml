@@ -7,8 +7,7 @@ virusseq_update: false
 skip_classification: true
 skip_postprocessing: true
 skip_harmonize: false
-start_date: "2024-01-30"
-end_date: "2024-04-30"
+start_date: "2024-06-15"
 metadata_source: "ViralAi_EpiCoV"
 metadata_config: "assets/metadata_conf/metadata.yaml"
 outdir: "results/covidmvp"
