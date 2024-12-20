@@ -38,6 +38,20 @@ jobs:
       - name: Run pipeline test (reference)
         run: |
           nextflow run main.nf -profile docker --prefix "covidmvp-$(date +%Y-%m-%d)" --end_date $(date +%Y-%m-%d) -params-file covidmvp_clinical_params.yaml
+  test_sarscov2_timeseries:
+    name: Run pipeline test (user)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Nextflow
+        run: |
+          wget -qO- get.nextflow.io | bash
+          sudo mv nextflow /usr/local/bin/
+
+      - name: Run pipeline test (timeseries)
+        run: |
+          nextflow run main.nf -profile docker --prefix "covidmvp-timeseries-$(date +%Y-%m-%d)" -params-file covidmvp_timeseries_params.yaml
 
   check_success:
     name: Check if all tests passed
