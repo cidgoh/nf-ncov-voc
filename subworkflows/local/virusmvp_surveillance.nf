@@ -16,10 +16,14 @@ workflow SURVEILLANCE {
   surveillance_indicators = Channel.value([id: "surveillance", file: params.surveillance_indicators])
 
   if (params.mode == 'reference') {
-    metadata = ch_metadata
+    ch_combined = tsv.join(ch_metadata, by: 0)
   }
   else {
-    metadata = [[], []]
+    ch_combined = tsv.map { id, gvf -> [id, gvf, []] }
   }
-  TSV2PDF(tsv, surveillance_indicators, metadata)
+  TSV2PDF(ch_combined, surveillance_indicators)
+
+  emit:
+  tsv = tsv
+  pdf = TSV2PDF.out.surveillance_pdf
 }
