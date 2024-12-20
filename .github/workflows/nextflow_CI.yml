@@ -56,7 +56,8 @@ jobs:
 
   check_success:
     name: Check if all tests passed
-    needs: [test_sarscov2_user, test_sarscov2_reference]
+    needs:
+      [test_sarscov2_user, test_sarscov2_reference, test_sarscov2_timeseries]
     runs-on: ubuntu-latest
     steps:
       - name: Check job status
