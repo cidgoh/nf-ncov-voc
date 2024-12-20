@@ -78,6 +78,6 @@ workflow PREPROCESSING {
 
     emit:
     ch_metadata
-    sequences   = SEQKIT_GREP.out.filter
-    logfile     = logfile
+    ch_sequences = SEQKIT_GREP.out.filter
+    logfile
 }
