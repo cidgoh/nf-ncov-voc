@@ -8,13 +8,11 @@ include { ANNOTATION                } from '../subworkflows/local/virusmvp_annot
 include { SURVEILLANCE              } from '../subworkflows/local/virusmvp_surveillance'
 include { GVF_PROCESSING_ANNOTATION } from '../subworkflows/local/virusmvp_gvf_processing_annotations'
 include { QUALITYCONTROL            } from '../subworkflows/local/virusmvp_qc'
-//include {VIRALAI                    } from '../subworkflows/local/viralai/viralai_datadownload'
 include { CLASSIFICATION            } from '../subworkflows/local/virusmvp_classification'
 include { POSTPROCESSING            } from '../subworkflows/local/virusmvp_postprocessing'
 
 // include modules
 include { METADATA_HARMONIZER       } from '../modules/local/harmonize_metadata'
-
 
 workflow POXMVP {
     take:
@@ -23,14 +21,12 @@ workflow POXMVP {
     ch_snpeff_config
 
     main:
-    //ch_voc = Channel.empty()
+    metadata = Channel.empty()
     skip_variant_calling = false
-
 
     seq = file(params.seq, checkIfExists: true)
     id = seq.getSimpleName()
     sequences = [[id: id], seq]
-
 
     if (params.mode == "reference") {
         meta = file(params.meta, checkIfExists: true)
@@ -48,29 +44,23 @@ workflow POXMVP {
         }
         if (!params.skip_classification) {
             CLASSIFICATION(metadata, sequences)
-            metadata = CLASSIFICATION.out.metadata
-            sequences = CLASSIFICATION.out.sequences
+            metadata = CLASSIFICATION.out.merged_metadata
         }
+
         PREPROCESSING(metadata, sequences)
+        metadata = PREPROCESSING.out.ch_metadata
+        processed_sequences = PREPROCESSING.out.ch_sequences
 
-        metadata = PREPROCESSING.out.metadata
-        sequences = PREPROCESSING.out.sequences
+        // Step 2: Process SEQKIT_GREP output
 
-        sequences
-            .map { key, fasta_files ->
-                tuple([[id: fasta_files.getBaseName(2)], [fasta_files]])
-            }
-            .set { sequences_grouped }
-
-        sequences
-            .map { [it[1]] }
+        ch_collected_sequences = processed_sequences
+            .map { it[1] }
             .collect()
-            .map { sequences -> [[id: "seqkit_stat"], sequences] }
-            .set { ch_collected_sequences }
+            .map { seqs -> [[id: "seqkit_stat"], seqs] }
 
         if (!params.skip_qc) {
-            QUALITYCONTROL(sequences_grouped, ch_collected_sequences)
-            sequences_grouped = QUALITYCONTROL.out.sequences_grouped
+            QUALITYCONTROL(processed_sequences, ch_collected_sequences)
+            sequences_grouped = QUALITYCONTROL.out.sequences
             ch_stats = QUALITYCONTROL.out.stats
         }
     }
@@ -83,11 +73,12 @@ workflow POXMVP {
         else {
             if (!params.skip_qc) {
                 QUALITYCONTROL(sequences, sequences)
-                sequences_grouped = QUALITYCONTROL.out.sequences_grouped
+                sequences_grouped = QUALITYCONTROL.out.sequences
                 ch_stats = QUALITYCONTROL.out.stats
             }
         }
     }
+
     if (!skip_variant_calling == true) {
         VARIANT_CALLING(sequences_grouped, params.viral_genome, params.viral_genome_fai)
         annotation_vcf = VARIANT_CALLING.out.vcf
@@ -100,5 +91,8 @@ workflow POXMVP {
     annotated_gvf = GVF_PROCESSING_ANNOTATION.out.annotation_gvf
     if (!params.skip_postprocessing) {
         POSTPROCESSING(annotated_gvf, PREPROCESSING.out.logfile)
+    }
+    if (!params.skip_surveillance) {
+        SURVEILLANCE(annotated_gvf, metadata)
     }
 }
