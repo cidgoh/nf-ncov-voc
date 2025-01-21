@@ -23,29 +23,35 @@ workflow ANNOTATION {
     lineage = true
     wastewater_data = []
 
+    ch_viral_genome = Channel
+        .fromPath(viral_genome)
+        .ifEmpty { error("Cannot find viral genome file: ${viral_genome}") }
+        .map { file -> [[id: params.virus_accession_id], file] }
+        .collect()
+
     if (!params.skip_problematics_sites && params.virus_accession_id == "NC_045512.2") {
         problematics_sites = file(params.probvcf, checkIfExists: true)
         vcf = [[id: params.virus_accession_id], [problematics_sites]]
         TAGPROBLEMATICSITES_NCOV(annotation_vcf, vcf)
         annotation_vcf = TAGPROBLEMATICSITES_NCOV.out.vcf
     }
-
+    ch_viral_genome_value = ch_viral_genome.first()
     if (!params.skip_SNPEFF) {
         SNPEFF_ANN(
             annotation_vcf,
-            ch_snpeff_db,
-            ch_snpeff_config,
-            viral_genome
+            ch_snpeff_db.collect(),
+            ch_snpeff_config.collect(),
+            ch_viral_genome_value,
         )
         annotation_vcf = SNPEFF_ANN.out.vcf
     }
 
-
+    ch_json_value = ch_json.first()
     if (!params.skip_peptide_annottaion && params.virus_accession_id == "NC_045512.2") {
-        ch_json_value = ch_json.first()
+
         ANNOTATEMATPEPTIDES_NCOV(
             annotation_vcf,
-            ch_json_value
+            ch_json_value,
         )
         annotation_vcf = ANNOTATEMATPEPTIDES_NCOV.out.vcf
     }
@@ -64,27 +70,37 @@ workflow ANNOTATION {
         lineage = []
         wastewater_data = true
         data_description = "Wastewater"
+
+        // For wastewater, combine annotation_vcf with its corresponding stats file
+        combined_input = annotation_vcf.join(ch_stats, by: 0)
     }
     else {
         data_description = "Clinical"
-    }
-    if (ch_stats) {
-        ch_stats = ch_stats.map { it[1] }
+        wastewater_data = false
+        lineage = true
+
+        if (ch_stats) {
+            ch_stats_value = ch_stats.collect().map { it -> it[1] }.first()
+            combined_input = annotation_vcf.combine(ch_stats_value) 
+        }
+        else {
+            combined_input = annotation_vcf.map { meta, vcf ->
+                [meta, vcf, []]
+            }
+        }
     }
 
-    if (params.mode == 'user') {
-        lineage = []
-    }
+    ch_json_value = ch_json.first()
 
     VCFTOGVF(
-        annotation_vcf,
-        ch_stats,
+        combined_input,
         threshold,
         ch_json_value,
         lineage,
         wastewater_data,
-        data_description
+        data_description,
     )
+
     gvf = VCFTOGVF.out.gvf
 
     emit:
