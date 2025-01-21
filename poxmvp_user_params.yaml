@@ -1,0 +1,19 @@
+prefix: "poxmvp-user"
+mode: "user"
+skip_classification: true
+skip_postprocessing: true
+skip_posting: true
+skip_harmonize: true
+outdir: "results/poxmvp"
+skip_peptide_annottaion: true
+skip_variantannotation: true
+funcannot: "assets/virus_functionalAnnotation/NC_063383.1/Pokay_functionalAnnotation_MPOX_v1.0.tsv"
+seq: "test_data/mpox/mpox_test_data_100x.fa"
+# seq: "data/viralai_test.vcf"
+virus_accession_id: "NC_063383.1"
+genecoord: "assets/virus_geneCoordinates/NC_063383.1/NC_063383.1.json"
+surveillance_indicators: "assets/virus_surveillanceIndicators/functions_df_template.tsv"
+viral_gbk: "assets/virus_genomeFeatures/NC_063383.1/NC_063383.1.gbk"
+viral_gff: "assets/virus_genomeAnnotation/NC_063383.1/NC_063383.1.gff"
+viral_genome: "assets/virus_referenceGenome/NC_063383.1/NC_063383.1.fasta"
+viral_genome_fai: "assets/virus_referenceGenome/NC_063383.1/NC_063383.1.fasta.fai"

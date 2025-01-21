@@ -1,0 +1,19 @@
+prefix: "covidmvp-user"
+mode: "user"
+skip_classification: true
+skip_postprocessing: true
+skip_posting: true
+skip_harmonize: true
+outdir: "results/covidmvp"
+seq: "test_data/sars-cov-2/sars-cov-2_test_data_1x.fa"
+# seq: "data/viralai_test.vcf"
+virus_accession_id: "NC_045512.2"
+probvcf: "assets/virus_problematicSites/NC_045512.2/problematic_sites_sarsCov2.vcf"
+funcannot: "assets/virus_functionalAnnotation/NC_045512.2/Pokay_functionalAnnotation_SARSCoV2_v4.2.tsv"
+surveillance_indicators: "assets/virus_surveillanceIndicators/functions_df_template.tsv"
+genecoord: "assets/virus_geneCoordinates/NC_045512.2/NC_045512.2.json"
+mutationsplit: "assets/ncov_multiNames/mutation_names_to_split.tsv"
+viral_gbk: "assets/virus_genomeFeatures/NC_045512.2/NC_045512.2.gbk"
+viral_gff: "assets/virus_genomeAnnotation/NC_045512.2/NC_045512.2.gff"
+viral_genome: "assets/virus_referenceGenome/NC_045512.2/NC_045512.2.fasta"
+viral_genome_fai: "assets/virus_referenceGenome/NC_045512.2/NC_045512.2.fasta.fai"
