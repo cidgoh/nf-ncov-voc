@@ -11,7 +11,7 @@ process SNPEFF_ANN {
     tuple val(meta), path(vcf)
     path db
     path config
-    path fasta
+    tuple val(meta2), path(fasta)
 
     output:
     tuple val(meta), path("*.vcf"), emit: vcf
