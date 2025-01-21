@@ -8,7 +8,7 @@ outdir: "results/poxmvp"
 skip_peptide_annottaion: true
 skip_variantannotation: true
 funcannot: "assets/virus_functionalAnnotation/NC_063383.1/Pokay_functionalAnnotation_MPOX_v1.0.tsv"
-seq: "test_data/mpox/mpox_test_data_100x.fa"
+seq: "test_data/mpox/mpox_test_data_10x.fa"
 # seq: "data/viralai_test.vcf"
 virus_accession_id: "NC_063383.1"
 genecoord: "assets/virus_geneCoordinates/NC_063383.1/NC_063383.1.json"
