@@ -27,21 +27,21 @@ include { FREYJA_DEMIX                                    } from '../modules/nf-
 include { FREYJA_VARIANTS                                 } from '../modules/nf-core/freyja/variants/main'
 include { IVAR_VARIANTS_TO_VCF as WW_IVAR_VARIANTS_TO_VCF } from '../modules/local/archive/custom'
 include { XZ_DECOMPRESS                                   } from '../modules/nf-core/xz/decompress/main'
-
+include { SURVEILLANCE                                    } from '../subworkflows/local/virusmvp_surveillance'
 include { INPUT_CHECK                                     } from '../subworkflows/local/input_check'
 include { BAM_VARIANT_DEMIX_BOOT_FREYJA                   } from '../subworkflows/nf-core/bam_variant_demix_boot_freyja/main'
 include { ANNOTATION                                      } from '../subworkflows/local/virusmvp_annotation'
 include { GVF_PROCESSING_ANNOTATION                       } from '../subworkflows/local/virusmvp_gvf_processing_annotations'
 
-
 workflow WASTEWATER {
     take:
-    ch_json         
-    ch_snpeff_db    
+    ch_json
+    ch_snpeff_db
     ch_snpeff_config
 
     main:
     ch_short_reads = Channel.empty()
+    metadata = Channel.empty()
     if (params.input) {
         ch_input = file(params.input)
     }
@@ -65,7 +65,7 @@ workflow WASTEWATER {
                 ch_short_reads,
                 adapter,
                 params.save_trimmed_fail,
-                params.save_merged
+                params.save_merged,
             )
         }
         else {
@@ -73,7 +73,7 @@ workflow WASTEWATER {
                 ch_short_reads,
                 [],
                 params.save_trimmed_fail,
-                params.save_merged
+                params.save_merged,
             )
         }
         ch_short_reads = WW_FASTP.out.reads
@@ -83,25 +83,35 @@ workflow WASTEWATER {
     WW_SEQKIT_STATS(ch_short_reads)
     human_genome = [
         [id: params.host_genome_id, single_end: true],
-        file(params.host_genome, checkIfExists: true)
+        file(params.host_genome, checkIfExists: true),
     ]
     viral_genome = [
         [id: params.viral_genome_id, single_end: true],
-        file(params.viral_genome, checkIfExists: true)
+        file(params.viral_genome, checkIfExists: true),
     ]
     if (!params.skip_dehosting) {
         if (params.dehost_aligner == 'bwa') {
-            XZ_DECOMPRESS(human_genome)
-            human_genome = XZ_DECOMPRESS.out.file
-            WW_BWA_INDEX_HOST(human_genome)
-            human_genome_index = WW_BWA_INDEX_HOST.out.index
+            // Check if BWA index files already exist
+            if (!bwaIndexExists(params.host_genome)) {
+                WW_BWA_INDEX_HOST(human_genome)
+                human_genome_index = WW_BWA_INDEX_HOST.out.index
+            }
+            else {
+                // If index files exist, create a channel with the existing index
+                human_genome_index = Channel
+                    .fromPath("${params.host_genome}.*")
+                    .collect()
+                    .map { files ->
+                        [human_genome[0], files]
+                    }
+            }
             reads = ch_short_reads
             sorted = params.bwa_sort_bam
             WW_BWA_MEM_HOST(
                 reads,
                 human_genome_index,
                 human_genome,
-                sorted
+                sorted,
             )
             ch_mapped_bam = WW_BWA_MEM_HOST.out.bam
         }
@@ -119,7 +129,7 @@ workflow WASTEWATER {
                 human_genome,
                 bam_format,
                 cigar_paf_format,
-                cigar_bam
+                cigar_bam,
             )
             ch_mapped_bam = MINIMAP2_ALIGN_HOST.out.bam
         }
@@ -139,12 +149,12 @@ workflow WASTEWATER {
         WW_SAMTOOLS_VIEW(
             ch_mapped_bam.combine(bam_index, by: 0),
             [[], []],
-            []
+            [],
         )
         interleaved = params.interleaved
         WW_SAMTOOLS_FASTQ(
             WW_SAMTOOLS_VIEW.out.bam,
-            interleaved
+            interleaved,
         )
 
         ch_short_reads = WW_SAMTOOLS_FASTQ.out.fastq
@@ -159,7 +169,7 @@ workflow WASTEWATER {
             reads,
             viral_genome_index,
             viral_genome,
-            sorted
+            sorted,
         )
         ch_viral_bam = WW_BWA_MEM_VIRAL.out.bam
     }
@@ -177,7 +187,7 @@ workflow WASTEWATER {
             viral_genome,
             bam_format,
             cigar_paf_format,
-            cigar_bam
+            cigar_bam,
         )
         ch_viral_bam = MINIMAP2_ALIGN_VIRAL.out.bam
     }
@@ -208,7 +218,18 @@ workflow WASTEWATER {
     annotatted_vcf = ANNOTATION.out.gvf
 
     GVF_PROCESSING_ANNOTATION(annotatted_vcf)
+    annotated_gvf = GVF_PROCESSING_ANNOTATION.out.annotation_gvf
+    if (!params.skip_surveillance) {
+        SURVEILLANCE(annotated_gvf, metadata)
+    }
 
     emit:
     versions = ch_versions // channel: [ path(versions.yml) ]
+}
+
+def bwaIndexExists(genome_file) {
+    def index_suffixes = ['.amb', '.ann', '.bwt', '.pac', '.sa']
+    return index_suffixes.every { suffix ->
+        file("${genome_file}${suffix}").exists()
+    }
 }
