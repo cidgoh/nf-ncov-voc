@@ -81,15 +81,16 @@ workflow WASTEWATER {
     }
 
     WW_SEQKIT_STATS(ch_short_reads)
-    human_genome = [
-        [id: params.host_genome_id, single_end: true],
-        file(params.host_genome, checkIfExists: true),
-    ]
+
     viral_genome = [
         [id: params.viral_genome_id, single_end: true],
         file(params.viral_genome, checkIfExists: true),
     ]
     if (!params.skip_dehosting) {
+        human_genome = [
+            [id: params.host_genome_id, single_end: true],
+            file(params.host_genome, checkIfExists: true),
+        ]
         if (params.dehost_aligner == 'bwa') {
             // Check if BWA index files already exist
             if (!bwaIndexExists(params.host_genome)) {
