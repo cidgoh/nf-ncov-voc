@@ -8,7 +8,7 @@
 ## Introduction
 
 **nf-ncov-voc** is a bioinformatics workflow developed to process viral genomes and integrate the contextual data.
-The workflow was intially designed for processing SARS-CoV-2 for COVID-19 pandemic response and has been later adapted for more priority viruses e.g., Mpox and Influenza. The workflow is developed in a modular structure with several modules and sub-workflows leveraged from [nf-core](https://nf-co.re). These modules and sub-workflows are assembled in a plug-n-play manner based on the data and viral charatceristics. Each virus supported by the workflow has its own workflow file that directs the assembly of sub-workflows and modules.
+The workflow was intially designed for processing SARS-CoV-2 for COVID-19 pandemic response and has been later adapted for Mpox. Two different versions for RSV and Influenza are in actvie development. The workflow is developed in a modular structure with several modules and sub-workflows leveraged from [nf-core](https://nf-co.re). These modules and sub-workflows are assembled in a plug-n-play manner based on the data and viral charatceristics. Each virus supported by the workflow has its own workflow file that directs the assembly of sub-workflows and modules.
 
 The workflow is built using [Nextflow](https://www.nextflow.io)- [DSL2](https://www.nextflow.io/docs/latest/dsl2.html), a workflow tool to run tasks across multiple compute infrastructures in a very portable manner. It can use `conda`/`Docker`/`Singularity` containers making installation trivial and results highly reproducible.
 
@@ -20,111 +20,57 @@ below in the dataflow diagram
 
 ### nf-ncov-voc Dataflow
 
-![DataFlow](figs/COVIDMVP.drawio.png)
+![DataFlow](figs/nf-ncov-voc.png)
 
-### Functional Annotation
+### Modes
 
-**nf-ncov-voc** offers a unique opportunity to integrate the contextual data with genomics data. Variant Called File (VCF) generated for each group or sample is then converted to a Genome Variant File (GVF) to integrate the functions associated to different mutations. For more information of how the functions are curated and structured see the dedicated repository [_Pokay_](https://github.com/nodrogluap/pokay)
+The workflow can be run in three different modes (`--mode reference`, `--mode user`, or `--wastewater`).
 
-**nf-ncov-voc** with the help of functional data in _Pokay_, produces surveillance reports that are developed in collaboration with the Public Health partners and offers a high-level yet comprehensive report on each mutation its associated functions in literature.
+- **Reference Mode**: This is the default and most commonly used mode. In this mode, input data is processed in bulk, and the resulting files can be viewed in the VIRUS-MVP visualization tool. This mode enables the most flexibility and features such as grouping data by different variables. User mode currently only supports uploading a FASTA file.
+- **User Mode**: This mode is designed for an enhanced user experience. The workflow is containerized and integrated directly into the visualization tool, allowing users to upload a FASTA file. The uploaded file is processed and viewed along with other groups in the visualization. This mode is suitable for teams setting up their own instances for regular surveillance.
+- **Wastewater Mode**: This mode is specified by passing the parameter `--wastewater`. It is used for processing wastewater samples sequenced using FASTQ reads.
+
+Each mode tailors the workflow to different use cases, ensuring flexibility and adaptability for various analysis needs.
 
 ### Input data
 
 As an input, **nf-ncov-voc** can accept different formats, Whole Genome Sequences (WGS) in `FASTA` format with a Metadata file in `TSV` format; paired-end short read sequences in `FASTQ` format with a Metadata file in `TSV` format. Additionally, the input can also be `VCF` file that contains variants called.
 
+### Classification
+
+This module offers a classification subworkflow that can be used for classifying sequences into lineages or clades using either [pangolin](https://github.com/cov-lineages/pangolin) (SARS-CoV-2 specific) or [Nextclade](https://clades.nextstrain.org) (SARS-CoV-2 & Mpox). The output report from these classification tools is merged with the metadata file before further processing. If a column `pango_lineage` is already available in the metadata file, this step can be skipped. To skip this step, use the `--skip_classification` parameter.
+
 ### Grouping data
+
+**nf-ncov-voc** allows for flexible grouping of input data to facilitate comparative analysis. Grouping can be based on various metadata attributes such as collection date, geographic location, or lineage information. This is particularly useful for identifying patterns and trends within specific subsets of the data. Users can specify grouping criteria through the `--grouping_criteria` parameter, which accepts a metadata column. For example, to group data by lineage you would use `--grouping_criteria lineage` or `--grouping_criteria time` for time based grouping. This feature enables targeted analysis and more meaningful interpretation of results by focusing on relevant data subsets.
 
 ### Quality control
 
+**nf-ncov-voc** employs different tools for quality control based on the input data format. When the input is in `FASTA` format, the workflow uses `BBMAP` to remove sequences containing a specified number of `Ns` representing missing data. This ensures that only high-quality sequences are processed further. Users can customize the maximum number of `Ns` allowed in the sequences through the `--maxns` parameter.
+
+For `FASTQ` format inputs, typically used for wastewater samples, the workflow utilizes `fastp` to filter out low-quality sequences. `fastp` performs comprehensive quality control, including trimming low-quality bases and filtering out reads that do not meet the quality thresholds. Users can customize various options in `fastp` to suit their specific requirements.
+
+Both tools provide flexibility and customization options to ensure that the quality control process meets the needs of different datasets and analysis goals.
+
 ### Variant Calling
 
-Sequences in pre-processing stage are filtered using Metadata
-variables, quality filtered and assigned lineages. Sequences
-assigned as VOCs, VOIs and VUMs are then mapped to SARS-CoV-2 genome,
-variant called and normalized in Genomic Analysis (Variant Calling)
-module. Mutations called are then annotated in several stages
-including flagging the potential contaminated sites, mutation
-annotation, genomic feature annotation, mature peptide annotation
-and finally respective biological functional impact using the
-manually curated effort [Pokay](https://github.com/nodrogluap/pokay).
-(lead by Paul Gordon [@nodrogluap](https://github.com/nodrogluap)).
-Finally, in the surveillance module, these functional profiles are
-summarized using functional indicators to highlight key functions
-and mutations responsible for them for e.g. **P618H** role in
-_convalescent plasma escape_.
+In the variant calling stage, the workflow supports two main options for input sequences in `FASTA` format: `iVar` and `Freebayes`. Users can choose between these tools based on their specific requirements. The `iVar` tool is used for more stringent variant calling, while `Freebayes` offers a more flexible approach.
 
-### Pre-Processing
-
-This module offers two ways to get lineage information for each
-genome in `FASTA` file and listed respectively in Metadata file
-unless a column `pango_lineage` is already available in which case
-both options can be skipped. First option is to use
-[PANGOLIN](https://github.com/cov-lineages/pangolin) to assign
-lineages and merge the metadata with pangolin report. This
-step can be skipped by passing `--skip_pangolin`. The second option
-is to map input metadata to [GISAID](https://www.gisaid.org) metadata
-file (which can be provided by `--gisaid_metadata` parameter) if the
-genomes are available in GISAID. This option is faster and
-computationally less expensive, though limits to only genomes
-available in GISAID. This option can be skipped by
-using `--skip_mapping`.
-
-### Genomic Analysis
-
-This module currently supports two different modes - "_reference_" &
-"_user_" which can be passed with `--mode reference` or `--mode 
-user`. By default, `--mode reference` is activated which allows you
-to build a reference library for each lineage and subsequently each
-variant for comparative analysis. This mode can take `FASTA` file
-with multiple genomes (**recommended** & **default**) or single
-genome with a metadata file that should have one column atleast
-(`pango_lineage`) as minimal metadata
-(see [Workflow Summary](#workflow-summary) for detailed options).
-The workflow has numerous options for several steps. For
-example, in `mode --reference` user can use `BWAMEM` using `--bwa`
-instead of `MINIMAP2` (_default_) for mapping consensus sequences to
-reference genome. Similarly, `ivar` with parameter `--ivar` for
-variant calling instead of `freebayes` (_default_) option.
-The user mode (`--mode user`) is by default active when using
-interactive visualization through
-[COVID-MVP](https://github.com/cidgoh/COVID-MVP) where a user can
-upload `GVF` file for comparative analysis against the reference data.
-Uploaded dataset can be a `FASTA` file or variant called `VCF` file.
+For wastewater samples, the workflow employs the [`Freyja`](https://github.com/andersen-lab/Freyja) subworkflow, which is specifically designed to handle the complexities associated with wastewater sequencing data. This subworkflow ensures accurate variant calling and analysis for wastewater samples.
 
 ### Functional Annotation
 
-In this module, the variant called `VCF` file for each lineage is
-converted into a `GVF` (Genomic Variant Format) file and annotated
-with functional information using
-[Pokay](https://github.com/nodrogluap/pokay). GVF is a variant of
-GFF3 format that is standardized for describing genomic mutations;
-it is used here because it can describe mutations across multiple
-rows, and because the "#attributes" column can store information in
-custom key-value pairs. The key-value pairs added at this stage
-include for each mutation: VOC/VOI status, clade-defining status
-(for reference lineages), and functional annotations parsed using
-[vcf2gvf.py](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/vcf2gvf.py)
-file written in python.
+**nf-ncov-voc** offers a unique opportunity to integrate contextual data with genomics data. Mutations identified through variant calling are annotated in several stages, including flagging potential contaminated sites, mutation annotation, genomic feature annotation, mature peptide annotation, and assessing the biological functional impact using the manually curated effort Pokay. For more information on how the functions are curated and structured, see the dedicated repository [_Pokay_](https://github.com/nodrogluap/pokay).
+
+The `Variant Called File (VCF)` generated for each group or sample is converted to a `Genome Variant File (GVF)` to integrate the functions associated with different mutations. GVF is a variant of the GFF3 format standardized for describing genomic mutations; it is used here because it can describe mutations across multiple rows, and the "#attributes" column can store information in custom key-value pairs. The key-value pairs added at this stage include, for each mutation: VOC/VOI status, clade-defining status (for reference lineages), and functional annotations.
+
+#### Mutation Functional Annotation Contextual Data Specifications
+
+To facilitate the integration of external annotations, we have developed a [Pathogen-Mutation-Functional-Annotation-Package](https://github.com/cidgoh/pathogen-mutation-functionalannotation-package). Users can use this template to add functional information using a controlled vocabulary and pick lists and integrate them into their analyses. To validate user-developed annotations, we have developed a [DataHarmonizer](https://github.com/cidgoh/DataHarmonizer) template for VIRUS-MVP functional annotation. This harmonization process enhances data quality and creates interoperability between different systems, facilitating collaborative research efforts and cross-study comparisons.
 
 ### Surveillance Reports
 
-Different `GVF` files for the same variant are then collated and
-summarized into a `TSV` file that contains mutation prevalence,
-profile and functional impact. Further `TSV` file is also summarized
-as a more human friendly and impactful surveillance report in a
-`PDF` format. Relevant/important indicators can be specified in the
-[tsv file](https://github.com/cidgoh/nf-ncov-voc/blob/master/assets/ncov_surveillanceIndicators/functions_df_template.tsv).
-This feature of surveillance reports can be used to identify new
-clusters, important mutations, and track their transmission and
-prevalence trends. However, if not required, this step can be
-skipped using `--skip_surveillance`. An example of surveillance file
-for Omicron variant using
-[VirusSeq Data Portal](https://virusseq-dataportal.ca) is available in
-[Docs](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs)
-
-See the
-[parameters](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs/PARAMETERS.md)
-docs for all available options when running the workflow.
+**nf-ncov-voc**, with the help of functional data, produces surveillance reports developed in collaboration with Public Health partners. These reports offer a high-level yet comprehensive overview of each mutation and its associated functions in the literature. For each group, the `GVF` file is used to produce two kinds of surveillance reports. The first is in `TSV` format, which aims to help integration with other surveillance tools. The second is a summarized `PDF` format, which aims to assist partners, collaborators, and end-users in regular genomic surveillance. These reports contain mutation prevalence, profile, and functional impact. Relevant/important indicators can be specified in the [tsv file](https://github.com/cidgoh/nf-ncov-voc/blob/master/assets/ncov_surveillanceIndicators/functions_df_template.tsv). This feature of surveillance reports can be used to identify new clusters, important mutations, and track their transmission and prevalence trends. However, if not required, this step can be skipped using `--skip_surveillance`. An example of a surveillance file for the Omicron variant using the [VirusSeq Data Portal](https://virusseq-dataportal.ca) is available in [Docs](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs).
 
 ** Further developments will continue to adapt nf-ncov-voc to other viruses in near furture. **
 
@@ -139,6 +85,10 @@ docs for all available options when running the workflow.
    ```bash
    nextflow run nf-ncov-voc/main.nf --help
    ```
+
+   See the
+   [parameters](https://github.com/cidgoh/nf-ncov-voc/blob/master/docs/PARAMETERS.md)
+   docs for all available options when running the workflow.
 
    ```bash
    N E X T F L O W  ~  version 21.04.3
@@ -231,46 +181,57 @@ docs for all available options when running the workflow.
 
 4. Start running your own analysis!
 
-   - Typical command for reference mode when Metadata File don't have
-     lineage information:
+   - Typical command for reference mode for SARS-CoV-2 analysis:
 
-     ```bash
-     nextflow nf-ncov-voc/main.nf \
-         -profile <conda, singularity, docker> \
-         --prefix <testing> \
-         --mode reference \
-         --startdate <2020-01-01> \
-         --enddate <2020-01-01> \
-         --seq <Sequence File> \
-         --meta <Metadata File> \
-         --skip_mapping \
-         --outdir <Output Dir>
-     ```
+   ```bash
+    nextflow nf-ncov-voc/main.nf \
+      -profile <conda, singularity, docker> \
+      --virus_accession_id: "NC_045512.2" \
+      --grouping_criteria "lineage" \
+      --prefix <testing> \
+      --mode reference \
+      --startdate <2020-01-01> \
+      --enddate <2020-01-01> \
+      --probvcf "assets/virus_problematicSites/NC_045512.2/problematic_sites_sarsCov2.vcf"
+      --funcannot "assets/virus_functionalAnnotation/NC_045512.2/Pokay_functionalAnnotation_SARSCoV2_v4.2.tsv" \
+      --surveillance_indicators "assets/virus_surveillanceIndicators/functions_df_template.tsv" \
+      --genecoord "assets/virus_geneCoordinates/NC_045512.2/NC_045512.2.json" \
+      --mutationsplit "assets/ncov_multiNames/mutation_names_to_split.tsv" \
+      --viral_gbk "assets/virus_genomeFeatures/NC_045512.2/NC_045512.2.gbk" \
+      --viral_gff "assets/virus_genomeAnnotation/NC_045512.2/NC_045512.2.gff" \
+      --viral_genome "assets/virus_referenceGenome/NC_045512.2/NC_045512.2.fasta" \
+      --viral_genome_fai "assets/virus_referenceGenome/NC_045512.2/NC_045512.2.fasta.fai" \
+      --variant "assets/virus_variants/NC_045512.2/variants_classification.tsv" \
+      --seq <Sequence File> \
+      --meta <Metadata File> \
+      --outdir <Output Dir>
+   ```
 
-   - Typical command for reference mode when Metadata File already
-     have
-     lineage information:
+   - Typical command for reference mode for Mpox analysis:
 
-     ```bash
-     nextflow nf-ncov-voc/main.nf \
-         -profile <conda, singularity, docker> \
-         --prefix <testing> \
-         --mode reference \
-         --startdate <2020-01-01> \
-         --enddate <2020-01-01> \
-         --seq <Sequence File> \
-         --meta <Metadata File> \
-         --skip_mapping \
-         --skip_pangolin \
-         --outdir <Output Dir>
-     ```
-
-   - An executable Python script called
-     [`functional_annotation.py`](https://github.com/cidgoh/nf-ncov-voc/blob/master/bin/functional_annotation.py)
-     has been provided if you would like to update the functional
-     annotations from `POKAY`. This will create a new file which
-     **should replace** the current file in
-     [assets/functional_annotation](https://github.com/cidgoh/nf-ncov-voc/blob/master/assets/ncov_functionalAnnotation).
+   ```bash
+   nextflow nf-ncov-voc/main.nf \
+     -profile <conda, singularity, docker> \
+     --virus_accession_id: "NC_063383.1" \
+     --grouping_criteria "lineage" \
+     --prefix <testing> \
+     --mode reference \
+     --startdate <2020-01-01> \
+     --enddate <2020-01-01> \
+     --probvcf "assets/virus_problematicSites/NC_063383.1/problematic_sites_sarsCov2.vcf"
+     --funcannot "assets/virus_functionalAnnotation/NC_063383.1/Pokay_functionalAnnotation_SARSCoV2_v4.2.tsv" \
+     --surveillance_indicators "assets/virus_surveillanceIndicators/functions_df_template.tsv" \
+     --genecoord "assets/virus_geneCoordinates/NC_063383.1/NC_063383.1.json" \
+     --mutationsplit "assets/ncov_multiNames/mutation_names_to_split.tsv" \
+     --viral_gbk "assets/virus_genomeFeatures/NC_063383.1/NC_063383.1.gbk" \
+     --viral_gff "assets/virus_genomeAnnotation/NC_063383.1/NC_063383.1.gff" \
+     --viral_genome "assets/virus_referenceGenome/NC_063383.1/NC_063383.1.fasta" \
+     --viral_genome_fai "assets/virus_referenceGenome/NC_063383.1/NC_063383.1.fasta.fai" \
+     --variant "assets/virus_variants/NC_063383.1/variants_classification.tsv" \
+     --seq <Sequence File> \
+     --meta <Metadata File> \
+     --outdir <Output Dir>
+   ```
 
 ## Acknowledgments
 
@@ -285,12 +246,12 @@ This workflow and scripts are written and conceptually designed by
 | Paul Gordon; [@nodrogluap](https://github.com/nodrogluap) | [CSM Center for Health Genomics and Informatics, University of Calgary, Canada](http://www.ucalgary.ca/~gordonp) |
 | Gary Van Domselaar; [@phac-nml](https://github.com/phac-nml) | [Public Health Agency of Canada](https://umanitoba.ca/faculties/health_sciences/medicine/units/medical_microbiology/faculty/vandomselaar.html) |
 
-Many thanks to others who have helped out and contributed along the way too, including (but not limited to)\*: [Canadian COVID Genomics Network - VirusSeq, Data Analytics Working Group](https://virusseq.ca/about/governance/)
+Many thanks to others who have helped out and contributed along the way too, including (but not limited to)\*: [Canadian COVID Genomics Network - VirusSeq, Data Analytics Working Group](https://virusseq.ca/about/governance/) & [CAMEO (CoVaRR-Net’s Computational Analysis, Modelling and Evolutionary Outcomes team)](https://covarrnet.ca/computational-analysis-modelling-and-evolutionary-outcomes-cameo/)
 
 ## Support
 
 For further information or help, don't hesitate to get in touch at
-[mzanwar@sfu.ca](mailto:mzanwar@sfu.ca) or [wwshiao](mailto:wwshiao@sfu.ca)
+[mzanwar@sfu.ca](mailto:mzanwar@sfu.ca) or [wwshiao@sfu.ca](mailto:wwshiao@sfu.ca)
 
 ## Citations
 
