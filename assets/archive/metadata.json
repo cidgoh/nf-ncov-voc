@@ -1,0 +1,97 @@
+{
+    "Format": {
+      "sep": "tab",
+      "suffix": ".gz"
+    },
+    "Required": {
+      "isolate": true,
+      "lineage": true,
+      "sample_collection_date": true,
+      "country": true,
+      "state_province_territory": true
+    },
+    "Optional": {
+      "gene_name": false,
+      "organism": true,
+      "host_scientific_name": true,
+      "host_gender": false,
+      "host_age_bin": false,
+      "submission_date": false,
+      "gisaid_accession": true,
+      "length": false,
+      "purpose_of_sampling": false,
+      "purpose_of_sequencing": false,
+      "alias": true,
+      "Type": false,
+      "Subtype": false,
+      "SubLineageGroup": false,
+      "Clade": false,
+      "last_updated": true
+    },
+    "ViralAi_EpiCoV": {
+      "isolate": "isolate",
+      "lineage": "raw_lineage",
+      "organism": "organism",
+      "gisaid_accession": "gisaid_accession",
+      "host_scientific_name": "host_scientific_name",
+      "sample_collection_date": "sample_collection_date",
+      "country": "geo_loc_name_country",
+      "state_province_territory": "geo_loc_name_state_province_territory",
+      "alias": "lineage",
+      "purpose_of_sampling": "purpose_of_sampling_details",
+      "purpose_of_sequencing": "purpose_of_sequencing_details",
+      "last_updated": "last_updated"
+    },
+    "Gisaid_EpiCoV": {
+      "isolate": "isolate",
+      "lineage": "raw_lineage",
+      "organism": "organism",
+      "gisaid_accession": "gisaid_accession",
+      "host_scientific_name": "host_scientific_name",
+      "sample_collection_date": "sample_collection_date",
+      "country": "geo_loc_name_country",
+      "state_province_territory": "geo_loc_name_state_province_territory",
+      "alias": "lineage",
+      "purpose_of_sampling": "purpose_of_sampling_details",
+      "purpose_of_sequencing": "purpose_of_sequencing_details"
+    },
+    "Gisaid_EpiPox": {
+      "isolate": "isolate",
+      "lineage": "raw_lineage",
+      "organism": "organism",
+      "gisaid_accession": "gisaid_accession",
+      "host_scientific_name": "host_scientific_name",
+      "sample_collection_date": "sample_collection_date",
+      "country": "geo_loc_name_country",
+      "state_province_territory": "geo_loc_name_state_province_territory",
+      "alias": "lineage",
+      "purpose_of_sampling": "purpose_of_sampling_details",
+      "purpose_of_sequencing": "purpose_of_sequencing_details"
+    },
+    "NCBIVirus_EpiPox": {
+      "isolate": "isolate",
+      "lineage": "raw_lineage",
+      "organism": "organism",
+      "gisaid_accession": "gisaid_accession",
+      "host_scientific_name": "host_scientific_name",
+      "sample_collection_date": "sample_collection_date",
+      "country": "geo_loc_name_country",
+      "state_province_territory": "geo_loc_name_state_province_territory",
+      "alias": "lineage",
+      "purpose_of_sampling": "purpose_of_sampling_details",
+      "purpose_of_sequencing": "purpose_of_sequencing_details"
+    },
+    "Gisaid_EpiFlu": {
+      "isolate": "isolate",
+      "lineage": "raw_lineage",
+      "organism": "organism",
+      "gisaid_accession": "gisaid_accession",
+      "host_scientific_name": "host_scientific_name",
+      "sample_collection_date": "sample_collection_date",
+      "country": "geo_loc_name_country",
+      "state_province_territory": "geo_loc_name_state_province_territory",
+      "alias": "lineage",
+      "purpose_of_sampling": "purpose_of_sampling_details",
+      "purpose_of_sequencing": "purpose_of_sequencing_details"
+    }
+}
