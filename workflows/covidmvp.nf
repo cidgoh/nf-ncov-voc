@@ -59,8 +59,8 @@ workflow COVIDMVP {
         }
 
         PREPROCESSING(metadata, sequences)
-        metadata = PREPROCESSING.out.metadata
-        processed_sequences = PREPROCESSING.out.sequences
+        metadata = PREPROCESSING.out.ch_metadata
+        processed_sequences = PREPROCESSING.out.ch_sequences
 
         // Step 2: Process SEQKIT_GREP output
 

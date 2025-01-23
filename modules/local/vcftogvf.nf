@@ -6,8 +6,8 @@ process VCFTOGVF {
     : 'amancevice/pandas:1.4.3'}"
 
   input:
-  tuple val(meta), path(vcf)
-  path stats
+  tuple val(meta), path(vcf), path(stats)
+  //path stats
   val threshold
   tuple val(meta2), path(json)
   val lineage

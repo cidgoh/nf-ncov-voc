@@ -25,45 +25,75 @@ workflow VARIANT_CALLING {
 
     main:
 
-    fasta = Channel.value([[params.virus_accession_id], file(viral_genome, checkIfExists: true)])
+    // Create a channel for the viral genome file
+    ch_viral_genome = Channel
+        .fromPath(viral_genome)
+        .ifEmpty { error("Cannot find viral genome file: ${viral_genome}") }
+        .map { file -> [[id: params.virus_accession_id], file] }
+        .collect()
+
+    ch_viral_genome_fai = Channel
+        .fromPath(viral_genome_fai)
+        .ifEmpty { error("Cannot find viral genome file: ${viral_genome}") }
+        .collect()
+
 
     if (params.viral_aligner == "bwa") {
-        BWA_INDEX([[id: params.virus_accession_id], viral_genome])
+        BWA_INDEX(ch_viral_genome)
+        index = BWA_INDEX.out.index
+        BWA_MEM(sequences_grouped, index, ch_viral_genome.map { it -> it[1] }, true)
+        ch_bam = BWA_MEM.out.bam
     }
     else {
-        MINIMAP2_ALIGN(sequences_grouped, [[id: params.virus_accession_id], viral_genome], true, false, false)
+        MINIMAP2_ALIGN(sequences_grouped, ch_viral_genome, true, false, false)
         ch_bam = MINIMAP2_ALIGN.out.bam
     }
 
-    BAM_SORT_STATS_SAMTOOLS(ch_bam, fasta)
+    // Modify BAM_SORT_STATS_SAMTOOLS call to match expected inputs
+    BAM_SORT_STATS_SAMTOOLS(ch_bam, ch_viral_genome)
     sorted_bam = BAM_SORT_STATS_SAMTOOLS.out.bam
     bam_index = BAM_SORT_STATS_SAMTOOLS.out.bai
-    bam_bai = bam_index.join(sorted_bam).map { meta, bai, bam -> [meta, bam, bai, [], [], []] }
+
+    bam_bai = sorted_bam
+        .join(bam_index)
+        .map { meta, bam, bai ->
+            tuple(meta, bam, bai)
+        }
 
     if (params.ivar) {
-        IVAR(ch_bam.combine(viral_genome).combine(params.ch_refgff))
+        IVAR(ch_bam.combine(ch_viral_genome).combine(params.ch_refgff))
         IVAR_VARIANTS_TO_VCF(IVAR.out.variants)
+        vcf = IVAR_VARIANTS_TO_VCF.out.vcf
     }
     else {
+        ch_input = bam_bai.map { meta, bam, bai ->
+            tuple(meta, bam, bai, [], [], [])
+        }
 
-        genome = Channel.value(
-            [
-                [id: params.virus_accession_id],
-                file(viral_genome, checkIfExists: true),
-                file(viral_genome_fai, checkIfExists: true)
-            ]
+        ch_viral_genome_with_index = ch_viral_genome
+            .combine(ch_viral_genome_fai)
+            .map { meta, fasta, fai ->
+                [meta[0], fasta, fai[0]]
+            }
+
+        // Create a value channel from ch_viral_genome_with_index
+        ch_viral_genome_with_index_value = ch_viral_genome_with_index.first()
+        BAM_VARIANT_CALLING_SORT_FREEBAYES_BCFTOOLS(
+            ch_input,
+            ch_viral_genome_with_index_value,
+            [[], []],
+            [[], []],
+            [[], []]
         )
-        BAM_VARIANT_CALLING_SORT_FREEBAYES_BCFTOOLS(bam_bai, genome, [[], []], [[], []], [[], []])
         GUNZIP(BAM_VARIANT_CALLING_SORT_FREEBAYES_BCFTOOLS.out.vcf)
+        vcf = GUNZIP.out.gunzip
     }
 
-    TABIX_BGZIPTABIX(
-        GUNZIP.out.gunzip
-    )
+    TABIX_BGZIPTABIX(vcf)
 
     BCFTOOLS_NORM(
         TABIX_BGZIPTABIX.out.gz_tbi,
-        [[id: params.virus_accession_id], viral_genome]
+        ch_viral_genome,
     )
     vcf = BCFTOOLS_NORM.out.vcf
 

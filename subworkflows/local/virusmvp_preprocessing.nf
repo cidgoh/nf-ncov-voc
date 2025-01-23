@@ -14,7 +14,7 @@ workflow PREPROCESSING {
     main:
     variant = file(params.variant, checkIfExists: true)
     variants = [[id: params.virus_accession_id], variant]
-
+    ch_metadata = Channel.empty()
 
     if (params.virusseq_update) {
         virusseq = true
@@ -54,6 +54,18 @@ workflow PREPROCESSING {
     }
 
     EXTRACTMETADATA(metadata, ch_group, true)
+    if (params.grouping_criteria == "time") {
+        ch_metadata = EXTRACTMETADATA.out.tsv
+            .map { it -> it[1] }
+            .flatten()
+            .map { file ->
+                def fileName = file.name.take(file.name.lastIndexOf('_Metadata'))
+                [[id: fileName], file]
+            }
+    }
+    else {
+        ch_metadata = EXTRACTMETADATA.out.tsv
+    }
     ids_channel = EXTRACTMETADATA.out.txt
         .map { it -> it[1] }
         .flatten()
@@ -65,7 +77,7 @@ workflow PREPROCESSING {
     SEQKIT_GREP(sequences, ids_channel)
 
     emit:
-    metadata  = EXTRACTMETADATA.out.tsv
-    sequences = SEQKIT_GREP.out.filter
-    logfile   = logfile
+    ch_metadata
+    ch_sequences = SEQKIT_GREP.out.filter
+    logfile
 }

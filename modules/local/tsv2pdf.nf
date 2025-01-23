@@ -6,9 +6,8 @@ process TSV2PDF {
         : 'community.wave.seqera.io/library/pip_pandas_reportlab:14a90fc25f86e9ba'}"
 
     input:
-    tuple val(meta), path(tsv)
+    tuple val(meta), path(tsv), path(metadata)
     tuple val(meta2), path(surveillanceindicators)
-    tuple val(meta3), path(metadata)
 
     output:
     tuple val(meta), path("*.pdf"), emit: surveillance_pdf
