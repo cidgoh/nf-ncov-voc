@@ -2,5 +2,3 @@ sample,fastq_1,fastq_2
 sample1,test_data/sars-cov-2/wastewater/sample1_R1.fastq.gz,test_data/sars-cov-2/wastewater/sample1_R2.fastq.gz
 sample2,test_data/sars-cov-2/wastewater/sample2_R1.fastq.gz,test_data/sars-cov-2/wastewater/sample2_R2.fastq.gz
 sample3,test_data/sars-cov-2/wastewater/sample3_R1.fastq.gz,test_data/sars-cov-2/wastewater/sample3_R2.fastq.gz
-sample4,test_data/sars-cov-2/wastewater/sample4_R1.fastq.gz,test_data/sars-cov-2/wastewater/sample4_R2.fastq.gz
-sample5,test_data/sars-cov-2/wastewater/sample5_R1.fastq.gz,test_data/sars-cov-2/wastewater/sample5_R2.fastq.gz
