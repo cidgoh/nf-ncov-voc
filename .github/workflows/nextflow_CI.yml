@@ -1,11 +1,9 @@
 name: Nextflow CI
 
 on:
-  push:
-    branches:
-      - development
   pull_request:
     branches:
+      - development
       - master
 
 jobs:
@@ -108,7 +106,7 @@ jobs:
         test_sarscov2_timeseries,
         test_sarscov2_wastewater,
         test_mpox_reference,
-        test_mpox_user,
+        test_mpox_user
       ]
     runs-on: ubuntu-latest
     steps:
