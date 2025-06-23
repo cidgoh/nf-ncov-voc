@@ -9,3 +9,13 @@ bin/__*
 *.sh
 bin/web.log
 assets/config.ini
+assets/host_genome/*
+pathoplexusmpox/*
+ncbimpox/*
+schema.json
+settings.json
+mpox_metadata.tsv
+harmonized_metadata.csv.gz
+run-info*
+sequences.fasta.gz
+test_data/create_test_data.py
