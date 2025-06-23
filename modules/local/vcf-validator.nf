@@ -3,7 +3,7 @@ process VCF_VALIDATOR {
     conda "bioconda::vcf-validator=0.10.0"
     container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
         ? 'https://depot.galaxyproject.org/singularity/vcf-validator:0.10.0--h9cfbc0b_2'
-        : 'quay.io/biocontainers/vcf-validator'}"
+        : 'quay.io/biocontainers/vcf-validator:0.10.0--h9cfbc0b_2'}"
 
     input:
     tuple val(meta), path(vcf)
