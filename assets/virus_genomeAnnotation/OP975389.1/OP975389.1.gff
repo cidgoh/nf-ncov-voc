@@ -1,0 +1,29 @@
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+##sequence-region OP975389.1 1 15222
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=208895
+OP975389.1	Genbank	region	1	15222	.	+	.	ID=OP975389.1:1..15222;Dbxref=taxon:208895;collected-by=Royal Children's Hospital-id%2C5763.0;collection-date=2019-03-04;country=Australia: Victoria;gbkey=Src;genome=genomic;isolate=hRSV/B/Australia/VIC-RCH056/2019;isolation-source=nasopharyngeal aspirate;mol_type=viral cRNA;nat-host=Homo sapiens;note=GISAID_ID:EPI_ISL_1653999;subtype=B
+OP975389.1	Genbank	gene	57	476	.	+	.	ID=gene-NS1;Name=NS1;gbkey=Gene;gene=NS1;gene_biotype=protein_coding
+OP975389.1	Genbank	CDS	57	476	.	+	0	ID=cds-WBQ20019.1;Parent=gene-NS1;Dbxref=NCBI_GP:WBQ20019.1;Name=WBQ20019.1;gbkey=CDS;gene=NS1;product=nonstructural protein 1;protein_id=WBQ20019.1
+OP975389.1	Genbank	gene	584	958	.	+	.	ID=gene-NS2;Name=NS2;gbkey=Gene;gene=NS2;gene_biotype=protein_coding
+OP975389.1	Genbank	CDS	584	958	.	+	0	ID=cds-WBQ20020.1;Parent=gene-NS2;Dbxref=NCBI_GP:WBQ20020.1;Name=WBQ20020.1;gbkey=CDS;gene=NS2;product=nonstructural protein 2;protein_id=WBQ20020.1
+OP975389.1	Genbank	gene	1097	2272	.	+	.	ID=gene-N;Name=N;gbkey=Gene;gene=N;gene_biotype=protein_coding
+OP975389.1	Genbank	CDS	1097	2272	.	+	0	ID=cds-WBQ20021.1;Parent=gene-N;Dbxref=NCBI_GP:WBQ20021.1;Name=WBQ20021.1;gbkey=CDS;gene=N;product=nucleocapsid protein;protein_id=WBQ20021.1
+OP975389.1	Genbank	gene	2305	3030	.	+	.	ID=gene-P;Name=P;gbkey=Gene;gene=P;gene_biotype=protein_coding
+OP975389.1	Genbank	CDS	2305	3030	.	+	0	ID=cds-WBQ20022.1;Parent=gene-P;Dbxref=NCBI_GP:WBQ20022.1;Name=WBQ20022.1;gbkey=CDS;gene=P;product=phosphoprotein;protein_id=WBQ20022.1
+OP975389.1	Genbank	gene	3154	3990	.	+	.	ID=gene-M;Name=M;gbkey=Gene;gene=M;gene_biotype=protein_coding
+OP975389.1	Genbank	CDS	3154	3990	.	+	0	ID=cds-WBQ20023.1;Parent=gene-M;Dbxref=NCBI_GP:WBQ20023.1;Name=WBQ20023.1;gbkey=CDS;gene=M;product=matrix protein;protein_id=WBQ20023.1
+OP975389.1	Genbank	gene	4259	4456	.	+	.	ID=gene-SH;Name=SH;gbkey=Gene;gene=SH;gene_biotype=protein_coding
+OP975389.1	Genbank	CDS	4259	4456	.	+	0	ID=cds-WBQ20024.1;Parent=gene-SH;Dbxref=NCBI_GP:WBQ20024.1;Name=WBQ20024.1;gbkey=CDS;gene=SH;product=small hydrophobic protein;protein_id=WBQ20024.1
+OP975389.1	Genbank	gene	4646	5578	.	+	.	ID=gene-G;Name=G;gbkey=Gene;gene=G;gene_biotype=protein_coding
+OP975389.1	Genbank	CDS	4646	5578	.	+	0	ID=cds-WBQ20025.1;Parent=gene-G;Dbxref=NCBI_GP:WBQ20025.1;Name=WBQ20025.1;gbkey=CDS;gene=G;product=attachment glycoprotein;protein_id=WBQ20025.1
+OP975389.1	Genbank	gene	5676	7400	.	+	.	ID=gene-F;Name=F;gbkey=Gene;gene=F;gene_biotype=protein_coding
+OP975389.1	Genbank	CDS	5676	7400	.	+	0	ID=cds-WBQ20026.1;Parent=gene-F;Dbxref=NCBI_GP:WBQ20026.1;Name=WBQ20026.1;gbkey=CDS;gene=F;product=fusion glycoprotein;protein_id=WBQ20026.1
+OP975389.1	Genbank	gene	7627	8214	.	+	.	ID=gene-M2-1;Name=M2-1;gbkey=Gene;gene=M2-1;gene_biotype=protein_coding
+OP975389.1	Genbank	CDS	7627	8214	.	+	0	ID=cds-WBQ20027.1;Parent=gene-M2-1;Dbxref=NCBI_GP:WBQ20027.1;Name=WBQ20027.1;gbkey=CDS;gene=M2-1;product=transcription elongation factor M2-1;protein_id=WBQ20027.1
+OP975389.1	Genbank	gene	8180	8452	.	+	.	ID=gene-M2-2;Name=M2-2;gbkey=Gene;gene=M2-2;gene_biotype=protein_coding
+OP975389.1	Genbank	CDS	8180	8452	.	+	0	ID=cds-WBQ20028.1;Parent=gene-M2-2;Dbxref=NCBI_GP:WBQ20028.1;Name=WBQ20028.1;gbkey=CDS;gene=M2-2;product=transcription elongation factor M2-2;protein_id=WBQ20028.1
+OP975389.1	Genbank	gene	8518	15018	.	+	.	ID=gene-L;Name=L;gbkey=Gene;gene=L;gene_biotype=protein_coding
+OP975389.1	Genbank	CDS	8518	15018	.	+	0	ID=cds-WBQ20029.1;Parent=gene-L;Dbxref=NCBI_GP:WBQ20029.1;Name=WBQ20029.1;gbkey=CDS;gene=L;product=RNA-directed RNA polymerase;protein_id=WBQ20029.1
+

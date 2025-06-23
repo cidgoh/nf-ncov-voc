@@ -1,0 +1,2114 @@
+{
+    "YP_010377002.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377002.1",
+        "protein_name": {
+            "label": "Chemokine binding protein (MPOX)",
+            "uri": "GENEPIO:0101557"
+        },
+        "protein_symbol": {
+            "label": "Opg001 protein (MPOX)",
+            "uri": "GENEPIO:0101720"
+        }
+    },
+    "YP_010377148.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377148.1",
+        "protein_name": {
+            "label": "Chemokine binding protein (MPOX)",
+            "uri": "GENEPIO:0101557"
+        },
+        "protein_symbol": {
+            "label": "Opg170 protein (MPOX)",
+            "uri": "GENEPIO:0101862"
+        }
+    },
+    "YP_010377182.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377182.1",
+        "protein_name": {
+            "label": "Chemokine binding protein (MPOX)",
+            "uri": "GENEPIO:0101557"
+        },
+        "protein_symbol": {
+            "label": "Opg001 protein (MPOX)",
+            "uri": "GENEPIO:0101720"
+        }
+    },
+    "YP_010377003.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377003.1",
+        "protein_name": {
+            "label": "Crm-B secreted TNF-alpha-receptor-like protein (MPOX)",
+            "uri": "GENEPIO:0101558"
+        },
+        "protein_symbol": {
+            "label": "Opg002 protein (MPOX)",
+            "uri": "GENEPIO:0101721"
+        }
+    },
+    "YP_010377181.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377181.1",
+        "protein_name": {
+            "label": "Crm-B secreted TNF-alpha-receptor-like protein (MPOX)",
+            "uri": "GENEPIO:0101558"
+        },
+        "protein_symbol": {
+            "label": "Opg002 protein (MPOX)",
+            "uri": "GENEPIO:0101721"
+        }
+    },
+    "YP_010377004.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377004.1",
+        "protein_name": {
+            "label": "Ankyrin repeat protein (25) (MPOX)",
+            "uri": "GENEPIO:0101559"
+        },
+        "protein_symbol": {
+            "label": "Opg003 protein (MPOX)",
+            "uri": "GENEPIO:0101722"
+        }
+    },
+    "YP_010377161.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377161.1",
+        "protein_name": {
+            "label": "Ankyrin repeat protein (25) (MPOX)",
+            "uri": "GENEPIO:0101559"
+        },
+        "protein_symbol": {
+            "label": "Opg189 protein (MPOX)",
+            "uri": "GENEPIO:0101875"
+        }
+    },
+    "YP_010377180.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377180.1",
+        "protein_name": {
+            "label": "Ankyrin repeat protein (25) (MPOX)",
+            "uri": "GENEPIO:0101559"
+        },
+        "protein_symbol": {
+            "label": "Opg003 protein (MPOX)",
+            "uri": "GENEPIO:0101722"
+        }
+    },
+    "YP_010377005.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377005.1",
+        "protein_name": {
+            "label": "Ankyrin repeat protein (39) (MPOX)",
+            "uri": "GENEPIO:0101560"
+        },
+        "protein_symbol": {
+            "label": "Opg015 protein (MPOX)",
+            "uri": "GENEPIO:0101723"
+        }
+    },
+    "YP_010377179.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377179.1",
+        "protein_name": {
+            "label": "Ankyrin repeat protein (39) (MPOX)",
+            "uri": "GENEPIO:0101560"
+        },
+        "protein_symbol": {
+            "label": "Opg015 protein (MPOX)",
+            "uri": "GENEPIO:0101723"
+        }
+    },
+    "YP_010377006.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377006.1",
+        "protein_name": {
+            "label": "EGF-like domain protein (MPOX)",
+            "uri": "GENEPIO:0101561"
+        },
+        "protein_symbol": {
+            "label": "Opg019 protein (MPOX)",
+            "uri": "GENEPIO:0101724"
+        }
+    },
+    "YP_010377007.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377007.1",
+        "protein_name": {
+            "label": "Zinc finger-like protein (2) (MPOX)",
+            "uri": "GENEPIO:0101562"
+        },
+        "protein_symbol": {
+            "label": "Opg021 protein (MPOX)",
+            "uri": "GENEPIO:0101725"
+        }
+    },
+    "YP_010377008.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377008.1",
+        "protein_name": {
+            "label": "Interleukin-18-binding protein (MPOX)",
+            "uri": "GENEPIO:0101563"
+        },
+        "protein_symbol": {
+            "label": "Opg022 protein (MPOX)",
+            "uri": "GENEPIO:0101726"
+        }
+    },
+    "YP_010377009.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377009.1",
+        "protein_name": {
+            "label": "Ankyrin repeat protein (2) (MPOX)",
+            "uri": "GENEPIO:0101564"
+        },
+        "protein_symbol": {
+            "label": "Opg023 protein (MPOX)",
+            "uri": "GENEPIO:0101727"
+        }
+    },
+    "YP_010377010.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377010.1",
+        "protein_name": {
+            "label": "retroviral pseudoprotease-like protein (MPOX)",
+            "uri": "GENEPIO:0101565"
+        },
+        "protein_symbol": {
+            "label": "Opg024 protein (MPOX)",
+            "uri": "GENEPIO:0101728"
+        }
+    },
+    "YP_010377011.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377011.1",
+        "protein_name": {
+            "label": "Ankyrin repeat protein (14) (MPOX)",
+            "uri": "GENEPIO:0101566"
+        },
+        "protein_symbol": {
+            "label": "Opg025 protein (MPOX)",
+            "uri": "GENEPIO:0101729"
+        }
+    },
+    "YP_010377012.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377012.1",
+        "protein_name": {
+            "label": "Host range protein (MPOX)",
+            "uri": "GENEPIO:0101567"
+        },
+        "protein_symbol": {
+            "label": "Opg027 protein (MPOX)",
+            "uri": "GENEPIO:0101730"
+        }
+    },
+    "YP_010377013.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377013.1",
+        "protein_name": {
+            "label": "Bcl-2-like protein (MPOX)",
+            "uri": "GENEPIO:0101568"
+        },
+        "protein_symbol": {
+            "label": "Opg029 protein (MPOX)",
+            "uri": "GENEPIO:0101731"
+        }
+    },
+    "YP_010377017.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377017.1",
+        "protein_name": {
+            "label": "Bcl-2-like protein (MPOX)",
+            "uri": "GENEPIO:0101568"
+        },
+        "protein_symbol": {
+            "label": "Opg034 protein (MPOX)",
+            "uri": "GENEPIO:0101734"
+        }
+    },
+    "YP_010377018.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377018.1",
+        "protein_name": {
+            "label": "Bcl-2-like protein (MPOX)",
+            "uri": "GENEPIO:0101568"
+        },
+        "protein_symbol": {
+            "label": "Opg035 protein (MPOX)",
+            "uri": "GENEPIO:0101735"
+        }
+    },
+    "YP_010377154.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377154.1",
+        "protein_name": {
+            "label": "Bcl-2-like protein (MPOX)",
+            "uri": "GENEPIO:0101568"
+        },
+        "protein_symbol": {
+            "label": "Opg176 protein (MPOX)",
+            "uri": "GENEPIO:0101868"
+        }
+    },
+    "YP_010377170.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377170.1",
+        "protein_name": {
+            "label": "Bcl-2-like protein (MPOX)",
+            "uri": "GENEPIO:0101568"
+        },
+        "protein_symbol": {
+            "label": "Opg200 protein (MPOX)",
+            "uri": "GENEPIO:0101884"
+        }
+    },
+    "YP_010377177.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377177.1",
+        "protein_name": {
+            "label": "Bcl-2-like protein (MPOX)",
+            "uri": "GENEPIO:0101568"
+        },
+        "protein_symbol": {
+            "label": "Opg005 protein (MPOX)",
+            "uri": "GENEPIO:0101890"
+        }
+    },
+    "YP_010377014.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377014.1",
+        "protein_name": {
+            "label": "Kelch-like protein (1) (MPOX)",
+            "uri": "GENEPIO:0101569"
+        },
+        "protein_symbol": {
+            "label": "Opg030 protein (MPOX)",
+            "uri": "GENEPIO:0101732"
+        }
+    },
+    "YP_010377015.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377015.1",
+        "protein_name": {
+            "label": "C4L/C10L-like family protein (MPOX)",
+            "uri": "GENEPIO:0101570"
+        },
+        "protein_symbol": {
+            "label": "Opg031 protein (MPOX)",
+            "uri": "GENEPIO:0101733"
+        }
+    },
+    "YP_010377020.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377020.1",
+        "protein_name": {
+            "label": "Ankyrin-like protein (1) (MPOX)",
+            "uri": "GENEPIO:0101571"
+        },
+        "protein_symbol": {
+            "label": "Opg037 protein (MPOX)",
+            "uri": "GENEPIO:0101736"
+        }
+    },
+    "YP_010377021.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377021.1",
+        "protein_name": {
+            "label": "NFkB inhibitor protein (MPOX)",
+            "uri": "GENEPIO:0101572"
+        },
+        "protein_symbol": {
+            "label": "Opg038 protein (MPOX)",
+            "uri": "GENEPIO:0101737"
+        }
+    },
+    "YP_010377022.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377022.1",
+        "protein_name": {
+            "label": "Ankyrin-like protein (3) (MPOX)",
+            "uri": "GENEPIO:0101573"
+        },
+        "protein_symbol": {
+            "label": "Opg039 protein (MPOX)",
+            "uri": "GENEPIO:0101738"
+        }
+    },
+    "YP_010377023.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377023.1",
+        "protein_name": {
+            "label": "Serpin protein (MPOX)",
+            "uri": "GENEPIO:0101574"
+        },
+        "protein_symbol": {
+            "label": "Opg040 protein (MPOX)",
+            "uri": "GENEPIO:0101739"
+        }
+    },
+    "YP_010377169.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377169.1",
+        "protein_name": {
+            "label": "Serpin protein (MPOX)",
+            "uri": "GENEPIO:0101574"
+        },
+        "protein_symbol": {
+            "label": "Opg199 protein (MPOX)",
+            "uri": "GENEPIO:0101883"
+        }
+    },
+    "YP_010377174.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377174.1",
+        "protein_name": {
+            "label": "Serpin protein (MPOX)",
+            "uri": "GENEPIO:0101574"
+        },
+        "protein_symbol": {
+            "label": "Opg208 protein (MPOX)",
+            "uri": "GENEPIO:0101887"
+        }
+    },
+    "YP_010377025.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377025.1",
+        "protein_name": {
+            "label": "Phospholipase-D-like protein (MPOX)",
+            "uri": "GENEPIO:0101575"
+        },
+        "protein_symbol": {
+            "label": "Opg042 protein (MPOX)",
+            "uri": "GENEPIO:0101740"
+        }
+    },
+    "YP_010377026.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377026.1",
+        "protein_name": {
+            "label": "Putative monoglyceride lipase protein (MPOX)",
+            "uri": "GENEPIO:0101576"
+        },
+        "protein_symbol": {
+            "label": "Opg043 protein (MPOX)",
+            "uri": "GENEPIO:0101741"
+        }
+    },
+    "YP_010377028.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377028.1",
+        "protein_name": {
+            "label": "Caspase-9 inhibitor protein (MPOX)",
+            "uri": "GENEPIO:0101577"
+        },
+        "protein_symbol": {
+            "label": "Opg045 protein (MPOX)",
+            "uri": "GENEPIO:0101742"
+        }
+    },
+    "YP_010377029.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377029.1",
+        "protein_name": {
+            "label": "dUTPase protein (MPOX)",
+            "uri": "GENEPIO:0101578"
+        },
+        "protein_symbol": {
+            "label": "Opg046 protein (MPOX)",
+            "uri": "GENEPIO:0101743"
+        }
+    },
+    "YP_010377030.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377030.1",
+        "protein_name": {
+            "label": "Kelch-like protein (2) (MPOX)",
+            "uri": "GENEPIO:0101579"
+        },
+        "protein_symbol": {
+            "label": "Opg047 protein (MPOX)",
+            "uri": "GENEPIO:0101744"
+        }
+    },
+    "YP_010377031.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377031.1",
+        "protein_name": {
+            "label": "Ribonucleotide reductase small subunit protein (MPOX)",
+            "uri": "GENEPIO:0101580"
+        },
+        "protein_symbol": {
+            "label": "Opg048 protein (MPOX)",
+            "uri": "GENEPIO:0101745"
+        }
+    },
+    "YP_010377032.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377032.1",
+        "protein_name": {
+            "label": "Telomere-binding protein I6 (1) (MPOX)",
+            "uri": "GENEPIO:0101581"
+        },
+        "protein_symbol": {
+            "label": "Opg049 protein (MPOX)",
+            "uri": "GENEPIO:0101746"
+        }
+    },
+    "YP_010377033.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377033.1",
+        "protein_name": {
+            "label": "CPXV053 protein (MPOX)",
+            "uri": "GENEPIO:0101582"
+        },
+        "protein_symbol": {
+            "label": "Opg050 protein (MPOX)",
+            "uri": "GENEPIO:0101747"
+        }
+    },
+    "YP_010377034.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377034.1",
+        "protein_name": {
+            "label": "CPXV054 protein (MPOX)",
+            "uri": "GENEPIO:0101583"
+        },
+        "protein_symbol": {
+            "label": "Opg051 protein (MPOX)",
+            "uri": "GENEPIO:0101748"
+        }
+    },
+    "YP_010377035.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377035.1",
+        "protein_name": {
+            "label": "Cytoplasmic protein (MPOX)",
+            "uri": "GENEPIO:0101584"
+        },
+        "protein_symbol": {
+            "label": "Opg052 protein (MPOX)",
+            "uri": "GENEPIO:0101749"
+        }
+    },
+    "YP_010377036.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377036.1",
+        "protein_name": {
+            "label": "IMV membrane protein L1R (MPOX)",
+            "uri": "GENEPIO:0101585"
+        },
+        "protein_symbol": {
+            "label": "Opg053 protein (MPOX)",
+            "uri": "GENEPIO:0101750"
+        }
+    },
+    "YP_010377077.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377077.1",
+        "protein_name": {
+            "label": "IMV membrane protein L1R (MPOX)",
+            "uri": "GENEPIO:0101585"
+        },
+        "protein_symbol": {
+            "label": "Opg095 protein (MPOX)",
+            "uri": "GENEPIO:0101790"
+        }
+    },
+    "YP_010377037.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377037.1",
+        "protein_name": {
+            "label": "Serine/threonine-protein kinase (MPOX)",
+            "uri": "GENEPIO:0101586"
+        },
+        "protein_symbol": {
+            "label": "Opg054 protein (MPOX)",
+            "uri": "GENEPIO:0101751"
+        }
+    },
+    "YP_010377038.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377038.1",
+        "protein_name": {
+            "label": "Protein F11 protein (MPOX)",
+            "uri": "GENEPIO:0101587"
+        },
+        "protein_symbol": {
+            "label": "Opg055 protein (MPOX)",
+            "uri": "GENEPIO:0101752"
+        }
+    },
+    "YP_010377039.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377039.1",
+        "protein_name": {
+            "label": "EEV maturation protein (MPOX)",
+            "uri": "GENEPIO:0101588"
+        },
+        "protein_symbol": {
+            "label": "Opg056 protein (MPOX)",
+            "uri": "GENEPIO:0101753"
+        }
+    },
+    "YP_010377040.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377040.1",
+        "protein_name": {
+            "label": "Palmytilated EEV membrane protein (MPOX)",
+            "uri": "GENEPIO:0101589"
+        },
+        "protein_symbol": {
+            "label": "Opg057 protein (MPOX)",
+            "uri": "GENEPIO:0101754"
+        }
+    },
+    "YP_010377041.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377041.1",
+        "protein_name": {
+            "label": "Protein F14 (1) protein (MPOX)",
+            "uri": "GENEPIO:0101590"
+        },
+        "protein_symbol": {
+            "label": "Opg058 protein (MPOX)",
+            "uri": "GENEPIO:0101755"
+        }
+    },
+    "YP_010377042.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377042.1",
+        "protein_name": {
+            "label": "Cytochrome C oxidase protein (MPOX)",
+            "uri": "GENEPIO:0101591"
+        },
+        "protein_symbol": {
+            "label": "Opg059 protein (MPOX)",
+            "uri": "GENEPIO:0101756"
+        }
+    },
+    "YP_010377043.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377043.1",
+        "protein_name": {
+            "label": "Protein F15 protein (MPOX)",
+            "uri": "GENEPIO:0101592"
+        },
+        "protein_symbol": {
+            "label": "Opg060 protein (MPOX)",
+            "uri": "GENEPIO:0101757"
+        }
+    },
+    "YP_010377044.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377044.1",
+        "protein_name": {
+            "label": "Protein F16 (1) protein (MPOX)",
+            "uri": "GENEPIO:0101593"
+        },
+        "protein_symbol": {
+            "label": "Opg061 protein (MPOX)",
+            "uri": "GENEPIO:0101758"
+        }
+    },
+    "YP_010377045.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377045.1",
+        "protein_name": {
+            "label": "DNA-binding phosphoprotein (1) (MPOX)",
+            "uri": "GENEPIO:0101594"
+        },
+        "protein_symbol": {
+            "label": "Opg062 protein (MPOX)",
+            "uri": "GENEPIO:0101759"
+        }
+    },
+    "YP_010377046.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377046.1",
+        "protein_name": {
+            "label": "Poly(A) polymerase catalytic subunit (3) protein (MPOX)",
+            "uri": "GENEPIO:0101595"
+        },
+        "protein_symbol": {
+            "label": "Opg063 protein (MPOX)",
+            "uri": "GENEPIO:0101760"
+        }
+    },
+    "YP_010377047.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377047.1",
+        "protein_name": {
+            "label": "Iev morphogenesis protein (MPOX)",
+            "uri": "GENEPIO:0101596"
+        },
+        "protein_symbol": {
+            "label": "Opg064 protein (MPOX)",
+            "uri": "GENEPIO:0101761"
+        }
+    },
+    "YP_010377057.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377057.1",
+        "protein_name": {
+            "label": "Iev morphogenesis protein (MPOX)",
+            "uri": "GENEPIO:0101596"
+        },
+        "protein_symbol": {
+            "label": "Opg074 protein (MPOX)",
+            "uri": "GENEPIO:0101770"
+        }
+    },
+    "YP_010377048.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377048.1",
+        "protein_name": {
+            "label": "Double-stranded RNA binding protein (MPOX)",
+            "uri": "GENEPIO:0101597"
+        },
+        "protein_symbol": {
+            "label": "Opg065 protein (MPOX)",
+            "uri": "GENEPIO:0101762"
+        }
+    },
+    "YP_010377049.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377049.1",
+        "protein_name": {
+            "label": "DNA-directed RNA polymerase 30 kDa polypeptide protein (MPOX)",
+            "uri": "GENEPIO:0101598"
+        },
+        "protein_symbol": {
+            "label": "Opg066 protein (MPOX)",
+            "uri": "GENEPIO:0101763"
+        }
+    },
+    "YP_010377051.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377051.1",
+        "protein_name": {
+            "label": "IMV membrane protein E6 (MPOX)",
+            "uri": "GENEPIO:0101599"
+        },
+        "protein_symbol": {
+            "label": "Opg068 protein (MPOX)",
+            "uri": "GENEPIO:0101764"
+        }
+    },
+    "YP_010377052.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377052.1",
+        "protein_name": {
+            "label": "Myristoylated protein E7 (MPOX)",
+            "uri": "GENEPIO:0101600"
+        },
+        "protein_symbol": {
+            "label": "Opg069 protein (MPOX)",
+            "uri": "GENEPIO:0101765"
+        }
+    },
+    "YP_010377053.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377053.1",
+        "protein_name": {
+            "label": "Membrane protein E8 (MPOX)",
+            "uri": "GENEPIO:0101601"
+        },
+        "protein_symbol": {
+            "label": "Opg070 protein (MPOX)",
+            "uri": "GENEPIO:0101766"
+        }
+    },
+    "YP_010377054.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377054.1",
+        "protein_name": {
+            "label": "DNA polymerase (2) protein (MPOX)",
+            "uri": "GENEPIO:0101602"
+        },
+        "protein_symbol": {
+            "label": "Opg071 protein (MPOX)",
+            "uri": "GENEPIO:0101767"
+        }
+    },
+    "YP_010377055.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377055.1",
+        "protein_name": {
+            "label": "Sulfhydryl oxidase protein (MPOX)",
+            "uri": "GENEPIO:0101603"
+        },
+        "protein_symbol": {
+            "label": "Opg072 protein (MPOX)",
+            "uri": "GENEPIO:0101768"
+        }
+    },
+    "YP_010377056.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377056.1",
+        "protein_name": {
+            "label": "Virion core protein E11 (MPOX)",
+            "uri": "GENEPIO:0101604"
+        },
+        "protein_symbol": {
+            "label": "Opg073 protein (MPOX)",
+            "uri": "GENEPIO:0101769"
+        }
+    },
+    "YP_010377058.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377058.1",
+        "protein_name": {
+            "label": "Glutaredoxin-1 protein (MPOX)",
+            "uri": "GENEPIO:0101605"
+        },
+        "protein_symbol": {
+            "label": "Opg075 protein (MPOX)",
+            "uri": "GENEPIO:0101771"
+        }
+    },
+    "YP_010377059.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377059.1",
+        "protein_name": {
+            "label": "Telomere-binding protein I1 (MPOX)",
+            "uri": "GENEPIO:0101607"
+        },
+        "protein_symbol": {
+            "label": "Opg077 protein (MPOX)",
+            "uri": "GENEPIO:0101772"
+        }
+    },
+    "YP_010377060.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377060.1",
+        "protein_name": {
+            "label": "IMV membrane protein I2 (MPOX)",
+            "uri": "GENEPIO:0101608"
+        },
+        "protein_symbol": {
+            "label": "Opg078 protein (MPOX)",
+            "uri": "GENEPIO:0101773"
+        }
+    },
+    "YP_010377061.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377061.1",
+        "protein_name": {
+            "label": "DNA-binding phosphoprotein (2) (MPOX)",
+            "uri": "GENEPIO:0101609"
+        },
+        "protein_symbol": {
+            "label": "Opg079 protein (MPOX)",
+            "uri": "GENEPIO:0101774"
+        }
+    },
+    "YP_010377062.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377062.1",
+        "protein_name": {
+            "label": "Ribonucleoside-diphosphate reductase (2) protein (MPOX)",
+            "uri": "GENEPIO:0101610"
+        },
+        "protein_symbol": {
+            "label": "Opg080 protein (MPOX)",
+            "uri": "GENEPIO:0101775"
+        }
+    },
+    "YP_010377063.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377063.1",
+        "protein_name": {
+            "label": "IMV membrane protein I5 (MPOX)",
+            "uri": "GENEPIO:0101611"
+        },
+        "protein_symbol": {
+            "label": "Opg081 protein (MPOX)",
+            "uri": "GENEPIO:0101776"
+        }
+    },
+    "YP_010377064.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377064.1",
+        "protein_name": {
+            "label": "Telomere-binding protein (MPOX)",
+            "uri": "GENEPIO:0101612"
+        },
+        "protein_symbol": {
+            "label": "Opg082 protein (MPOX)",
+            "uri": "GENEPIO:0101777"
+        }
+    },
+    "YP_010377065.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377065.1",
+        "protein_name": {
+            "label": "Viral core cysteine proteinase (MPOX)",
+            "uri": "GENEPIO:0101613"
+        },
+        "protein_symbol": {
+            "label": "Opg083 protein (MPOX)",
+            "uri": "GENEPIO:0101778"
+        }
+    },
+    "YP_010377066.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377066.1",
+        "protein_name": {
+            "label": "RNA helicase NPH-II (2) protein (MPOX)",
+            "uri": "GENEPIO:0101614"
+        },
+        "protein_symbol": {
+            "label": "Opg084 protein (MPOX)",
+            "uri": "GENEPIO:0101779"
+        }
+    },
+    "YP_010377067.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377067.1",
+        "protein_name": {
+            "label": "Metalloendopeptidase protein (MPOX)",
+            "uri": "GENEPIO:0101615"
+        },
+        "protein_symbol": {
+            "label": "Opg085 protein (MPOX)",
+            "uri": "GENEPIO:0101780"
+        }
+    },
+    "YP_010377068.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377068.1",
+        "protein_name": {
+            "label": "Entry/fusion complex component protein (MPOX)",
+            "uri": "GENEPIO:0101616"
+        },
+        "protein_symbol": {
+            "label": "Opg086 protein (MPOX)",
+            "uri": "GENEPIO:0101781"
+        }
+    },
+    "YP_010377069.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377069.1",
+        "protein_name": {
+            "label": "Late transcription elongation factor protein (MPOX)",
+            "uri": "GENEPIO:0101617"
+        },
+        "protein_symbol": {
+            "label": "Opg087 protein (MPOX)",
+            "uri": "GENEPIO:0101782"
+        }
+    },
+    "YP_010377070.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377070.1",
+        "protein_name": {
+            "label": "Glutaredoxin-2 protein (MPOX)",
+            "uri": "GENEPIO:0101618"
+        },
+        "protein_symbol": {
+            "label": "Opg088 protein (MPOX)",
+            "uri": "GENEPIO:0101783"
+        }
+    },
+    "YP_010377071.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377071.1",
+        "protein_name": {
+            "label": "FEN1-like nuclease protein (MPOX)",
+            "uri": "GENEPIO:0101619"
+        },
+        "protein_symbol": {
+            "label": "Opg089 protein (MPOX)",
+            "uri": "GENEPIO:0101784"
+        }
+    },
+    "YP_010377072.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377072.1",
+        "protein_name": {
+            "label": "DNA-directed RNA polymerase 7 kDa subunit protein (MPOX)",
+            "uri": "GENEPIO:0101620"
+        },
+        "protein_symbol": {
+            "label": "Opg090 protein (MPOX)",
+            "uri": "GENEPIO:0101785"
+        }
+    },
+    "YP_010377073.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377073.1",
+        "protein_name": {
+            "label": "Nlpc/p60 superfamily protein (MPOX)",
+            "uri": "GENEPIO:0101621"
+        },
+        "protein_symbol": {
+            "label": "Opg091 protein (MPOX)",
+            "uri": "GENEPIO:0101786"
+        }
+    },
+    "YP_010377074.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377074.1",
+        "protein_name": {
+            "label": "Assembly protein G7 (MPOX)",
+            "uri": "GENEPIO:0101622"
+        },
+        "protein_symbol": {
+            "label": "Opg092 protein (MPOX)",
+            "uri": "GENEPIO:0101787"
+        }
+    },
+    "YP_010377075.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377075.1",
+        "protein_name": {
+            "label": "Late transcription factor VLTF-1 protein (MPOX)",
+            "uri": "GENEPIO:0101623"
+        },
+        "protein_symbol": {
+            "label": "Opg093 protein (MPOX)",
+            "uri": "GENEPIO:0101788"
+        }
+    },
+    "YP_010377076.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377076.1",
+        "protein_name": {
+            "label": "Myristylated protein (MPOX)",
+            "uri": "GENEPIO:0101624"
+        },
+        "protein_symbol": {
+            "label": "Opg094 protein (MPOX)",
+            "uri": "GENEPIO:0101789"
+        }
+    },
+    "YP_010377086.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377086.1",
+        "protein_name": {
+            "label": "Myristylated protein (MPOX)",
+            "uri": "GENEPIO:0101624"
+        },
+        "protein_symbol": {
+            "label": "Opg104 protein (MPOX)",
+            "uri": "GENEPIO:0101799"
+        }
+    },
+    "YP_010377125.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377125.1",
+        "protein_name": {
+            "label": "Myristylated protein (MPOX)",
+            "uri": "GENEPIO:0101624"
+        },
+        "protein_symbol": {
+            "label": "Opg143 protein (MPOX)",
+            "uri": "GENEPIO:0101838"
+        }
+    },
+    "YP_010377078.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377078.1",
+        "protein_name": {
+            "label": "Crescent membrane and immature virion formation protein (MPOX)",
+            "uri": "GENEPIO:0101625"
+        },
+        "protein_symbol": {
+            "label": "Opg096 protein (MPOX)",
+            "uri": "GENEPIO:0101791"
+        }
+    },
+    "YP_010377079.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377079.1",
+        "protein_name": {
+            "label": "Internal virion L3/FP4 protein (MPOX)",
+            "uri": "GENEPIO:0101626"
+        },
+        "protein_symbol": {
+            "label": "Opg097 protein (MPOX)",
+            "uri": "GENEPIO:0101792"
+        }
+    },
+    "YP_010377080.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377080.1",
+        "protein_name": {
+            "label": "Nucleic acid binding protein VP8/L4R (MPOX)",
+            "uri": "GENEPIO:0101627"
+        },
+        "protein_symbol": {
+            "label": "Opg098 protein (MPOX)",
+            "uri": "GENEPIO:0101793"
+        }
+    },
+    "YP_010377081.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377081.1",
+        "protein_name": {
+            "label": "Membrane protein CL5 (MPOX)",
+            "uri": "GENEPIO:0101628"
+        },
+        "protein_symbol": {
+            "label": "Opg099 protein (MPOX)",
+            "uri": "GENEPIO:0101794"
+        }
+    },
+    "YP_010377082.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377082.1",
+        "protein_name": {
+            "label": "IMV membrane protein J1 (MPOX)",
+            "uri": "GENEPIO:0101629"
+        },
+        "protein_symbol": {
+            "label": "Opg100 protein (MPOX)",
+            "uri": "GENEPIO:0101795"
+        }
+    },
+    "YP_010377083.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377083.1",
+        "protein_name": {
+            "label": "Thymidine kinase protein (MPOX)",
+            "uri": "GENEPIO:0101630"
+        },
+        "protein_symbol": {
+            "label": "Opg101 protein (MPOX)",
+            "uri": "GENEPIO:0101796"
+        }
+    },
+    "YP_010377084.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377084.1",
+        "protein_name": {
+            "label": "Cap-specific mRNA protein (MPOX)",
+            "uri": "GENEPIO:0101631"
+        },
+        "protein_symbol": {
+            "label": "Opg102 protein (MPOX)",
+            "uri": "GENEPIO:0101797"
+        }
+    },
+    "YP_010377085.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377085.1",
+        "protein_name": {
+            "label": "DNA-directed RNA polymerase subunit protein (MPOX)",
+            "uri": "GENEPIO:0101632"
+        },
+        "protein_symbol": {
+            "label": "Opg103 protein (MPOX)",
+            "uri": "GENEPIO:0101798"
+        }
+    },
+    "YP_010377087.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377087.1",
+        "protein_name": {
+            "label": "DNA-dependent RNA polymerase subunit rpo147 protein (MPOX)",
+            "uri": "GENEPIO:0101633"
+        },
+        "protein_symbol": {
+            "label": "Opg105 protein (MPOX)",
+            "uri": "GENEPIO:0101800"
+        }
+    },
+    "YP_010377088.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377088.1",
+        "protein_name": {
+            "label": "Tyr/ser protein phosphatase (MPOX)",
+            "uri": "GENEPIO:0101634"
+        },
+        "protein_symbol": {
+            "label": "Opg106 protein (MPOX)",
+            "uri": "GENEPIO:0101801"
+        }
+    },
+    "YP_010377089.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377089.1",
+        "protein_name": {
+            "label": "Entry-fusion complex essential component protein (MPOX)",
+            "uri": "GENEPIO:0101635"
+        },
+        "protein_symbol": {
+            "label": "Opg107 protein (MPOX)",
+            "uri": "GENEPIO:0101802"
+        }
+    },
+    "YP_010377090.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377090.1",
+        "protein_name": {
+            "label": "IMV heparin binding surface protein (MPOX)",
+            "uri": "GENEPIO:0101636"
+        },
+        "protein_symbol": {
+            "label": "Opg108 protein (MPOX)",
+            "uri": "GENEPIO:0101803"
+        }
+    },
+    "YP_010377091.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377091.1",
+        "protein_name": {
+            "label": "RNA polymerase-associated transcription-specificity factor RAP94 protein (MPOX)",
+            "uri": "GENEPIO:0101637"
+        },
+        "protein_symbol": {
+            "label": "Opg109 protein (MPOX)",
+            "uri": "GENEPIO:0101804"
+        }
+    },
+    "YP_010377092.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377092.1",
+        "protein_name": {
+            "label": "Late transcription factor VLTF-4 (1) protein (MPOX)",
+            "uri": "GENEPIO:0101638"
+        },
+        "protein_symbol": {
+            "label": "Opg110 protein (MPOX)",
+            "uri": "GENEPIO:0101805"
+        }
+    },
+    "YP_010377093.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377093.1",
+        "protein_name": {
+            "label": "DNA topoisomerase type I protein (MPOX)",
+            "uri": "GENEPIO:0101639"
+        },
+        "protein_symbol": {
+            "label": "Opg111 protein (MPOX)",
+            "uri": "GENEPIO:0101806"
+        }
+    },
+    "YP_010377094.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377094.1",
+        "protein_name": {
+            "label": "Late protein H7 (MPOX)",
+            "uri": "GENEPIO:0101640"
+        },
+        "protein_symbol": {
+            "label": "Opg112 protein (MPOX)",
+            "uri": "GENEPIO:0101807"
+        }
+    },
+    "YP_010377095.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377095.1",
+        "protein_name": {
+            "label": "mRNA capping enzyme large subunit protein (MPOX)",
+            "uri": "GENEPIO:0101641"
+        },
+        "protein_symbol": {
+            "label": "Opg113 protein (MPOX)",
+            "uri": "GENEPIO:0101808"
+        }
+    },
+    "YP_010377096.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377096.1",
+        "protein_name": {
+            "label": "Virion protein D2 (MPOX)",
+            "uri": "GENEPIO:0101642"
+        },
+        "protein_symbol": {
+            "label": "Opg114 protein (MPOX)",
+            "uri": "GENEPIO:0101809"
+        }
+    },
+    "YP_010377097.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377097.1",
+        "protein_name": {
+            "label": "Virion core protein D3 (MPOX)",
+            "uri": "GENEPIO:0101643"
+        },
+        "protein_symbol": {
+            "label": "Opg115 protein (MPOX)",
+            "uri": "GENEPIO:0101810"
+        }
+    },
+    "YP_010377098.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377098.1",
+        "protein_name": {
+            "label": "Uracil DNA glycosylase superfamily protein (MPOX)",
+            "uri": "GENEPIO:0101644"
+        },
+        "protein_symbol": {
+            "label": "Opg116 protein (MPOX)",
+            "uri": "GENEPIO:0101811"
+        }
+    },
+    "YP_010377099.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377099.1",
+        "protein_name": {
+            "label": "NTPase (1) protein (MPOX)",
+            "uri": "GENEPIO:0101645"
+        },
+        "protein_symbol": {
+            "label": "Opg117 protein (MPOX)",
+            "uri": "GENEPIO:0101812"
+        }
+    },
+    "YP_010377100.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377100.1",
+        "protein_name": {
+            "label": "Early transcription factor 70 kDa subunit protein (MPOX)",
+            "uri": "GENEPIO:0101646"
+        },
+        "protein_symbol": {
+            "label": "Opg118 protein (MPOX)",
+            "uri": "GENEPIO:0101813"
+        }
+    },
+    "YP_010377101.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377101.1",
+        "protein_name": {
+            "label": "RNA polymerase subunit RPO18 protein (MPOX)",
+            "uri": "GENEPIO:0101647"
+        },
+        "protein_symbol": {
+            "label": "Opg119 protein (MPOX)",
+            "uri": "GENEPIO:0101814"
+        }
+    },
+    "YP_010377102.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377102.1",
+        "protein_name": {
+            "label": "Carbonic anhydrase protein (MPOX)",
+            "uri": "GENEPIO:0101648"
+        },
+        "protein_symbol": {
+            "label": "Opg120 protein (MPOX)",
+            "uri": "GENEPIO:0101815"
+        }
+    },
+    "YP_010377103.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377103.1",
+        "protein_name": {
+            "label": "NUDIX domain protein (MPOX)",
+            "uri": "GENEPIO:0101649"
+        },
+        "protein_symbol": {
+            "label": "Opg121 protein (MPOX)",
+            "uri": "GENEPIO:0101816"
+        }
+    },
+    "YP_010377104.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377104.1",
+        "protein_name": {
+            "label": "MutT motif protein (MPOX)",
+            "uri": "GENEPIO:0101650"
+        },
+        "protein_symbol": {
+            "label": "Opg122 protein (MPOX)",
+            "uri": "GENEPIO:0101817"
+        }
+    },
+    "YP_010377105.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377105.1",
+        "protein_name": {
+            "label": "Nucleoside triphosphatase I protein (MPOX)",
+            "uri": "GENEPIO:0101651"
+        },
+        "protein_symbol": {
+            "label": "Opg123 protein (MPOX)",
+            "uri": "GENEPIO:0101818"
+        }
+    },
+    "YP_010377106.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377106.1",
+        "protein_name": {
+            "label": "mRNA capping enzyme small subunit protein (MPOX)",
+            "uri": "GENEPIO:0101652"
+        },
+        "protein_symbol": {
+            "label": "Opg124 protein (MPOX)",
+            "uri": "GENEPIO:0101819"
+        }
+    },
+    "YP_010377107.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377107.1",
+        "protein_name": {
+            "label": "Rifampicin resistance protein (MPOX)",
+            "uri": "GENEPIO:0101653"
+        },
+        "protein_symbol": {
+            "label": "Opg125 protein (MPOX)",
+            "uri": "GENEPIO:0101820"
+        }
+    },
+    "YP_010377108.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377108.1",
+        "protein_name": {
+            "label": "Late transcription factor VLTF-2 (2) protein (MPOX)",
+            "uri": "GENEPIO:0101654"
+        },
+        "protein_symbol": {
+            "label": "Opg126 protein (MPOX)",
+            "uri": "GENEPIO:0101821"
+        }
+    },
+    "YP_010377109.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377109.1",
+        "protein_name": {
+            "label": "Late transcription factor VLTF-3 (1) protein (MPOX)",
+            "uri": "GENEPIO:0101655"
+        },
+        "protein_symbol": {
+            "label": "Opg127 protein (MPOX)",
+            "uri": "GENEPIO:0101822"
+        }
+    },
+    "YP_010377110.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377110.1",
+        "protein_name": {
+            "label": "S-S bond formation pathway protein (MPOX)",
+            "uri": "GENEPIO:0101656"
+        },
+        "protein_symbol": {
+            "label": "Opg128 protein (MPOX)",
+            "uri": "GENEPIO:0101823"
+        }
+    },
+    "YP_010377111.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377111.1",
+        "protein_name": {
+            "label": "Virion core protein P4b (MPOX)",
+            "uri": "GENEPIO:0101657"
+        },
+        "protein_symbol": {
+            "label": "Opg129 protein (MPOX)",
+            "uri": "GENEPIO:0101824"
+        }
+    },
+    "YP_010377112.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377112.1",
+        "protein_name": {
+            "label": "A5L protein-like (MPOX)",
+            "uri": "GENEPIO:0101658"
+        },
+        "protein_symbol": {
+            "label": "Opg130 protein (MPOX)",
+            "uri": "GENEPIO:0101825"
+        }
+    },
+    "YP_010377113.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377113.1",
+        "protein_name": {
+            "label": "DNA-directed RNA polymerase 19 kDa subunit protein (MPOX)",
+            "uri": "GENEPIO:0101659"
+        },
+        "protein_symbol": {
+            "label": "Opg131 protein (MPOX)",
+            "uri": "GENEPIO:0101826"
+        }
+    },
+    "YP_010377114.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377114.1",
+        "protein_name": {
+            "label": "Virion morphogenesis protein (MPOX)",
+            "uri": "GENEPIO:0101660"
+        },
+        "protein_symbol": {
+            "label": "Opg132 protein (MPOX)",
+            "uri": "GENEPIO:0101827"
+        }
+    },
+    "YP_010377115.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377115.1",
+        "protein_name": {
+            "label": "Early transcription factor 82 kDa subunit protein (MPOX)",
+            "uri": "GENEPIO:0101661"
+        },
+        "protein_symbol": {
+            "label": "Opg133 protein (MPOX)",
+            "uri": "GENEPIO:0101828"
+        }
+    },
+    "YP_010377116.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377116.1",
+        "protein_name": {
+            "label": "Intermediate transcription factor VITF-3 (1) protein (MPOX)",
+            "uri": "GENEPIO:0101662"
+        },
+        "protein_symbol": {
+            "label": "Opg134 protein (MPOX)",
+            "uri": "GENEPIO:0101829"
+        }
+    },
+    "YP_010377117.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377117.1",
+        "protein_name": {
+            "label": "IMV membrane protein A9 (MPOX)",
+            "uri": "GENEPIO:0101663"
+        },
+        "protein_symbol": {
+            "label": "Opg135 protein (MPOX)",
+            "uri": "GENEPIO:0101830"
+        }
+    },
+    "YP_010377118.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377118.1",
+        "protein_name": {
+            "label": "Virion core protein P4a (MPOX)",
+            "uri": "GENEPIO:0101664"
+        },
+        "protein_symbol": {
+            "label": "Opg136 protein (MPOX)",
+            "uri": "GENEPIO:0101831"
+        }
+    },
+    "YP_010377119.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377119.1",
+        "protein_name": {
+            "label": "Viral membrane formation protein (MPOX)",
+            "uri": "GENEPIO:0101665"
+        },
+        "protein_symbol": {
+            "label": "Opg137 protein (MPOX)",
+            "uri": "GENEPIO:0101832"
+        }
+    },
+    "YP_010377120.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377120.1",
+        "protein_name": {
+            "label": "A12 protein (MPOX)",
+            "uri": "GENEPIO:0101666"
+        },
+        "protein_symbol": {
+            "label": "Opg138 protein (MPOX)",
+            "uri": "GENEPIO:0101833"
+        }
+    },
+    "YP_010377121.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377121.1",
+        "protein_name": {
+            "label": "IMV membrane protein A13L (MPOX)",
+            "uri": "GENEPIO:0101667"
+        },
+        "protein_symbol": {
+            "label": "Opg139 protein (MPOX)",
+            "uri": "GENEPIO:0101834"
+        }
+    },
+    "YP_010377122.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377122.1",
+        "protein_name": {
+            "label": "IMV membrane protein A14 (MPOX)",
+            "uri": "GENEPIO:0101668"
+        },
+        "protein_symbol": {
+            "label": "Opg140 protein (MPOX)",
+            "uri": "GENEPIO:0101835"
+        }
+    },
+    "YP_010377123.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377123.1",
+        "protein_name": {
+            "label": "DUF1029 domain protein (MPOX)",
+            "uri": "GENEPIO:0101669"
+        },
+        "protein_symbol": {
+            "label": "Opg141 protein (MPOX)",
+            "uri": "GENEPIO:0101836"
+        }
+    },
+    "YP_010377124.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377124.1",
+        "protein_name": {
+            "label": "Core protein A15 (MPOX)",
+            "uri": "GENEPIO:0101670"
+        },
+        "protein_symbol": {
+            "label": "Opg142 protein (MPOX)",
+            "uri": "GENEPIO:0101837"
+        }
+    },
+    "YP_010377126.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377126.1",
+        "protein_name": {
+            "label": "IMV membrane protein P21 (MPOX)",
+            "uri": "GENEPIO:0101671"
+        },
+        "protein_symbol": {
+            "label": "Opg144 protein (MPOX)",
+            "uri": "GENEPIO:0101839"
+        }
+    },
+    "YP_010377127.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377127.1",
+        "protein_name": {
+            "label": "DNA helicase protein (MPOX)",
+            "uri": "GENEPIO:0101672"
+        },
+        "protein_symbol": {
+            "label": "Opg145 protein (MPOX)",
+            "uri": "GENEPIO:0101840"
+        }
+    },
+    "YP_010377128.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377128.1",
+        "protein_name": {
+            "label": "Zinc finger-like protein (1) (MPOX)",
+            "uri": "GENEPIO:0101673"
+        },
+        "protein_symbol": {
+            "label": "Opg146 protein (MPOX)",
+            "uri": "GENEPIO:0101841"
+        }
+    },
+    "YP_010377129.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377129.1",
+        "protein_name": {
+            "label": "IMV membrane protein A21 (MPOX)",
+            "uri": "GENEPIO:0101674"
+        },
+        "protein_symbol": {
+            "label": "Opg147 protein (MPOX)",
+            "uri": "GENEPIO:0101842"
+        }
+    },
+    "YP_010377130.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377130.1",
+        "protein_name": {
+            "label": "DNA polymerase processivity factor protein (MPOX)",
+            "uri": "GENEPIO:0101675"
+        },
+        "protein_symbol": {
+            "label": "Opg148 protein (MPOX)",
+            "uri": "GENEPIO:0101843"
+        }
+    },
+    "YP_010377131.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377131.1",
+        "protein_name": {
+            "label": "Holliday junction resolvase protein (MPOX)",
+            "uri": "GENEPIO:0101676"
+        },
+        "protein_symbol": {
+            "label": "Opg149 protein (MPOX)",
+            "uri": "GENEPIO:0101844"
+        }
+    },
+    "YP_010377132.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377132.1",
+        "protein_name": {
+            "label": "Intermediate transcription factor VITF-3 (2) protein (MPOX)",
+            "uri": "GENEPIO:0101677"
+        },
+        "protein_symbol": {
+            "label": "Opg150 protein (MPOX)",
+            "uri": "GENEPIO:0101845"
+        }
+    },
+    "YP_010377133.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377133.1",
+        "protein_name": {
+            "label": "DNA-dependent RNA polymerase subunit rpo132 protein (MPOX)",
+            "uri": "GENEPIO:0101678"
+        },
+        "protein_symbol": {
+            "label": "Opg151 protein (MPOX)",
+            "uri": "GENEPIO:0101846"
+        }
+    },
+    "YP_010377134.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377134.1",
+        "protein_name": {
+            "label": "Orthopoxvirus A26L/A30L protein (MPOX)",
+            "uri": "GENEPIO:0101679"
+        },
+        "protein_symbol": {
+            "label": "Opg153 protein (MPOX)",
+            "uri": "GENEPIO:0101847"
+        }
+    },
+    "YP_010377135.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377135.1",
+        "protein_name": {
+            "label": "IMV surface fusion protein (MPOX)",
+            "uri": "GENEPIO:0101680"
+        },
+        "protein_symbol": {
+            "label": "Opg154 protein (MPOX)",
+            "uri": "GENEPIO:0101848"
+        }
+    },
+    "YP_010377136.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377136.1",
+        "protein_name": {
+            "label": "Envelope protein A28 homolog (MPOX)",
+            "uri": "GENEPIO:0101681"
+        },
+        "protein_symbol": {
+            "label": "Opg155 protein (MPOX)",
+            "uri": "GENEPIO:0101849"
+        }
+    },
+    "YP_010377137.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377137.1",
+        "protein_name": {
+            "label": "DNA-directed RNA polymerase 35 kDa subunit protein (MPOX)",
+            "uri": "GENEPIO:0101682"
+        },
+        "protein_symbol": {
+            "label": "Opg156 protein (MPOX)",
+            "uri": "GENEPIO:0101850"
+        }
+    },
+    "YP_010377138.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377138.1",
+        "protein_name": {
+            "label": "IMV membrane protein A30 (MPOX)",
+            "uri": "GENEPIO:0101683"
+        },
+        "protein_symbol": {
+            "label": "Opg157 protein (MPOX)",
+            "uri": "GENEPIO:0101851"
+        }
+    },
+    "YP_010377139.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377139.1",
+        "protein_name": {
+            "label": "A32.5L protein (MPOX)",
+            "uri": "GENEPIO:0101684"
+        },
+        "protein_symbol": {
+            "label": "Opg158 protein (MPOX)",
+            "uri": "GENEPIO:0101852"
+        }
+    },
+    "YP_010377140.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377140.1",
+        "protein_name": {
+            "label": "CPXV166 protein (MPOX)",
+            "uri": "GENEPIO:0101685"
+        },
+        "protein_symbol": {
+            "label": "Opg159 protein (MPOX)",
+            "uri": "GENEPIO:0101853"
+        }
+    },
+    "YP_010377141.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377141.1",
+        "protein_name": {
+            "label": "ATPase A32 protein (MPOX)",
+            "uri": "GENEPIO:0101686"
+        },
+        "protein_symbol": {
+            "label": "Opg160 protein (MPOX)",
+            "uri": "GENEPIO:0101854"
+        }
+    },
+    "YP_010377142.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377142.1",
+        "protein_name": {
+            "label": "EEV glycoprotein (1) (MPOX)",
+            "uri": "GENEPIO:0101687"
+        },
+        "protein_symbol": {
+            "label": "Opg161 protein (MPOX)",
+            "uri": "GENEPIO:0101855"
+        }
+    },
+    "YP_010377143.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377143.1",
+        "protein_name": {
+            "label": "EEV glycoprotein (2) (MPOX)",
+            "uri": "GENEPIO:0101688"
+        },
+        "protein_symbol": {
+            "label": "Opg162 protein (MPOX)",
+            "uri": "GENEPIO:0101856"
+        }
+    },
+    "YP_010377144.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377144.1",
+        "protein_name": {
+            "label": "MHC class II antigen presentation inhibitor protein (MPOX)",
+            "uri": "GENEPIO:0101689"
+        },
+        "protein_symbol": {
+            "label": "Opg163 protein (MPOX)",
+            "uri": "GENEPIO:0101857"
+        }
+    },
+    "YP_010377145.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377145.1",
+        "protein_name": {
+            "label": "IEV transmembrane phosphoprotein (MPOX)",
+            "uri": "GENEPIO:0101690"
+        },
+        "protein_symbol": {
+            "label": "Opg164 protein (MPOX)",
+            "uri": "GENEPIO:0101858"
+        }
+    },
+    "YP_010377146.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377146.1",
+        "protein_name": {
+            "label": "CPXV173 protein (MPOX)",
+            "uri": "GENEPIO:0101691"
+        },
+        "protein_symbol": {
+            "label": "Opg165 protein (MPOX)",
+            "uri": "GENEPIO:0101859"
+        }
+    },
+    "YP_010415322.1": {
+        "type": "CDS",
+        "protein_id": "YP_010415322.1",
+        "protein_name": {
+            "label": "hypothetical protein (MPOX)",
+            "uri": "GENEPIO:0101692"
+        },
+        "protein_symbol": {
+            "label": "Opg166 protein (MPOX)",
+            "uri": "GENEPIO:0101860"
+        }
+    },
+    "YP_010377147.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377147.1",
+        "protein_name": {
+            "label": "CD47-like protein (MPOX)",
+            "uri": "GENEPIO:0101693"
+        },
+        "protein_symbol": {
+            "label": "Opg167 protein (MPOX)",
+            "uri": "GENEPIO:0101861"
+        }
+    },
+    "YP_010377149.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377149.1",
+        "protein_name": {
+            "label": "Profilin domain protein (MPOX)",
+            "uri": "GENEPIO:0101694"
+        },
+        "protein_symbol": {
+            "label": "Opg171 protein (MPOX)",
+            "uri": "GENEPIO:0101863"
+        }
+    },
+    "YP_010377150.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377150.1",
+        "protein_name": {
+            "label": "Type-I membrane glycoprotein (MPOX)",
+            "uri": "GENEPIO:0101695"
+        },
+        "protein_symbol": {
+            "label": "Opg172 protein (MPOX)",
+            "uri": "GENEPIO:0101864"
+        }
+    },
+    "YP_010377151.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377151.1",
+        "protein_name": {
+            "label": "MPXVgp154 protein (MPOX)",
+            "uri": "GENEPIO:0101696"
+        },
+        "protein_symbol": {
+            "label": "Opg173 protein (MPOX)",
+            "uri": "GENEPIO:0101865"
+        }
+    },
+    "YP_010377152.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377152.1",
+        "protein_name": {
+            "label": "Hydroxysteroid dehydrogenase protein (MPOX)",
+            "uri": "GENEPIO:0101697"
+        },
+        "protein_symbol": {
+            "label": "Opg174 protein (MPOX)",
+            "uri": "GENEPIO:0101866"
+        }
+    },
+    "YP_010377153.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377153.1",
+        "protein_name": {
+            "label": "Copper/zinc superoxide dismutase protein (MPOX)",
+            "uri": "GENEPIO:0101698"
+        },
+        "protein_symbol": {
+            "label": "Opg175 protein (MPOX)",
+            "uri": "GENEPIO:0101867"
+        }
+    },
+    "YP_010377155.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377155.1",
+        "protein_name": {
+            "label": "Thymidylate kinase protein (MPOX)",
+            "uri": "GENEPIO:0101699"
+        },
+        "protein_symbol": {
+            "label": "Opg178 protein (MPOX)",
+            "uri": "GENEPIO:0101869"
+        }
+    },
+    "YP_010377156.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377156.1",
+        "protein_name": {
+            "label": "DNA ligase (2) protein (MPOX)",
+            "uri": "GENEPIO:0101700"
+        },
+        "protein_symbol": {
+            "label": "Opg180 protein (MPOX)",
+            "uri": "GENEPIO:0101870"
+        }
+    },
+    "YP_010377157.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377157.1",
+        "protein_name": {
+            "label": "M137R protein (MPOX)",
+            "uri": "GENEPIO:0101701"
+        },
+        "protein_symbol": {
+            "label": "Opg181 protein (MPOX)",
+            "uri": "GENEPIO:0101871"
+        }
+    },
+    "YP_010377158.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377158.1",
+        "protein_name": {
+            "label": "Hemagglutinin protein (MPOX)",
+            "uri": "GENEPIO:0101702"
+        },
+        "protein_symbol": {
+            "label": "Opg185 protein (MPOX)",
+            "uri": "GENEPIO:0101872"
+        }
+    },
+    "YP_010377159.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377159.1",
+        "protein_name": {
+            "label": "Ser/thr kinase protein (MPOX)",
+            "uri": "GENEPIO:0101703"
+        },
+        "protein_symbol": {
+            "label": "Opg187 protein (MPOX)",
+            "uri": "GENEPIO:0101873"
+        }
+    },
+    "YP_010377168.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377168.1",
+        "protein_name": {
+            "label": "Ser/thr kinase protein (MPOX)",
+            "uri": "GENEPIO:0101703"
+        },
+        "protein_symbol": {
+            "label": "Opg198 protein (MPOX)",
+            "uri": "GENEPIO:0101882"
+        }
+    },
+    "YP_010377160.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377160.1",
+        "protein_name": {
+            "label": "Schlafen (1) protein (MPOX)",
+            "uri": "GENEPIO:0101704"
+        },
+        "protein_symbol": {
+            "label": "Opg188 protein (MPOX)",
+            "uri": "GENEPIO:0101874"
+        }
+    },
+    "YP_010377162.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377162.1",
+        "protein_name": {
+            "label": "EEV type-I membrane glycoprotein (MPOX)",
+            "uri": "GENEPIO:0101705"
+        },
+        "protein_symbol": {
+            "label": "Opg190 protein (MPOX)",
+            "uri": "GENEPIO:0101876"
+        }
+    },
+    "YP_010377163.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377163.1",
+        "protein_name": {
+            "label": "Ankyrin-like protein (46) (MPOX)",
+            "uri": "GENEPIO:0101706"
+        },
+        "protein_symbol": {
+            "label": "Opg191 protein (MPOX)",
+            "uri": "GENEPIO:0101877"
+        }
+    },
+    "YP_010377164.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377164.1",
+        "protein_name": {
+            "label": "Virulence protein (MPOX)",
+            "uri": "GENEPIO:0101707"
+        },
+        "protein_symbol": {
+            "label": "Opg192 protein (MPOX)",
+            "uri": "GENEPIO:0101878"
+        }
+    },
+    "YP_010377175.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377175.1",
+        "protein_name": {
+            "label": "Virulence protein (MPOX)",
+            "uri": "GENEPIO:0101707"
+        },
+        "protein_symbol": {
+            "label": "Opg209 protein (MPOX)",
+            "uri": "GENEPIO:0101888"
+        }
+    },
+    "YP_010377165.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377165.1",
+        "protein_name": {
+            "label": "Soluble interferon-gamma receptor-like protein (MPOX)",
+            "uri": "GENEPIO:0101708"
+        },
+        "protein_symbol": {
+            "label": "Opg193 protein (MPOX)",
+            "uri": "GENEPIO:0101879"
+        }
+    },
+    "YP_010377166.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377166.1",
+        "protein_name": {
+            "label": "Intracellular viral protein (MPOX)",
+            "uri": "GENEPIO:0101709"
+        },
+        "protein_symbol": {
+            "label": "Opg195 protein (MPOX)",
+            "uri": "GENEPIO:0101880"
+        }
+    },
+    "YP_010377167.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377167.1",
+        "protein_name": {
+            "label": "CPXV205 protein (MPOX)",
+            "uri": "GENEPIO:0101710"
+        },
+        "protein_symbol": {
+            "label": "Opg197 protein (MPOX)",
+            "uri": "GENEPIO:0101881"
+        }
+    },
+    "YP_010377172.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377172.1",
+        "protein_name": {
+            "label": "IFN-alpha/beta-receptor-like secreted glycoprotein (MPOX)",
+            "uri": "GENEPIO:0101711"
+        },
+        "protein_symbol": {
+            "label": "Opg204 protein (MPOX)",
+            "uri": "GENEPIO:0101885"
+        }
+    },
+    "YP_010377173.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377173.1",
+        "protein_name": {
+            "label": "Ankyrin repeat protein (44) (MPOX)",
+            "uri": "GENEPIO:0101712"
+        },
+        "protein_symbol": {
+            "label": "Opg205 protein (MPOX)",
+            "uri": "GENEPIO:0101886"
+        }
+    },
+    "YP_010377176.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377176.1",
+        "protein_name": {
+            "label": "B22R family protein (MPOX)",
+            "uri": "GENEPIO:0101713"
+        },
+        "protein_symbol": {
+            "label": "Opg210 protein (MPOX)",
+            "uri": "GENEPIO:0101889"
+        }
+    },
+    "YP_010377184.1": {
+        "type": "CDS",
+        "protein_id": "YP_010377184.1",
+        "protein_name": {
+            "label": "Brix domain protein (MPOX)",
+            "uri": "GENEPIO:0101714"
+        },
+        "protein_symbol": {
+            "label": "Opg016 protein (MPOX)",
+            "uri": "GENEPIO:0101891"
+        }
+    }
+}

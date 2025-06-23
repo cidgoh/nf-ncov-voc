@@ -1,0 +1,29 @@
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+##sequence-region PP109421.1 1 15225
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=208893
+PP109421.1	Genbank	region	1	15225	.	+	.	ID=PP109421.1:1..15225;Dbxref=taxon:208893;collection-date=30-Oct-2017;country=United Kingdom;gbkey=Src;genome=genomic;genotype=A;isolate=hRSV/A/England/397/2017;mol_type=viral cRNA;nat-host=Homo sapiens
+PP109421.1	Genbank	gene	70	489	.	+	.	ID=gene-NS1;Name=NS1;gbkey=Gene;gene=NS1;gene_biotype=protein_coding
+PP109421.1	Genbank	CDS	70	489	.	+	0	ID=cds-WTM05205.1;Parent=gene-NS1;Dbxref=NCBI_GP:WTM05205.1;Name=WTM05205.1;gbkey=CDS;gene=NS1;product=nonstructural protein 1;protein_id=WTM05205.1
+PP109421.1	Genbank	gene	599	973	.	+	.	ID=gene-NS2;Name=NS2;gbkey=Gene;gene=NS2;gene_biotype=protein_coding
+PP109421.1	Genbank	CDS	599	973	.	+	0	ID=cds-WTM05206.1;Parent=gene-NS2;Dbxref=NCBI_GP:WTM05206.1;Name=WTM05206.1;gbkey=CDS;gene=NS2;product=nonstructural protein 2;protein_id=WTM05206.1
+PP109421.1	Genbank	gene	1111	2286	.	+	.	ID=gene-N;Name=N;gbkey=Gene;gene=N;gene_biotype=protein_coding
+PP109421.1	Genbank	CDS	1111	2286	.	+	0	ID=cds-WTM05207.1;Parent=gene-N;Dbxref=NCBI_GP:WTM05207.1;Name=WTM05207.1;gbkey=CDS;gene=N;product=nucleoprotein;protein_id=WTM05207.1
+PP109421.1	Genbank	gene	2318	3043	.	+	.	ID=gene-P;Name=P;gbkey=Gene;gene=P;gene_biotype=protein_coding
+PP109421.1	Genbank	CDS	2318	3043	.	+	0	ID=cds-WTM05208.1;Parent=gene-P;Dbxref=NCBI_GP:WTM05208.1;Name=WTM05208.1;gbkey=CDS;gene=P;product=phosphoprotein;protein_id=WTM05208.1
+PP109421.1	Genbank	gene	3226	3996	.	+	.	ID=gene-M;Name=M;gbkey=Gene;gene=M;gene_biotype=protein_coding
+PP109421.1	Genbank	CDS	3226	3996	.	+	0	ID=cds-WTM05209.1;Parent=gene-M;Dbxref=NCBI_GP:WTM05209.1;Name=WTM05209.1;gbkey=CDS;gene=M;product=matrix protein;protein_id=WTM05209.1
+PP109421.1	Genbank	gene	4266	4460	.	+	.	ID=gene-SH;Name=SH;gbkey=Gene;gene=SH;gene_biotype=protein_coding
+PP109421.1	Genbank	CDS	4266	4460	.	+	0	ID=cds-WTM05210.1;Parent=gene-SH;Dbxref=NCBI_GP:WTM05210.1;Name=WTM05210.1;gbkey=CDS;gene=SH;product=small hydrophobic protein;protein_id=WTM05210.1
+PP109421.1	Genbank	gene	4652	5617	.	+	.	ID=gene-G;Name=G;gbkey=Gene;gene=G;gene_biotype=protein_coding
+PP109421.1	Genbank	CDS	4652	5617	.	+	0	ID=cds-WTM05211.1;Parent=gene-G;Dbxref=NCBI_GP:WTM05211.1;Name=WTM05211.1;gbkey=CDS;gene=G;product=attachment glycoprotein;protein_id=WTM05211.1
+PP109421.1	Genbank	gene	5697	7421	.	+	.	ID=gene-F;Name=F;gbkey=Gene;gene=F;gene_biotype=protein_coding
+PP109421.1	Genbank	CDS	5697	7421	.	+	0	ID=cds-WTM05212.1;Parent=gene-F;Dbxref=NCBI_GP:WTM05212.1;Name=WTM05212.1;gbkey=CDS;gene=F;product=fusion protein;protein_id=WTM05212.1
+PP109421.1	Genbank	gene	7640	8224	.	+	.	ID=gene-M2-1;Name=M2-1;gbkey=Gene;gene=M2-1;gene_biotype=protein_coding
+PP109421.1	Genbank	CDS	7640	8224	.	+	0	ID=cds-WTM05215.1;Parent=gene-M2-1;Dbxref=NCBI_GP:WTM05215.1;Name=WTM05215.1;gbkey=CDS;gene=M2-1;product=M2-1 protein;protein_id=WTM05215.1
+PP109421.1	Genbank	gene	8199	8465	.	+	.	ID=gene-M2-2;Name=M2-2;gbkey=Gene;gene=M2-2;gene_biotype=protein_coding
+PP109421.1	Genbank	CDS	8199	8465	.	+	0	ID=cds-WTM05214.1;Parent=gene-M2-2;Dbxref=NCBI_GP:WTM05214.1;Name=WTM05214.1;gbkey=CDS;gene=M2-2;product=M2-2 protein;protein_id=WTM05214.1
+PP109421.1	Genbank	gene	8532	15029	.	+	.	ID=gene-L;Name=L;gbkey=Gene;gene=L;gene_biotype=protein_coding
+PP109421.1	Genbank	CDS	8532	15029	.	+	0	ID=cds-WTM05213.1;Parent=gene-L;Dbxref=NCBI_GP:WTM05213.1;Name=WTM05213.1;gbkey=CDS;gene=L;product=RNA-dependent RNA polymerase;protein_id=WTM05213.1
+
