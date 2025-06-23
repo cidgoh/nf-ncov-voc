@@ -1,0 +1,6 @@
+{
+    "limit": 10000,
+    "dataFormat": "JSON",
+    "downloadAsFile": "false",
+    "dataUseTerms": "OPEN"
+}
