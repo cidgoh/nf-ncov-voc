@@ -11,7 +11,7 @@ include { MINIMAP2_ALIGN                              } from '../../modules/nf-c
 include { GUNZIP                                      } from '../../modules/nf-core/gunzip/main'
 include { TABIX_BGZIPTABIX                            } from '../../modules/nf-core/tabix/bgziptabix/main'
 include { BCFTOOLS_NORM                               } from '../../modules/nf-core/bcftools/norm/main'
-
+include { VCF_VALIDATOR                               } from '../../modules/local/vcf-validator'
 // import sub-workflows
 include { BAM_VARIANT_CALLING_SORT_FREEBAYES_BCFTOOLS } from '../nf-core/bam_variant_calling_sort_freebayes_bcftools/main'
 include { BAM_SORT_STATS_SAMTOOLS                     } from '../nf-core/bam_sort_stats_samtools/main'
@@ -26,14 +26,12 @@ workflow VARIANT_CALLING {
     main:
 
     // Create a channel for the viral genome file
-    ch_viral_genome = Channel
-        .fromPath(viral_genome)
+    ch_viral_genome = Channel.fromPath(viral_genome)
         .ifEmpty { error("Cannot find viral genome file: ${viral_genome}") }
         .map { file -> [[id: params.virus_accession_id], file] }
         .collect()
 
-    ch_viral_genome_fai = Channel
-        .fromPath(viral_genome_fai)
+    ch_viral_genome_fai = Channel.fromPath(viral_genome_fai)
         .ifEmpty { error("Cannot find viral genome file: ${viral_genome}") }
         .collect()
 
@@ -83,7 +81,7 @@ workflow VARIANT_CALLING {
             ch_viral_genome_with_index_value,
             [[], []],
             [[], []],
-            [[], []]
+            [[], []],
         )
         GUNZIP(BAM_VARIANT_CALLING_SORT_FREEBAYES_BCFTOOLS.out.vcf)
         vcf = GUNZIP.out.gunzip
@@ -96,6 +94,8 @@ workflow VARIANT_CALLING {
         ch_viral_genome,
     )
     vcf = BCFTOOLS_NORM.out.vcf
+
+    VCF_VALIDATOR(vcf)
 
     emit:
     vcf
