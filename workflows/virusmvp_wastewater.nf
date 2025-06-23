@@ -99,8 +99,7 @@ workflow WASTEWATER {
             }
             else {
                 // If index files exist, create a channel with the existing index
-                human_genome_index = Channel
-                    .fromPath("${params.host_genome}.*")
+                human_genome_index = Channel.fromPath("${params.host_genome}.*")
                     .collect()
                     .map { files ->
                         [human_genome[0], files]
@@ -214,6 +213,7 @@ workflow WASTEWATER {
     WW_IVAR_VARIANTS_TO_VCF(BAM_VARIANT_DEMIX_BOOT_FREYJA.out.variants)
     vcf = WW_IVAR_VARIANTS_TO_VCF.out.vcf
     ch_stats = WW_SEQKIT_STATS.out.stats
+
 
     ANNOTATION(vcf, ch_snpeff_db, ch_snpeff_config, params.viral_genome, ch_stats, ch_json)
     annotatted_vcf = ANNOTATION.out.gvf
