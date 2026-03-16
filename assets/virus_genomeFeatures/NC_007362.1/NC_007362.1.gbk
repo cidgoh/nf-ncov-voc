@@ -1,0 +1,117 @@
+LOCUS       NC_007362               1760 bp    cRNA    linear   VRL 13-AUG-2018
+DEFINITION  Influenza A virus (A/goose/Guangdong/1/1996(H5N1)) hemagglutinin
+            (HA) gene, complete cds.
+ACCESSION   NC_007362
+VERSION     NC_007362.1
+DBLINK      BioProject: PRJNA485481
+KEYWORDS    RefSeq.
+SOURCE      Influenza A virus (A/goose/Guangdong/1/1996(H5N1))
+  ORGANISM  Influenza A virus (A/goose/Guangdong/1/1996(H5N1))
+            Viruses; Riboviria; Orthornavirae; Negarnaviricota;
+            Polyploviricotina; Insthoviricetes; Articulavirales;
+            Orthomyxoviridae; Alphainfluenzavirus; Alphainfluenzavirus
+            influenzae.
+REFERENCE   1  (bases 1 to 1760)
+  CONSRTM   World Health Organization Global Influenza Program Surveillance
+            Network
+  TITLE     Evolution of H5N1 avian influenza viruses in Asia
+  JOURNAL   Emerging Infect. Dis. 11 (10), 1515-1521 (2005)
+   PUBMED   16318689
+REFERENCE   2  (bases 1 to 1760)
+  AUTHORS   Xu,X., Subbarao, Cox,N.J. and Guo,Y.
+  TITLE     Genetic characterization of the pathogenic influenza
+            A/Goose/Guangdong/1/96 (H5N1) virus: similarity of its
+            hemagglutinin gene to those of H5N1 viruses from the 1997 outbreaks
+            in Hong Kong
+  JOURNAL   Virology 261 (1), 15-19 (1999)
+   PUBMED   10484749
+REFERENCE   3  (bases 1 to 1760)
+  CONSRTM   NCBI Genome Project
+  TITLE     Direct Submission
+  JOURNAL   Submitted (26-AUG-2005) National Center for Biotechnology
+            Information, NIH, Bethesda, MD 20894, USA
+REFERENCE   4  (bases 1 to 1760)
+  AUTHORS   Xu,X., Subbarao,K., Cox,N.J. and Guo,Y.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (20-APR-1999) Influenza Branch, Center for Diseases
+            Control and Prevention, 1600 Clifton Road, Atlanta, GA 30333, USA
+COMMENT     REVIEWED REFSEQ: This record has been curated by NCBI staff. The
+            reference sequence was derived from AF144305.
+            COMPLETENESS: full length.
+FEATURES             Location/Qualifiers
+     source          1..1760
+                     /organism="Influenza A virus
+                     (A/goose/Guangdong/1/1996(H5N1))"
+                     /mol_type="viral cRNA"
+                     /strain="A/goose/Guangdong/1/1996"
+                     /serotype="H5N1"
+                     /db_xref="taxon:93838"
+                     /segment="4"
+     gene            22..1728
+                     /gene="HA"
+                     /locus_tag="FLUAVH5N1_s4gp1"
+                     /db_xref="GeneID:3654620"
+     CDS             22..1728
+                     /gene="HA"
+                     /locus_tag="FLUAVH5N1_s4gp1"
+                     /codon_start=1
+                     /product="hemagglutinin"
+                     /protein_id="YP_308669.1"
+                     /db_xref="GeneID:3654620"
+                     /translation="MEKIVLLLAIVSLVKSDQICIGYHANNSTEQVDTIMEKNVTVTH
+                     AQDILEKTHNGKLCDLNGVKPLILRDCSVAGWLLGNPMCDEFINVPEWSYIVEKASPA
+                     NDLCYPGDFNDYEELKHLLSRTNHFEKIQIIPKSSWSNHDASSGVSSACPYHGRSSFF
+                     RNVVWLIKKNSAYPTIKRSYNNTNQEDLLVLWGIHHPNDAAEQTKLYQNPTTYISVGT
+                     STLNQRLVPEIATRPKVNGQSGRMEFFWTILKPNDAINFESNGNFIAPEYAYKIVKKG
+                     DSAIMKSELEYGNCNTKCQTPMGAINSSMPFHNIHPLTIGECPKYVKSNRLVLATGLR
+                     NTPQRERRRKKRGLFGAIAGFIEGGWQGMVDGWYGYHHSNEQGSGYAADKESTQKAID
+                     GVTNKVNSIIDKMNTQFEAVGREFNNLERRIENLNKQMEDGFLDVWTYNAELLVLMEN
+                     ERTLDFHDSNVKNLYDKVRLQLRDNAKELGNGCFEFYHKCDNECMESVKNGTYDYPQY
+                     SEEARLNREEISGVKLESMGTYQILSIYSTVASSLALAIMVAGLSLWMCSNGSLQCRI
+                     CI"
+     sig_peptide     22..69
+                     /gene="HA"
+                     /locus_tag="FLUAVH5N1_s4gp1"
+     mat_peptide     70..1059
+                     /gene="HA"
+                     /locus_tag="FLUAVH5N1_s4gp1"
+                     /product="HA1"
+                     /protein_id="YP_529486.1"
+     mat_peptide     1060..1725
+                     /gene="HA"
+                     /locus_tag="FLUAVH5N1_s4gp1"
+                     /product="HA2"
+                     /protein_id="YP_529487.1"
+ORIGIN      
+        1 gcaggggtat aatctgtcaa aatggagaaa atagtgcttc ttcttgcaat agtcagtctt
+       61 gtcaaaagtg atcagatttg cattggttac catgcaaaca actcgacaga gcaggttgac
+      121 acaataatgg aaaagaacgt tactgttaca catgcccaag acatactgga aaagacacac
+      181 aatgggaagc tctgcgatct aaatggagtg aagcctctca ttttgagaga ttgtagtgta
+      241 gctggatggc tcctcggaaa ccctatgtgt gacgaattca tcaatgtgcc ggaatggtct
+      301 tacatagtgg agaaggccag tccagccaat gacctctgtt acccagggga tttcaacgac
+      361 tatgaagaac tgaaacacct attgagcaga acaaaccatt ttgagaaaat tcagatcatc
+      421 cccaaaagtt cttggtccaa tcatgatgcc tcatcagggg tgagctcagc atgtccatac
+      481 catgggaggt cctccttttt cagaaatgtg gtatggctta tcaaaaagaa cagtgcatac
+      541 ccaacaataa agaggagcta caataatacc aaccaagaag atcttttagt actgtggggg
+      601 attcaccatc ctaatgatgc ggcagagcag acaaagctct atcaaaaccc aaccacttac
+      661 atttccgttg gaacatcaac actgaaccag agattggttc cagaaatagc tactagaccc
+      721 aaagtaaacg ggcaaagtgg aagaatggag ttcttctgga caattttaaa gccgaatgat
+      781 gccatcaatt tcgagagtaa tggaaatttc attgctccag aatatgcata caaaattgtc
+      841 aagaaagggg actcagcaat tatgaaaagt gaattggaat atggtaactg caacaccaag
+      901 tgtcaaactc caatgggggc gataaactct agtatgccat tccacaacat acaccccctc
+      961 accatcgggg aatgccccaa atatgtgaaa tcaaacagat tagtccttgc gactggactc
+     1021 agaaataccc ctcagagaga gagaagaaga aaaaagagag gactatttgg agctatagca
+     1081 ggttttatag agggaggatg gcagggaatg gtagatggtt ggtatgggta ccaccatagc
+     1141 aatgagcagg ggagtggata cgctgcagac aaagaatcca ctcaaaaggc aatagatgga
+     1201 gtcaccaata aggtcaactc gatcattgac aaaatgaaca ctcagtttga ggccgttgga
+     1261 agggaattta ataacttgga aaggaggata gagaatttaa acaagcagat ggaagacgga
+     1321 ttcctagatg tctggactta taatgctgaa cttctggttc tcatggaaaa tgagagaact
+     1381 ctagactttc atgactcaaa tgtcaagaac ctttatgaca aggtccgact acagcttagg
+     1441 gataatgcaa aggagctggg taatggttgt ttcgagttct atcacaaatg tgataatgaa
+     1501 tgtatggaaa gtgtaaaaaa cggaacgtat gactacccgc agtattcaga agaagcaaga
+     1561 ctaaacagag aggaaataag tggagtaaaa ttggaatcaa tgggaactta ccaaatactg
+     1621 tcaatttatt caacagtggc gagttcccta gcactggcaa tcatggtagc tggtctatct
+     1681 ttatggatgt gctccaatgg atcgttacaa tgcagaattt gcatttaaat ttgtgagttc
+     1741 agattgtagt taaaaacacc
+//
+

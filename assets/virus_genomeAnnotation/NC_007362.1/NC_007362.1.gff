@@ -1,0 +1,12 @@
+##gff-version 3
+#!gff-spec-version 1.21
+#!processor NCBI annotwriter
+##sequence-region NC_007362.1 1 1760
+##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=93838
+NC_007362.1	RefSeq	region	1	1760	.	+	.	ID=NC_007362.1:1..1760;Dbxref=taxon:93838;Name=4;gbkey=Src;genome=genomic;mol_type=viral cRNA;old-name=Influenza A virus (A/Goose/Guangdong/1/96(H5N1));segment=4;serotype=H5N1;strain=A/goose/Guangdong/1/1996
+NC_007362.1	RefSeq	gene	22	1728	.	+	.	ID=gene-FLUAVH5N1_s4gp1;Dbxref=GeneID:3654620;Name=HA;gbkey=Gene;gene=HA;gene_biotype=protein_coding;locus_tag=FLUAVH5N1_s4gp1
+NC_007362.1	RefSeq	CDS	22	1728	.	+	0	ID=cds-YP_308669.1;Parent=gene-FLUAVH5N1_s4gp1;Dbxref=GenBank:YP_308669.1,GeneID:3654620;Name=YP_308669.1;gbkey=CDS;gene=HA;locus_tag=FLUAVH5N1_s4gp1;product=hemagglutinin;protein_id=YP_308669.1
+NC_007362.1	RefSeq	signal_peptide_region_of_CDS	22	69	.	+	.	ID=id-YP_308669.1:1..16;Parent=cds-YP_308669.1;gbkey=Prot
+NC_007362.1	RefSeq	mature_protein_region_of_CDS	70	1059	.	+	.	ID=id-YP_308669.1:17..346;Parent=cds-YP_308669.1;gbkey=Prot;product=HA1;protein_id=YP_529486.1
+NC_007362.1	RefSeq	mature_protein_region_of_CDS	1060	1725	.	+	.	ID=id-YP_308669.1:347..568;Parent=cds-YP_308669.1;gbkey=Prot;product=HA2;protein_id=YP_529487.1
+
