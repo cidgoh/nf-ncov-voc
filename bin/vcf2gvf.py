@@ -193,7 +193,7 @@ if __name__ == '__main__':
 
     # combine pragmas, header, GVF contents
     final_gvf = pd.DataFrame(np.vstack([gvf.columns, gvf]))
-    final_gvf = pragmas.append(final_gvf)
+    final_gvf = pd.concat([pragmas, final_gvf], ignore_index=True)
     
     # save GVF
     filepath = args.outgvf  # outdir + strain + ".annotated.gvf"

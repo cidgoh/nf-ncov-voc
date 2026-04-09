@@ -1,0 +1,61 @@
+{
+    "YP_308669.1": {
+        "type": "CDS",
+        "protein_id": "YP_308669.1",
+        "protein_name": {
+            "label": "hemagglutinin precursor H5 (HA0)",
+            "uri": "GENEPIO:0102002"
+        },
+        "protein_symbol": {
+            "label": "HA0 protein H5",
+            "uri": "GENEPIO:0102003"
+        },
+        "virus_subtype": {
+            "label": "H5",
+            "uri": "GENEPIO:HA_SUBTYPE_H5"
+        },
+        "cleaved_into": [
+            "YP_529486.1",
+            "YP_529487.1"
+        ],
+        "cleavage_site": {
+            "label": "polybasic cleavage site",
+            "uri": "GENEPIO:0102004",
+            "description": "Presence of polybasic amino acid motif associated with high pathogenicity in H5 strains"
+        }
+    },
+    "YP_529486.1": {
+        "type": "mature_peptide",
+        "protein_id": "YP_529486.1",
+        "protein_name": {
+            "label": "hemagglutinin HA1 subunit H5",
+            "uri": "GENEPIO:0102005"
+        },
+        "protein_symbol": {
+            "label": "HA1 protein H5",
+            "uri": "GENEPIO:0102006"
+        },
+        "derived_from": "YP_308669.1",
+        "functional_role": {
+            "label": "receptor binding subunit",
+            "uri": "GENEPIO:HA1_FUNCTION"
+        }
+    },
+    "YP_529487.1": {
+        "type": "mature_peptide",
+        "protein_id": "YP_529487.1",
+        "protein_name": {
+            "label": "hemagglutinin HA2 subunit H5",
+            "uri": "GENEPIO:0102007"
+        },
+        "protein_symbol": {
+            "label": "HA2 protein H5",
+            "uri": "GENEPIO:0102008"
+        },
+        "derived_from": "YP_308669.1",
+        "functional_role": {
+            "label": "membrane fusion subunit",
+            "uri": "GENEPIO:HA2_FUNCTION"
+        }
+    }
+}

@@ -57,11 +57,14 @@ if __name__ == '__main__':
             gene_ids = GENE_PROTEIN_POSITIONS_DICT[entry]["Dbxref"].replace("GeneID", "NCBIGene")
             # find matching gene entry in ontology_genes JSON
             for gene_entry in ONTOLOGY_GENES_DICT.keys():
+                print(ONTOLOGY_GENES_DICT[gene_entry]["Dbxref"])                
+                print(gene_ids)
                 if ONTOLOGY_GENES_DICT[gene_entry]["Dbxref"] == gene_ids:
                     gene_name = ONTOLOGY_GENES_DICT[gene_entry]["gene_name"]
                     gene_symbol = ONTOLOGY_GENES_DICT[gene_entry]["gene_symbol"]
                     strand_orientation = ONTOLOGY_GENES_DICT[gene_entry]["strand_orientation"]
                     gene_orientation = ONTOLOGY_GENES_DICT[gene_entry]["gene_orientation"]
+                    
             GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"] = gene_name
             GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"] = gene_symbol
             GENE_PROTEIN_POSITIONS_DICT[entry]["strand_orientation"] = strand_orientation

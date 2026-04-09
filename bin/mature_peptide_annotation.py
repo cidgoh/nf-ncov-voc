@@ -75,7 +75,9 @@ if __name__ == '__main__':
             if gene_protein[key]["type"] == "mature_protein_region_of_CDS":
                 if int(gene_protein[key]["start"]) <= int(record.POS) <= int(gene_protein[key]["end"]):
                     record.INFO["mat_pep"] = str("".join(gene_protein[key]["protein_alias"])).replace(";", ",")
-                    record.INFO["mat_pep_desc"] = str("".join(gene_protein[key]["Note"])).replace(";", ",")
+                    # Use .get() method with fallback to handle missing "Note" field
+                    note_value = gene_protein[key].get("Note", gene_protein[key].get("product", "n/a"))
+                    record.INFO["mat_pep_desc"] = str("".join([note_value] if isinstance(note_value, str) else note_value)).replace(";", ",")
                     record.INFO["mat_pep_acc"] = str("".join(gene_protein[key]["ID"])).replace(";", ",")
         w.write_record(record)    
     w.close()
