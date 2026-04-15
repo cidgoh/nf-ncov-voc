@@ -36,7 +36,7 @@
             "uri": "GENEPIO:0102001"
         },
         "strand_orientation": {
-            "label": "negative strand orientation",
+            "label": "antisense strand orientation",
             "uri": "GENEPIO:0700003"
         },
         "gene_orientation": {
