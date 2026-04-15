@@ -517,11 +517,21 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             gene = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
             product = GENE_PROTEIN_POSITIONS_DICT[entry]["product"]
             protein_alias = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]
-            protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["uri"] + ']'
-            protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["uri"] + ']'
             protein_id = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_id"]
             locus_tag = GENE_PROTEIN_POSITIONS_DICT[entry]["locus_tag"]
-    
+
+            # add ontology terms if the JSON file contains them
+
+            if "protein_name" in GENE_PROTEIN_POSITIONS_DICT[entry].keys():
+                protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["uri"] + ']'
+            else:
+                protein_name = 'n/a'
+
+            if "protein_symbol" in GENE_PROTEIN_POSITIONS_DICT[entry].keys():
+                protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["uri"] + ']'
+            else:
+                protein_symbol = 'n/a'
+
             # fill in attributes for mutations in this CDS region
             cds_mask = df[pos_column].astype(int).between(start, end, inclusive="both")
             df.loc[cds_mask, "gene"] = gene
@@ -537,11 +547,29 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             # extract values from JSON entry
             start = GENE_PROTEIN_POSITIONS_DICT[entry]["start"]
             end = GENE_PROTEIN_POSITIONS_DICT[entry]["end"]
-            gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["uri"] + ']'
-            gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["uri"] + ']'
-            strand_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["strand_orientation"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["strand_orientation"]["uri"] + ']'
-            gene_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_orientation"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["gene_orientation"]["uri"] + ']'
-            
+
+            # add ontology terms if the JSON file contains them
+
+            if "gene_name" in GENE_PROTEIN_POSITIONS_DICT[entry].keys():
+                gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["uri"] + ']'
+            else:
+                gene_name = 'n/a'
+
+            if "gene_symbol" in GENE_PROTEIN_POSITIONS_DICT[entry].keys():
+                gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["uri"] + ']'
+            else:
+                gene_symbol = 'n/a'
+
+            if "strand_orientation" in GENE_PROTEIN_POSITIONS_DICT[entry].keys():
+                strand_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["strand_orientation"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["strand_orientation"]["uri"] + ']'
+            else:
+                strand_orientation = 'n/a'
+
+            if "gene_orientation" in GENE_PROTEIN_POSITIONS_DICT[entry].keys():
+                gene_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_orientation"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["gene_orientation"]["uri"] + ']'
+            else:
+                gene_orientation = 'n/a'            
+
             # fill in attributes for mutations in this gene region
             gene_mask = df[pos_column].astype(int).between(start, end, inclusive="both")
             df.loc[gene_mask, "gene_name"] = gene_name
