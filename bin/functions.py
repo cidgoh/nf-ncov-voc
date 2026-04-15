@@ -517,8 +517,8 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             gene = GENE_PROTEIN_POSITIONS_DICT[entry]["gene"]
             product = GENE_PROTEIN_POSITIONS_DICT[entry]["product"]
             protein_alias = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]
-            protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["label"]
-            protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["label"]
+            protein_name = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["protein_name"]["uri"] + ']'
+            protein_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["protein_symbol"]["uri"] + ']'
             protein_id = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_id"]
             locus_tag = GENE_PROTEIN_POSITIONS_DICT[entry]["locus_tag"]
     
@@ -537,10 +537,10 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             # extract values from JSON entry
             start = GENE_PROTEIN_POSITIONS_DICT[entry]["start"]
             end = GENE_PROTEIN_POSITIONS_DICT[entry]["end"]
-            gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"]
-            gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"]
-            strand_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["strand_orientation"]["label"]
-            gene_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_orientation"]["label"]
+            gene_name = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["gene_name"]["uri"] + ']'
+            gene_symbol = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["gene_symbol"]["uri"] + ']'
+            strand_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["strand_orientation"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["strand_orientation"]["uri"] + ']'
+            gene_orientation = GENE_PROTEIN_POSITIONS_DICT[entry]["gene_orientation"]["label"] + ' [' + GENE_PROTEIN_POSITIONS_DICT[entry]["gene_orientation"]["uri"] + ']'
             
             # fill in attributes for mutations in this gene region
             gene_mask = df[pos_column].astype(int).between(start, end, inclusive="both")
@@ -553,6 +553,8 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
     df.loc[df["gene"].isna(), "gene"] = "intergenic"
     # label all mutations that didn't belong to any protein as "n/a"
     df = df.fillna("n/a")
+    # to account for missing ontology terms, replace " []" with "n/a"
+    df = df.replace(" []", "n/a")
 
     return(df)
 
