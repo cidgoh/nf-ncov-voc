@@ -376,8 +376,7 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     # expand "unknown" column into multiple named columns
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
     unknown.columns = var_cols
-    print("var_cols:")
-    print(var_cols)
+
     # drop columns in df that have the same name as 'unknown' column names
     cols_to_drop = list(set(df.columns) & set(unknown.columns)) 
     df = df.drop(columns=cols_to_drop)
