@@ -75,7 +75,8 @@ def add_hgvs_names(new_gvf):
     new_gvf['hgvs_alias'] = 'n/a'
     
     # fill in 'hgvs_nt'
-    
+
+    """    
     # define nt regex patterns
     # for SNPs, eg. g.C45T, g.C-45T
     nt_snp_regex = "[a-z]\\.[A-Z][0-9\\-]+[A-Z]"
@@ -101,6 +102,8 @@ def add_hgvs_names(new_gvf):
     # add hgvs nt delins: change to eg. g.123_129delinsAC
     nt_delins_mask = new_gvf['nt_name'].str.contains(nt_delins_regex, regex=True)
     #new_gvf.loc[nt_delins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + "TBA!" #new_gvf['nt_name']  
+    """    
+    new_gvf['hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + new_gvf['nt_name']
 
     # remove transcript id in parentheses for all HGVS nucleotide names where 'locus_tag'=='n/a'
     new_gvf['hgvs_nt'] = new_gvf['hgvs_nt'].str.replace("(n/a)", "", regex=False)
