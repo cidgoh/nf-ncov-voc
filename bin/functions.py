@@ -191,7 +191,7 @@ def get_unknown_labels(df):
         # use "RO" instead of "REF_DP" to match GVF standard
         # use "AO" instead of "ALT_DP" to match GVF standard
         columns = [x.lower() for x in ["GT","RO","REF_RV","REF_QUAL","AO","ALT_RV","ALT_QUAL","ALT_FREQ"]]
-        
+ 
     return columns
         
 
@@ -297,27 +297,27 @@ def unnest_multi(df, columns, reset_index=False):
     return df
 
 
-def select_snpeff_records(eff_string, ao_count):
+def select_snpeff_records(ann_string, ao_count):
     
-    eff_list = eff_string.split(",")
+    ann_list = ann_string.split(",")
 
     # if any records in the row contain '|p.', take only those records
-    EFF_records_list = [s for s in eff_list if '|p.' or 'LOF' in s]
+    ANN_records_list = [s for s in ann_list if '|p.' or 'LOF' in s]
 
     # if no records contain '|p.', take the "intergenic" record
-    if len(EFF_records_list) == 0:
-        EFF_records_list = [s for s in eff_list if 'intergenic_region' in s]
+    if len(ANN_records_list) == 0:
+        ANN_records_list = [s for s in ann_list if 'intergenic_region' in s]
 
     # filter out annotations that include 'WARNING' or 'GU280_gp01.2'
     # this keeps 'GU280_gp01' annotations over 'GU280_gp01.2'
-    EFF_records_list = [s for s in EFF_records_list if 'WARNING' not in s
+    ANN_records_list = [s for s in ANN_records_list if 'WARNING' not in s
                         and 'GU280_gp01.2' not in s]
     
     # of the filtered records, take only the first N, where N is the number
     # of comma-separated AO values given in the "unknown" column
-    EFF_records_list = EFF_records_list[:ao_count]
+    ANN_records_list = ANN_records_list[:ao_count]
     
-    return EFF_records_list
+    return ANN_records_list
 
 
 def find_sample_size(table, lineage, vcf_file, wastewater):
@@ -355,16 +355,16 @@ def find_sample_size(table, lineage, vcf_file, wastewater):
 
 
     
-def parse_INFO(df, var_cols): # return INFO dataframe with named columns, including EFF split apart
+def parse_INFO(df, var_cols): # return INFO dataframe with named columns, including ANN split apart
 
     # extract these key-value pairs in INFO into their own columns
-    cols_to_extract = ['DP', 'ps_filter', 'ps_exc', 'EFF', 'mat_pep', 'mat_pep_desc', 'mat_pep_acc']
+    cols_to_extract = ['DP', 'ps_filter', 'ps_exc', 'ANN', 'mat_pep', 'mat_pep_desc', 'mat_pep_acc']
     info = pd.DataFrame(columns=cols_to_extract)
     for col in cols_to_extract:
         pat = str(col) + "\=(.*?)(?=[\;]|$)" 
         info[col] = df['INFO'].str.extract(pat)
     # rename uppercase columns as lowercase
-    info = info.rename(columns={'DP':'dp', 'EFF':'eff'})
+    info = info.rename(columns={'DP':'dp', 'ANN':'ann'})
 
     # concatenate info and df horizontally
     df = pd.concat([df, info], axis=1)
@@ -373,11 +373,14 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     # expand "unknown" column into multiple named columns
     unknown = df['unknown'].str.split(pat=':').apply(pd.Series)
     unknown.columns = var_cols
-    #drop columns in df that have the same name as 'unknown' column names
+    print("var_cols:")
+    print(var_cols)
+    # drop columns in df that have the same name as 'unknown' column names
     cols_to_drop = list(set(df.columns) & set(unknown.columns)) 
     df = df.drop(columns=cols_to_drop)
-
+    # concatenate 'unknown' columns to df
     df = pd.concat([df, unknown], axis=1)
+
     # make ALT, AO, type into lists
     for column in ["ao", "ALT"]:
         df[column] = df[column].str.split(",")
@@ -385,10 +388,12 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
         df["type"] = df["type"].str.split(",")   
     # get number of AO values given in "unknown" column
     df['ao_count'] = df["ao"].str.len()
+
+    # parse ANN entry from INFO
+    df["ann_result"] = [select_snpeff_records(x, y) for x, y in
+                        zip(df['ann'], df["ao_count"])]
     
-    # parse EFF entry from INFO
-    df["eff_result"] = [select_snpeff_records(x, y) for x, y in
-                        zip(df['eff'], df["ao_count"])]
+ 
     #df.to_csv("eff_result_checking.tsv", sep="\t")
     # check how many "type" entries there are
     #df['eff_result_len'] = df["eff_result"].str.len()
@@ -398,57 +403,50 @@ def parse_INFO(df, var_cols): # return INFO dataframe with named columns, includ
     #mismatch.to_csv("mismatches.csv", sep='\t', header=True, index=True)
     # unnest list columns
     if "type" in df.columns: # "type" is not an attribute of INFO for wastewater
-        df = unnest_multi(df, ["eff_result", "ao", "ALT", "type"], reset_index=True)
+        df = unnest_multi(df, ["ann_result", "ao", "ALT", "type"], reset_index=True)
     else:
-        df = unnest_multi(df, ["eff_result", "ao", "ALT"], reset_index=True)
+        df = unnest_multi(df, ["ann_result", "ao", "ALT"], reset_index=True)
     # calculate Alternate Frequency
     df['AF'] = df['ao'].astype(int) / df['dp'].astype(int)
 
-    # expand the contents of eff_result into separate columns, named as in the 
+    # expand the contents of ann_result into separate columns, named as in the 
     # VCF header
-    eff_info = df['eff_result'].str.findall('\\((.*?)\\)').str[0]
     # split at pipe, form dataframe
-    eff_info = eff_info.str.split(pat='|').apply(pd.Series)
-    num_cols = len(eff_info.columns)
-    eff_info_cols = ['Effect_Impact','Functional_Class','Codon_Change','Amino_Acid_Change','Amino_Acid_length','Gene_Name','Transcript_BioType','Gene_Coding','Transcript_ID','Exon_Rank','Genotype ERRORS', 'Genotype WARNINGS'][:num_cols]
-    eff_info.columns = eff_info_cols
+    ann_info = df['ann_result'].str.split(pat='|').apply(pd.Series)
+    num_cols = len(ann_info.columns)
+    # ann_info_cols are hardcoded from the pragma beginning with '##INFO=<ID=ANN' for SnpEffVersion=5.0e
+    #eff_info_cols = ['Effect_Impact','Functional_Class','Codon_Change','Amino_Acid_Change','Amino_Acid_length','Gene_Name','Transcript_BioType','Gene_Coding','Transcript_ID','Exon_Rank','Genotype ERRORS', 'Genotype WARNINGS'][:num_cols]
+    ann_info_cols = ['Allele', 'Annotation', 'Annotation_Impact', 'Gene_Name', 'Gene_ID', 'Feature_Type', 'Feature_ID', 'Transcript_BioType', 'Rank', 'HGVS.c', 'HGVS.p', 'cDNA.pos / cDNA.length', 'CDS.pos / CDS.length', 'AA.pos / AA.length', 'Distance', 'ERRORS / WARNINGS / INFO']
+    ann_info.columns = ann_info_cols
+    # add split ANN columns to df
+    df = pd.concat([df, ann_info], axis=1)
+    df = df.drop(columns='ann_result')
 
-    df = pd.concat([df, eff_info], axis=1)
-    df = df.drop(columns='eff_result')
-    
+    df = df.rename(columns={'HGVS.c': 'nt_name', 'HGVS.p': 'aa_name'})
 
-    # split df['Amino_Acid_Change'] into two columns: one for HGVS amino acid
-    # names, and the righthand column for nucleotide-level names
-    name_mask = df['Amino_Acid_Change'].str.contains('/')
-    df.loc[~name_mask, 'Amino_Acid_Change'] = '/' + df['Amino_Acid_Change']
-    hgvs = df['Amino_Acid_Change'].str.rsplit(pat='/').apply(pd.Series)
-    hgvs.columns = ["hgvs_protein", "hgvs_nucleotide"]
-    df = pd.concat([df, hgvs], axis=1)
-    
     # make adjustments to the nucleotide names
     # 1) change 'c.' to 'g.'convert_amino_acid_codes for nucleotide names ### double check that we want this
-    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("c.", "g.", regex=False) 
-    df["hgvs_nucleotide"] = df["hgvs_nucleotide"].str.replace("n.", "g.", regex=False) 
+    df["nt_name"] = df["nt_name"].str.replace("c.", "g.", regex=False) 
+    df["nt_name"] = df["nt_name"].str.replace("n.", "g.", regex=False) 
     # 2) change nucleotide names of the form "g.C*4378A" to g.C4378AN;
-    asterisk_mask = df["hgvs_nucleotide"].str.contains('*', regex=False)
-    df.loc[asterisk_mask, "hgvs_nucleotide"] = 'g.' + df['REF'] + df['POS'] + \
+    asterisk_mask = df["nt_name"].str.contains('*', regex=False)
+    df.loc[asterisk_mask, "nt_name"] = 'g.' + df['REF'] + df['POS'] + \
         df['ALT']
     # 3) change 'Gene_Name' to "intergenic" where names contain a "*"
     df.loc[asterisk_mask, 'Gene_Name'] = "intergenic"
 
     # create a "Names" column that holds the amino acid name (minus 'p.')
     # if there is one, or the nucleotide level name if not
-    df["Names"] = df["hgvs_nucleotide"]
-    protein_mask = df["hgvs_protein"].str.contains("p.")
-    df.loc[protein_mask, "Names"] = df["hgvs_protein"].str.replace(
+    df["Names"] = df["nt_name"]
+    protein_mask = df["aa_name"].str.contains("p.")
+    df.loc[protein_mask, "Names"] = df["aa_name"].str.replace(
         "p.", "", regex=False)
 
     # rename some columns
-    df = df.rename(columns={'Gene_Name': "vcf_gene", 'Functional_Class':
-                            "mutation_type", 'hgvs_nucleotide': 'nt_name',
-                            'hgvs_protein': 'aa_name', 'REF': 'Reference_seq',
+    df = df.rename(columns={'Gene_Name': "vcf_gene", 'Annotation':
+                            "mutation_type", 'REF': 'Reference_seq',
                             'ALT': 'Variant_seq'})
-
+    
     return(df)
     
 
