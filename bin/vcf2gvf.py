@@ -178,8 +178,10 @@ if __name__ == '__main__':
     
 
     # print("Processing: " + vcf_file)
-
-    sample_size = find_sample_size(size_stats, strain, vcf_file, args.wastewater)
+    if size_stats=='n/a':
+        sample_size = 'n/a'
+    else:
+        sample_size = find_sample_size(size_stats, strain, vcf_file, args.wastewater)
     
     # create gvf from annotated vcf (ignoring pragmas for now)
     gvf = vcftogvf(vcf_file, strain, GENE_PROTEIN_POSITIONS_DICT,
