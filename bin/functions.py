@@ -602,11 +602,10 @@ def clade_defining_threshold(threshold, df, sample_size):
 
 
 def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
-    '''Creates alias names for Orf1ab mutations, reindexing the amino acid numbers.'''
+    '''Creates alias names for mature peptide mutations (eg. Orf1ab mutations), reindexing the amino acid numbers.'''
     df.loc[:, 'alias'] = 'n/a'
 
-    # get list of all NSP, 3CL, and PlPro proteins in the file:
-    #alias_mask = (df['gene_symbol'].str.contains("orf1ab")) & (df['mat_pep']!='n/a')
+    # get list of all mature peptide proteins in the file (eg. NSPs, 3CL, and PlPro):
     alias_mask = (df['mat_pep']!='n/a')
     nsps_list = sorted(list(set(df[alias_mask]['mat_pep'].tolist())))
     if len(nsps_list) > 0:
@@ -634,6 +633,7 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
         
         # for each nsp in nsps_list, operate on the number column based on the nsp start coordinates
         for nsp in nsps_list:
+            # hardcoding PL_pro for SARS-COV-2
             if nsp=='PL_proPLpro':
                 nsp='PL_pro'
             nsp_start_aa = int(GENE_PROTEIN_POSITIONS_DICT[nsp]["aa_start"])
