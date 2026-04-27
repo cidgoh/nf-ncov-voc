@@ -133,6 +133,9 @@ def add_hgvs_names(new_gvf):
     # dels
     nt_del_mask = (new_gvf['hgvs_nt'].str.contains("del", regex=False) & ~new_gvf['hgvs_nt'].str.contains("delins", regex=False))
     new_gvf.loc[nt_del_mask, 'hgvs_nt'] = new_gvf.loc[nt_del_mask, 'hgvs_nt'].apply(remove_nts_from_nt_name)
+    # dups
+    nt_dup_mask = new_gvf['hgvs_nt'].str.contains("dup", regex=False)
+    new_gvf.loc[nt_dup_mask, 'hgvs_nt'] = new_gvf.loc[nt_dup_mask, 'hgvs_nt'].apply(remove_nts_from_nt_name)
 
     # remove transcript id in parentheses for all HGVS nucleotide names where 'locus_tag'=='n/a'
     new_gvf['hgvs_nt'] = new_gvf['hgvs_nt'].str.replace("(n/a)", "", regex=False)
