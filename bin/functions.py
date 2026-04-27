@@ -52,6 +52,15 @@ def rewrite_nt_snps_as_hgvs(original_nt_name):
 
     return(hgvs_name)
 
+def undo_hgvs_snps(hgvs_nt_name):
+    # interim function for updated SnpEFF
+    # converts eg. g.33C>T to g.C33T
+    pos = "".join([i for i in hgvs_nt_name if i.isdigit()])
+    nts_list = [ch for ch in hgvs_nt_name if ch.isupper()]
+    non_hgvs_name = "g." + nts_list[0] + pos + nts_list[1] ##may change "g." in future
+
+    return(non_hgvs_name)
+
 def remove_nts_from_nt_name(original_nt_name):
     # sufficient for nt names containing "del" or "dup"
     # will not work for "ins" or "delins"
@@ -78,33 +87,47 @@ def add_hgvs_names(new_gvf):
 
     """    
     # define nt regex patterns
+
     # for SNPs, eg. g.C45T, g.C-45T
     nt_snp_regex = "[a-z]\\.[A-Z][0-9\\-]+[A-Z]"
+
     # for dels and dups, eg. g.254_259delTGGTTG, g.361delA
     nt_del_dup_regex = "[a-z]\\.[0-9\\-_]+(?:del|dup)[A-Z]+"
+
     # for ins
     nt_ins_regex = "[a-z]\\.[0-9\\-_]+ins[A-Z]+"
+
     # for delins, eg. g.GCC10182_10184ACA
     nt_delins_regex = "[a-z]\.[A-Z]+-?[0-9]+_-?[0-9]+[A-Z]+" 
     
     #df.loc[mask, 'val'] = df.loc[mask, 'val'].apply(f)
+
     # add hgvs nt snp names
+    # find the rows where nt_name is a snp matching nt_snp_regex
     nt_snp_mask = new_gvf['nt_name'].str.contains(nt_snp_regex, regex=True)
+    # write hgvs_nt in HGVS format
     new_gvf.loc[nt_snp_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + \
                  new_gvf.loc[nt_snp_mask, 'nt_name'].apply(rewrite_nt_snps_as_hgvs)
+    
     # add hgvs nt dels and dups
     nt_del_dup_mask = new_gvf['nt_name'].str.contains(nt_del_dup_regex, regex=True)
     new_gvf.loc[nt_del_dup_mask,'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + \
                 new_gvf.loc[nt_del_dup_mask, 'nt_name'].apply(remove_nts_from_nt_name)
+    
     # add hgvs nt ins
     nt_ins_mask = new_gvf['nt_name'].str.contains(nt_ins_regex, regex=True)
     new_gvf.loc[nt_ins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + new_gvf['nt_name']  
+    
     # add hgvs nt delins: change to eg. g.123_129delinsAC
     nt_delins_mask = new_gvf['nt_name'].str.contains(nt_delins_regex, regex=True)
     #new_gvf.loc[nt_delins_mask, 'hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + "TBA!" #new_gvf['nt_name']  
     """    
     new_gvf['hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + new_gvf['nt_name']
 
+    # revert nt_name to old format
+    nt_snp_mask = new_gvf['hgvs_nt'].str.contains(">", regex=False)
+    new_gvf.loc[nt_snp_mask, 'nt_name'] = new_gvf.loc[nt_snp_mask, 'nt_name'].apply(undo_hgvs_snps)
+    
     # remove transcript id in parentheses for all HGVS nucleotide names where 'locus_tag'=='n/a'
     new_gvf['hgvs_nt'] = new_gvf['hgvs_nt'].str.replace("(n/a)", "", regex=False)
 
