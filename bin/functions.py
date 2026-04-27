@@ -125,9 +125,15 @@ def add_hgvs_names(new_gvf):
     new_gvf['hgvs_nt'] = new_gvf['#seqid'] + "(" + new_gvf['locus_tag'] + "):" + new_gvf['nt_name']
 
     # revert nt_name to old format
+    # snps
     nt_snp_mask = new_gvf['hgvs_nt'].str.contains(">", regex=False)
     new_gvf.loc[nt_snp_mask, 'nt_name'] = new_gvf.loc[nt_snp_mask, 'nt_name'].apply(undo_hgvs_snps)
     
+    # revert hgvs_nt to old format
+    # dels
+    nt_del_mask = (new_gvf['hgvs_nt'].str.contains("del", regex=False) & ~new_gvf['hgvs_nt'].str.contains("delins", regex=False))
+    new_gvf.loc[nt_del_mask, 'hgvs_nt'] = new_gvf.loc[nt_del_mask, 'hgvs_nt'].apply(remove_nts_from_nt_name)
+
     # remove transcript id in parentheses for all HGVS nucleotide names where 'locus_tag'=='n/a'
     new_gvf['hgvs_nt'] = new_gvf['hgvs_nt'].str.replace("(n/a)", "", regex=False)
 
