@@ -221,6 +221,8 @@ def get_unknown_labels(df):
     source = df['#CHROM'][df['#CHROM'].str.contains("##source=")].values[0].split("=")[1].split()[0]
     if source=="freeBayes":
         columns = [x.lower() for x in ["GT","DP","AD","RO","QR","AO","QA","GL"]]
+    elif source=="freebayes": # PAFtools VCF reformatted to freebayes-like format
+        columns = [x.lower() for x in ["GT","DP","AD","RO","QR","AO","QA","GL", "GQ"]]
     elif source=="iVar":
         # iVar names are: ["GT","REF_DP","REF_RV","REF_QUAL","ALT_DP","ALT_RV","ALT_QUAL","ALT_FREQ"]
         # use "RO" instead of "REF_DP" to match GVF standard
