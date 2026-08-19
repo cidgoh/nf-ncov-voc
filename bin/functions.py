@@ -221,6 +221,8 @@ def get_unknown_labels(df):
     source = df['#CHROM'][df['#CHROM'].str.contains("##source=")].values[0].split("=")[1].split()[0]
     if source=="freeBayes":
         columns = [x.lower() for x in ["GT","DP","AD","RO","QR","AO","QA","GL"]]
+    elif source=="paftools_to_freebayes_vcf.py": # PAFtools VCF reformatted to freebayes-like format
+        columns = [x.lower() for x in ["GT","DP","AD","RO","QR","AO","QA","GL", "GQ"]]
     elif source=="iVar":
         # iVar names are: ["GT","REF_DP","REF_RV","REF_QUAL","ALT_DP","ALT_RV","ALT_QUAL","ALT_FREQ"]
         # use "RO" instead of "REF_DP" to match GVF standard
@@ -550,7 +552,8 @@ def map_pos_to_gene_protein(pos, GENE_PROTEIN_POSITIONS_DICT):
             product = GENE_PROTEIN_POSITIONS_DICT[entry]["product"]
             protein_alias = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_alias"]
             protein_id = GENE_PROTEIN_POSITIONS_DICT[entry]["protein_id"]
-            locus_tag = GENE_PROTEIN_POSITIONS_DICT[entry]["locus_tag"]
+            #locus_tag = GENE_PROTEIN_POSITIONS_DICT[entry]["locus_tag"]
+            locus_tag = (GENE_PROTEIN_POSITIONS_DICT[entry].get("locus_tag") or GENE_PROTEIN_POSITIONS_DICT[entry].get("Parent", "").replace("gene-", ""))
 
             # add ontology terms if the JSON file contains them
 
@@ -669,7 +672,9 @@ def add_alias_names(df, GENE_PROTEIN_POSITIONS_DICT):
             if nsp=='PL_proPLpro':
                 nsp='PL_pro'
             nsp_start_aa = int(GENE_PROTEIN_POSITIONS_DICT[nsp]["aa_start"])
-            nsp_protein_id = GENE_PROTEIN_POSITIONS_DICT[nsp]["protein_id"]
+            #nsp_protein_id = GENE_PROTEIN_POSITIONS_DICT[nsp]["protein_id"]            
+            nsp_protein_id = (GENE_PROTEIN_POSITIONS_DICT[nsp].get("protein_id") or GENE_PROTEIN_POSITIONS_DICT[nsp].get("ID", "").replace("id-", ""))
+            
             nsp_mask = df['mat_pep']==nsp
             # add alias_protein_id
             df.loc[nsp_mask, 'alias_protein_id'] = nsp_protein_id
